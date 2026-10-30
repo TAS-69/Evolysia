@@ -1,0 +1,99 @@
+{
+  "id": "portraits.ears",
+  "family": "portraits",
+  "layer": "ears",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/ears.png",
+    "portraits/ears_idx.png"
+  ],
+  "sidecar": "portraits/ears.json",
+  "atlas_columns": 6,
+  "sheet_rows": [
+    "base.child.oval",
+    "base.child.round",
+    "base.adult.oval",
+    "base.adult.round",
+    "base.elder.oval",
+    "base.elder.round"
+  ],
+  "variants": [
+    "base"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      1,
+      0,
+      2,
+      3,
+      2,
+      4,
+      5,
+      4
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "ears"
+  ],
+  "recolor_slots": [
+    "skin_0",
+    "skin_2",
+    "skin_3"
+  ]
+}

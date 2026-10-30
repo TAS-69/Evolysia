@@ -1,0 +1,44 @@
+{
+  "id": "structures.lean_to_burned",
+  "family": "structures",
+  "asset_id": "lean_to",
+  "state": "burned",
+  "lighting": "unlit",
+  "files": [
+    "structures/lean_to_burned.png",
+    "structures/lean_to_burned_idx.png"
+  ],
+  "sidecar": "structures/lean_to_burned.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "wood",
+    "thatch"
+  ],
+  "materials": [
+    "wood",
+    "thatch"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2"
+  ],
+  "emissive_slots": []
+}

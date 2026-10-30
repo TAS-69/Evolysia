@@ -1,0 +1,164 @@
+{
+  "id": "portraits.accessory",
+  "family": "portraits",
+  "layer": "accessory",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/accessory.png",
+    "portraits/accessory_idx.png"
+  ],
+  "sidecar": "portraits/accessory.json",
+  "atlas_columns": 10,
+  "sheet_rows": [
+    "feather_band.child.oval",
+    "feather_band.adult.oval",
+    "bone_necklace.child.oval",
+    "beads.child.oval",
+    "mask.child.oval",
+    "mask.adult.oval",
+    "helmet.child.oval",
+    "helmet.adult.oval",
+    "helmet_bone.child.oval",
+    "helmet_bone.adult.oval"
+  ],
+  "variants": [
+    "feather_band",
+    "bone_necklace",
+    "beads",
+    "mask",
+    "helmet",
+    "helmet_bone"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      8,
+      8,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "accessory"
+  ],
+  "recolor_slots": [
+    "fixed_ui_4",
+    "hair_0",
+    "cloth_a_2",
+    "culture_2"
+  ]
+}

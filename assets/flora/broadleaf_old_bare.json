@@ -1,0 +1,46 @@
+{
+  "id": "flora.broadleaf_old_bare",
+  "family": "flora",
+  "asset_id": "broadleaf",
+  "state": "old_bare",
+  "files": [
+    "flora/broadleaf_old_bare.png",
+    "flora/broadleaf_old_bare_idx.png"
+  ],
+  "sidecar": "flora/broadleaf_old_bare.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "old_bare"
+  ],
+  "recolor_slots": [
+    "bark_1",
+    "bark_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "L",
+  "layer": "base"
+}

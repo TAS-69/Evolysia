@@ -1,0 +1,45 @@
+{
+  "id": "flora.rainforest_giant_burned",
+  "family": "flora",
+  "asset_id": "rainforest_giant",
+  "state": "burned",
+  "files": [
+    "flora/rainforest_giant_burned.png",
+    "flora/rainforest_giant_burned_idx.png"
+  ],
+  "sidecar": "flora/rainforest_giant_burned.json",
+  "frame": [
+    32,
+    48
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    46
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "burned"
+  ],
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "L",
+  "layer": "base"
+}

@@ -1,0 +1,49 @@
+{
+  "id": "flora.mushrooms",
+  "family": "flora",
+  "asset_id": "mushrooms",
+  "state": "normal",
+  "files": [
+    "flora/mushrooms.png",
+    "flora/mushrooms_idx.png"
+  ],
+  "sidecar": "flora/mushrooms.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "normal"
+  ],
+  "recolor_slots": [
+    "bark_3",
+    "flower_0",
+    "flower_1",
+    "flower_2",
+    "flower_3",
+    "flower_4"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

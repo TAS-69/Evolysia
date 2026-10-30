@@ -1,0 +1,56 @@
+{
+  "id": "flora.broadleaf_young",
+  "family": "flora",
+  "asset_id": "broadleaf",
+  "state": "young",
+  "files": [
+    "flora/broadleaf_young.png",
+    "flora/broadleaf_young_idx.png"
+  ],
+  "sidecar": "flora/broadleaf_young.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "young"
+  ],
+  "recolor_slots": [
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 30,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "base",
+  "seasonal_states": {
+    "winter": "flora.broadleaf_bare"
+  }
+}

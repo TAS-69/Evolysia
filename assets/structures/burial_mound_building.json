@@ -1,0 +1,45 @@
+{
+  "id": "structures.burial_mound_building",
+  "family": "structures",
+  "asset_id": "burial_mound",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/burial_mound_building.png",
+    "structures/burial_mound_building_idx.png"
+  ],
+  "sidecar": "structures/burial_mound_building.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "soil",
+    "grass"
+  ],
+  "materials": [
+    "soil",
+    "grass"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "emissive_slots": []
+}

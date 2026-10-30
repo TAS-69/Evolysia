@@ -1,0 +1,38 @@
+{
+  "id": "overlays.wet_ground",
+  "family": "overlays",
+  "files": [
+    "overlays/wet_ground.png",
+    "overlays/wet_ground_idx.png"
+  ],
+  "sidecar": "overlays/wet_ground.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "wet_ground",
+  "set_type": "variants",
+  "tileable": true
+}

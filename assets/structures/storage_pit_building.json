@@ -1,0 +1,45 @@
+{
+  "id": "structures.storage_pit_building",
+  "family": "structures",
+  "asset_id": "storage_pit",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/storage_pit_building.png",
+    "structures/storage_pit_building_idx.png"
+  ],
+  "sidecar": "structures/storage_pit_building.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "soil",
+    "wood"
+  ],
+  "materials": [
+    "soil",
+    "wood"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "emissive_slots": []
+}

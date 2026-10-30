@@ -1,0 +1,87 @@
+{
+  "id": "terrain.water_corners",
+  "family": "terrain",
+  "files": [
+    "terrain/water_corners.png",
+    "terrain/water_corners_idx.png"
+  ],
+  "sidecar": "terrain/water_corners.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03",
+    "none_04",
+    "none_05",
+    "none_06",
+    "none_07",
+    "none_08",
+    "none_09",
+    "none_10",
+    "none_11",
+    "none_12",
+    "none_13",
+    "none_14",
+    "none_15"
+  ],
+  "fps": 3,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "corners"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_water_2",
+    "fixed_water_3",
+    "fixed_water_4"
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 3
+    }
+  },
+  "material": "water",
+  "layer_priority": 1,
+  "masks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 16,
+  "emissive": false
+}

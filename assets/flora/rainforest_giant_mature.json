@@ -1,0 +1,52 @@
+{
+  "id": "flora.rainforest_giant_mature",
+  "family": "flora",
+  "asset_id": "rainforest_giant",
+  "state": "mature",
+  "files": [
+    "flora/rainforest_giant_mature.png",
+    "flora/rainforest_giant_mature_idx.png"
+  ],
+  "sidecar": "flora/rainforest_giant_mature.json",
+  "frame": [
+    32,
+    48
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    46
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "mature"
+  ],
+  "recolor_slots": [
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 46,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "L",
+  "layer": "base"
+}

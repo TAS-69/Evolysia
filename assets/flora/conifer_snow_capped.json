@@ -1,0 +1,50 @@
+{
+  "id": "flora.conifer_snow_capped",
+  "family": "flora",
+  "asset_id": "conifer",
+  "state": "snow_capped",
+  "files": [
+    "flora/conifer_snow_capped.png",
+    "flora/conifer_snow_capped_idx.png"
+  ],
+  "sidecar": "flora/conifer_snow_capped.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "snow_capped"
+  ],
+  "recolor_slots": [
+    "fixed_snow_2",
+    "fixed_snow_3",
+    "fixed_snow_4"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 30,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "snow_overlay",
+  "composite_over": "flora.conifer_mature"
+}

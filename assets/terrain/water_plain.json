@@ -1,0 +1,57 @@
+{
+  "id": "terrain.water_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/water_plain.png",
+    "terrain/water_plain_idx.png"
+  ],
+  "sidecar": "terrain/water_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 3,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_water_2",
+    "fixed_water_3"
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 3
+    }
+  },
+  "material": "water",
+  "layer_priority": 1,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

@@ -1,0 +1,50 @@
+{
+  "id": "fauna.sheep_eat",
+  "family": "fauna",
+  "asset_id": "sheep",
+  "form": "wild",
+  "source_species": "sheep",
+  "files": [
+    "fauna/sheep_eat.png",
+    "fauna/sheep_eat_idx.png"
+  ],
+  "sidecar": "fauna/sheep_eat.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 4,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "eat": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4
+    }
+  },
+  "animation": "eat",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

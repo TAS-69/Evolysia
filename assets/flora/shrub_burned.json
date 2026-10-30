@@ -1,0 +1,46 @@
+{
+  "id": "flora.shrub_burned",
+  "family": "flora",
+  "asset_id": "shrub",
+  "state": "burned",
+  "files": [
+    "flora/shrub_burned.png",
+    "flora/shrub_burned_idx.png"
+  ],
+  "sidecar": "flora/shrub_burned.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "burned"
+  ],
+  "recolor_slots": [
+    "fixed_basalt_2",
+    "bark_1"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

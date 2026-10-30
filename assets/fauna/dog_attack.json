@@ -1,0 +1,56 @@
+{
+  "id": "fauna.dog_attack",
+  "family": "fauna",
+  "asset_id": "dog",
+  "form": "domestic",
+  "source_species": "wolf",
+  "files": [
+    "fauna/dog_attack.png",
+    "fauna/dog_attack_idx.png"
+  ],
+  "sidecar": "fauna/dog_attack.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 3,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 10,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "attack": {
+      "row": 0,
+      "frames": 3,
+      "fps": 10
+    }
+  },
+  "animation": "attack",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "fixed_ui_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M",
+  "coat_lut": "lut_hair"
+}

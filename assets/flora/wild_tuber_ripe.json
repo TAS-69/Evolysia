@@ -1,0 +1,52 @@
+{
+  "id": "flora.wild_tuber_ripe",
+  "family": "flora",
+  "asset_id": "wild_tuber",
+  "state": "ripe",
+  "files": [
+    "flora/wild_tuber_ripe.png",
+    "flora/wild_tuber_ripe_idx.png"
+  ],
+  "sidecar": "flora/wild_tuber_ripe.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "ripe"
+  ],
+  "recolor_slots": [
+    "fixed_soil_0",
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3",
+    "fixed_soil_4",
+    "grass_2",
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

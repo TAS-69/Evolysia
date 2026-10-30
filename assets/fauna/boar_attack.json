@@ -1,0 +1,51 @@
+{
+  "id": "fauna.boar_attack",
+  "family": "fauna",
+  "asset_id": "boar",
+  "form": "wild",
+  "source_species": "boar",
+  "files": [
+    "fauna/boar_attack.png",
+    "fauna/boar_attack_idx.png"
+  ],
+  "sidecar": "fauna/boar_attack.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 3,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 10,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "attack": {
+      "row": 0,
+      "frames": 3,
+      "fps": 10
+    }
+  },
+  "animation": "attack",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3",
+    "fixed_ui_4"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

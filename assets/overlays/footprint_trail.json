@@ -1,0 +1,39 @@
+{
+  "id": "overlays.footprint_trail",
+  "family": "overlays",
+  "files": [
+    "overlays/footprint_trail.png",
+    "overlays/footprint_trail_idx.png"
+  ],
+  "sidecar": "overlays/footprint_trail.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "footprint_trail",
+  "set_type": "variants",
+  "optional": true
+}

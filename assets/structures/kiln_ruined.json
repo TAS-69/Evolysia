@@ -1,0 +1,47 @@
+{
+  "id": "structures.kiln_ruined",
+  "family": "structures",
+  "asset_id": "kiln",
+  "state": "ruined",
+  "lighting": "unlit",
+  "files": [
+    "structures/kiln_ruined.png",
+    "structures/kiln_ruined_idx.png"
+  ],
+  "sidecar": "structures/kiln_ruined.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "clay",
+    "stone"
+  ],
+  "materials": [
+    "clay",
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_stone_2",
+    "fixed_clay_0",
+    "fixed_clay_1",
+    "fixed_clay_2",
+    "fixed_clay_3"
+  ],
+  "emissive_slots": []
+}

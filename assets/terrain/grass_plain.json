@@ -1,0 +1,52 @@
+{
+  "id": "terrain.grass_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/grass_plain.png",
+    "terrain/grass_plain_idx.png"
+  ],
+  "sidecar": "terrain/grass_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "grass_1",
+    "grass_2",
+    "grass_3"
+  ],
+  "anims": {},
+  "material": "grass",
+  "layer_priority": 11,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

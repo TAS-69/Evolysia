@@ -1,0 +1,39 @@
+{
+  "id": "overlays.ash_fall",
+  "family": "overlays",
+  "files": [
+    "overlays/ash_fall.png",
+    "overlays/ash_fall_idx.png"
+  ],
+  "sidecar": "overlays/ash_fall.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_ash_2",
+    "fixed_ash_3"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "ash_fall",
+  "set_type": "variants",
+  "tileable": true
+}

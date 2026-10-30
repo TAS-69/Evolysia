@@ -1,0 +1,43 @@
+{
+  "id": "structures.altar_burned",
+  "family": "structures",
+  "asset_id": "altar",
+  "state": "burned",
+  "lighting": "unlit",
+  "files": [
+    "structures/altar_burned.png",
+    "structures/altar_burned_idx.png"
+  ],
+  "sidecar": "structures/altar_burned.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "stone"
+  ],
+  "materials": [
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_ash_0",
+    "fixed_ash_1",
+    "fixed_ash_2"
+  ],
+  "emissive_slots": []
+}

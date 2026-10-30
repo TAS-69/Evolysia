@@ -1,0 +1,48 @@
+{
+  "id": "fauna.bird_flock_fly",
+  "family": "fauna",
+  "asset_id": "bird_flock",
+  "form": "wild",
+  "source_species": "bird_flock",
+  "files": [
+    "fauna/bird_flock_fly.png",
+    "fauna/bird_flock_fly_idx.png"
+  ],
+  "sidecar": "fauna/bird_flock_fly.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 8,
+  "pivot": [
+    8,
+    8
+  ],
+  "anims": {
+    "fly": {
+      "row": 0,
+      "frames": 4,
+      "fps": 8
+    }
+  },
+  "animation": "fly",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2"
+  ],
+  "tags": [
+    "fauna",
+    "ambient"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

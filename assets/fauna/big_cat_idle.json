@@ -1,0 +1,51 @@
+{
+  "id": "fauna.big_cat_idle",
+  "family": "fauna",
+  "asset_id": "big_cat",
+  "form": "wild",
+  "source_species": "big_cat",
+  "files": [
+    "fauna/big_cat_idle.png",
+    "fauna/big_cat_idle_idx.png"
+  ],
+  "sidecar": "fauna/big_cat_idle.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 3,
+  "pivot": [
+    12,
+    14
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 3
+    }
+  },
+  "animation": "idle",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_0",
+    "fixed_basalt_1",
+    "fixed_basalt_2",
+    "fixed_basalt_3",
+    "fixed_ui_4"
+  ],
+  "tags": [
+    "fauna",
+    "predator"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L"
+}

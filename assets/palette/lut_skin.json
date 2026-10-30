@@ -1,0 +1,43 @@
+{
+  "id": "palette.lut_skin",
+  "family": "palette",
+  "files": [
+    "palette/lut_skin.png"
+  ],
+  "frame": [
+    256,
+    1
+  ],
+  "frames": 1,
+  "directions": [
+    "skin_0",
+    "skin_1",
+    "skin_2",
+    "skin_3",
+    "skin_4",
+    "skin_5",
+    "skin_6",
+    "skin_7"
+  ],
+  "fps": 0,
+  "pivot": [
+    0,
+    0
+  ],
+  "tags": [
+    "lookup_texture"
+  ],
+  "rows": [
+    "skin_0",
+    "skin_1",
+    "skin_2",
+    "skin_3",
+    "skin_4",
+    "skin_5",
+    "skin_6",
+    "skin_7"
+  ],
+  "sidecar": "palette/lut_skin.json",
+  "anims": {},
+  "recolor_slots": []
+}

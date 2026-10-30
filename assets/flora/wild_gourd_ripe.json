@@ -1,0 +1,52 @@
+{
+  "id": "flora.wild_gourd_ripe",
+  "family": "flora",
+  "asset_id": "wild_gourd",
+  "state": "ripe",
+  "files": [
+    "flora/wild_gourd_ripe.png",
+    "flora/wild_gourd_ripe_idx.png"
+  ],
+  "sidecar": "flora/wild_gourd_ripe.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "ripe"
+  ],
+  "recolor_slots": [
+    "fixed_clay_0",
+    "fixed_clay_1",
+    "fixed_clay_2",
+    "fixed_clay_3",
+    "fixed_clay_4",
+    "grass_2",
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

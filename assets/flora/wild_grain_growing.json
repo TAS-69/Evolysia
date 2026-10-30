@@ -1,0 +1,44 @@
+{
+  "id": "flora.wild_grain_growing",
+  "family": "flora",
+  "asset_id": "wild_grain",
+  "state": "growing",
+  "files": [
+    "flora/wild_grain_growing.png",
+    "flora/wild_grain_growing_idx.png"
+  ],
+  "sidecar": "flora/wild_grain_growing.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "growing"
+  ],
+  "recolor_slots": [
+    "grass_2",
+    "foliage_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

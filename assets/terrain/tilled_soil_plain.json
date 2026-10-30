@@ -1,0 +1,57 @@
+{
+  "id": "terrain.tilled_soil_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/tilled_soil_plain.png",
+    "terrain/tilled_soil_plain_idx.png"
+  ],
+  "sidecar": "terrain/tilled_soil_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "ns_00",
+    "ns_01",
+    "ns_02",
+    "ns_03",
+    "ew_00",
+    "ew_01",
+    "ew_02",
+    "ew_03"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "anims": {},
+  "material": "tilled_soil",
+  "layer_priority": 9,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "ns",
+    "ew"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

@@ -1,0 +1,56 @@
+{
+  "id": "fauna.cattle_run",
+  "family": "fauna",
+  "asset_id": "cattle",
+  "form": "domestic",
+  "source_species": "bison",
+  "files": [
+    "fauna/cattle_run.png",
+    "fauna/cattle_run_idx.png"
+  ],
+  "sidecar": "fauna/cattle_run.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 12,
+  "pivot": [
+    12,
+    14
+  ],
+  "anims": {
+    "run": {
+      "row": 0,
+      "frames": 4,
+      "fps": 12
+    }
+  },
+  "animation": "run",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L",
+  "coat_lut": "lut_hair"
+}

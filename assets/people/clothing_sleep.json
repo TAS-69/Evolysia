@@ -1,0 +1,341 @@
+{
+  "id": "people.clothing_sleep",
+  "family": "people",
+  "layer": "clothing",
+  "animation": "sleep",
+  "files": [
+    "people/clothing_sleep.png",
+    "people/clothing_sleep_idx.png"
+  ],
+  "sidecar": "people/clothing_sleep.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 2,
+  "fps": 2,
+  "directions": [
+    "side"
+  ],
+  "sheet_rows": [
+    "none.child.slim.side",
+    "none.child.average.side",
+    "none.child.stout.side",
+    "hide_wrap.child.slim.side",
+    "hide_wrap.child.average.side",
+    "hide_wrap.child.stout.side",
+    "hide_wrap.adult.slim.side",
+    "hide_wrap.adult.average.side",
+    "hide_wrap.adult.stout.side",
+    "fur_cloak.child.slim.side",
+    "fur_cloak.child.average.side",
+    "fur_cloak.child.stout.side",
+    "fur_cloak.adult.slim.side",
+    "fur_cloak.adult.average.side",
+    "fur_cloak.adult.stout.side",
+    "woven_tunic.child.slim.side",
+    "woven_tunic.child.average.side",
+    "woven_tunic.child.stout.side",
+    "woven_tunic.adult.slim.side",
+    "woven_tunic.adult.average.side",
+    "woven_tunic.adult.stout.side",
+    "dyed_robe.child.slim.side",
+    "dyed_robe.child.average.side",
+    "dyed_robe.child.stout.side",
+    "dyed_robe.adult.slim.side",
+    "dyed_robe.adult.average.side",
+    "dyed_robe.adult.stout.side",
+    "ceremonial.child.slim.side",
+    "ceremonial.child.average.side",
+    "ceremonial.child.stout.side",
+    "ceremonial.adult.slim.side",
+    "ceremonial.adult.average.side",
+    "ceremonial.adult.stout.side"
+  ],
+  "variants": [
+    "none",
+    "hide_wrap",
+    "fur_cloak",
+    "woven_tunic",
+    "dyed_robe",
+    "ceremonial"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "row_formula": "row_lookup[variant_index][profile_index]",
+  "row_lookup": [
+    [
+      0,
+      1,
+      2,
+      0,
+      1,
+      2,
+      0,
+      1,
+      2
+    ],
+    [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      6,
+      7,
+      8
+    ],
+    [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      12,
+      13,
+      14
+    ],
+    [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      18,
+      19,
+      20
+    ],
+    [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      24,
+      25,
+      26
+    ],
+    [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      30,
+      31,
+      32
+    ]
+  ],
+  "pose_row_count": 9,
+  "pivot": [
+    10,
+    14
+  ],
+  "row_pivots": [
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ]
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        13
+      ]
+    ]
+  ],
+  "anchor_row_formula": "profile_index",
+  "rig": "people/rig.json",
+  "seed": 0,
+  "sim_actions": [
+    "sleep"
+  ],
+  "mirror_side_left": true,
+  "anims": {
+    "sleep": {
+      "row": 0,
+      "frames": 2,
+      "fps": 2
+    }
+  },
+  "recolor_slots": [
+    "cloth_a_0",
+    "cloth_a_2",
+    "cloth_a_3",
+    "cloth_b_3",
+    "culture_2"
+  ],
+  "tags": [
+    "people",
+    "clothing"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S"
+}

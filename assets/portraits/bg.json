@@ -1,0 +1,96 @@
+{
+  "id": "portraits.bg",
+  "family": "portraits",
+  "layer": "bg",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/bg.png",
+    "portraits/bg_idx.png"
+  ],
+  "sidecar": "portraits/bg.json",
+  "atlas_columns": 1,
+  "sheet_rows": [
+    "vignette.child.oval"
+  ],
+  "variants": [
+    "vignette"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "bg"
+  ],
+  "recolor_slots": [
+    "culture_0",
+    "culture_1"
+  ],
+  "sources": [
+    "portraits/expressions.json"
+  ]
+}

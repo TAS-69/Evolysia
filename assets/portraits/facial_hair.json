@@ -1,0 +1,112 @@
+{
+  "id": "portraits.facial_hair",
+  "family": "portraits",
+  "layer": "facial_hair",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/facial_hair.png",
+    "portraits/facial_hair_idx.png"
+  ],
+  "sidecar": "portraits/facial_hair.json",
+  "atlas_columns": 7,
+  "sheet_rows": [
+    "stubble.adult.oval",
+    "moustache.adult.oval",
+    "moustache.elder.oval",
+    "chin_beard.adult.oval",
+    "chin_beard.elder.oval",
+    "full_beard.adult.oval",
+    "full_beard.elder.oval"
+  ],
+  "variants": [
+    "stubble",
+    "moustache",
+    "chin_beard",
+    "full_beard"
+  ],
+  "profiles": [
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4
+    ],
+    [
+      5,
+      5,
+      5,
+      6,
+      6,
+      6
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "facial_hair"
+  ],
+  "recolor_slots": [
+    "hair_0",
+    "hair_1",
+    "hair_3"
+  ]
+}

@@ -1,0 +1,280 @@
+{
+  "id": "people.body_paint_dead",
+  "family": "people",
+  "layer": "body_paint",
+  "animation": "dead",
+  "files": [
+    "people/body_paint_dead.png",
+    "people/body_paint_dead_idx.png"
+  ],
+  "sidecar": "people/body_paint_dead.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "sheet_rows": [
+    "cheek_dots.child.slim.side",
+    "cheek_dots.adult.slim.side",
+    "brow_band.child.slim.side",
+    "brow_band.adult.slim.side",
+    "arm_bands.child.slim.side",
+    "leg_marks.child.slim.side",
+    "face_streak.child.slim.side",
+    "face_streak.adult.slim.side",
+    "shoulder_dabs.child.slim.side",
+    "shoulder_dabs.child.average.side",
+    "shoulder_dabs.child.stout.side"
+  ],
+  "variants": [
+    "cheek_dots",
+    "brow_band",
+    "arm_bands",
+    "leg_marks",
+    "face_streak",
+    "shoulder_dabs"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "row_formula": "row_lookup[variant_index][profile_index]",
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      8,
+      9,
+      10,
+      8,
+      9,
+      10
+    ]
+  ],
+  "pose_row_count": 9,
+  "pivot": [
+    10,
+    14
+  ],
+  "row_pivots": [
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ]
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ]
+  ],
+  "anchor_row_formula": "profile_index",
+  "rig": "people/rig.json",
+  "seed": 0,
+  "sim_actions": [
+    "dead"
+  ],
+  "mirror_side_left": true,
+  "anims": {
+    "dead": {
+      "row": 0,
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "recolor_slots": [
+    "culture_2"
+  ],
+  "tags": [
+    "people",
+    "body_paint"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S",
+  "clip_rule": "body_alpha & ~clothing_alpha"
+}

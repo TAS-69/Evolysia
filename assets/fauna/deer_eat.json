@@ -1,0 +1,51 @@
+{
+  "id": "fauna.deer_eat",
+  "family": "fauna",
+  "asset_id": "deer",
+  "form": "wild",
+  "source_species": "deer",
+  "files": [
+    "fauna/deer_eat.png",
+    "fauna/deer_eat_idx.png"
+  ],
+  "sidecar": "fauna/deer_eat.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 4,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "eat": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4
+    }
+  },
+  "animation": "eat",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

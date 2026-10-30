@@ -1,0 +1,46 @@
+{
+  "id": "flora.broadleaf_dead",
+  "family": "flora",
+  "asset_id": "broadleaf",
+  "state": "dead",
+  "files": [
+    "flora/broadleaf_dead.png",
+    "flora/broadleaf_dead_idx.png"
+  ],
+  "sidecar": "flora/broadleaf_dead.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "dead"
+  ],
+  "recolor_slots": [
+    "bark_1",
+    "bark_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "base"
+}

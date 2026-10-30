@@ -1,0 +1,304 @@
+{
+  "version": 1,
+  "layer_order": [
+    "bg",
+    "shoulders",
+    "head",
+    "ears",
+    "eyes",
+    "brows",
+    "nose",
+    "mouth",
+    "facial_hair",
+    "hair",
+    "scars",
+    "paint",
+    "accessory"
+  ],
+  "hair_sublayers": [
+    "hair_back",
+    "hair_front"
+  ],
+  "expressions": {
+    "calm": {
+      "brows": "neutral",
+      "eyes": "normal",
+      "mouth": "neutral"
+    },
+    "joy": {
+      "brows": "raised",
+      "eyes": "crinkled",
+      "mouth": "smile"
+    },
+    "pride": {
+      "brows": "neutral",
+      "eyes": "narrowed",
+      "mouth": "smirk"
+    },
+    "love": {
+      "brows": "raised",
+      "eyes": "soft",
+      "mouth": "small_smile"
+    },
+    "surprise": {
+      "brows": "raised_high",
+      "eyes": "wide",
+      "mouth": "open_round"
+    },
+    "fear": {
+      "brows": "pinched",
+      "eyes": "wide",
+      "mouth": "grimace"
+    },
+    "anger": {
+      "brows": "furrowed",
+      "eyes": "narrowed",
+      "mouth": "open_shout"
+    },
+    "disgust": {
+      "brows": "furrowed_one_side",
+      "eyes": "narrowed",
+      "mouth": "sneer"
+    },
+    "sadness": {
+      "brows": "sad_tilt",
+      "eyes": "downcast",
+      "mouth": "frown"
+    },
+    "shame": {
+      "brows": "sad_tilt",
+      "eyes": "averted",
+      "mouth": "pressed"
+    },
+    "envy": {
+      "brows": "furrowed",
+      "eyes": "side_glance",
+      "mouth": "pout"
+    }
+  },
+  "defaults": {
+    "eye_shape": "almond",
+    "iris": "brown",
+    "brow_shape": "fine",
+    "nose": "straight",
+    "shoulders": "woven_tunic",
+    "hair": {
+      "child": "child_tuft",
+      "adult": "short",
+      "elder": "cropped"
+    },
+    "elder_hair_lut": 6
+  },
+  "hair_styles": {
+    "shaved": {
+      "front": null,
+      "back": null
+    },
+    "short": {
+      "front": "short",
+      "back": null
+    },
+    "cropped": {
+      "front": "cropped",
+      "back": null
+    },
+    "long": {
+      "front": "long",
+      "back": "long"
+    },
+    "braided": {
+      "front": "braided",
+      "back": "braided"
+    },
+    "topknot": {
+      "front": "topknot",
+      "back": null
+    },
+    "mane": {
+      "front": "mane",
+      "back": "mane"
+    },
+    "tied_back": {
+      "front": "tied_back",
+      "back": "tied_back"
+    },
+    "locks": {
+      "front": "locks",
+      "back": "locks"
+    },
+    "child_tuft": {
+      "front": "child_tuft",
+      "back": null
+    }
+  },
+  "scar_operations": {
+    "missing_ear": {
+      "target_layer": "ears",
+      "operation": "subtract_alpha",
+      "polygon_by_profile": {
+        "child.oval": [
+          [
+            34,
+            22
+          ],
+          [
+            38,
+            22
+          ],
+          [
+            38,
+            27
+          ],
+          [
+            34,
+            25
+          ]
+        ],
+        "child.round": [
+          [
+            35,
+            22
+          ],
+          [
+            39,
+            22
+          ],
+          [
+            39,
+            27
+          ],
+          [
+            35,
+            25
+          ]
+        ],
+        "child.angular": [
+          [
+            34,
+            22
+          ],
+          [
+            38,
+            22
+          ],
+          [
+            38,
+            27
+          ],
+          [
+            34,
+            25
+          ]
+        ],
+        "adult.oval": [
+          [
+            34,
+            20
+          ],
+          [
+            38,
+            20
+          ],
+          [
+            38,
+            25
+          ],
+          [
+            34,
+            23
+          ]
+        ],
+        "adult.round": [
+          [
+            35,
+            20
+          ],
+          [
+            39,
+            20
+          ],
+          [
+            39,
+            25
+          ],
+          [
+            35,
+            23
+          ]
+        ],
+        "adult.angular": [
+          [
+            34,
+            20
+          ],
+          [
+            38,
+            20
+          ],
+          [
+            38,
+            25
+          ],
+          [
+            34,
+            23
+          ]
+        ],
+        "elder.oval": [
+          [
+            34,
+            21
+          ],
+          [
+            38,
+            21
+          ],
+          [
+            38,
+            26
+          ],
+          [
+            34,
+            24
+          ]
+        ],
+        "elder.round": [
+          [
+            35,
+            21
+          ],
+          [
+            39,
+            21
+          ],
+          [
+            39,
+            26
+          ],
+          [
+            35,
+            24
+          ]
+        ],
+        "elder.angular": [
+          [
+            34,
+            21
+          ],
+          [
+            38,
+            21
+          ],
+          [
+            38,
+            26
+          ],
+          [
+            34,
+            24
+          ]
+        ]
+      }
+    }
+  }
+}

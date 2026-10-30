@@ -1,0 +1,50 @@
+{
+  "id": "flora.shrub_dry",
+  "family": "flora",
+  "asset_id": "shrub",
+  "state": "dry",
+  "files": [
+    "flora/shrub_dry.png",
+    "flora/shrub_dry_idx.png"
+  ],
+  "sidecar": "flora/shrub_dry.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "dry"
+  ],
+  "recolor_slots": [
+    "fixed_thatch_0",
+    "fixed_thatch_1",
+    "fixed_thatch_2",
+    "fixed_thatch_3",
+    "fixed_thatch_4",
+    "bark_1"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

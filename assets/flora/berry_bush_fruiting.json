@@ -1,0 +1,51 @@
+{
+  "id": "flora.berry_bush_fruiting",
+  "family": "flora",
+  "asset_id": "berry_bush",
+  "state": "fruiting",
+  "files": [
+    "flora/berry_bush_fruiting.png",
+    "flora/berry_bush_fruiting_idx.png"
+  ],
+  "sidecar": "flora/berry_bush_fruiting.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "fruiting"
+  ],
+  "recolor_slots": [
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "fruit_2",
+    "fruit_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

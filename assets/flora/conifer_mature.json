@@ -1,0 +1,52 @@
+{
+  "id": "flora.conifer_mature",
+  "family": "flora",
+  "asset_id": "conifer",
+  "state": "mature",
+  "files": [
+    "flora/conifer_mature.png",
+    "flora/conifer_mature_idx.png"
+  ],
+  "sidecar": "flora/conifer_mature.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "mature"
+  ],
+  "recolor_slots": [
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 30,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "base"
+}

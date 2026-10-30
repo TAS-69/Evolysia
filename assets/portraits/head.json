@@ -1,0 +1,103 @@
+{
+  "id": "portraits.head",
+  "family": "portraits",
+  "layer": "head",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/head.png",
+    "portraits/head_idx.png"
+  ],
+  "sidecar": "portraits/head.json",
+  "atlas_columns": 9,
+  "sheet_rows": [
+    "base.child.oval",
+    "base.child.round",
+    "base.child.angular",
+    "base.adult.oval",
+    "base.adult.round",
+    "base.adult.angular",
+    "base.elder.oval",
+    "base.elder.round",
+    "base.elder.angular"
+  ],
+  "variants": [
+    "base"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "head"
+  ],
+  "recolor_slots": [
+    "skin_0",
+    "skin_1",
+    "skin_2",
+    "skin_3"
+  ]
+}

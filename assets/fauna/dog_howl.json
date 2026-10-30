@@ -1,0 +1,56 @@
+{
+  "id": "fauna.dog_howl",
+  "family": "fauna",
+  "asset_id": "dog",
+  "form": "domestic",
+  "source_species": "wolf",
+  "files": [
+    "fauna/dog_howl.png",
+    "fauna/dog_howl_idx.png"
+  ],
+  "sidecar": "fauna/dog_howl.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 3,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "howl": {
+      "row": 0,
+      "frames": 2,
+      "fps": 3
+    }
+  },
+  "animation": "howl",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "fixed_ui_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M",
+  "coat_lut": "lut_hair"
+}

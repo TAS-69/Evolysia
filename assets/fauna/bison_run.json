@@ -1,0 +1,51 @@
+{
+  "id": "fauna.bison_run",
+  "family": "fauna",
+  "asset_id": "bison",
+  "form": "wild",
+  "source_species": "bison",
+  "files": [
+    "fauna/bison_run.png",
+    "fauna/bison_run_idx.png"
+  ],
+  "sidecar": "fauna/bison_run.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 12,
+  "pivot": [
+    12,
+    14
+  ],
+  "anims": {
+    "run": {
+      "row": 0,
+      "frames": 4,
+      "fps": 12
+    }
+  },
+  "animation": "run",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L"
+}

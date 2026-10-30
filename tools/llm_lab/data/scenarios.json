@@ -1,0 +1,127 @@
+{
+  "_doc": "Each option has trait loadings (-1..1). A persona's predicted affinity for an option is the dot product of the loadings with the persona's centred traits. A model with good personality fidelity picks high-affinity options more often than chance. Traits: NS novelty_seeking, HA harm_avoidance, RD reward_dependence, PS persistence, SD self_directedness, CO cooperativeness, ST self_transcendence.",
+  "scenarios": [
+    {
+      "id": "predator_berries",
+      "kind": "fear",
+      "situation": "{name} has not eaten in two days. The only ripe berry bush nearby has a lone wolf sniffing around it. The wolf has not noticed {name} yet.",
+      "memories": ["Last winter a wolf badly bit {name}'s cousin."],
+      "options": [
+        {"id": "flee", "desc": "Back away quietly and go home hungry", "load": {"HA": 1.0, "NS": -0.5}},
+        {"id": "hide_and_wait", "desc": "Hide and wait for the wolf to leave", "load": {"HA": 0.4, "PS": 0.5}},
+        {"id": "confront", "desc": "Charge the wolf with a stick, shouting", "load": {"HA": -1.0, "NS": 0.8}},
+        {"id": "fetch_help", "desc": "Run back to camp and ask others to come", "load": {"RD": 0.6, "CO": 0.4, "SD": -0.5}}
+      ]
+    },
+    {
+      "id": "invention_mocked",
+      "kind": "pivot",
+      "situation": "{name} spent a whole moon building a new kind of woven fish trap. At the evening fire {name} proudly showed it off. The elders laughed, called it a waste of good reeds, and {name}'s closest friends laughed along.",
+      "memories": ["{name} has always been told to respect the elders' ways."],
+      "options": [
+        {"id": "conform", "desc": "Burn the trap and go back to fishing the old way", "load": {"RD": 1.0, "SD": -0.8, "PS": -0.6}},
+        {"id": "double_down", "desc": "Keep using the trap anyway and prove them wrong", "load": {"PS": 1.0, "SD": 0.8, "RD": -0.5}},
+        {"id": "withdraw", "desc": "Stop sharing ideas with anyone and keep to themself", "load": {"HA": 0.7, "RD": 0.3, "SD": -0.3, "CO": -0.2}},
+        {"id": "resent", "desc": "Quietly hold a grudge and plan to get back at the elders", "load": {"CO": -1.0, "PS": 0.3}},
+        {"id": "leave", "desc": "Pack up and go live elsewhere with anyone who will follow", "load": {"NS": 0.8, "SD": 0.7, "RD": -0.7}}
+      ]
+    },
+    {
+      "id": "starving_stranger",
+      "kind": "selfish",
+      "situation": "{name}'s family is starving after a failed harvest. A stranger from another tribe is asleep beside the trail with a full bag of dried meat.",
+      "memories": ["{name}'s youngest child cried from hunger all night."],
+      "options": [
+        {"id": "steal", "desc": "Take the meat while the stranger sleeps", "load": {"CO": -1.0, "HA": -0.4}},
+        {"id": "attack", "desc": "Club the stranger and take everything", "load": {"CO": -1.0, "HA": -0.8, "PS": 0.2}},
+        {"id": "beg", "desc": "Wake the stranger and beg them to share", "load": {"CO": 0.5, "RD": 0.4, "SD": -0.3}},
+        {"id": "offer_trade", "desc": "Wake the stranger and offer a trade", "load": {"CO": 0.6, "SD": 0.3}},
+        {"id": "walk_away", "desc": "Leave the stranger alone and keep searching for food", "load": {"CO": 0.4, "HA": 0.6}}
+      ]
+    },
+    {
+      "id": "granary_fire",
+      "kind": "spiritual",
+      "situation": "Lightning struck the village granary last night and half the winter food burned. Everyone is frightened and arguing about why it happened.",
+      "memories": [],
+      "options": [
+        {"id": "appease_spirits", "desc": "Insist the sky spirits are angry and lead an offering to them", "load": {"ST": 1.0, "RD": 0.2}},
+        {"id": "natural_cause", "desc": "Argue it was just a storm and the granary must be rebuilt away from the tall tree", "load": {"ST": -1.0, "SD": 0.5, "NS": 0.3}},
+        {"id": "blame_outsiders", "desc": "Blame the strangers who passed through last week", "load": {"CO": -0.7, "HA": 0.5, "ST": 0.2}},
+        {"id": "rebuild_silently", "desc": "Say nothing and start rebuilding right away", "load": {"CO": 0.6, "PS": 0.6, "ST": -0.2}}
+      ]
+    },
+    {
+      "id": "river_fear",
+      "kind": "fear",
+      "situation": "Last summer {name} nearly drowned in the river and still has nightmares about it. Today the family's only fish trap is stuck on the far bank, and someone has to cross to get it.",
+      "memories": ["{name} nearly drowned in this river last summer."],
+      "options": [
+        {"id": "avoid", "desc": "Refuse to go near the river", "load": {"HA": 1.0, "PS": -0.3}},
+        {"id": "cross_with_rope", "desc": "Cross only if a friend holds a rope", "load": {"RD": 0.5, "HA": 0.2, "CO": 0.3}},
+        {"id": "cross_alone", "desc": "Face the fear and cross alone", "load": {"HA": -0.8, "PS": 0.6, "SD": 0.6}},
+        {"id": "send_sibling", "desc": "Talk a younger sibling into going instead", "load": {"CO": -0.6, "HA": 0.5}}
+      ]
+    },
+    {
+      "id": "new_ritual",
+      "kind": "conformity",
+      "situation": "The village headwoman announces a new rule: before eating, everyone must bury a piece of every meal for the earth mother. Most villagers nod along.",
+      "memories": [],
+      "options": [
+        {"id": "embrace", "desc": "Embrace the new ritual wholeheartedly", "load": {"RD": 0.6, "ST": 0.8}},
+        {"id": "go_along", "desc": "Go along with it to avoid trouble, without believing", "load": {"RD": 0.6, "SD": -0.4, "ST": -0.3}},
+        {"id": "refuse_quietly", "desc": "Quietly refuse and eat as before", "load": {"SD": 0.8, "ST": -0.4, "RD": -0.4}},
+        {"id": "mock_openly", "desc": "Mock the ritual openly in front of everyone", "load": {"CO": -0.6, "ST": -0.7, "RD": -0.7, "HA": -0.4}}
+      ]
+    },
+    {
+      "id": "strange_fruit",
+      "kind": "novelty",
+      "situation": "{name} finds a bush of bright purple fruit that no one in the village has ever seen. {name} is hungry.",
+      "memories": [],
+      "options": [
+        {"id": "eat_now", "desc": "Eat one right away", "load": {"NS": 1.0, "HA": -0.8}},
+        {"id": "test_on_bird", "desc": "Feed one to a captured bird first and watch what happens", "load": {"NS": 0.4, "PS": 0.4, "HA": 0.2}},
+        {"id": "ignore", "desc": "Leave it alone; unknown food is dangerous", "load": {"HA": 0.8, "NS": -0.8}},
+        {"id": "ask_elders", "desc": "Bring one back for the elders to judge", "load": {"RD": 0.7, "SD": -0.5, "CO": 0.3}}
+      ]
+    },
+    {
+      "id": "chief_died",
+      "kind": "ambition",
+      "situation": "The old chief died this morning without naming a successor. People are gathering and murmuring about who should lead.",
+      "memories": [],
+      "options": [
+        {"id": "claim", "desc": "Step forward and claim leadership", "load": {"SD": 0.8, "HA": -0.6, "RD": -0.2}},
+        {"id": "back_friend", "desc": "Loudly support a close friend for chief", "load": {"CO": 0.5, "RD": 0.6}},
+        {"id": "council", "desc": "Propose that the elders rule together as a council", "load": {"CO": 0.8, "SD": 0.2}},
+        {"id": "stay_out", "desc": "Stay out of it and go back to work", "load": {"HA": 0.6, "NS": -0.3, "SD": -0.2}}
+      ]
+    },
+    {
+      "id": "hunt_praised",
+      "kind": "pivot",
+      "situation": "{name} brought down a huge elk alone. The whole village is cheering and the chief calls {name} the best hunter alive.",
+      "memories": [],
+      "options": [
+        {"id": "share_credit", "desc": "Credit the others and share the meat widely", "load": {"CO": 1.0, "RD": 0.2}},
+        {"id": "boast", "desc": "Boast loudly and demand the best cuts", "load": {"CO": -0.6, "SD": 0.4, "RD": 0.3}},
+        {"id": "bigger_prey", "desc": "Announce a plan to hunt the great cave bear next", "load": {"NS": 0.8, "HA": -0.6, "PS": 0.4}},
+        {"id": "stay_modest", "desc": "Shrug it off and keep the usual routine", "load": {"HA": 0.4, "NS": -0.5, "RD": -0.4}}
+      ]
+    },
+    {
+      "id": "courtship_refused",
+      "kind": "pivot",
+      "situation": "{name} gathered rare feathers for weeks to make a gift for the person {name} loves. In front of everyone, the gift was refused with a laugh.",
+      "memories": [],
+      "options": [
+        {"id": "try_again", "desc": "Make an even better gift and try again", "load": {"PS": 1.0, "RD": 0.3}},
+        {"id": "give_up_love", "desc": "Give up on love and avoid that person", "load": {"HA": 0.6, "PS": -0.6, "RD": 0.3}},
+        {"id": "look_elsewhere", "desc": "Shrug and court someone else", "load": {"NS": 0.5, "SD": 0.5, "RD": -0.4}},
+        {"id": "spread_rumors", "desc": "Spread cruel rumors about the one who refused", "load": {"CO": -1.0, "RD": 0.2}}
+      ]
+    }
+  ]
+}

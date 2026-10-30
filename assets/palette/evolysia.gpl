@@ -1,0 +1,360 @@
+GIMP Palette
+Name: Evolysia
+Columns: 16
+#
+ 58  34  31	colour_000
+ 83  55  47	colour_001
+108  79  65	colour_002
+132 101  84	colour_003
+157 125 105	colour_004
+ 87  67  55	colour_005
+125 104  82	colour_006
+162 144 111	colour_007
+199 180 141	colour_008
+237 216 174	colour_009
+ 62  62  63	colour_010
+ 88  88  90	colour_011
+115 115 117	colour_012
+142 142 145	colour_013
+170 168 172	colour_014
+ 39  34  42	colour_015
+ 55  50  60	colour_016
+ 72  66  78	colour_017
+ 92  82  96	colour_018
+112  99 114	colour_019
+103 106 108	colour_020
+147 152 153	colour_021
+192 199 199	colour_022
+237 245 245	colour_023
+239 247 246	colour_024
+ 67  85  95	colour_025
+ 98 126 136	colour_026
+131 169 176	colour_027
+166 216 217	colour_028
+194 247 240	colour_029
+ 26  51  73	colour_030
+ 42  80 104	colour_031
+ 61 112 135	colour_032
+ 83 154 166	colour_033
+107 198 197	colour_034
+ 64  64  34	colour_035
+ 85  92  51	colour_036
+102 119  71	colour_037
+129 147  92	colour_038
+157 174 115	colour_039
+ 34  54  37	colour_040
+ 51  77  50	colour_041
+ 74 100  68	colour_042
+ 96 123  87	colour_043
+119 146 107	colour_044
+ 54  33  30	colour_045
+ 77  52  45	colour_046
+100  75  62	colour_047
+123  96  80	colour_048
+146 118 100	colour_049
+ 75  46  37	colour_050
+107  76  56	colour_051
+139 109  78	colour_052
+171 139 102	colour_053
+203 170 129	colour_054
+ 83  58  41	colour_055
+119  93  62	colour_056
+154 133  86	colour_057
+189 166 113	colour_058
+225 201 143	colour_059
+ 80  58  51	colour_060
+114  90  75	colour_061
+148 125 102	colour_062
+182 157 130	colour_063
+216 190 160	colour_064
+ 73  45  42	colour_065
+105  72  63	colour_066
+136 103  86	colour_067
+168 132 111	colour_068
+199 162 138	colour_069
+ 70  67  64	colour_070
+100  97  92	colour_071
+130 128 121	colour_072
+160 158 149	colour_073
+190 188 178	colour_074
+ 84  45  40	colour_075
+120  75  62	colour_076
+156 110  87	colour_077
+192 142 114	colour_078
+227 177 143	colour_079
+ 87  41  33	colour_080
+125  72  53	colour_081
+162 109  76	colour_082
+199 142 102	colour_083
+237 178 132	colour_084
+ 63  68  74	colour_085
+ 91  99 105	colour_086
+119 130 137	colour_087
+148 164 169	colour_088
+178 199 200	colour_089
+111  45  21	colour_090
+158  87  39	colour_091
+206 138  63	colour_092
+247 176  90	colour_093
+247 185 104	colour_094
+104  23  20	colour_095
+148  54  37	colour_096
+192  94  59	colour_097
+237 131  86	colour_098
+247 153 104	colour_099
+ 70  66  70	colour_100
+100  95  99	colour_101
+130 124 129	colour_102
+160 153 158	colour_103
+190 183 187	colour_104
+108  87  69	colour_105
+155 134 103	colour_106
+201 185 139	colour_107
+247 230 177	colour_108
+247 232 183	colour_109
+ 82  74  36	colour_110
+116 116  56	colour_111
+139 151  79	colour_112
+174 186 104	colour_113
+210 221 133	colour_114
+ 36  30  40	colour_115
+ 51  44  58	colour_116
+ 67  59  75	colour_117
+ 86  74  92	colour_118
+106  89 109	colour_119
+ 91  56  74	colour_120
+129  84 103	colour_121
+168 114 133	colour_122
+207 145 163	colour_123
+246 179 193	colour_124
+ 35  19  20	colour_125
+ 50  30  29	colour_126
+ 65  44  39	colour_127
+ 80  57  51	colour_128
+ 95  72  64	colour_129
+ 47  23  23	colour_130
+ 67  39  35	colour_131
+ 87  58  49	colour_132
+107  76  64	colour_133
+127  96  81	colour_134
+ 58  30  30	colour_135
+ 83  50  45	colour_136
+108  73  62	colour_137
+132  95  81	colour_138
+157 119 102	colour_139
+ 69  35  32	colour_140
+ 99  59  49	colour_141
+128  87  69	colour_142
+158 114  91	colour_143
+187 142 115	colour_144
+ 81  44  38	colour_145
+115  73  58	colour_146
+150 107  81	colour_147
+184 138 107	colour_148
+218 171 135	colour_149
+ 92  56  47	colour_150
+131  91  72	colour_151
+170 131  99	colour_152
+209 167 129	colour_153
+247 204 161	colour_154
+102  70  61	colour_155
+146 110  91	colour_156
+190 155 124	colour_157
+233 196 159	colour_158
+247 213 176	colour_159
+110  84  74	colour_160
+158 129 110	colour_161
+205 178 147	colour_162
+247 219 184	colour_163
+247 223 190	colour_164
+ 24  20  24	colour_165
+ 38  32  38	colour_166
+ 51  45  51	colour_167
+ 65  58  63	colour_168
+ 39  27  25	colour_169
+ 61  47  42	colour_170
+ 83  68  60	colour_171
+105  89  79	colour_172
+ 57  29  25	colour_173
+ 90  57  45	colour_174
+122  88  67	colour_175
+155 119  93	colour_176
+ 75  40  31	colour_177
+118  79  56	colour_178
+160 120  85	colour_179
+203 161 119	colour_180
+ 93  63  47	colour_181
+146 114  80	colour_182
+199 168 119	colour_183
+247 215 160	colour_184
+ 87  34  27	colour_185
+137  75  51	colour_186
+187 122  82	colour_187
+237 169 119	colour_188
+ 82  78  77	colour_189
+128 124 122	colour_190
+175 170 167	colour_191
+221 216 213	colour_192
+107 103 100	colour_193
+167 164 157	colour_194
+228 225 216	colour_195
+247 245 236	colour_196
+ 80  29  34	colour_197
+126  55  53	colour_198
+171  94  82	colour_199
+217 137 117	colour_200
+ 89  39  27	colour_201
+140  83  52	colour_202
+191 132  83	colour_203
+242 180 121	colour_204
+ 91  58  34	colour_205
+142 110  61	colour_206
+194 165  95	colour_207
+246 214 135	colour_208
+ 68  63  34	colour_209
+102 106  59	colour_210
+134 145  87	colour_211
+174 183 119	colour_212
+ 36  57  49	colour_213
+ 60  90  72	colour_214
+ 86 122  95	colour_215
+114 155 119	colour_216
+ 34  63  67	colour_217
+ 58 105 104	colour_218
+ 86 144 133	colour_219
+118 182 158	colour_220
+ 34  52  74	colour_221
+ 60  91 116	colour_222
+ 89 139 158	colour_223
+123 196 200	colour_224
+ 44  47  74	colour_225
+ 73  80 116	colour_226
+106 123 158	colour_227
+142 176 200	colour_228
+ 63  46  69	colour_229
+101  76 108	colour_230
+142 108 147	colour_231
+186 142 184	colour_232
+ 82  52  69	colour_233
+129  86 106	colour_234
+176 123 143	colour_235
+222 164 179	colour_236
+100  83  74	colour_237
+157 139 120	colour_238
+215 196 169	colour_239
+247 230 201	colour_240
+ 47  42  43	colour_241
+ 74  66  67	colour_242
+101  92  91	colour_243
+127 118 117	colour_244
+ 79  58  51	colour_245
+124 101  84	colour_246
+169 146 120	colour_247
+214 190 159	colour_248
+ 91  34  36	colour_249
+169  93  78	colour_250
+247 164 136	colour_251
+ 93  47  31	colour_252
+173 125  74	colour_253
+247 195 130	colour_254
+ 95  65  40	colour_255
+176 154  89	colour_256
+247 223 145	colour_257
+ 81  76  41	colour_258
+134 150  86	colour_259
+204 218 141	colour_260
+ 45  71  55	colour_261
+ 90 131  92	colour_262
+146 191 141	colour_263
+ 38  68  71	colour_264
+ 80 131 123	colour_265
+129 191 165	colour_266
+ 39  61  82	colour_267
+ 84 130 152	colour_268
+139 222 222	colour_269
+ 52  55  81	colour_270
+103 115 150	colour_271
+162 198 220	colour_272
+ 70  50  79	colour_273
+132 101 147	colour_274
+213 158 214	colour_275
+ 87  53  77	colour_276
+162 108 139	colour_277
+237 171 196	colour_278
+ 87  66  60	colour_279
+162 139 118	colour_280
+237 211 184	colour_281
+ 68  72  70	colour_282
+128 133 129	colour_283
+188 195 188	colour_284
+ 30  24  19	colour_285
+ 42  33  26	colour_286
+ 58  46  36	colour_287
+ 90  70  54	colour_288
+241 230 217	colour_289
+212 195 177	colour_290
+200 145  58	colour_291
+111 143  78	colour_292
+181  85  60	colour_293
+ 79 134 168	colour_294
+242 210 122	colour_295
+ 69  72  52	colour_296
+ 94 103  76	colour_297
+116 134 101	colour_298
+147 165 128	colour_299
+178 196 156	colour_300
+ 71  72  33	colour_301
+ 92 103  51	colour_302
+109 133  72	colour_303
+139 164  95	colour_304
+170 195 120	colour_305
+ 83  57  38	colour_306
+118  93  59	colour_307
+153 133  83	colour_308
+188 166 109	colour_309
+224 200 138	colour_310
+ 75  36  32	colour_311
+108  62  50	colour_312
+140  94  71	colour_313
+172 122  94	colour_314
+204 153 120	colour_315
+ 72  71  66	colour_316
+101 102  94	colour_317
+130 133 123	colour_318
+161 163 153	colour_319
+191 194 182	colour_320
+ 63  70  68	colour_321
+ 91  99  96	colour_322
+119 129 123	colour_323
+147 159 151	colour_324
+176 188 179	colour_325
+ 78  61  45	colour_326
+112  95  67	colour_327
+145 133  92	colour_328
+178 165 119	colour_329
+212 198 147	colour_330
+ 35  64  35	colour_331
+ 60  91  53	colour_332
+ 90 118  73	colour_333
+116 146  95	colour_334
+144 173 118	colour_335
+ 32  55  45	colour_336
+ 47  79  61	colour_337
+ 65 102  75	colour_338
+ 84 126  91	colour_339
+104 149 108	colour_340
+ 70  61  42	colour_341
+100  93  62	colour_342
+130 129  85	colour_343
+160 158 109	colour_344
+190 188 135	colour_345
+ 61  54  49	colour_346
+ 87  80  71	colour_347
+113 108  93	colour_348
+139 133 117	colour_349
+165 159 141	colour_350
+ 54  49  45	colour_351
+ 77  72  65	colour_352
+101  96  86	colour_353
+124 119 107	colour_354
+147 142 129	colour_355

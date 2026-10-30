@@ -1,0 +1,66 @@
+{
+  "id": "structures.kiln_lit",
+  "family": "structures",
+  "asset_id": "kiln",
+  "state": "complete",
+  "lighting": "lit",
+  "files": [
+    "structures/kiln_lit.png",
+    "structures/kiln_lit_idx.png"
+  ],
+  "sidecar": "structures/kiln_lit.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "fps": 6,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {
+    "lit": {
+      "row": 0,
+      "frames": 4,
+      "fps": 6
+    }
+  },
+  "tags": [
+    "structure",
+    "landmark",
+    "clay",
+    "stone"
+  ],
+  "materials": [
+    "clay",
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_stone_2",
+    "fixed_clay_0",
+    "fixed_clay_1",
+    "fixed_clay_2",
+    "fixed_clay_3",
+    "fixed_fire_1",
+    "fixed_fire_3",
+    "fixed_fire_4"
+  ],
+  "emissive_slots": [
+    "fixed_fire_1",
+    "fixed_fire_3",
+    "fixed_fire_4"
+  ],
+  "fire_window": [
+    6,
+    14,
+    11,
+    20
+  ]
+}

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Evolysia.Narration/Evolysia.Narration.csproj" />
+    <Project Path="src/Evolysia.Sim.Runner/Evolysia.Sim.Runner.csproj" />
+    <Project Path="src/Evolysia.Sim/Evolysia.Sim.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Evolysia.Sim.Tests/Evolysia.Sim.Tests.csproj" />
+  </Folder>
+</Solution>

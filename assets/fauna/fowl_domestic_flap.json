@@ -1,0 +1,57 @@
+{
+  "id": "fauna.fowl_domestic_flap",
+  "family": "fauna",
+  "asset_id": "fowl",
+  "form": "domestic",
+  "source_species": "fowl",
+  "files": [
+    "fauna/fowl_domestic_flap.png",
+    "fauna/fowl_domestic_flap_idx.png"
+  ],
+  "sidecar": "fauna/fowl_domestic_flap.json",
+  "frame": [
+    8,
+    8
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 8,
+  "pivot": [
+    4,
+    6
+  ],
+  "anims": {
+    "flap": {
+      "row": 0,
+      "frames": 2,
+      "fps": 8
+    }
+  },
+  "animation": "flap",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "fixed_clay_2",
+    "fixed_clay_3",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S",
+  "coat_lut": "lut_hair"
+}

@@ -1,0 +1,49 @@
+{
+  "id": "fauna.crocodile_dead",
+  "family": "fauna",
+  "asset_id": "crocodile",
+  "form": "wild",
+  "source_species": "crocodile",
+  "files": [
+    "fauna/crocodile_dead.png",
+    "fauna/crocodile_dead_idx.png"
+  ],
+  "sidecar": "fauna/crocodile_dead.json",
+  "frame": [
+    24,
+    8
+  ],
+  "frames": 1,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    12,
+    6
+  ],
+  "anims": {
+    "dead": {
+      "row": 0,
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "animation": "dead",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2",
+    "fixed_basalt_3"
+  ],
+  "tags": [
+    "fauna",
+    "predator"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L"
+}

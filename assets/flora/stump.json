@@ -1,0 +1,50 @@
+{
+  "id": "flora.stump",
+  "family": "flora",
+  "asset_id": "stump",
+  "state": "normal",
+  "files": [
+    "flora/stump.png",
+    "flora/stump_idx.png"
+  ],
+  "sidecar": "flora/stump.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "normal"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4",
+    "bark_0",
+    "bark_1",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

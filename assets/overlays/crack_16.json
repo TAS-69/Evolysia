@@ -1,0 +1,38 @@
+{
+  "id": "overlays.crack_16",
+  "family": "overlays",
+  "files": [
+    "overlays/crack_16.png",
+    "overlays/crack_16_idx.png"
+  ],
+  "sidecar": "overlays/crack_16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_0"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "crack",
+  "set_type": "variants"
+}

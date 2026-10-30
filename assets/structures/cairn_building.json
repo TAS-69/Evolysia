@@ -1,0 +1,43 @@
+{
+  "id": "structures.cairn_building",
+  "family": "structures",
+  "asset_id": "cairn",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/cairn_building.png",
+    "structures/cairn_building_idx.png"
+  ],
+  "sidecar": "structures/cairn_building.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "stone"
+  ],
+  "materials": [
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_stone_1",
+    "fixed_stone_2",
+    "fixed_stone_3"
+  ],
+  "emissive_slots": []
+}

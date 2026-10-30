@@ -1,0 +1,39 @@
+{
+  "id": "overlays.crater_32",
+  "family": "overlays",
+  "files": [
+    "overlays/crater_32.png",
+    "overlays/crater_32_idx.png"
+  ],
+  "sidecar": "overlays/crater_32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_0",
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "crater",
+  "set_type": "variants",
+  "shadow": "engine"
+}

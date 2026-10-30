@@ -1,0 +1,51 @@
+{
+  "id": "terrain.scree_cliff_wall",
+  "family": "terrain",
+  "files": [
+    "terrain/scree_cliff_wall.png",
+    "terrain/scree_cliff_wall_idx.png"
+  ],
+  "sidecar": "terrain/scree_cliff_wall.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "0",
+    "1",
+    "2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "cliff_wall"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_rock_0",
+    "fixed_rock_1",
+    "fixed_rock_2",
+    "fixed_rock_3"
+  ],
+  "anims": {},
+  "material": "scree",
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "variants_per_orientation": 3,
+  "orientations": [
+    "none"
+  ],
+  "shadow": "engine"
+}

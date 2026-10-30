@@ -1,0 +1,43 @@
+{
+  "id": "flora.crop_grain_seedling",
+  "family": "flora",
+  "asset_id": "crop_grain",
+  "state": "seedling",
+  "files": [
+    "flora/crop_grain_seedling.png",
+    "flora/crop_grain_seedling_idx.png"
+  ],
+  "sidecar": "flora/crop_grain_seedling.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "seedling"
+  ],
+  "recolor_slots": [
+    "grass_2",
+    "foliage_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

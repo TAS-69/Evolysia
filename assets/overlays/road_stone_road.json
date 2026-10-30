@@ -1,0 +1,78 @@
+{
+  "id": "overlays.road_stone_road",
+  "family": "overlays",
+  "files": [
+    "overlays/road_stone_road.png",
+    "overlays/road_stone_road_idx.png"
+  ],
+  "sidecar": "overlays/road_stone_road.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "mask_00",
+    "mask_01",
+    "mask_02",
+    "mask_03",
+    "mask_04",
+    "mask_05",
+    "mask_06",
+    "mask_07",
+    "mask_08",
+    "mask_09",
+    "mask_10",
+    "mask_11",
+    "mask_12",
+    "mask_13",
+    "mask_14",
+    "mask_15"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_stone_1",
+    "fixed_stone_2",
+    "fixed_stone_3"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "road",
+  "set_type": "connection",
+  "masks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "mask_bits": {
+    "n": 1,
+    "e": 2,
+    "s": 4,
+    "w": 8
+  },
+  "subtype": "stone_road",
+  "width_px": 8
+}

@@ -1,0 +1,47 @@
+# A profile = one MAIN mind (dialogue, decisions, reflections, pivots)
+#           + optional HELPER sub-agent (naming, tagging, memory summaries)
+#           + optional EMBED model (memory retrieval).
+#
+# device = "gpu" | "cpu".  CPU keeps VRAM free for the main mind; helpers and
+# embeddings produce short outputs from short prompts, which CPUs handle well.
+# helper / embed: set model = "off" to disable (helper tasks then go to main).
+#
+# Change any of this per machine with `lab.py configure` (writes local.toml),
+# or per run with CLI flags (`lab.py plan --help`).
+
+[defaults]
+host = "127.0.0.1"
+ports = { main = 8081, helper = 8082, embed = 8083 }
+gpu_layers = 99
+gpu_device = ""              # "" = llama.cpp default; pin e.g. "Vulkan0" (see `llama-server --list-devices`)
+cache_type = "q8_0"          # KV cache quantization (halves KV memory vs f16)
+
+[profiles.lite]
+description = "8-12 GB GPU: 4B main on GPU, tiny helper + embeddings on CPU"
+main   = { model = "qwen3.5-4b",       device = "gpu", ctx = 16384, slots = 4 }
+helper = { model = "qwen3.5-0.8b",     device = "cpu", ctx = 4096,  slots = 2, threads = 6 }
+embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
+
+[profiles.balanced]
+description = "16 GB GPU: 9B main on GPU, small helper + embeddings on CPU"
+main   = { model = "qwen3.5-9b",       device = "gpu", ctx = 24576, slots = 6 }
+helper = { model = "qwen3.5-2b",       device = "cpu", ctx = 4096,  slots = 2, threads = 8 }
+embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
+
+[profiles.full]
+description = "24 GB GPU: 26B-A4B MoE main on GPU, small helper + embeddings on CPU"
+main   = { model = "gemma-4-26b-a4b",  device = "gpu", ctx = 32768, slots = 8 }
+helper = { model = "qwen3.5-2b",       device = "cpu", ctx = 4096,  slots = 2, threads = 8 }
+embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
+
+[profiles.cpu]
+description = "No usable GPU: everything on CPU (slow, but works for testing)"
+main   = { model = "qwen3.5-4b",       device = "cpu", ctx = 8192,  slots = 2, threads = 12 }
+helper = { model = "off" }
+embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
+
+# Shorthands accepted wherever a helper model is expected.
+[helper_sizes]
+tiny   = "qwen3.5-0.8b"
+small  = "qwen3.5-2b"
+medium = "qwen3.5-4b"

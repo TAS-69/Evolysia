@@ -1,0 +1,44 @@
+{
+  "id": "structures.drying_rack_building",
+  "family": "structures",
+  "asset_id": "drying_rack",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/drying_rack_building.png",
+    "structures/drying_rack_building_idx.png"
+  ],
+  "sidecar": "structures/drying_rack_building.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "wood",
+    "hide"
+  ],
+  "materials": [
+    "wood",
+    "hide"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_wood_1",
+    "fixed_wood_2"
+  ],
+  "emissive_slots": []
+}

@@ -1,0 +1,46 @@
+{
+  "id": "flora.conifer_burned",
+  "family": "flora",
+  "asset_id": "conifer",
+  "state": "burned",
+  "files": [
+    "flora/conifer_burned.png",
+    "flora/conifer_burned_idx.png"
+  ],
+  "sidecar": "flora/conifer_burned.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "burned"
+  ],
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "base"
+}

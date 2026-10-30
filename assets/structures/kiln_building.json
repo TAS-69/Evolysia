@@ -1,0 +1,46 @@
+{
+  "id": "structures.kiln_building",
+  "family": "structures",
+  "asset_id": "kiln",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/kiln_building.png",
+    "structures/kiln_building_idx.png"
+  ],
+  "sidecar": "structures/kiln_building.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "clay",
+    "stone"
+  ],
+  "materials": [
+    "clay",
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_clay_0",
+    "fixed_clay_1",
+    "fixed_clay_2",
+    "fixed_clay_3"
+  ],
+  "emissive_slots": []
+}

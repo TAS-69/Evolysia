@@ -1,0 +1,128 @@
+{
+  "id": "portraits.scars",
+  "family": "portraits",
+  "layer": "scars",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/scars.png",
+    "portraits/scars_idx.png"
+  ],
+  "sidecar": "portraits/scars.json",
+  "atlas_columns": 12,
+  "sheet_rows": [
+    "cheek.child.oval",
+    "cheek.adult.oval",
+    "cheek.elder.oval",
+    "brow.child.oval",
+    "brow.adult.oval",
+    "brow.elder.oval",
+    "missing_ear.child.oval",
+    "missing_ear.child.round",
+    "missing_ear.adult.oval",
+    "missing_ear.adult.round",
+    "missing_ear.elder.oval",
+    "missing_ear.elder.round"
+  ],
+  "variants": [
+    "cheek",
+    "brow",
+    "missing_ear"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      7,
+      6,
+      8,
+      9,
+      8,
+      10,
+      11,
+      10
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "scars"
+  ],
+  "recolor_slots": [
+    "skin_0",
+    "skin_3"
+  ]
+}

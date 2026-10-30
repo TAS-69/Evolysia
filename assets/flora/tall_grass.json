@@ -1,0 +1,53 @@
+{
+  "id": "flora.tall_grass",
+  "family": "flora",
+  "asset_id": "tall_grass",
+  "state": "normal",
+  "files": [
+    "flora/tall_grass.png",
+    "flora/tall_grass_idx.png"
+  ],
+  "sidecar": "flora/tall_grass.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 4,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "normal"
+  ],
+  "recolor_slots": [
+    "grass_1",
+    "grass_3",
+    "grass_4"
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 4
+    }
+  },
+  "wind_sway": {
+    "mode": "frames"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

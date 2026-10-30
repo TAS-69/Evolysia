@@ -1,0 +1,51 @@
+{
+  "id": "fauna.rabbit_idle",
+  "family": "fauna",
+  "asset_id": "rabbit",
+  "form": "wild",
+  "source_species": "rabbit",
+  "files": [
+    "fauna/rabbit_idle.png",
+    "fauna/rabbit_idle_idx.png"
+  ],
+  "sidecar": "fauna/rabbit_idle.json",
+  "frame": [
+    8,
+    8
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 3,
+  "pivot": [
+    4,
+    6
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 3
+    }
+  },
+  "animation": "idle",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3",
+    "fixed_hide_4"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "fauna.sheep_domestic_eat",
+  "family": "fauna",
+  "asset_id": "sheep",
+  "form": "domestic",
+  "source_species": "sheep",
+  "files": [
+    "fauna/sheep_domestic_eat.png",
+    "fauna/sheep_domestic_eat_idx.png"
+  ],
+  "sidecar": "fauna/sheep_domestic_eat.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 4,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "eat": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4
+    }
+  },
+  "animation": "eat",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M",
+  "coat_lut": "lut_hair"
+}

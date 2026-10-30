@@ -1,0 +1,53 @@
+{
+  "id": "terrain.dry_grass_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/dry_grass_plain.png",
+    "terrain/dry_grass_plain_idx.png"
+  ],
+  "sidecar": "terrain/dry_grass_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_2",
+    "fixed_thatch_1",
+    "fixed_thatch_2",
+    "fixed_thatch_3"
+  ],
+  "anims": {},
+  "material": "dry_grass",
+  "layer_priority": 10,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

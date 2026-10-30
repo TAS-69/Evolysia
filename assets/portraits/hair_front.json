@@ -1,0 +1,207 @@
+{
+  "id": "portraits.hair_front",
+  "family": "portraits",
+  "layer": "hair_front",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/hair_front.png",
+    "portraits/hair_front_idx.png"
+  ],
+  "sidecar": "portraits/hair_front.json",
+  "atlas_columns": 16,
+  "sheet_rows": [
+    "short.child.oval",
+    "short.adult.oval",
+    "cropped.child.oval",
+    "cropped.adult.oval",
+    "long.child.oval",
+    "long.adult.oval",
+    "braided.child.oval",
+    "braided.adult.oval",
+    "topknot.child.oval",
+    "topknot.adult.oval",
+    "mane.child.oval",
+    "mane.adult.oval",
+    "tied_back.child.oval",
+    "tied_back.adult.oval",
+    "locks.child.oval",
+    "locks.adult.oval",
+    "child_tuft.child.oval",
+    "child_tuft.adult.oval"
+  ],
+  "variants": [
+    "short",
+    "cropped",
+    "long",
+    "braided",
+    "topknot",
+    "mane",
+    "tied_back",
+    "locks",
+    "child_tuft"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      8,
+      8,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ],
+    [
+      10,
+      10,
+      10,
+      11,
+      11,
+      11,
+      11,
+      11,
+      11
+    ],
+    [
+      12,
+      12,
+      12,
+      13,
+      13,
+      13,
+      13,
+      13,
+      13
+    ],
+    [
+      14,
+      14,
+      14,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    [
+      16,
+      16,
+      16,
+      17,
+      17,
+      17,
+      17,
+      17,
+      17
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "hair_front"
+  ],
+  "recolor_slots": [
+    "hair_0",
+    "hair_1",
+    "hair_3"
+  ]
+}

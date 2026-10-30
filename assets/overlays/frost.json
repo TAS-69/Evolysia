@@ -1,0 +1,40 @@
+{
+  "id": "overlays.frost",
+  "family": "overlays",
+  "files": [
+    "overlays/frost.png",
+    "overlays/frost_idx.png"
+  ],
+  "sidecar": "overlays/frost.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_ice_2",
+    "fixed_ice_3",
+    "fixed_ice_4"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "frost",
+  "set_type": "variants",
+  "tileable": true
+}

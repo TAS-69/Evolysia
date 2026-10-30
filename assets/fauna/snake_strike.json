@@ -1,0 +1,51 @@
+{
+  "id": "fauna.snake_strike",
+  "family": "fauna",
+  "asset_id": "snake",
+  "form": "wild",
+  "source_species": "snake",
+  "files": [
+    "fauna/snake_strike.png",
+    "fauna/snake_strike_idx.png"
+  ],
+  "sidecar": "fauna/snake_strike.json",
+  "frame": [
+    16,
+    8
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 10,
+  "pivot": [
+    8,
+    6
+  ],
+  "anims": {
+    "strike": {
+      "row": 0,
+      "frames": 2,
+      "fps": 10
+    }
+  },
+  "animation": "strike",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_0",
+    "fixed_basalt_1",
+    "fixed_basalt_2",
+    "fixed_basalt_3",
+    "fixed_ui_4"
+  ],
+  "tags": [
+    "fauna",
+    "predator"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

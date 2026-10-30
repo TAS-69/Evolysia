@@ -1,0 +1,45 @@
+{
+  "id": "structures.smelter_burned",
+  "family": "structures",
+  "asset_id": "smelter",
+  "state": "burned",
+  "lighting": "unlit",
+  "files": [
+    "structures/smelter_burned.png",
+    "structures/smelter_burned_idx.png"
+  ],
+  "sidecar": "structures/smelter_burned.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "mudbrick",
+    "stone"
+  ],
+  "materials": [
+    "mudbrick",
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_ash_0",
+    "fixed_ash_1",
+    "fixed_ash_2"
+  ],
+  "emissive_slots": []
+}

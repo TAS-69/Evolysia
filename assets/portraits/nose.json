@@ -1,0 +1,155 @@
+{
+  "id": "portraits.nose",
+  "family": "portraits",
+  "layer": "nose",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/nose.png",
+    "portraits/nose_idx.png"
+  ],
+  "sidecar": "portraits/nose.json",
+  "atlas_columns": 15,
+  "sheet_rows": [
+    "straight.child.oval",
+    "straight.adult.oval",
+    "straight.elder.oval",
+    "broad.child.oval",
+    "broad.adult.oval",
+    "broad.elder.oval",
+    "hooked.child.oval",
+    "hooked.adult.oval",
+    "hooked.elder.oval",
+    "button.child.oval",
+    "button.adult.oval",
+    "button.elder.oval",
+    "flat.child.oval",
+    "flat.adult.oval",
+    "flat.elder.oval"
+  ],
+  "variants": [
+    "straight",
+    "broad",
+    "hooked",
+    "button",
+    "flat"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8
+    ],
+    [
+      9,
+      9,
+      9,
+      10,
+      10,
+      10,
+      11,
+      11,
+      11
+    ],
+    [
+      12,
+      12,
+      12,
+      13,
+      13,
+      13,
+      14,
+      14,
+      14
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "nose"
+  ],
+  "recolor_slots": [
+    "skin_0",
+    "skin_3"
+  ]
+}

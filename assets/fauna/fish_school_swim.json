@@ -1,0 +1,48 @@
+{
+  "id": "fauna.fish_school_swim",
+  "family": "fauna",
+  "asset_id": "fish_school",
+  "form": "wild",
+  "source_species": "fish_school",
+  "files": [
+    "fauna/fish_school_swim.png",
+    "fauna/fish_school_swim_idx.png"
+  ],
+  "sidecar": "fauna/fish_school_swim.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 6,
+  "pivot": [
+    8,
+    8
+  ],
+  "anims": {
+    "swim": {
+      "row": 0,
+      "frames": 4,
+      "fps": 6
+    }
+  },
+  "animation": "swim",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_shadow_1",
+    "fixed_shadow_2"
+  ],
+  "tags": [
+    "fauna",
+    "ambient"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

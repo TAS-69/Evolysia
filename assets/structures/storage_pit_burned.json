@@ -1,0 +1,46 @@
+{
+  "id": "structures.storage_pit_burned",
+  "family": "structures",
+  "asset_id": "storage_pit",
+  "state": "burned",
+  "lighting": "unlit",
+  "files": [
+    "structures/storage_pit_burned.png",
+    "structures/storage_pit_burned_idx.png"
+  ],
+  "sidecar": "structures/storage_pit_burned.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "soil",
+    "wood"
+  ],
+  "materials": [
+    "soil",
+    "wood"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_ash_0",
+    "fixed_ash_1",
+    "fixed_ash_2"
+  ],
+  "emissive_slots": []
+}

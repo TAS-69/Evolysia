@@ -1,0 +1,48 @@
+{
+  "id": "flora.cactus_flowering",
+  "family": "flora",
+  "asset_id": "cactus",
+  "state": "flowering",
+  "files": [
+    "flora/cactus_flowering.png",
+    "flora/cactus_flowering_idx.png"
+  ],
+  "sidecar": "flora/cactus_flowering.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "flowering"
+  ],
+  "recolor_slots": [
+    "foliage_1",
+    "foliage_3",
+    "flower_0",
+    "flower_2",
+    "flower_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

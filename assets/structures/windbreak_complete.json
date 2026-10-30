@@ -1,0 +1,48 @@
+{
+  "id": "structures.windbreak_complete",
+  "family": "structures",
+  "asset_id": "windbreak",
+  "state": "complete",
+  "lighting": "unlit",
+  "files": [
+    "structures/windbreak_complete.png",
+    "structures/windbreak_complete_idx.png"
+  ],
+  "sidecar": "structures/windbreak_complete.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "wood",
+    "thatch"
+  ],
+  "materials": [
+    "wood",
+    "thatch"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_thatch_1",
+    "fixed_thatch_2",
+    "fixed_thatch_3"
+  ],
+  "emissive_slots": []
+}

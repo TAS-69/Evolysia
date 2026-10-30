@@ -1,0 +1,51 @@
+{
+  "id": "palette.lut_culture",
+  "family": "palette",
+  "files": [
+    "palette/lut_culture.png"
+  ],
+  "frame": [
+    256,
+    1
+  ],
+  "frames": 1,
+  "directions": [
+    "culture_0",
+    "culture_1",
+    "culture_2",
+    "culture_3",
+    "culture_4",
+    "culture_5",
+    "culture_6",
+    "culture_7",
+    "culture_8",
+    "culture_9",
+    "culture_10",
+    "culture_11"
+  ],
+  "fps": 0,
+  "pivot": [
+    0,
+    0
+  ],
+  "tags": [
+    "lookup_texture"
+  ],
+  "rows": [
+    "culture_0",
+    "culture_1",
+    "culture_2",
+    "culture_3",
+    "culture_4",
+    "culture_5",
+    "culture_6",
+    "culture_7",
+    "culture_8",
+    "culture_9",
+    "culture_10",
+    "culture_11"
+  ],
+  "sidecar": "palette/lut_culture.json",
+  "anims": {},
+  "recolor_slots": []
+}

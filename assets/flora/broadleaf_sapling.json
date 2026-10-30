@@ -1,0 +1,53 @@
+{
+  "id": "flora.broadleaf_sapling",
+  "family": "flora",
+  "asset_id": "broadleaf",
+  "state": "sapling",
+  "files": [
+    "flora/broadleaf_sapling.png",
+    "flora/broadleaf_sapling_idx.png"
+  ],
+  "sidecar": "flora/broadleaf_sapling.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2",
+    "variant_3"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "sapling"
+  ],
+  "recolor_slots": [
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 14,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

@@ -1,0 +1,361 @@
+{
+  "id": "people.hair_back_craft",
+  "family": "people",
+  "layer": "hair_back",
+  "animation": "craft",
+  "files": [
+    "people/hair_back_craft.png",
+    "people/hair_back_craft_idx.png"
+  ],
+  "sidecar": "people/hair_back_craft.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 3,
+  "fps": 6,
+  "directions": [
+    "side"
+  ],
+  "sheet_rows": [
+    "long.child.slim.side",
+    "long.adult.slim.side",
+    "long.elder.slim.side",
+    "braided.child.slim.side",
+    "braided.adult.slim.side",
+    "braided.elder.slim.side",
+    "topknot.child.slim.side",
+    "topknot.adult.slim.side",
+    "topknot.elder.slim.side",
+    "mane.child.slim.side",
+    "mane.adult.slim.side",
+    "mane.elder.slim.side",
+    "tied_back.child.slim.side",
+    "tied_back.adult.slim.side",
+    "tied_back.elder.slim.side",
+    "locks.child.slim.side",
+    "locks.adult.slim.side",
+    "locks.elder.slim.side"
+  ],
+  "variants": [
+    "long",
+    "braided",
+    "topknot",
+    "mane",
+    "tied_back",
+    "locks"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "row_formula": "row_lookup[variant_index][profile_index]",
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8
+    ],
+    [
+      9,
+      9,
+      9,
+      10,
+      10,
+      10,
+      11,
+      11,
+      11
+    ],
+    [
+      12,
+      12,
+      12,
+      13,
+      13,
+      13,
+      14,
+      14,
+      14
+    ],
+    [
+      15,
+      15,
+      15,
+      16,
+      16,
+      16,
+      17,
+      17,
+      17
+    ]
+  ],
+  "pose_row_count": 9,
+  "pivot": [
+    8,
+    14
+  ],
+  "row_pivots": [
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ]
+  ],
+  "hand_anchors": [
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ]
+  ],
+  "anchor_row_formula": "profile_index",
+  "rig": "people/rig.json",
+  "seed": 0,
+  "sim_actions": [
+    "craft",
+    "cook"
+  ],
+  "mirror_side_left": true,
+  "anims": {
+    "craft": {
+      "row": 0,
+      "frames": 3,
+      "fps": 6
+    }
+  },
+  "recolor_slots": [
+    "hair_0",
+    "hair_1",
+    "hair_3"
+  ],
+  "tags": [
+    "people",
+    "hair_back"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S"
+}

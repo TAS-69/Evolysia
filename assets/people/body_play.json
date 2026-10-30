@@ -1,0 +1,330 @@
+{
+  "id": "people.body_play",
+  "family": "people",
+  "layer": "body",
+  "animation": "play",
+  "files": [
+    "people/body_play.png",
+    "people/body_play_idx.png"
+  ],
+  "sidecar": "people/body_play.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "fps": 8,
+  "directions": [
+    "down",
+    "up",
+    "side"
+  ],
+  "sheet_rows": [
+    "base.child.slim.down",
+    "base.child.slim.up",
+    "base.child.slim.side",
+    "base.child.average.down",
+    "base.child.average.up",
+    "base.child.average.side",
+    "base.child.stout.down",
+    "base.child.stout.up",
+    "base.child.stout.side"
+  ],
+  "variants": [
+    "base"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "down"
+    ],
+    [
+      "child",
+      "slim",
+      "up"
+    ],
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "down"
+    ],
+    [
+      "child",
+      "average",
+      "up"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "down"
+    ],
+    [
+      "child",
+      "stout",
+      "up"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ]
+  ],
+  "row_formula": "row_lookup[variant_index][profile_index]",
+  "row_lookup": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  ],
+  "pose_row_count": 9,
+  "pivot": [
+    8,
+    14
+  ],
+  "row_pivots": [
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ]
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        11
+      ],
+      [
+        9,
+        10
+      ],
+      [
+        9,
+        10
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        11
+      ],
+      [
+        9,
+        10
+      ],
+      [
+        9,
+        10
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ],
+      [
+        9,
+        11
+      ],
+      [
+        9,
+        10
+      ],
+      [
+        9,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    [
+      [
+        10,
+        12
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ]
+  ],
+  "anchor_row_formula": "profile_index",
+  "rig": "people/rig.json",
+  "seed": 0,
+  "sim_actions": [
+    "play"
+  ],
+  "mirror_side_left": true,
+  "anims": {
+    "play": {
+      "row": 0,
+      "frames": 4,
+      "fps": 8
+    }
+  },
+  "recolor_slots": [
+    "skin_0",
+    "skin_1",
+    "skin_2",
+    "skin_3"
+  ],
+  "tags": [
+    "people",
+    "body"
+  ],
+  "shadow": "engine",
+  "shadow_size": "S"
+}

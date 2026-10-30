@@ -1,0 +1,55 @@
+{
+  "id": "fauna.dog_walk",
+  "family": "fauna",
+  "asset_id": "dog",
+  "form": "domestic",
+  "source_species": "wolf",
+  "files": [
+    "fauna/dog_walk.png",
+    "fauna/dog_walk_idx.png"
+  ],
+  "sidecar": "fauna/dog_walk.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 8,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "walk": {
+      "row": 0,
+      "frames": 4,
+      "fps": 8
+    }
+  },
+  "animation": "walk",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M",
+  "coat_lut": "lut_hair"
+}

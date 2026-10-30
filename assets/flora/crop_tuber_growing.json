@@ -1,0 +1,46 @@
+{
+  "id": "flora.crop_tuber_growing",
+  "family": "flora",
+  "asset_id": "crop_tuber",
+  "state": "growing",
+  "files": [
+    "flora/crop_tuber_growing.png",
+    "flora/crop_tuber_growing_idx.png"
+  ],
+  "sidecar": "flora/crop_tuber_growing.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "growing"
+  ],
+  "recolor_slots": [
+    "grass_2",
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

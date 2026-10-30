@@ -1,0 +1,45 @@
+{
+  "id": "flora.cactus_tall",
+  "family": "flora",
+  "asset_id": "cactus",
+  "state": "normal",
+  "files": [
+    "flora/cactus_tall.png",
+    "flora/cactus_tall_idx.png"
+  ],
+  "sidecar": "flora/cactus_tall.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "normal"
+  ],
+  "recolor_slots": [
+    "foliage_1",
+    "foliage_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "M",
+  "layer": "base"
+}

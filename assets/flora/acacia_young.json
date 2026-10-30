@@ -1,0 +1,56 @@
+{
+  "id": "flora.acacia_young",
+  "family": "flora",
+  "asset_id": "acacia",
+  "state": "young",
+  "files": [
+    "flora/acacia_young.png",
+    "flora/acacia_young_idx.png"
+  ],
+  "sidecar": "flora/acacia_young.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "young"
+  ],
+  "recolor_slots": [
+    "foliage_0",
+    "foliage_1",
+    "foliage_2",
+    "foliage_3",
+    "foliage_4",
+    "bark_1",
+    "bark_2",
+    "bark_3"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "shader",
+    "anchor_y": 30,
+    "max_displacement_px": 1
+  },
+  "shadow": "engine",
+  "shadow_size": "L",
+  "layer": "base",
+  "seasonal_states": {
+    "dry": "flora.acacia_bare"
+  }
+}

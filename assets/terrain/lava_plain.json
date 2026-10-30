@@ -1,0 +1,58 @@
+{
+  "id": "terrain.lava_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/lava_plain.png",
+    "terrain/lava_plain_idx.png"
+  ],
+  "sidecar": "terrain/lava_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 3,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_lava_1",
+    "fixed_lava_2",
+    "fixed_lava_3"
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 3
+    }
+  },
+  "material": "lava",
+  "layer_priority": 21,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": true
+}

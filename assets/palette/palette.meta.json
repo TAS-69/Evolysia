@@ -1,0 +1,30 @@
+{
+  "id": "palette.master",
+  "family": "palette",
+  "files": [
+    "palette/palette.png"
+  ],
+  "frame": [
+    256,
+    368
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    0,
+    0
+  ],
+  "tags": [
+    "palette_swatches"
+  ],
+  "sources": [
+    "palette/evolysia.gpl",
+    "palette/palette.json"
+  ],
+  "sidecar": "palette/palette.meta.json",
+  "anims": {},
+  "recolor_slots": []
+}

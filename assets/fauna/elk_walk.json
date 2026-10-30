@@ -1,0 +1,52 @@
+{
+  "id": "fauna.elk_walk",
+  "family": "fauna",
+  "asset_id": "elk",
+  "form": "wild",
+  "source_species": "elk",
+  "files": [
+    "fauna/elk_walk.png",
+    "fauna/elk_walk_idx.png"
+  ],
+  "sidecar": "fauna/elk_walk.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 8,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {
+    "walk": {
+      "row": 0,
+      "frames": 4,
+      "fps": 8
+    }
+  },
+  "animation": "walk",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

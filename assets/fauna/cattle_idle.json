@@ -1,0 +1,56 @@
+{
+  "id": "fauna.cattle_idle",
+  "family": "fauna",
+  "asset_id": "cattle",
+  "form": "domestic",
+  "source_species": "bison",
+  "files": [
+    "fauna/cattle_idle.png",
+    "fauna/cattle_idle_idx.png"
+  ],
+  "sidecar": "fauna/cattle_idle.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 3,
+  "pivot": [
+    12,
+    14
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 2,
+      "fps": 3
+    }
+  },
+  "animation": "idle",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L",
+  "coat_lut": "lut_hair"
+}

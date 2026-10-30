@@ -1,0 +1,46 @@
+{
+  "id": "flora.crop_grain_ripe",
+  "family": "flora",
+  "asset_id": "crop_grain",
+  "state": "ripe",
+  "files": [
+    "flora/crop_grain_ripe.png",
+    "flora/crop_grain_ripe_idx.png"
+  ],
+  "sidecar": "flora/crop_grain_ripe.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "ripe"
+  ],
+  "recolor_slots": [
+    "fixed_thatch_0",
+    "fixed_thatch_1",
+    "fixed_thatch_2",
+    "fixed_thatch_3",
+    "grass_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

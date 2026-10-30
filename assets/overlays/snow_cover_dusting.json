@@ -1,0 +1,37 @@
+{
+  "id": "overlays.snow_cover_dusting",
+  "family": "overlays",
+  "files": [
+    "overlays/snow_cover_dusting.png",
+    "overlays/snow_cover_dusting_idx.png"
+  ],
+  "sidecar": "overlays/snow_cover_dusting.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_snow_3",
+    "fixed_snow_4"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "snow_cover",
+  "set_type": "variants",
+  "tileable": true
+}

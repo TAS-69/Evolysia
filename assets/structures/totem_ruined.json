@@ -1,0 +1,65 @@
+{
+  "id": "structures.totem_ruined",
+  "family": "structures",
+  "asset_id": "totem",
+  "state": "ruined",
+  "lighting": "unlit",
+  "files": [
+    "structures/totem_ruined.png",
+    "structures/totem_ruined_idx.png"
+  ],
+  "sidecar": "structures/totem_ruined.json",
+  "frame": [
+    16,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    30
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "wood",
+    "culture"
+  ],
+  "materials": [
+    "wood",
+    "culture"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_stone_1",
+    "fixed_stone_2",
+    "fixed_stone_3",
+    "culture_2"
+  ],
+  "emissive_slots": [],
+  "glyph_anchor": {
+    "position": [
+      2,
+      10
+    ],
+    "size": [
+      12,
+      12
+    ],
+    "visible_states": [
+      "complete",
+      "damaged"
+    ],
+    "glyph_generated": false
+  }
+}

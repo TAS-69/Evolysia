@@ -1,0 +1,52 @@
+{
+  "_doc": "Short-prompt, short-output jobs meant for the helper sub-agent (CPU-friendly). Gold labels are deliberately unambiguous.",
+  "categories": ["danger", "social", "discovery", "loss", "spiritual", "conflict", "trade", "birth"],
+  "classify": [
+    {"text": "A bear wandered into camp at night and mauled a sleeping hunter.", "category": "danger", "importance": [7, 10]},
+    {"text": "Two neighbours shared a pot of stew and laughed about old times.", "category": "social", "importance": [1, 4]},
+    {"text": "Ayo noticed that clay hardens when left in the fire overnight.", "category": "discovery", "importance": [5, 9]},
+    {"text": "Old Teku died in his sleep after a long illness.", "category": "loss", "importance": [5, 9]},
+    {"text": "The shaman saw a white stag in a dream and says it is a sign from the ancestors.", "category": "spiritual", "importance": [4, 8]},
+    {"text": "Two clans fought with spears over the hunting grounds by the lake.", "category": "conflict", "importance": [6, 10]},
+    {"text": "A traveller exchanged three flint blades for a bundle of furs.", "category": "trade", "importance": [2, 5]},
+    {"text": "Mira gave birth to healthy twins at dawn.", "category": "birth", "importance": [6, 9]},
+    {"text": "A rockslide blocked the only path down the mountain.", "category": "danger", "importance": [5, 9]},
+    {"text": "The children made up a new game with pebbles and taught it to everyone.", "category": "social", "importance": [1, 4]},
+    {"text": "Someone stole the chief's ceremonial necklace and a fight broke out over who did it.", "category": "conflict", "importance": [5, 8]},
+    {"text": "The family's only goat was carried off by a flood.", "category": "loss", "importance": [4, 8]}
+  ],
+  "names": [
+    {"syllables": ["ka", "ru", "tem", "o"], "feature": "a fishing village at a river mouth"},
+    {"syllables": ["shi", "va", "lin", "e"], "feature": "a mountain pass shrine"},
+    {"syllables": ["gor", "ud", "ma", "k"], "feature": "a flint quarry in the hills"},
+    {"syllables": ["el", "sa", "wyn", "i"], "feature": "a grove where the dead are buried"},
+    {"syllables": ["tz", "aq", "ol", "u"], "feature": "a salt marsh trading post"}
+  ],
+  "summarize": [
+    {"dialogue": "Brann: You took more than your share of the catch again.\nAma: I have three children to feed!\nBrann: So do I. Don't expect my help when your roof leaks.", "about": "Brann", "trust_sign": -1},
+    {"dialogue": "Cyra: Your leg is bleeding, sit down.\nDoru: It's nothing.\nCyra: Let me wrap it with moss. There. Lean on me on the way back.\nDoru: Thank you, I owe you.", "about": "Cyra", "trust_sign": 1},
+    {"dialogue": "Esk: I saw you whispering to the elders about me.\nFen: I only said you were tired lately.\nEsk: Liar. You told them I was lazy.", "about": "Fen", "trust_sign": -1},
+    {"dialogue": "Galo: I found a spot where the berries grow thick. Come, I'll show you.\nHesa: You'd share it? Nobody shares berry spots.\nGalo: You helped me last winter. Fair is fair.", "about": "Galo", "trust_sign": 1},
+    {"dialogue": "Ira: Will you hold the rope while I climb?\nJuno: Sure.\n(Juno let go of the rope halfway and walked off laughing.)\nIra: I could have died!", "about": "Juno", "trust_sign": -1}
+  ],
+  "retrieval": {
+    "memories": [
+      "A wolf bit my cousin near the berry bushes last winter.",
+      "The elders laughed at my fish trap at the evening fire.",
+      "Cyra wrapped my wounded leg with moss and helped me home.",
+      "Lightning burned the granary and half our winter food.",
+      "I nearly drowned crossing the river last summer.",
+      "A traveller traded me flint blades for furs.",
+      "My mother taught me to find honey by following bees.",
+      "The headwoman made a rule about burying food for the earth mother."
+    ],
+    "queries": [
+      {"q": "Is the river safe to cross?", "gold": 4},
+      {"q": "Who has been kind to me?", "gold": 2},
+      {"q": "Are there dangerous animals near food?", "gold": 0},
+      {"q": "What happened to the village food stores?", "gold": 3},
+      {"q": "How do people react to my inventions?", "gold": 1},
+      {"q": "Where can I get good stone tools?", "gold": 5}
+    ]
+  }
+}

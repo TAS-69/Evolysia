@@ -1,0 +1,46 @@
+{
+  "id": "structures.smelter_building",
+  "family": "structures",
+  "asset_id": "smelter",
+  "state": "building",
+  "lighting": "unlit",
+  "files": [
+    "structures/smelter_building.png",
+    "structures/smelter_building_idx.png"
+  ],
+  "sidecar": "structures/smelter_building.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    22
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "mudbrick",
+    "stone"
+  ],
+  "materials": [
+    "mudbrick",
+    "stone"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "M",
+  "recolor_slots": [
+    "fixed_mudbrick_0",
+    "fixed_mudbrick_1",
+    "fixed_mudbrick_2",
+    "fixed_mudbrick_3"
+  ],
+  "emissive_slots": []
+}

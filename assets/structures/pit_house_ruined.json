@@ -1,0 +1,51 @@
+{
+  "id": "structures.pit_house_ruined",
+  "family": "structures",
+  "asset_id": "pit_house",
+  "state": "ruined",
+  "lighting": "unlit",
+  "files": [
+    "structures/pit_house_ruined.png",
+    "structures/pit_house_ruined_idx.png"
+  ],
+  "sidecar": "structures/pit_house_ruined.json",
+  "frame": [
+    32,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    22
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "soil",
+    "wood",
+    "thatch"
+  ],
+  "materials": [
+    "soil",
+    "wood",
+    "thatch"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "L",
+  "recolor_slots": [
+    "fixed_soil_0",
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3",
+    "fixed_wood_1",
+    "fixed_wood_3",
+    "fixed_thatch_1"
+  ],
+  "emissive_slots": []
+}

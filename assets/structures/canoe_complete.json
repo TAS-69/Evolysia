@@ -1,0 +1,44 @@
+{
+  "id": "structures.canoe_complete",
+  "family": "structures",
+  "asset_id": "canoe",
+  "state": "complete",
+  "lighting": "unlit",
+  "files": [
+    "structures/canoe_complete.png",
+    "structures/canoe_complete_idx.png"
+  ],
+  "sidecar": "structures/canoe_complete.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {},
+  "tags": [
+    "structure",
+    "landmark",
+    "wood"
+  ],
+  "materials": [
+    "wood"
+  ],
+  "seed": 0,
+  "shadow": "engine",
+  "shadow_size": "S",
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3"
+  ],
+  "emissive_slots": []
+}

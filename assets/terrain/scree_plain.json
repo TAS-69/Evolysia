@@ -1,0 +1,52 @@
+{
+  "id": "terrain.scree_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/scree_plain.png",
+    "terrain/scree_plain_idx.png"
+  ],
+  "sidecar": "terrain/scree_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_rock_1",
+    "fixed_rock_2",
+    "fixed_rock_3"
+  ],
+  "anims": {},
+  "material": "scree",
+  "layer_priority": 15,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

@@ -1,0 +1,56 @@
+{
+  "id": "fauna.cattle_eat",
+  "family": "fauna",
+  "asset_id": "cattle",
+  "form": "domestic",
+  "source_species": "bison",
+  "files": [
+    "fauna/cattle_eat.png",
+    "fauna/cattle_eat_idx.png"
+  ],
+  "sidecar": "fauna/cattle_eat.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 2,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0",
+    "coat_1",
+    "coat_2"
+  ],
+  "fps": 4,
+  "pivot": [
+    12,
+    14
+  ],
+  "anims": {
+    "eat": {
+      "row": 0,
+      "frames": 2,
+      "fps": 4
+    }
+  },
+  "animation": "eat",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_3",
+    "fixed_hide_4",
+    "hair_0",
+    "hair_1",
+    "hair_2",
+    "hair_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "L",
+  "coat_lut": "lut_hair"
+}

@@ -1,0 +1,98 @@
+{
+  "id": "terrain.tilled_soil_corners",
+  "family": "terrain",
+  "files": [
+    "terrain/tilled_soil_corners.png",
+    "terrain/tilled_soil_corners_idx.png"
+  ],
+  "sidecar": "terrain/tilled_soil_corners.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "ns_00",
+    "ns_01",
+    "ns_02",
+    "ns_03",
+    "ns_04",
+    "ns_05",
+    "ns_06",
+    "ns_07",
+    "ns_08",
+    "ns_09",
+    "ns_10",
+    "ns_11",
+    "ns_12",
+    "ns_13",
+    "ns_14",
+    "ns_15",
+    "ew_00",
+    "ew_01",
+    "ew_02",
+    "ew_03",
+    "ew_04",
+    "ew_05",
+    "ew_06",
+    "ew_07",
+    "ew_08",
+    "ew_09",
+    "ew_10",
+    "ew_11",
+    "ew_12",
+    "ew_13",
+    "ew_14",
+    "ew_15"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "corners"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "anims": {},
+  "material": "tilled_soil",
+  "layer_priority": 9,
+  "masks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "ns",
+    "ew"
+  ],
+  "variants_per_orientation": 16,
+  "emissive": false
+}

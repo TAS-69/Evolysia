@@ -1,0 +1,45 @@
+{
+  "id": "flora.acacia_bare",
+  "family": "flora",
+  "asset_id": "acacia",
+  "state": "bare",
+  "files": [
+    "flora/acacia_bare.png",
+    "flora/acacia_bare_idx.png"
+  ],
+  "sidecar": "flora/acacia_bare.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    30
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "bare"
+  ],
+  "recolor_slots": [
+    "bark_1",
+    "bark_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "L",
+  "layer": "base"
+}

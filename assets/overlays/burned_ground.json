@@ -1,0 +1,38 @@
+{
+  "id": "overlays.burned_ground",
+  "family": "overlays",
+  "files": [
+    "overlays/burned_ground.png",
+    "overlays/burned_ground_idx.png"
+  ],
+  "sidecar": "overlays/burned_ground.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_1"
+  ],
+  "anims": {},
+  "tags": [
+    "ground_overlay"
+  ],
+  "asset_id": "burned_ground",
+  "set_type": "variants",
+  "tileable": true
+}

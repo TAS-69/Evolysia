@@ -1,0 +1,53 @@
+{
+  "id": "flora.reeds",
+  "family": "flora",
+  "asset_id": "reeds",
+  "state": "normal",
+  "files": [
+    "flora/reeds.png",
+    "flora/reeds_idx.png"
+  ],
+  "sidecar": "flora/reeds.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0",
+    "variant_1",
+    "variant_2"
+  ],
+  "fps": 4,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "normal"
+  ],
+  "recolor_slots": [
+    "grass_1",
+    "grass_3",
+    "grass_4",
+    "bark_2"
+  ],
+  "anims": {
+    "idle": {
+      "row": 0,
+      "frames": 4,
+      "fps": 4
+    }
+  },
+  "wind_sway": {
+    "mode": "frames"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

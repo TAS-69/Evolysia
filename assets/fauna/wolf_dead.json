@@ -1,0 +1,50 @@
+{
+  "id": "fauna.wolf_dead",
+  "family": "fauna",
+  "asset_id": "wolf",
+  "form": "wild",
+  "source_species": "wolf",
+  "files": [
+    "fauna/wolf_dead.png",
+    "fauna/wolf_dead_idx.png"
+  ],
+  "sidecar": "fauna/wolf_dead.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "dead": {
+      "row": 0,
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "animation": "dead",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_0",
+    "fixed_basalt_1",
+    "fixed_basalt_2",
+    "fixed_basalt_3"
+  ],
+  "tags": [
+    "fauna",
+    "predator"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

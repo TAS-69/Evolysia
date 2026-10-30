@@ -1,0 +1,50 @@
+{
+  "id": "fauna.sheep_run",
+  "family": "fauna",
+  "asset_id": "sheep",
+  "form": "wild",
+  "source_species": "sheep",
+  "files": [
+    "fauna/sheep_run.png",
+    "fauna/sheep_run_idx.png"
+  ],
+  "sidecar": "fauna/sheep_run.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 4,
+  "directions": [
+    "side"
+  ],
+  "mirror_left": true,
+  "sheet_rows": [
+    "coat_0"
+  ],
+  "fps": 12,
+  "pivot": [
+    8,
+    14
+  ],
+  "anims": {
+    "run": {
+      "row": 0,
+      "frames": 4,
+      "fps": 12
+    }
+  },
+  "animation": "run",
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2",
+    "fixed_hide_3"
+  ],
+  "tags": [
+    "fauna",
+    "animal"
+  ],
+  "shadow": "engine",
+  "shadow_size": "M"
+}

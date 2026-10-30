@@ -1,0 +1,52 @@
+{
+  "id": "terrain.ice_plain",
+  "family": "terrain",
+  "files": [
+    "terrain/ice_plain.png",
+    "terrain/ice_plain_idx.png"
+  ],
+  "sidecar": "terrain/ice_plain.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "tags": [
+    "plain"
+  ],
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_ice_1",
+    "fixed_ice_2",
+    "fixed_ice_3"
+  ],
+  "anims": {},
+  "material": "ice",
+  "layer_priority": 20,
+  "masks": [],
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "emissive": false
+}

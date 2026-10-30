@@ -1,0 +1,42 @@
+{
+  "id": "flora.crop_gourd_harvested",
+  "family": "flora",
+  "asset_id": "crop_gourd",
+  "state": "harvested",
+  "files": [
+    "flora/crop_gourd_harvested.png",
+    "flora/crop_gourd_harvested_idx.png"
+  ],
+  "sidecar": "flora/crop_gourd_harvested.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "variant_0"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    14
+  ],
+  "seed": 0,
+  "tags": [
+    "flora",
+    "harvested"
+  ],
+  "recolor_slots": [
+    "bark_2"
+  ],
+  "anims": {},
+  "wind_sway": {
+    "mode": "none"
+  },
+  "shadow": "engine",
+  "shadow_size": "S",
+  "layer": "base"
+}

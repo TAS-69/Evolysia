@@ -1,0 +1,169 @@
+{
+  "id": "portraits.shoulders",
+  "family": "portraits",
+  "layer": "shoulders",
+  "frame": [
+    48,
+    48
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "three_quarter_left"
+  ],
+  "pivot": [
+    24,
+    46
+  ],
+  "files": [
+    "portraits/shoulders.png",
+    "portraits/shoulders_idx.png"
+  ],
+  "sidecar": "portraits/shoulders.json",
+  "atlas_columns": 13,
+  "sheet_rows": [
+    "none.child.oval",
+    "none.adult.oval",
+    "hide_wrap.child.oval",
+    "hide_wrap.adult.oval",
+    "fur_cloak.child.oval",
+    "fur_cloak.adult.oval",
+    "woven_tunic.child.oval",
+    "woven_tunic.adult.oval",
+    "woven_tunic.elder.oval",
+    "dyed_robe.child.oval",
+    "dyed_robe.adult.oval",
+    "ceremonial.child.oval",
+    "ceremonial.adult.oval"
+  ],
+  "variants": [
+    "none",
+    "hide_wrap",
+    "fur_cloak",
+    "woven_tunic",
+    "dyed_robe",
+    "ceremonial"
+  ],
+  "profiles": [
+    [
+      "child",
+      "oval"
+    ],
+    [
+      "child",
+      "round"
+    ],
+    [
+      "child",
+      "angular"
+    ],
+    [
+      "adult",
+      "oval"
+    ],
+    [
+      "adult",
+      "round"
+    ],
+    [
+      "adult",
+      "angular"
+    ],
+    [
+      "elder",
+      "oval"
+    ],
+    [
+      "elder",
+      "round"
+    ],
+    [
+      "elder",
+      "angular"
+    ]
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8
+    ],
+    [
+      9,
+      9,
+      9,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10
+    ],
+    [
+      11,
+      11,
+      11,
+      12,
+      12,
+      12,
+      12,
+      12,
+      12
+    ]
+  ],
+  "cell_formula": "row_lookup[variant_index][profile_index]",
+  "cell_xy_formula": "[(cell_index % atlas_columns) * 48, (cell_index // atlas_columns) * 48]",
+  "anims": {},
+  "seed": 0,
+  "tags": [
+    "portrait",
+    "shoulders"
+  ],
+  "recolor_slots": [
+    "skin_2",
+    "skin_3",
+    "cloth_a_0",
+    "cloth_a_2",
+    "cloth_a_3",
+    "culture_2"
+  ]
+}
