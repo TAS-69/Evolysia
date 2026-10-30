@@ -8,7 +8,7 @@ namespace Evolysia.Game;
 /// Scene root. Builds the world view, band layer, camera and HUD around a SimHost, keeps them in
 /// sync with the simulation, and handles selection.
 ///
-/// Command line (after "--"): --seed N  --days N  --overlay Cultures  --select band|agent
+/// Command line (after "--"): --seed N  --days N  --overlay Cultures  --select band|agent  --zoom Z  --focus x,y
 ///                            --screenshot path.png  (captures after warm-up, then quits)
 /// </summary>
 public partial class Main : Node2D
@@ -17,6 +17,7 @@ public partial class Main : Node2D
 
     SimHost _host = null!;
     WorldView _view = null!;
+    TileView _tiles = null!;
     BandLayer _bands = null!;
     CameraRig _camera = null!;
     Hud _hud = null!;
@@ -47,6 +48,7 @@ public partial class Main : Node2D
 
         AddChild(_host = new SimHost());
         AddChild(_view = new WorldView());
+        AddChild(_tiles = new TileView());
         AddChild(_bands = new BandLayer());
         AddChild(_target = new TargetOverlay());
         AddChild(_camera = new CameraRig());
@@ -82,6 +84,7 @@ public partial class Main : Node2D
         _camera.Changed += () =>
         {
             _target.CameraZoom = _camera.Zoom.X;
+            _tiles.SetZoom(_camera.Zoom.X);
             if (!Mathf.IsEqualApprox(_bands.CameraZoom, _camera.Zoom.X)) { _bands.CameraZoom = _camera.Zoom.X; _bands.QueueRedraw(); }
         };
 
@@ -101,6 +104,8 @@ public partial class Main : Node2D
         if (_args.GetValueOrDefault("demo") == "gods") DemoGods();
         if (_args.TryGetValue("zoom", out var zs) && float.TryParse(zs, System.Globalization.CultureInfo.InvariantCulture, out var zoom))
             _camera.Focus(_camera.Position, zoom);
+        if (_args.TryGetValue("focus", out var fs) && fs.Split(',') is [var fx, var fy] && int.TryParse(fx, out var cx) && int.TryParse(fy, out var cy))
+            _camera.Focus(new Vector2(cx + 0.5f, cy + 0.5f) * CellPx);   // --focus x,y: centre on a cell
         if (_args.TryGetValue("screenshot", out var shot)) { _screenshot = shot; _shotCountdown = 10; SetSpeed(0); }
         if (_args.TryGetValue("speed", out var sp) && int.TryParse(sp, out var speed)) SetSpeed(speed);
         _seenEvents = _host.Sim!.Chronicle.Events.Count;
@@ -111,6 +116,7 @@ public partial class Main : Node2D
         _host.NewWorld(seed);
         var sim = _host.Sim!;
         _view.Bind(sim.World);
+        _tiles.Bind(sim.World);
         _bands.Sim = sim;
         _voices.Attach(sim);
         _voicesShown = -1;
@@ -139,6 +145,7 @@ public partial class Main : Node2D
         if (_mapDirty || (sim.Day - _lastMapDay >= 5 && _mapTimer <= 0) || sim.Day < _lastMapDay)
         {
             _view.Redraw(sim);
+            _tiles.Redraw(sim, _view.Overlay);
             _lastMapDay = sim.Day;
             _mapDirty = false;
             _mapTimer = 0.33;

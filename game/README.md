@@ -1,8 +1,9 @@
 # Evolysia game client (step 3)
 
 A Godot 4.7 **.NET** project that hosts the simulation from `../sim` and lets you watch and inspect the
-world. The art is procedural placeholder until the Codex asset pipeline (`docs/art/`) delivers sprites
-and tiles.
+world. Zoomed in, it draws the Codex 16 px art from `../assets` (terrain, rivers, flora, structures, people);
+zoomed out, and for the data overlays, it shows a smooth procedural map. The 32 and 64 px art densities Codex is
+still working on are not used yet.
 
 ## Run it
 The .NET build of Godot is in the repo root (`Godot_v4.7.2-stable_mono_win64`). The standard build next to it can't run C#.
@@ -21,7 +22,8 @@ Options after `--`:
 | `--days N` | fast-forward N days before showing (e.g. `54000` = 150 years) |
 | `--overlay Biome\|Elevation\|Temperature\|Rainfall\|Food\|Cultures` | starting map overlay |
 | `--select band\|agent` | open the inspector on the largest band, or on its most eventful adult |
-| `--zoom Z` | camera zoom (0.6-10) |
+| `--zoom Z` | camera zoom (0.7-10; the tile art fades in from 1.1 to 1.6, camps appear from 1.8) |
+| `--focus x,y` | centre the camera on a cell |
 | `--screenshot path.png` | capture after start-up, then quit (used for automated checks) |
 
 ## Controls
@@ -32,8 +34,11 @@ Links in the chronicle and inspector jump to that band or person.
 ## What's on screen
 The planet **wraps east-west**, as the simulation does: pan forever in either direction and the far coasts and sea routes continue seamlessly. Terrain, markers, routes and effects are drawn on three copies, and the camera folds back into one planet-width, so the jump is invisible.
 
-- **Planet:** colour comes from biome, today's plant growth and the season (dry seasons, autumn colour, snow and sea ice follow real temperature), plus hillshading, rivers and ash after eruptions. Coastlines are smoothed from interpolated elevation.
-- **Bands:** circles are wandering bands, squares are farming villages. Colour is culture, size is population, and sick bands turn yellow-green. Notable events flash as rings. Names are drawn crisply in screen space without overlapping.
+- **Planet, zoomed in:** Codex's 16 px tiles. Each cell's biome picks a terrain material, blended with its neighbours on a dual grid (art guide section 3.1). Rivers use the connection sets, sized by flow, and plants are scattered by biome. Colours come from the nature LUT for each cell's biome and season, easing into the next season. Deciduous trees go bare in winter, acacias in the dry season, and conifers in cold places carry snow. Snow and sea ice follow real temperature; ash and burned trees follow eruptions.
+- **Planet, zoomed out:** colour comes from biome, today's plant growth and the season, plus hillshading, rivers and ash. Coastlines are smoothed from interpolated elevation.
+- **Bands, zoomed in:** each band's camp. Shelters follow what the band knows (windbreak, lean-to, hide tent, or pit houses for villages), plus a lit fire pit and a storage pit or granary. A few of its actual people stand round the fire. Their skin and hair come from their genes, elders are grey, and hair styles lean by culture. Clothing comes from know-how (hide, furs where it's cold, woven and dyed in culture colours).
+- **Bands, zoomed out:** circles are wandering bands, squares are farming villages. Colour is culture, size is population, and sick bands turn yellow-green.
+- **Both:** notable events flash as rings. Names are drawn crisply in screen space without overlapping.
 - **Sea routes:** dashed arcs. Recent voyages are bright and older ones fade into a map of where people went. Lost voyages are red and end at sea with an ×, and first landings are ringed in gold. Select a band to see the shores its scouts have sighted across the water.
 - **Chronicle:** the simulation's notable events, newest first, colour-coded by category (the same 8 categories as the art guide's icons).
 - **Inspector:**
@@ -81,15 +86,20 @@ A local model voices notable moments: pivots after rejection, myths, inventions,
 |---|---|
 | `Main.cs` | scene root: wiring, selection, input, screenshot mode |
 | `SimHost.cs` | owns `Simulation`; steps days on the main thread within a 20 ms/frame budget |
-| `WorldView.cs` | procedural planet texture and overlays |
-| `BandLayer.cs`, `BandLabels.cs` | band markers and event pings; screen-space labels |
+| `WorldView.cs` | procedural planet texture and overlays (zoomed out) |
+| `Art.cs` | reads `../assets`: sidecar JSON, reference PNGs, slot-index maps, LUTs |
+| `TileBake.cs`, `TileView.cs`, `shaders/tiles.gdshader` | the planet in tile art: baked once to palette-slot indices, coloured per cell (season, snow, shade, culture tint) by the shader |
+| `Figures.cs` | composites layered people sprites, recoloured by skin, hair, dye and culture LUTs |
+| `BandLayer.cs`, `BandLabels.cs` | camps or markers, sea routes and event pings; screen-space labels |
 | `CameraRig.cs` | pan and zoom, clamped to the planet |
 | `Hud.cs`, `Describe.cs` | UI theme (art guide section 11.1 colours), chronicle and inspector BBCode |
-| `Palette.cs` | placeholder biome colours, final UI colours, culture hues |
+| `Palette.cs` | zoomed-out biome colours, final UI colours, culture hues |
+| `shaders/pixel.gdshader` | keeps pixel art crisp at non-integer zoom |
 | `TargetOverlay.cs` | the armed power's reach at the cursor, and bursts where acts land |
 | `NarrationHost.cs` | feeds moments to the narrator with focus priorities, delivers voices, can start the lab servers |
 
 ## Next
-- Swap the procedural map for the Codex tiles and the palette-swap shader (art guide sections 2.2 and 3).
+- More of the 16 px art: fauna herds, animated water and fire on the map, cliff sets, territory borders, roads, crops for farming bands, and people animated by what they are doing.
+- The 32 and 64 px art densities once Codex finishes them.
 - Optionally step the simulation on a worker thread. Each day already runs across cores (`SimConfig.Threads`, cores minus 2 in the game), so the UI stays responsive without it.
 - Swap power-bar text for the Codex icon set (art guide section 11.3), and add Raise/Lower land, Possess and Follow.

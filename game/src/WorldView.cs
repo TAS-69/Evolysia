@@ -10,7 +10,8 @@ public enum Overlay { Biome, Elevation, Temperature, Rainfall, Food, Cultures }
 /// <summary>
 /// Paints the planet procedurally from simulation data: biome colour shifted by season and
 /// today's growth, hillshading, snow and sea ice from today's temperature, rivers along the flow
-/// network, ash after eruptions. Placeholder until the tile art from docs/art arrives.
+/// network, ash after eruptions. Shown zoomed out and for the data overlays; zoomed in,
+/// <see cref="TileView"/> draws Codex's tile art over it.
 /// </summary>
 public partial class WorldView : Sprite2D
 {
@@ -172,10 +173,11 @@ public partial class WorldView : Sprite2D
         return c;
     }
 
-    Dictionary<int, Color> Territory(Simulation sim)
+    /// <summary>Land within a cell of each band, tinted by its culture.</summary>
+    internal static Dictionary<int, Color> Territory(Simulation sim)
     {
         var map = new Dictionary<int, Color>();
-        var w = _world!;
+        var w = sim.World;
         foreach (var band in sim.Bands.Values)
         {
             var col = Palette.Culture(sim.Cultures[band.CultureId].Hue);
@@ -191,7 +193,8 @@ public partial class WorldView : Sprite2D
         return map;
     }
 
-    static float Shade(WorldMap w, int i)
+    /// <summary>Hillshade multiplier, lit from the north-west.</summary>
+    internal static float Shade(WorldMap w, int i)
     {
         if (!w.IsLand(i)) return 1f;
         int x = w.X(i), y = w.Y(i);

@@ -1,0 +1,13 @@
+// Crisp pixel art at any zoom: with a linear-filtered texture, sample at the texel centre except
+// across the one screen pixel where two texels meet, which is blended instead of jagged.
+shader_type canvas_item;
+
+void fragment()
+{
+	vec2 size = vec2(textureSize(TEXTURE, 0));
+	vec2 tp = UV * size;
+	vec2 fw = max(fwidth(tp), vec2(1e-5));
+	vec2 base = floor(tp - 0.5) + 0.5;
+	vec2 wt = clamp((tp - base - 0.5) / fw + 0.5, 0.0, 1.0);
+	COLOR = texture(TEXTURE, (base + wt) / size) * COLOR;
+}
