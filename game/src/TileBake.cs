@@ -4,236 +4,435 @@ using Evolysia.Sim.World;
 namespace Evolysia.Game;
 
 /// <summary>
-/// Bakes the planet into one RGBA8 image of palette-slot indices, 16 px per cell:
-/// R = ground (terrain materials blended on a dual grid, then rivers), G = flora as it looks in
-/// season, B = flora off-season (bare in winter, dry-season states, snow-capped conifers),
-/// A = bit 1 where G is drawn, bit 2 where B is drawn. Colour comes later, per cell, from the
-/// nature LUT in tiles.gdshader, so seasons change without rebaking.
+/// Bakes a rectangle of the planet into RGBA8 palette-slot indices at one art density (16, 32 or
+/// 64 px per cell): R = ground (landscape materials blended on a dual grid, then rivers),
+/// G = flora as it looks in season, B = flora off-season (bare in winter, dry-season states,
+/// snow-capped conifers, harvested fields), A = bit 1 where G is drawn, bit 2 where B is drawn.
+/// Colour comes later, per cell, from the nature LUT in tiles.gdshader, so seasons change without
+/// rebaking. Everything is placed in logical units (16 per cell), so every density draws the same
+/// world and the same plants in the same places - only the pixel detail changes. Thread-safe:
+/// detail chunks bake in the background.
 /// </summary>
 public static class TileBake
 {
-    public const int Px = 16;
+    public const int Px = 16;   // logical units per cell
 
-    /// <summary>The terrain material a cell is made of (art spec section 3.1).</summary>
-    public static string Material(WorldMap w, int i)
+    /// <summary>What the bake needs besides the world: farmed cells and their crop.</summary>
+    public sealed record Input(WorldMap World, IReadOnlyDictionary<int, string> Fields);
+
+    /// <summary>The surface a cell is made of (landscape family material ids).</summary>
+    public static string Material(Input input, int i)
     {
+        var w = input.World;
         if (w.Volcano[i]) return "lava";
         if (w.IsLand(i) && w.Ash[i] > 0.3f) return "ash";
+        if (input.Fields.ContainsKey(i)) return "tilled_soil";
+        float n = Patch(w, i);
+        float t = w.TempMean[i], rain = w.Precip[i];
+        if (Beach(w, i))
+            return t < 4f ? "gravel" : n > 0.8f ? "shell_beach" : t > 22f ? "fine_sand" : "sand";
         return w.Biome[i] switch
         {
             Biome.DeepOcean => "deep_water",
             Biome.Ocean or Biome.Lake => "water",
-            Biome.Coast => "shallow_water",
+            Biome.Coast => t > 22f && n > 0.7f ? "coral_shore" : "shallow_water",
             Biome.IceSheet => "ice",
-            Biome.Tundra => "tundra",
-            Biome.BorealForest or Biome.TemperateForest or Biome.TemperateRainforest or Biome.TropicalSeasonalForest => "forest_floor",
+            Biome.Tundra => t < -9f ? "permafrost" : n > 0.66f ? "lichen_rock" : n < 0.2f ? "frozen_mud" : "tundra",
+            Biome.BorealForest => rain > 700f && n > 0.55f ? "moss_floor" : "pine_needles",
+            Biome.TemperateForest => n > 0.5f ? "leaf_litter" : "forest_floor",
+            Biome.TemperateRainforest => n > 0.4f ? "moss_floor" : "forest_floor",
+            Biome.TropicalSeasonalForest => n > 0.72f ? "red_clay" : "forest_floor",
             Biome.TropicalRainforest => "jungle_floor",
-            Biome.ColdDesert => "scree",
-            Biome.TemperateGrassland => "grass",
-            Biome.Shrubland or Biome.Savanna => "dry_grass",
-            Biome.HotDesert => "sand",
-            Biome.Wetland => "marsh",
-            Biome.Alpine => w.Elevation[i] > 3200f ? "rock" : "scree",
-            Biome.Volcanic => "basalt",
+            Biome.ColdDesert => n > 0.78f ? "salt_flat" : n > 0.45f ? "gravel" : "scree",
+            Biome.TemperateGrassland => rain < 450f ? "steppe" : n > 0.62f ? "meadow" : "grass",
+            Biome.Shrubland => t < 12f && rain > 500f ? "heathland" : n > 0.7f ? "steppe" : "dry_grass",
+            Biome.Savanna => n > 0.82f ? "red_sand" : "dry_grass",
+            Biome.HotDesert => n > 0.6f ? "dune" : n < 0.12f ? "red_sand" : "sand",
+            Biome.Wetland => t > 22f && Shore(w, i) ? "mangrove_floor" : t < 5f ? "bog" : n > 0.7f ? "peat" : "marsh",
+            Biome.Alpine => w.Elevation[i] > 3200f ? (n > 0.6f ? "granite" : n < 0.25f ? "slate" : "rock") : "scree",
+            Biome.Volcanic => n > 0.75f ? "obsidian" : "basalt",
             _ => "dirt",
         };
     }
 
-    public static byte[] Bake(WorldMap w)
+    /// <summary>Low land touching the sea: a beach.</summary>
+    static bool Beach(WorldMap w, int i) =>
+        w.IsLand(i) && w.Elevation[i] < 40f && w.Biome[i] is not (Biome.Lake or Biome.Wetland or Biome.IceSheet or Biome.Alpine or Biome.Volcanic)
+        && Shore(w, i);
+
+    static bool Shore(WorldMap w, int i)
     {
-        int texW = w.W * Px, texH = w.H * Px;
-        var px = new byte[texW * texH * 4];
-        Ground(w, px, texW, texH);
-        Rivers(w, px, texW, texH);
-        Flora(w, px, texW, texH);
-        return px;
+        int x = w.X(i), y = w.Y(i);
+        for (int dy = -1; dy <= 1; dy++)
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                int ny = y + dy;
+                if (ny < 0 || ny >= w.H || (dx == 0 && dy == 0)) continue;
+                int n = w.Index(x + dx, ny);
+                if (!w.IsLand(n)) return true;
+            }
+        return false;
+    }
+
+    /// <summary>Smooth noise in 0..1 over a few cells, so soils come in patches rather than per cell.</summary>
+    static float Patch(WorldMap w, int i)
+    {
+        float fx = w.X(i) / 3.5f, fy = w.Y(i) / 3.5f;
+        int x0 = (int)MathF.Floor(fx), y0 = (int)MathF.Floor(fy);
+        float tx = fx - x0, ty = fy - y0;
+        tx = tx * tx * (3 - 2 * tx); ty = ty * ty * (3 - 2 * ty);
+        int period = (int)MathF.Ceiling(w.W / 3.5f);   // wraps east-west with the planet
+        float H(int a, int b) => (Hash(((a % period) + period) % period, b + 911) & 0xFFFF) / 65535f;
+        float v = (H(x0, y0) * (1 - tx) + H(x0 + 1, y0) * tx) * (1 - ty) + (H(x0, y0 + 1) * (1 - tx) + H(x0 + 1, y0 + 1) * tx) * ty;
+        return Math.Clamp((v - 0.5f) * 1.6f + 0.5f + ((Hash(i, 5) & 0xFF) / 255f - 0.5f) * 0.15f, 0f, 1f);
+    }
+
+    /// <summary>
+    /// Bakes cells [cx0, cx0+cw) x [cy0, cy0+ch) (x wraps) at <paramref name="density"/> px per cell.
+    /// </summary>
+    public static byte[] Bake(Input input, int density, int cx0, int cy0, int cw, int ch)
+    {
+        var t = new Target(new byte[cw * density * ch * density * 4], cx0 * density, cy0 * density, cw * density, ch * density,
+                           input.World.W * density, input.World.H * density, density);
+        Ground(input, t, cx0, cy0, cw, ch);
+        Rivers(input.World, t, cx0, cy0, cw, ch);
+        Flora(input, t, cx0, cy0, cw, ch);
+        return t.Px;
+    }
+
+    /// <summary>The region being baked, in the world's pixel space at this density.</summary>
+    readonly record struct Target(byte[] Px, int X0, int Y0, int W, int H, int WorldW, int WorldH, int D)
+    {
+        public void Put(int gx, int gy, byte slot, int layer)
+        {
+            int ry = gy - Y0;
+            if (ry < 0 || ry >= H) return;
+            int rx = (((gx - X0) % WorldW) + WorldW) % WorldW;
+            if (rx >= W) return;
+            int o = (ry * W + rx) * 4;
+            if (layer == 0) Px[o] = slot;
+            else { Px[o + layer] = slot; Px[o + 3] |= (byte)layer; }
+        }
     }
 
     // ---- ground ---------------------------------------------------------------------------------
 
-    sealed record Mat(string Id, int Priority, Sheet Plain, Sheet Corners);
+    sealed record Mat(string Id, int Priority, Sheet Plain, Sheet Corners, int Variants);
 
-    static readonly Dictionary<string, Mat?> Mats = new();
+    static readonly Dictionary<(string, int), Mat?> Mats = new();
 
-    static Mat? MatOf(string id)
+    static Mat? MatOf(string id, int density)
     {
-        if (Mats.TryGetValue(id, out var m)) return m;
-        var plain = Art.Get($"terrain.{id}_plain");
-        var corners = Art.Get($"terrain.{id}_corners");
-        m = plain == null || corners == null ? null
-            : new Mat(id, plain.Meta.TryGetProperty("layer_priority", out var p) ? p.GetInt32() : 0, plain, corners);
-        return Mats[id] = m;
+        lock (Mats)
+        {
+            if (Mats.TryGetValue((id, density), out var m)) return m;
+            var plain = Art.Lod($"landscape.{id}_plain", density);
+            var corners = Art.Lod($"landscape.{id}_corners", density);
+            m = plain == null || corners == null ? null
+                : new Mat(id, plain.Int("layer_priority") * 1000 + plain.Int("priority_offset"), plain, corners,
+                          Math.Clamp(plain.Int("variants_per_orientation", plain.Rows), 1, plain.Rows));
+            return Mats[(id, density)] = m;
+        }
     }
 
     /// <summary>
     /// Dual grid: one tile per cell corner, covering the quarters of the four cells that meet there.
-    /// The lowest-priority material fills it; each higher one is laid over with the corner tile whose
-    /// mask marks the quarters at or above its priority, so higher materials' edges overlap lower ones.
+    /// The lowest-priority material fills it with a random plain variant; each higher one is laid
+    /// over with the corner tile whose mask marks the quarters at or above its priority.
     /// </summary>
-    static void Ground(WorldMap w, byte[] px, int texW, int texH)
+    static void Ground(Input input, Target t, int cx0, int cy0, int cw, int ch)
     {
-        var mats = new Mat[w.Count];
-        for (int i = 0; i < w.Count; i++) mats[i] = MatOf(Material(w, i)) ?? MatOf("dirt")!;
+        var w = input.World;
+        int d = t.D;
+        var fallback = MatOf("dirt", d)!;
+        var mats = new Dictionary<int, Mat>();
+        Mat MatAt(int i) => mats.TryGetValue(i, out var m) ? m : mats[i] = MatOf(Material(input, i), d) ?? fallback;
         Span<int> corner = stackalloc int[4];   // TL, TR, BR, BL - the order of the mask bits 1, 2, 4, 8
         var present = new List<Mat>(4);
-        for (int vy = 0; vy <= w.H; vy++)
-            for (int vx = 0; vx < w.W; vx++)
+        for (int vy = cy0; vy <= Math.Min(cy0 + ch, w.H); vy++)
+            for (int vx = cx0; vx <= cx0 + cw; vx++)
             {
                 int top = Math.Max(vy - 1, 0), bottom = Math.Min(vy, w.H - 1);
                 corner[0] = w.Index(vx - 1, top); corner[1] = w.Index(vx, top);
                 corner[2] = w.Index(vx, bottom); corner[3] = w.Index(vx - 1, bottom);
                 present.Clear();
-                for (int k = 0; k < 4; k++) if (!present.Contains(mats[corner[k]])) present.Add(mats[corner[k]]);
+                for (int k = 0; k < 4; k++) if (!present.Contains(MatAt(corner[k]))) present.Add(MatAt(corner[k]));
                 present.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-                int ox = vx * Px - Px / 2, oy = vy * Px - Px / 2;
-                uint h = Hash(vx, vy);
-                Blit(present[0].Plain, 0, (int)(h % (uint)present[0].Plain.Rows), ox, oy, px, texW, texH, 0);
+                int ox = vx * d - d / 2, oy = vy * d - d / 2;
+                uint h = Hash(w.Wrap(vx), vy);
+                Blit(t, present[0].Plain, 0, (int)(h % (uint)present[0].Variants), ox, oy, 1, 0);
                 for (int m = 1; m < present.Count; m++)
                 {
                     int mask = 0;
-                    for (int k = 0; k < 4; k++) if (mats[corner[k]].Priority >= present[m].Priority) mask |= 1 << k;
-                    Blit(present[m].Corners, 0, mask, ox, oy, px, texW, texH, 0);
+                    for (int k = 0; k < 4; k++) if (MatAt(corner[k]).Priority >= present[m].Priority) mask |= 1 << k;
+                    Blit(t, present[m].Corners, 0, mask, ox, oy, 1, 0);
                 }
             }
     }
 
     // ---- rivers ---------------------------------------------------------------------------------
 
-    static void Rivers(WorldMap w, byte[] px, int texW, int texH)
+    /// <summary>River connection masks (N=1, E=2, S=4, W=8); each river cell drains into its best 4-neighbour.</summary>
+    static int[]? _riverMask;
+    static WorldMap? _riverWorld;
+
+    static int[] RiverMasks(WorldMap w)
+    {
+        lock (Mats)
+        {
+            if (_riverWorld == w && _riverMask != null) return _riverMask;
+            var mask = new int[w.Count];
+            int[] dx = { 0, 1, 0, -1 }, dy = { -1, 0, 1, 0 };
+            for (int i = 0; i < w.Count; i++)
+            {
+                if (!IsRiver(w, i)) continue;
+                int x = w.X(i), y = w.Y(i), best = -1, bestDir = -1;
+                float bestFlow = w.Flow[i];
+                for (int dir = 0; dir < 4; dir++)
+                {
+                    int ny = y + dy[dir];
+                    if (ny < 0 || ny >= w.H) continue;
+                    int n = w.Index(x + dx[dir], ny);
+                    if (w.IsWater(n)) { if (best < 0 || w.IsLand(best)) { best = n; bestDir = dir; bestFlow = float.MaxValue; } }
+                    else if (w.Flow[n] > bestFlow) { best = n; bestDir = dir; bestFlow = w.Flow[n]; }
+                }
+                if (best < 0) continue;
+                mask[i] |= 1 << bestDir;
+                if (IsRiver(w, best)) mask[best] |= 1 << ((bestDir + 2) % 4);
+            }
+            _riverWorld = w;
+            return _riverMask = mask;
+        }
+    }
+
+    public static bool IsRiver(WorldMap w, int i) => w.IsLand(i) && w.Biome[i] != Biome.Lake && w.Flow[i] >= WorldGen.RiverFlow * 2f;
+
+    /// <summary>Rivers come from the 16 px overlay family (no finer art yet), enlarged at 32 / 64.</summary>
+    static void Rivers(WorldMap w, Target t, int cx0, int cy0, int cw, int ch)
     {
         var stream = Art.Get("overlays.river_stream");
         var river = Art.Get("overlays.river_river");
         var great = Art.Get("overlays.river_great_river");
         if (stream == null || river == null || great == null) return;
-        // The art connects N/E/S/W only, so each river cell drains into its best 4-neighbour.
-        var mask = new int[w.Count];
-        int[] dx = { 0, 1, 0, -1 }, dy = { -1, 0, 1, 0 };   // N, E, S, W = bits 1, 2, 4, 8
-        for (int i = 0; i < w.Count; i++)
-        {
-            if (!IsRiver(w, i)) continue;
-            int x = w.X(i), y = w.Y(i), best = -1, bestDir = -1;
-            float bestFlow = w.Flow[i];
-            for (int d = 0; d < 4; d++)
+        var mask = RiverMasks(w);
+        int scale = t.D / Px;
+        for (int y = Math.Max(cy0, 0); y < Math.Min(cy0 + ch, w.H); y++)
+            for (int x = cx0; x < cx0 + cw; x++)
             {
-                int ny = y + dy[d];
-                if (ny < 0 || ny >= w.H) continue;
-                int n = w.Index(x + dx[d], ny);
-                if (w.IsWater(n) || w.Biome[n] == Biome.Lake) { if (best < 0 || w.IsLand(best)) { best = n; bestDir = d; bestFlow = float.MaxValue; } }
-                else if (w.Flow[n] > bestFlow) { best = n; bestDir = d; bestFlow = w.Flow[n]; }
+                int i = w.Index(x, y);
+                if (mask[i] == 0) continue;
+                var sheet = w.Flow[i] > WorldGen.RiverFlow * 16f ? great : w.Flow[i] > WorldGen.RiverFlow * 6f ? river : stream;
+                Blit(t, sheet, 0, mask[i], x * t.D, y * t.D, scale, 0);
             }
-            if (best < 0) continue;
-            mask[i] |= 1 << bestDir;
-            if (IsRiver(w, best)) mask[best] |= 1 << ((bestDir + 2) % 4);
-        }
-        for (int i = 0; i < w.Count; i++)
-        {
-            if (mask[i] == 0) continue;
-            var sheet = w.Flow[i] > WorldGen.RiverFlow * 16f ? great : w.Flow[i] > WorldGen.RiverFlow * 6f ? river : stream;
-            Blit(sheet, 0, mask[i], w.X(i) * Px, w.Y(i) * Px, px, texW, texH, 0);
-        }
     }
 
-    static bool IsRiver(WorldMap w, int i) => w.IsLand(i) && w.Biome[i] != Biome.Lake && w.Flow[i] >= WorldGen.RiverFlow * 2f;
-
     // ---- flora ----------------------------------------------------------------------------------
+
+    /// <summary>
+    /// A kind of plant: its 16 px flora sheet (with seasonal states) and its civilisation detail
+    /// art (16/32/64). Either may be missing; the other stands in.
+    /// </summary>
+    readonly record struct Kind(string? Flora, string? Detail);
+
+    static readonly Dictionary<string, Kind> Kinds = new()
+    {
+        ["conifer_mature"] = new("conifer_mature", "tree_conifer"),
+        ["conifer_old"] = new("conifer_old", "tree_spruce"),
+        ["conifer_young"] = new("conifer_young", "tree_fir"),
+        ["conifer_sapling"] = new("conifer_sapling", "nature_fern"),
+        ["pine"] = new("conifer_mature", "tree_pine"),
+        ["cedar"] = new("conifer_old", "tree_cedar"),
+        ["juniper"] = new(null, "tree_juniper"),
+        ["broadleaf_mature"] = new("broadleaf_mature", "tree_broadleaf"),
+        ["broadleaf_old"] = new("broadleaf_old", "tree_oak"),
+        ["broadleaf_young"] = new("broadleaf_young", "tree_broadleaf"),
+        ["birch"] = new("broadleaf_young", "tree_birch"),
+        ["willow"] = new(null, "tree_willow"),
+        ["fruit_tree"] = new(null, "tree_fruit_tree"),
+        ["acacia_mature"] = new("acacia_mature", "tree_acacia"),
+        ["acacia_young"] = new("acacia_young", "tree_acacia"),
+        ["baobab"] = new(null, "tree_baobab"),
+        ["palm_mature"] = new("palm_mature", "tree_palm"),
+        ["jungle_tree_mature"] = new("jungle_tree_mature", "tree_jungle"),
+        ["jungle_tree_young"] = new("jungle_tree_young", "tree_jungle"),
+        ["rainforest_giant_mature"] = new("rainforest_giant_mature", "tree_jungle"),
+        ["mangrove"] = new(null, "tree_mangrove"),
+        ["shrub"] = new("shrub", "nature_flowering_shrub"),
+        ["shrub_dry"] = new("shrub_dry", "nature_dry_shrub"),
+        ["thorn_shrub"] = new(null, "nature_thorn_shrub"),
+        ["berry_bush_fruiting"] = new("berry_bush_fruiting", "nature_berry_shrub"),
+        ["berry_bush_flowering"] = new("berry_bush_flowering", "nature_berry_shrub"),
+        ["tall_grass"] = new("tall_grass", "nature_meadow_grass"),
+        ["dry_grass"] = new("tall_grass", "nature_dry_grass"),
+        ["wild_grain_ripe"] = new("wild_grain_ripe", null),
+        ["flowers"] = new("flowers", "nature_wildflowers"),
+        ["clover"] = new(null, "nature_clover"),
+        ["sedge"] = new(null, "nature_sedge"),
+        ["weeds"] = new(null, "nature_weeds"),
+        ["fern"] = new(null, "nature_fern"),
+        ["heath"] = new(null, "nature_heath"),
+        ["moss"] = new(null, "nature_moss"),
+        ["reeds"] = new("reeds", "nature_reeds"),
+        ["cactus"] = new("cactus", "nature_cactus"),
+        ["cactus_tall"] = new("cactus_tall", "nature_cactus"),
+        ["cactus_flowering"] = new("cactus_flowering", "nature_cactus"),
+        ["succulent"] = new(null, "nature_succulent"),
+        ["mushrooms"] = new("mushrooms", "nature_mushroom_patch"),
+        ["fallen_log"] = new("fallen_log", "nature_fallen_log"),
+        ["stump"] = new("stump", "nature_tree_stump"),
+        ["conifer_dead"] = new("conifer_dead", null),
+        ["boulder"] = new(null, "boulder_detail"),
+        ["scree"] = new(null, "nature_scree"),
+        ["granite_outcrop"] = new(null, "nature_granite_outcrop"),
+        ["sandstone_outcrop"] = new(null, "nature_sandstone_outcrop"),
+        ["basalt_outcrop"] = new(null, "nature_basalt_outcrop"),
+        ["ore_outcrop"] = new(null, "nature_ore_outcrop"),
+        ["clay_deposit"] = new(null, "nature_clay_deposit"),
+    };
 
     /// <summary>What grows in a biome, with relative weights, and how many plants a cell holds.</summary>
     static ((string id, float weight)[] kinds, int count) FloraOf(Biome b) => b switch
     {
-        Biome.BorealForest => (new[] { ("conifer_mature", 4f), ("conifer_old", 2f), ("conifer_young", 2f), ("conifer_sapling", 0.6f), ("shrub", 0.8f) }, 6),
-        Biome.TemperateForest => (new[] { ("broadleaf_mature", 4f), ("broadleaf_old", 1.2f), ("broadleaf_young", 2f), ("conifer_mature", 0.8f), ("shrub", 1f), ("berry_bush_fruiting", 0.4f), ("mushrooms", 0.3f), ("fallen_log", 0.3f) }, 6),
-        Biome.TemperateRainforest => (new[] { ("conifer_old", 3f), ("conifer_mature", 3f), ("broadleaf_old", 1f), ("fallen_log", 0.5f), ("mushrooms", 0.5f) }, 7),
-        Biome.TemperateGrassland => (new[] { ("tall_grass", 4f), ("flowers", 1.5f), ("shrub", 0.8f), ("broadleaf_young", 0.3f), ("wild_grain_ripe", 0.5f) }, 4),
-        Biome.Shrubland => (new[] { ("shrub", 4f), ("shrub_dry", 2f), ("berry_bush_flowering", 0.6f), ("tall_grass", 1f) }, 4),
-        Biome.HotDesert => (new[] { ("cactus", 2f), ("cactus_tall", 1f), ("cactus_flowering", 0.4f), ("shrub_dry", 1f) }, 1),
-        Biome.ColdDesert => (new[] { ("shrub_dry", 3f), ("tall_grass", 0.5f) }, 1),
-        Biome.Savanna => (new[] { ("tall_grass", 4f), ("acacia_mature", 1.2f), ("acacia_young", 0.6f), ("shrub_dry", 1f) }, 4),
-        Biome.TropicalSeasonalForest => (new[] { ("jungle_tree_mature", 3f), ("broadleaf_mature", 2f), ("palm_mature", 1f), ("shrub", 1f) }, 6),
-        Biome.TropicalRainforest => (new[] { ("rainforest_giant_mature", 1.5f), ("jungle_tree_mature", 3f), ("jungle_tree_young", 1f), ("palm_mature", 1f) }, 6),
-        Biome.Wetland => (new[] { ("reeds", 4f), ("tall_grass", 2f), ("broadleaf_young", 0.4f) }, 4),
-        Biome.Tundra => (new[] { ("shrub_dry", 1f), ("tall_grass", 0.6f), ("mushrooms", 0.3f) }, 1),
-        Biome.Alpine => (new[] { ("conifer_young", 1f), ("shrub_dry", 1f) }, 1),
-        Biome.Volcanic => (new[] { ("conifer_dead", 1f), ("stump", 1f) }, 1),
+        Biome.BorealForest => (new[] { ("conifer_mature", 4f), ("conifer_old", 2f), ("conifer_young", 2f), ("pine", 1f), ("birch", 0.6f), ("conifer_sapling", 0.6f), ("shrub", 0.5f), ("moss", 0.4f), ("fallen_log", 0.2f) }, 6),
+        Biome.TemperateForest => (new[] { ("broadleaf_mature", 4f), ("broadleaf_old", 1.2f), ("broadleaf_young", 2f), ("birch", 0.6f), ("conifer_mature", 0.8f), ("shrub", 1f), ("fern", 0.6f), ("berry_bush_fruiting", 0.4f), ("mushrooms", 0.3f), ("fallen_log", 0.3f) }, 6),
+        Biome.TemperateRainforest => (new[] { ("conifer_old", 3f), ("cedar", 1.5f), ("conifer_mature", 3f), ("broadleaf_old", 1f), ("fern", 1.2f), ("moss", 0.6f), ("fallen_log", 0.5f), ("mushrooms", 0.5f) }, 7),
+        Biome.TemperateGrassland => (new[] { ("tall_grass", 4f), ("flowers", 1.5f), ("clover", 0.8f), ("shrub", 0.8f), ("broadleaf_young", 0.3f), ("wild_grain_ripe", 0.5f), ("boulder", 0.1f) }, 4),
+        Biome.Shrubland => (new[] { ("shrub", 3f), ("shrub_dry", 2f), ("heath", 1.2f), ("juniper", 0.5f), ("berry_bush_flowering", 0.6f), ("dry_grass", 1f), ("boulder", 0.2f) }, 4),
+        Biome.HotDesert => (new[] { ("cactus", 2f), ("cactus_tall", 1f), ("cactus_flowering", 0.4f), ("succulent", 0.8f), ("shrub_dry", 1f), ("sandstone_outcrop", 0.3f) }, 1),
+        Biome.ColdDesert => (new[] { ("shrub_dry", 3f), ("dry_grass", 0.5f), ("scree", 0.8f), ("juniper", 0.3f), ("boulder", 0.4f) }, 1),
+        Biome.Savanna => (new[] { ("dry_grass", 4f), ("acacia_mature", 1.2f), ("acacia_young", 0.6f), ("baobab", 0.2f), ("thorn_shrub", 0.8f), ("shrub_dry", 0.6f) }, 4),
+        Biome.TropicalSeasonalForest => (new[] { ("jungle_tree_mature", 3f), ("broadleaf_mature", 2f), ("palm_mature", 1f), ("shrub", 1f), ("fern", 0.6f) }, 6),
+        Biome.TropicalRainforest => (new[] { ("rainforest_giant_mature", 1.5f), ("jungle_tree_mature", 3f), ("jungle_tree_young", 1f), ("palm_mature", 1f), ("fern", 1f) }, 6),
+        Biome.Wetland => (new[] { ("reeds", 4f), ("sedge", 2f), ("tall_grass", 1f), ("willow", 0.5f), ("broadleaf_young", 0.3f) }, 4),
+        Biome.Tundra => (new[] { ("shrub_dry", 1f), ("sedge", 0.8f), ("moss", 0.8f), ("tall_grass", 0.4f), ("mushrooms", 0.2f), ("boulder", 0.4f) }, 1),
+        Biome.Alpine => (new[] { ("conifer_young", 1f), ("juniper", 0.4f), ("shrub_dry", 1f), ("scree", 0.8f), ("granite_outcrop", 0.5f), ("ore_outcrop", 0.15f) }, 1),
+        Biome.Volcanic => (new[] { ("conifer_dead", 1f), ("stump", 1f), ("basalt_outcrop", 1f) }, 1),
         _ => (Array.Empty<(string, float)>(), 0),
     };
 
-    record struct Plant(int X, int Y, Sheet Summer, int SummerRow, Sheet? Off, int OffRow, Sheet? Cap);
-
-    static void Flora(WorldMap w, byte[] px, int texW, int texH)
+    /// <summary>Kinds that replace a biome's usual flora in special places (river banks, tropical shores).</summary>
+    static string? Special(WorldMap w, int i, uint h)
     {
+        if (w.Biome[i] == Biome.Wetland && w.TempMean[i] > 22f && Shore(w, i) && (h & 3) == 0) return "mangrove";
+        if (IsRiver(w, i) && w.Biome[i] is Biome.TemperateForest or Biome.TemperateGrassland or Biome.Shrubland && (h & 7) == 0) return "willow";
+        if (IsRiver(w, i) && (h & 15) == 1) return "clay_deposit";
+        return null;
+    }
+
+    /// <summary>A plant at a logical position (16 units per cell), with what it is in and out of season.</summary>
+    record struct Plant(int X, int Y, string Kind, int Variant, bool Snowy);
+
+    static void Flora(Input input, Target t, int cx0, int cy0, int cw, int ch)
+    {
+        var w = input.World;
         var plants = new List<Plant>();
-        for (int i = 0; i < w.Count; i++)
-        {
-            if (!w.IsLand(i) || w.Volcano[i] || w.Biome[i] == Biome.Lake) continue;
-            var (kinds, count) = FloraOf(w.Biome[i]);
-            if (count == 0) continue;
-            bool burned = w.Ash[i] > 0.25f;
-            bool snowyWinter = w.TempMean[i] - w.TempAmp[i] < -3f;
-            float total = kinds.Sum(k => k.weight);
-            for (int n = 0; n < count; n++)
+        // Plants rooted just outside the region can reach into it (trees are two cells tall).
+        for (int y = Math.Max(cy0 - 1, 0); y < Math.Min(cy0 + ch + 3, w.H); y++)
+            for (int x = cx0 - 2; x < cx0 + cw + 2; x++)
             {
-                uint h = Hash(i, n * 7 + 3);
-                if ((h & 0xFF) < 40) continue;   // gaps, so cells don't read as a grid
-                float pick = (h >> 8 & 0xFFFF) / 65536f * total;
-                string id = kinds[^1].id;
-                foreach (var (kid, weight) in kinds) { if (pick < weight) { id = kid; break; } pick -= weight; }
-                if (burned) id = BurnedOf(id);
-                var sheet = Art.Get("flora." + id);
-                if (sheet == null) continue;
-                Sheet? off = sheet, cap = null;
-                if (sheet.Meta.TryGetProperty("seasonal_states", out var states))
-                    foreach (var s in states.EnumerateObject()) off = Art.Get(s.Value.GetString()!) ?? sheet;
-                if (snowyWinter && id.StartsWith("conifer_") && id is not ("conifer_sapling" or "conifer_dead" or "conifer_burned"))
-                    cap = Art.Get("flora.conifer_snow_capped");
-                uint v = Hash(n, i * 13 + 1);
-                int x = w.X(i) * Px + 2 + (int)(Hash(i, n * 2 + 11) % 12u);
-                int y = w.Y(i) * Px + 3 + (int)(Hash(i, n * 5 + 17) % 13u);
-                plants.Add(new Plant(x, y, sheet, (int)(v % (uint)sheet.Rows), off, (int)(v % (uint)Math.Max(1, off?.Rows ?? 1)), cap));
+                int i = w.Index(x, y);
+                if (input.Fields.TryGetValue(i, out var crop))
+                {
+                    plants.Add(new Plant(x * Px + 8, y * Px + 15, "crop:" + crop, 0, false));
+                    continue;
+                }
+                if (!w.IsLand(i) || w.Volcano[i] || w.Biome[i] == Biome.Lake || Beach(w, i)) continue;
+                var (kinds, count) = FloraOf(w.Biome[i]);
+                if (count == 0) continue;
+                bool burned = w.Ash[i] > 0.25f;
+                bool snowy = w.TempMean[i] - w.TempAmp[i] < -3f;
+                float total = kinds.Sum(k => k.weight);
+                for (int n = 0; n < count; n++)
+                {
+                    uint h = Hash(i, n * 7 + 3);
+                    if ((h & 0xFF) < 40) continue;   // gaps, so cells don't read as a grid
+                    float pick = (h >> 8 & 0xFFFF) / 65536f * total;
+                    string id = kinds[^1].id;
+                    foreach (var (kid, weight) in kinds) { if (pick < weight) { id = kid; break; } pick -= weight; }
+                    if (n == 0 && Special(w, i, h >> 24) is { } special) id = special;
+                    if (burned) id = BurnedOf(id);
+                    int px = x * Px + 2 + (int)(Hash(i, n * 2 + 11) % 12u);
+                    int py = y * Px + 3 + (int)(Hash(i, n * 5 + 17) % 13u);
+                    plants.Add(new Plant(px, py, id, (int)(Hash(n, i * 13 + 1) & 0xFFFF), snowy));
+                }
             }
-        }
         plants.Sort((a, b) => a.Y != b.Y ? a.Y.CompareTo(b.Y) : a.X.CompareTo(b.X));   // y-sort: nearer plants overlap
+        int d = t.D, scale = d / Px;
         foreach (var p in plants)
         {
-            Blit(p.Summer, 0, p.SummerRow, p.X - p.Summer.PivotX, p.Y - p.Summer.PivotY, px, texW, texH, 1);
-            var off = p.Off ?? p.Summer;
-            Blit(off, 0, p.OffRow % off.Rows, p.X - off.PivotX, p.Y - off.PivotY, px, texW, texH, 2);
-            if (p.Cap != null) Blit(p.Cap, 0, p.SummerRow % p.Cap.Rows, p.X - p.Cap.PivotX, p.Y - p.Cap.PivotY, px, texW, texH, 2);
+            int gx = p.X * scale, gy = p.Y * scale;
+            if (p.Kind.StartsWith("crop:")) { Crop(t, p.Kind[5..], gx, gy); continue; }
+            var kind = Kinds.GetValueOrDefault(p.Kind, new Kind(p.Kind, null));
+            // At 16 px prefer the flora family (it has bare, dry and snow-capped states); finer
+            // densities use the civilisation detail art, whose colours still follow the season.
+            Sheet? summer = null, off = null, cap = null;
+            int sScale = 1;
+            if (d == Px || kind.Detail == null)
+            {
+                if (kind.Flora != null && Art.Get("flora." + kind.Flora) is { } f)
+                {
+                    summer = f; sScale = scale; off = f;
+                    if (f.Meta.TryGetProperty("seasonal_states", out var states))
+                        foreach (var s in states.EnumerateObject()) off = Art.Get(s.Value.GetString()!) ?? f;
+                    if (p.Snowy && kind.Flora.StartsWith("conifer_") && kind.Flora is not ("conifer_sapling" or "conifer_dead" or "conifer_burned"))
+                        cap = Art.Get("flora.conifer_snow_capped");
+                }
+            }
+            if (summer == null && kind.Detail != null && Art.Lod("civilisation." + kind.Detail, d) is { } detail) { summer = off = detail; sScale = 1; }
+            if (summer == null) continue;
+            Blit(t, summer, 0, p.Variant % summer.Rows, gx - summer.PivotX * sScale, gy - summer.PivotY * sScale, sScale, 1);
+            var o = off ?? summer;
+            Blit(t, o, 0, p.Variant % o.Rows, gx - o.PivotX * sScale, gy - o.PivotY * sScale, sScale, 2);
+            if (cap != null) Blit(t, cap, 0, p.Variant % cap.Rows, gx - cap.PivotX * sScale, gy - cap.PivotY * sScale, sScale, 2);
         }
+    }
+
+    /// <summary>A field cell: ripe in season, stubble (16 px) or bare tilled soil off-season.</summary>
+    static void Crop(Target t, string crop, int gx, int gy)
+    {
+        int d = t.D;
+        if (crop == "grain" && d > Px && Art.Lod("civilisation.crop_grain_detail", d) is { } detail)
+        {
+            Blit(t, detail, 0, 0, gx - detail.PivotX, gy - detail.PivotY, 1, 1);
+            return;
+        }
+        int scale = d / Px;
+        if (Art.Get($"flora.crop_{crop}_ripe") is { } ripe) Blit(t, ripe, 0, 0, gx - ripe.PivotX * scale, gy - ripe.PivotY * scale, scale, 1);
+        if (d == Px && Art.Get($"flora.crop_{crop}_harvested") is { } stubble) Blit(t, stubble, 0, 0, gx - stubble.PivotX, gy - stubble.PivotY, 1, 2);
     }
 
     static string BurnedOf(string id)
     {
         foreach (var tree in new[] { "rainforest_giant", "jungle_tree", "broadleaf", "conifer", "acacia", "palm", "shrub" })
             if (id.StartsWith(tree)) return tree + "_burned";
-        return "stump";
+        return id is "pine" or "cedar" or "juniper" ? "conifer_burned" : id is "birch" or "willow" or "baobab" or "fruit_tree" or "mangrove" ? "broadleaf_burned" : "stump";
     }
 
     // ---- helpers --------------------------------------------------------------------------------
 
     /// <summary>
-    /// Copies one frame's slot indices into the world image (wrapping east-west). Layer 0 writes
-    /// the ground channel (R); layer 1 / 2 write in-season (G) / off-season (B) flora and mark A.
+    /// Copies one frame's slot indices into the region at global pixel (ox, oy), each art pixel
+    /// <paramref name="scale"/> x <paramref name="scale"/>. Layer 0 writes the ground channel (R);
+    /// layer 1 / 2 write in-season (G) / off-season (B) flora and mark A.
     /// </summary>
-    static void Blit(Sheet sheet, int frame, int row, int ox, int oy, byte[] px, int texW, int texH, int layer)
+    static void Blit(Target t, Sheet sheet, int frame, int row, int ox, int oy, int scale, int layer)
     {
-        if (row >= sheet.Rows) return;
-        for (int y = 0; y < sheet.FrameH; y++)
-        {
-            int ty = oy + y;
-            if (ty < 0 || ty >= texH) continue;
-            for (int x = 0; x < sheet.FrameW; x++)
+        if (row >= sheet.Rows || frame >= sheet.Frames) return;
+        int fw = sheet.FrameW, fh = sheet.FrameH;
+        // Quick reject: wholly above or below the region.
+        if (oy + fh * scale <= t.Y0 || oy >= t.Y0 + t.H) return;
+        for (int y = 0; y < fh; y++)
+            for (int x = 0; x < fw; x++)
             {
                 byte slot = sheet.Slot(frame, row, x, y);
                 if (slot == Art.Empty) continue;
-                int tx = ((ox + x) % texW + texW) % texW;
-                int o = (ty * texW + tx) * 4;
-                if (layer == 0) px[o] = slot;
-                else { px[o + layer] = slot; px[o + 3] |= (byte)layer; }
+                for (int sy = 0; sy < scale; sy++)
+                    for (int sx = 0; sx < scale; sx++)
+                        t.Put(ox + x * scale + sx, oy + y * scale + sy, slot, layer);
             }
-        }
     }
 
-    static uint Hash(int a, int b)
+    public static uint Hash(int a, int b)
     {
         uint h = (uint)(a * 374761393 + b * 668265263);
         h = (h ^ (h >> 13)) * 1274126177u;

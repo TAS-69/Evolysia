@@ -1,4 +1,5 @@
 using Evolysia.Sim;
+using Evolysia.Sim.Agents;
 using Evolysia.Sim.Core;
 using Godot;
 
@@ -84,7 +85,9 @@ public partial class Main : Node2D
         _camera.Changed += () =>
         {
             _target.CameraZoom = _camera.Zoom.X;
-            _tiles.SetZoom(_camera.Zoom.X);
+            var viewSize = GetViewportRect().Size / _camera.Zoom.X;
+            _tiles.SetView(_camera.Position, viewSize, _camera.Zoom.X);
+            _bands.View = new Rect2(_camera.Position - viewSize / 2f, viewSize);
             if (!Mathf.IsEqualApprox(_bands.CameraZoom, _camera.Zoom.X)) { _bands.CameraZoom = _camera.Zoom.X; _bands.QueueRedraw(); }
         };
 
@@ -102,6 +105,7 @@ public partial class Main : Node2D
         }
         if (_args.TryGetValue("select", out var what) && what is "band" or "agent") SelectForDemo(what);
         if (_args.GetValueOrDefault("demo") == "gods") DemoGods();
+        if (_args.GetValueOrDefault("demo") == "village") DemoVillage();
         if (_args.TryGetValue("zoom", out var zs) && float.TryParse(zs, System.Globalization.CultureInfo.InvariantCulture, out var zoom))
             _camera.Focus(_camera.Position, zoom);
         if (_args.TryGetValue("focus", out var fs) && fs.Split(',') is [var fx, var fy] && int.TryParse(fx, out var cx) && int.TryParse(fy, out var cy))
@@ -116,7 +120,7 @@ public partial class Main : Node2D
         _host.NewWorld(seed);
         var sim = _host.Sim!;
         _view.Bind(sim.World);
-        _tiles.Bind(sim.World);
+        _tiles.Bind(sim.World, Settlements.BakeInput(sim));
         _bands.Sim = sim;
         _voices.Attach(sim);
         _voicesShown = -1;
@@ -145,7 +149,7 @@ public partial class Main : Node2D
         if (_mapDirty || (sim.Day - _lastMapDay >= 5 && _mapTimer <= 0) || sim.Day < _lastMapDay)
         {
             _view.Redraw(sim);
-            _tiles.Redraw(sim, _view.Overlay);
+            _tiles.Redraw(sim, _view.Overlay, Settlements.BakeInput(sim));
             _lastMapDay = sim.Day;
             _mapDirty = false;
             _mapTimer = 0.33;
@@ -190,7 +194,7 @@ public partial class Main : Node2D
             int want = _args.TryGetValue("wait-voices", out var wv) && int.TryParse(wv, out var n) ? n : 0;
             int wantChoices = _args.TryGetValue("wait-choices", out var wc) && int.TryParse(wc, out var k) ? k : 0;
             _shotWait += delta;
-            bool ready = _voices.Recent.Count >= want && _voices.Recent.Count(v => v.Moment.Kind == "decision") >= wantChoices;
+            bool ready = _voices.Recent.Count >= want && _voices.Recent.Count(v => v.Moment.Kind == "decision") >= wantChoices && !_tiles.Busy;   // and the tile chunks under the view are baked
             if (ready && wantChoices > 0 && _host.SpeedIndex != 0) SetSpeed(0);   // freeze the moment for the picture
             if (ready || _shotWait > 240) { if (--_shotCountdown == 0) TakeScreenshot(); }
         }
@@ -417,6 +421,24 @@ public partial class Main : Node2D
     }
 
     /// <summary>--demo gods: show the faith loop on the largest band (wonders -> revelation -> dream).</summary>
+    /// <summary>
+    /// --demo village (screenshots only): the selected band settles and learns the later
+    /// techniques at once, so villages, fields, kilns and herds can be checked without simulating
+    /// centuries. Changes the simulation; never used in play.
+    /// </summary>
+    void DemoVillage()
+    {
+        var sim = _host.Sim!;
+        if (_sel != Selection.Band || !sim.Bands.TryGetValue(_selId, out var band)) return;
+        ulong all = 0;
+        foreach (var t in Enum.GetValues<TechId>()) if (t is not (TechId.Copper or TechId.Bronze)) all |= Techs.Bit(t);
+        foreach (int id in band.Members) if (sim.Living.TryGetValue(id, out var a)) a.Knows |= all;
+        band.Sedentary = true;
+        band.FoodPool = band.Members.Count * 20f;
+        _tiles.Redraw(sim, _view.Overlay, Settlements.BakeInput(sim));
+        _mapDirty = true;
+    }
+
     void DemoGods()
     {
         var sim = _host.Sim!;

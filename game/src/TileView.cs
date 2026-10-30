@@ -6,83 +6,296 @@ using Godot;
 namespace Evolysia.Game;
 
 /// <summary>
-/// The planet in Codex's 16 px tile art (assets/terrain, overlays, flora), drawn over the
-/// procedural <see cref="WorldView"/> when zoomed in. The art is baked once into slot indices
-/// (<see cref="TileBake"/>); every redraw only refreshes small per-cell textures (season row,
-/// snow, shade, tint) that tiles.gdshader turns into colour.
+/// The planet in Codex's tile art, drawn over the procedural <see cref="WorldView"/> when zoomed
+/// in. Three density levels share one layout: the whole planet baked at 16 px per cell, and, as
+/// the camera closes in, 32 and 64 px chunks baked in the background around the view
+/// (render_contract.json: up to 24 screen px per cell -> 16, up to 48 -> 32, beyond -> 64). Each
+/// level fades in over the one below, which stays visible until the finer chunks are ready. The
+/// art is baked to slot indices (<see cref="TileBake"/>); every redraw only refreshes small
+/// per-cell textures (season row, snow, shade, tint) that tiles.gdshader turns into colour.
 /// </summary>
-public partial class TileView : Sprite2D
+public partial class TileView : Node2D
 {
+    const int ChunkCells = 16;
+    static readonly string[] Animated = { "deep_water", "water", "shallow_water", "lava" };   // cell_c.b kinds 1..4
+
     WorldMap? _world;
-    ShaderMaterial? _material;
+    TileBake.Input? _input;
     Image? _cellA, _cellB, _cellC;
-    ImageTexture? _texA, _texB, _texC, _texWorld;
+    ImageTexture? _texA, _texB, _texC, _lut;
     byte[] _a = Array.Empty<byte>(), _b = Array.Empty<byte>(), _c = Array.Empty<byte>();
+    byte[] _kind = Array.Empty<byte>();     // per cell: animated material kind
     int[] _rows = Array.Empty<int>();       // per biome x season: lut_nature row
-    long _bakedAshSignature;
-    int _bakedDay = int.MinValue;
+    long _bakedSignature;
+    int _bakedDay = int.MinValue / 2, _version;
+    bool _desaturate;
+    float _zoom = 1f;
+    Vector2 _viewCentre, _viewSize;
+    readonly Level[] _levels = new Level[3];
 
-    public bool Active => _material != null;
-
-    public void Bind(WorldMap world)
+    /// <summary>One density: its shared shader inputs and its baked pieces (the whole planet at 16 px, chunks above).</summary>
+    sealed class Level
     {
-        _world = world;
-        foreach (var child in GetChildren()) child.QueueFree();
-        if (!Art.Available) { Visible = false; return; }
-        _material ??= new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/tiles.gdshader") };
-        Material = _material;
-        Centered = false;
-        Scale = Vector2.One * (Main.CellPx / (float)TileBake.Px);
-        TextureFilter = TextureFilterEnum.Nearest;
-        BuildRows();
+        public int D;
+        public ImageTexture Snow = null!, Ice = null!, Anim = null!, AnimSlots = null!;
+        public readonly Dictionary<(int, int), Chunk> Chunks = new();
+        public float Fade;
+        public Node2D Node = null!;   // levels draw in tree order, coarse under fine
+    }
 
+    sealed class Chunk
+    {
+        public int Cx, Cy, Cw, Ch, Version = -1, Pending = -1;
+        public Sprite2D? Sprite;
+        public ShaderMaterial? Material;
+        public ImageTexture? Texture;
+        public Task<byte[]>? Task;
+        public ulong LastSeen;
+    }
+
+    public bool Active => _world != null && Art.Available;
+    /// <summary>Chunks under the view are still baking.</summary>
+    public bool Busy { get; private set; }
+    /// <summary>The density currently drawn on top (16 when no finer chunks are showing).</summary>
+    public int Density => _zoom >= 6f ? 64 : _zoom >= 3f ? 32 : 16;
+
+    public void Bind(WorldMap world, TileBake.Input input)
+    {
+        foreach (var level in _levels.Where(l => l != null)) level.Node.QueueFree();
+        _world = world;
+        _input = input;
+        if (!Art.Available) { Visible = false; return; }
+        _ = Art.SlotNames;   // load the palette here, before any bake thread needs it
+        BuildRows();
         (_cellA, _texA, _a) = CellTexture(world);
         (_cellB, _texB, _b) = CellTexture(world);
         (_cellC, _texC, _c) = CellTexture(world);
-        _material.SetShaderParameter("lut", ImageTexture.CreateFromImage(Art.Nature.Image));
-        _material.SetShaderParameter("cell_a", _texA);
-        _material.SetShaderParameter("cell_b", _texB);
-        _material.SetShaderParameter("cell_c", _texC);
-        _material.SetShaderParameter("snow_tile", TileSlots("terrain.snow_plain"));
-        _material.SetShaderParameter("ice_tile", TileSlots("terrain.ice_plain"));
-        Bake(0);
+        _lut = ImageTexture.CreateFromImage(Art.Nature.Image);
+        for (int k = 0; k < 3; k++) _levels[k] = NewLevel(Art.Densities[k]);
+        _version = 0;
+        RefreshKinds();
+        _bakedSignature = Signature();
 
-        // The planet wraps east-west: a copy on each side, sharing texture and material.
-        int width = world.W * TileBake.Px;
+        // The 16 px level is the whole planet, baked now; it wraps east-west with a copy each side.
+        var whole = new Chunk { Cx = 0, Cy = 0, Cw = world.W, Ch = world.H };
+        _levels[0].Chunks[(0, 0)] = whole;
+        var started = Time.GetTicksMsec();
+        Finish(_levels[0], whole, TileBake.Bake(input, 16, 0, 0, world.W, world.H), 0);
+        GD.Print($"[tiles] baked {world.W}x{world.H} cells at 16 px in {Time.GetTicksMsec() - started} ms");
+        int width = world.W * Main.CellPx;
         foreach (int side in new[] { -1, 1 })
-            AddChild(new Sprite2D { Texture = _texWorld, Centered = false, Position = new Vector2(side * width, 0), UseParentMaterial = true });
+            whole.Sprite!.AddChild(new Sprite2D { Texture = whole.Texture, Centered = false, Position = new Vector2(side * width, 0) / whole.Sprite.Scale, UseParentMaterial = true });
     }
 
-    void Bake(int day)
+    Level NewLevel(int d)
+    {
+        var level = new Level { D = d, Node = new Node2D { Name = $"Density{d}" } };
+        AddChild(level.Node);
+        level.Snow = TileSlots(Art.Lod("landscape.snow_plain", d), d);
+        level.Ice = TileSlots(Art.Lod("landscape.ice_plain", d), d);
+        // Animated plains: 4 frames across, (kind x 4 variants) down; and which slots each kind owns.
+        var anim = new byte[4 * d * Animated.Length * 4 * d * 4];
+        var owned = new byte[256 * 4];
+        for (int k = 0; k < Animated.Length; k++)
+        {
+            if (Art.Lod($"landscape.{Animated[k]}_plain", d) is not { } sheet) continue;
+            for (int v = 0; v < 4; v++)
+                for (int f = 0; f < 4; f++)
+                    for (int y = 0; y < d; y++)
+                        for (int x = 0; x < d; x++)
+                        {
+                            byte slot = sheet.Slot(f % sheet.Frames, v % sheet.Rows, x, y);
+                            if (slot == Art.Empty) continue;
+                            int o = (((k * 4 + v) * d + y) * 4 * d + f * d + x) * 4;
+                            anim[o] = slot; anim[o + 3] = 255;
+                            owned[slot * 4] |= (byte)(1 << k);
+                            owned[slot * 4 + 3] = 255;
+                        }
+        }
+        level.Anim = ImageTexture.CreateFromImage(Image.CreateFromData(4 * d, Animated.Length * 4 * d, false, Image.Format.Rgba8, anim));
+        level.AnimSlots = ImageTexture.CreateFromImage(Image.CreateFromData(256, 1, false, Image.Format.Rgba8, owned));
+        return level;
+    }
+
+    /// <summary>Puts a finished bake on screen: the chunk's sprite, texture and shader inputs.</summary>
+    void Finish(Level level, Chunk chunk, byte[] px, int version)
+    {
+        int d = level.D;
+        var image = Image.CreateFromData(chunk.Cw * d, chunk.Ch * d, false, Image.Format.Rgba8, px);
+        if (chunk.Texture == null || chunk.Texture.GetWidth() != image.GetWidth()) chunk.Texture = ImageTexture.CreateFromImage(image);
+        else chunk.Texture.Update(image);
+        if (chunk.Sprite == null)
+        {
+            chunk.Material = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/tiles.gdshader") };
+            chunk.Sprite = new Sprite2D
+            {
+                Centered = false, Material = chunk.Material, TextureFilter = TextureFilterEnum.Nearest,
+                Scale = Vector2.One * (Main.CellPx / (float)d),
+            };
+            level.Node.AddChild(chunk.Sprite);
+            var m = chunk.Material;
+            m.SetShaderParameter("lut", _lut!);
+            m.SetShaderParameter("cell_a", _texA!);
+            m.SetShaderParameter("cell_b", _texB!);
+            m.SetShaderParameter("cell_c", _texC!);
+            m.SetShaderParameter("snow_tile", level.Snow);
+            m.SetShaderParameter("ice_tile", level.Ice);
+            m.SetShaderParameter("anim", level.Anim);
+            m.SetShaderParameter("anim_slots", level.AnimSlots);
+            m.SetShaderParameter("tile", d);
+            m.SetShaderParameter("origin", new Vector2I(chunk.Cx, chunk.Cy));
+            m.SetShaderParameter("cells", new Vector2I(_world!.W, _world.H));
+            m.SetShaderParameter("wrap", chunk.Cw == _world.W);
+            m.SetShaderParameter("fade", level.Fade);
+            m.SetShaderParameter("desaturate", _desaturate);
+        }
+        chunk.Sprite.Texture = chunk.Texture;
+        chunk.Material!.SetShaderParameter("world", chunk.Texture);
+        chunk.Version = version;
+        foreach (var copy in chunk.Sprite.GetChildren().OfType<Sprite2D>()) copy.Texture = chunk.Texture;
+    }
+
+    /// <summary>The camera moved or zoomed: which levels show, and which chunks they need.</summary>
+    public void SetView(Vector2 centre, Vector2 size, float zoom)
+    {
+        _zoom = zoom;
+        _viewCentre = centre;
+        _viewSize = size;
+        if (!Active) return;
+        _levels[0].Fade = Math.Clamp((zoom - 1.1f) / 0.5f, 0f, 1f);
+        _levels[1].Fade = Math.Clamp((zoom - 3f) / 0.35f, 0f, 1f);
+        _levels[2].Fade = Math.Clamp((zoom - 6f) / 0.6f, 0f, 1f);
+    }
+
+    public override void _Process(double delta)
+    {
+        if (!Active || _world == null) return;
+        ulong now = Time.GetTicksMsec();
+        bool coveredAbove = false;
+        bool busy = false;
+        for (int k = 2; k >= 0; k--)
+        {
+            var level = _levels[k];
+            bool wanted = level.Fade > 0f && Visible;
+            bool complete = true;
+            if (k > 0 && wanted) complete = UpdateChunks(level, now);
+            busy |= !complete;
+            foreach (var chunk in level.Chunks.Values)
+            {
+                if (chunk.Sprite == null) continue;
+                bool show = wanted && !coveredAbove && (k == 0 || chunk.LastSeen + 500 > now);
+                chunk.Sprite.Visible = show;
+                if (show) chunk.Material!.SetShaderParameter("fade", level.Fade);
+            }
+            // A finer level that is fully faded in and fully baked hides the coarser ones (saves fill).
+            if (wanted && level.Fade >= 1f && complete && k > 0) coveredAbove = true;
+        }
+        Busy = busy || _levels[0].Chunks[(0, 0)].Task != null;
+    }
+
+    /// <summary>Keeps the chunks under the view baked (nearest first, a few at a time in the background).</summary>
+    bool UpdateChunks(Level level, ulong now)
     {
         var w = _world!;
-        var started = Time.GetTicksMsec();
-        var px = TileBake.Bake(w);
-        var image = Image.CreateFromData(w.W * TileBake.Px, w.H * TileBake.Px, false, Image.Format.Rgba8, px);
-        if (_texWorld == null) _texWorld = ImageTexture.CreateFromImage(image);
-        else _texWorld.Update(image);
-        Texture = _texWorld;
-        _material!.SetShaderParameter("world", _texWorld);
-        _bakedAshSignature = AshSignature(w);
-        _bakedDay = day;
-        GD.Print($"[tiles] baked {w.W}x{w.H} cells in {Time.GetTicksMsec() - started} ms");
+        int chunksX = (w.W + ChunkCells - 1) / ChunkCells, chunksY = (w.H + ChunkCells - 1) / ChunkCells;
+        float cell = Main.CellPx;
+        var half = _viewSize / 2f + Vector2.One * cell;
+        int ux0 = (int)MathF.Floor((_viewCentre.X - half.X) / cell / ChunkCells), ux1 = (int)MathF.Floor((_viewCentre.X + half.X) / cell / ChunkCells);
+        int uy0 = Math.Max(0, (int)MathF.Floor((_viewCentre.Y - half.Y) / cell / ChunkCells)), uy1 = Math.Min(chunksY - 1, (int)MathF.Floor((_viewCentre.Y + half.Y) / cell / ChunkCells));
+        bool complete = true;
+        var needed = new List<(Chunk chunk, float distance)>();
+        for (int uy = uy0; uy <= uy1; uy++)
+            for (int ux = ux0; ux <= ux1; ux++)
+            {
+                int kx = ((ux % chunksX) + chunksX) % chunksX;
+                if (!level.Chunks.TryGetValue((kx, uy), out var chunk))
+                    level.Chunks[(kx, uy)] = chunk = new Chunk { Cx = kx * ChunkCells, Cy = uy * ChunkCells, Cw = Math.Min(ChunkCells, w.W - kx * ChunkCells), Ch = Math.Min(ChunkCells, w.H - uy * ChunkCells) };
+                chunk.LastSeen = now;
+                if (chunk.Sprite != null) chunk.Sprite.Position = new Vector2(ux * ChunkCells, uy * ChunkCells) * cell;
+                if (chunk.Version != _version) complete = false;
+                if (chunk.Version != _version && chunk.Task == null)
+                {
+                    var centre = (new Vector2(ux, uy) + Vector2.One * 0.5f) * ChunkCells * cell;
+                    needed.Add((chunk, centre.DistanceSquaredTo(_viewCentre)));
+                }
+            }
+        // Collect finished bakes; start new ones, nearest the centre of the view first.
+        int running = 0;
+        foreach (var chunk in level.Chunks.Values)
+        {
+            if (chunk.Task == null) continue;
+            if (chunk.Task.IsCompleted)
+            {
+                if (chunk.Task.IsCompletedSuccessfully) Finish(level, chunk, chunk.Task.Result, chunk.Pending);
+                else GD.PrintErr($"[tiles] chunk bake failed: {chunk.Task.Exception?.GetBaseException().Message}");
+                chunk.Task = null;
+            }
+            else running++;
+        }
+        foreach (var (chunk, _) in needed.OrderBy(n => n.distance))
+        {
+            if (running >= 3) break;
+            var input = _input!;
+            int d = level.D, cx = chunk.Cx, cy = chunk.Cy, cw = chunk.Cw, ch = chunk.Ch;
+            chunk.Pending = _version;
+            chunk.Task = Task.Run(() => TileBake.Bake(input, d, cx, cy, cw, ch));
+            running++;
+        }
+        Evict(level, now);
+        return complete;
     }
 
-    /// <summary>Show the art when zoomed in, fading to the smooth procedural map as you zoom out.</summary>
-    public void SetZoom(float zoom) => _material?.SetShaderParameter("fade", Math.Clamp((zoom - 1.1f) / 0.5f, 0f, 1f));
-
-    public void Redraw(Simulation sim, Overlay overlay)
+    /// <summary>Frees the chunks seen longest ago once a level holds more than it needs.</summary>
+    static void Evict(Level level, ulong now)
     {
-        if (_material == null || _world == null) return;
+        int keep = level.D >= 64 ? 24 : 40;
+        if (level.Chunks.Count <= keep) return;
+        foreach (var (key, chunk) in level.Chunks.Where(c => c.Value.Task == null && c.Value.LastSeen + 2000 < now)
+                                                 .OrderBy(c => c.Value.LastSeen).Take(level.Chunks.Count - keep).ToList())
+        {
+            chunk.Sprite?.QueueFree();
+            level.Chunks.Remove(key);
+        }
+    }
+
+    public void Redraw(Simulation sim, Overlay overlay, TileBake.Input input)
+    {
+        if (!Active || _world == null) return;
         Visible = overlay is Overlay.Biome or Overlay.Cultures;
         if (!Visible) return;
         var w = _world;
         int day = sim.Day;
-        // Eruptions and fires change the ground (ash, burned trees): rebake, at most monthly.
-        if (day - _bakedDay >= 30 && AshSignature(w) != _bakedAshSignature) Bake(day);
+        // Eruptions, fires and new fields change the ground: rebake, at most monthly.
+        if (day - _bakedDay >= 30)
+        {
+            _input = input;
+            long signature = Signature();
+            if (signature != _bakedSignature)
+            {
+                _bakedSignature = signature;
+                _bakedDay = day;
+                _version++;
+                RefreshKinds();
+                var whole = _levels[0].Chunks[(0, 0)];
+                int v = _version;
+                whole.Pending = v;
+                whole.Task ??= Task.Run(() => TileBake.Bake(input, 16, 0, 0, w.W, w.H));
+            }
+        }
+        var wholeChunk = _levels[0].Chunks[(0, 0)];
+        if (wholeChunk.Task is { IsCompleted: true } done)
+        {
+            if (done.IsCompletedSuccessfully) Finish(_levels[0], wholeChunk, done.Result, wholeChunk.Pending);
+            wholeChunk.Task = null;
+        }
 
         var territory = overlay == Overlay.Cultures ? WorldView.Territory(sim) : null;
-        _material.SetShaderParameter("desaturate", territory != null);
+        if (_desaturate != (territory != null))
+        {
+            _desaturate = territory != null;
+            foreach (var level in _levels)
+                foreach (var chunk in level.Chunks.Values) chunk.Material?.SetShaderParameter("desaturate", _desaturate);
+        }
         int doy = WorldMap.DayOfYear(day);
         for (int i = 0; i < w.Count; i++)
         {
@@ -119,7 +332,8 @@ public partial class TileView : Sprite2D
             else { _b[o] = _b[o + 1] = _b[o + 2] = _b[o + 3] = 0; }   // premultiplied, so edges blend cleanly
 
             _c[o] = (byte)(WorldView.Shade(w, i) * 128f);
-            _c[o + 1] = (byte)((off ? 1 : 0) | (w.IsWater(i) || w.Biome[i] == Biome.Lake ? 2 : 0));
+            _c[o + 1] = (byte)((off ? 1 : 0) | (w.IsWater(i) ? 2 : 0));
+            _c[o + 2] = cover > 0.5f ? (byte)0 : _kind[i];   // frozen water stays still
         }
         Upload(_cellA!, _texA!, _a);
         Upload(_cellB!, _texB!, _b);
@@ -127,6 +341,24 @@ public partial class TileView : Sprite2D
     }
 
     // ---- helpers --------------------------------------------------------------------------------
+
+    void RefreshKinds()
+    {
+        var w = _world!;
+        if (_kind.Length != w.Count) _kind = new byte[w.Count];
+        for (int i = 0; i < w.Count; i++) _kind[i] = (byte)(Array.IndexOf(Animated, TileBake.Material(_input!, i)) + 1);
+    }
+
+    /// <summary>What forces a rebake: volcanoes, ash and burns, and farmed fields.</summary>
+    long Signature()
+    {
+        var w = _world!;
+        long s = 0;
+        for (int i = 0; i < w.Count; i++)
+            if (w.Volcano[i] || (w.IsLand(i) && w.Ash[i] > 0.25f)) s = s * 31 + i + (w.Ash[i] > 0.3f ? 7 : 0);
+        foreach (var (cell, crop) in _input!.Fields.OrderBy(f => f.Key)) s = s * 37 + cell * 5 + crop.Length;
+        return s;
+    }
 
     static bool HasWetDry(Biome b) => b is Biome.Savanna or Biome.TropicalSeasonalForest or Biome.TropicalRainforest;
 
@@ -139,7 +371,7 @@ public partial class TileView : Sprite2D
             {
                 int row = Art.Nature.Row($"{Ids.Snake(b)}.{Ids.Snake(s)}");
                 if (row < 0) row = Art.Nature.Row($"{Ids.Snake(b)}.summer");
-                if (row < 0) row = Art.Nature.Row("temperate_forest.summer");   // the reference colouring
+                if (row < 0) row = Art.ReferenceRow;
                 _rows[(int)b * 6 + (int)s] = Math.Max(row, 0);
             }
     }
@@ -159,26 +391,17 @@ public partial class TileView : Sprite2D
         texture.Update(image);
     }
 
-    /// <summary>The first 16 x 16 frame of a sheet as slot indices in R (for snow and ice cover).</summary>
-    static ImageTexture TileSlots(string id)
+    /// <summary>The first frame of a plain tile as slot indices in R (for snow and ice cover).</summary>
+    static ImageTexture TileSlots(Sheet? sheet, int d)
     {
-        var sheet = Art.Need(id);
-        var bytes = new byte[TileBake.Px * TileBake.Px * 4];
-        for (int y = 0; y < TileBake.Px; y++)
-            for (int x = 0; x < TileBake.Px; x++)
-            {
-                byte slot = sheet.Slot(0, 0, x, y);
-                bytes[(y * TileBake.Px + x) * 4] = slot;
-                bytes[(y * TileBake.Px + x) * 4 + 3] = 255;
-            }
-        return ImageTexture.CreateFromImage(Image.CreateFromData(TileBake.Px, TileBake.Px, false, Image.Format.Rgba8, bytes));
-    }
-
-    static long AshSignature(WorldMap w)
-    {
-        long s = 0;
-        for (int i = 0; i < w.Count; i++)
-            if (w.Volcano[i] || (w.IsLand(i) && w.Ash[i] > 0.25f)) s = s * 31 + i + (w.Ash[i] > 0.3f ? 7 : 0);
-        return s;
+        var bytes = new byte[d * d * 4];
+        if (sheet != null)
+            for (int y = 0; y < d; y++)
+                for (int x = 0; x < d; x++)
+                {
+                    bytes[(y * d + x) * 4] = sheet.Slot(0, 0, x % sheet.FrameW, y % sheet.FrameH);
+                    bytes[(y * d + x) * 4 + 3] = 255;
+                }
+        return ImageTexture.CreateFromImage(Image.CreateFromData(d, d, false, Image.Format.Rgba8, bytes));
     }
 }

@@ -7,9 +7,10 @@ namespace Evolysia.Game;
 
 /// <summary>
 /// Draws every band at its cell. Zoomed out: wandering bands as circles, settled villages as squares,
-/// coloured by culture and sized by population. Zoomed in: the camp in Codex's 16 px art - shelters
-/// and fire by what the band knows, and a handful of its actual people. Notable events flash as
-/// expanding rings so the eye finds where history is happening.
+/// coloured by culture and sized by population. Zoomed in: the band's camp or village and its
+/// people going about their day (<see cref="Camps"/>), and the wildlife around them
+/// (<see cref="Wildlife"/>), in Codex's art at the density the zoom calls for (16, 32 or 64 px per
+/// cell). Notable events flash as expanding rings so the eye finds where history is happening.
 /// </summary>
 public partial class BandLayer : Node2D
 {
@@ -19,18 +20,17 @@ public partial class BandLayer : Node2D
 
     /// <summary>Zoom from which camps are drawn as art rather than markers.</summary>
     public const float CampZoom = 1.8f;
-    const float ArtScale = Main.CellPx / (float)TileBake.Px;   // world units per art pixel
+    /// <summary>The camera's view in world units (centre copy), for culling.</summary>
+    public Rect2 View;
 
     readonly List<(Vector2 pos, Color color, double born)> _pings = new();
     readonly Dictionary<int, ulong> _bandKnows = new();
-    readonly List<CampSprite> _camp = new();
+    readonly List<WorldSprite> _sprites = new();
     readonly Dictionary<int, Vector2> _spread = new();
-    int _knowsDay = int.MinValue, _animFrame = -1, _spreadDay = int.MinValue, _spreadCount;
+    int _knowsDay = int.MinValue, _spreadDay = int.MinValue, _spreadCount;
     static readonly Font Font = ThemeDB.FallbackFont;
 
-    record struct CampSprite(Vector2 Foot, Texture2D Texture, Rect2 Source, Vector2 Pivot, Color Modulate, float Shadow);
-
-    bool Camps => CameraZoom >= CampZoom && Art.Available;
+    bool ShowCamps => CameraZoom >= CampZoom && Art.Available;
 
     public override void _Ready()
     {
@@ -62,7 +62,7 @@ public partial class BandLayer : Node2D
             for (int k = 0; k < bands.Count; k++)
             {
                 float a = k * Mathf.Tau / bands.Count + group.Key * 0.9f;
-                _spread[bands[k].Id] = new Vector2(MathF.Cos(a), MathF.Sin(a) * 0.8f) * (3.5f + bands.Count * 0.8f);
+                _spread[bands[k].Id] = new Vector2(MathF.Cos(a), MathF.Sin(a) * 0.8f) * (10f + bands.Count * 3f);
             }
         }
     }
@@ -70,18 +70,14 @@ public partial class BandLayer : Node2D
     public static float Radius(Band band) => 0.9f + MathF.Sqrt(band.Members.Count) * 0.28f;
 
     /// <summary>How far from its position a band can be clicked: its marker, or its camp when zoomed in.</summary>
-    float HitRadius(Band band) => Camps ? 6f : Radius(band);
+    float HitRadius(Band band) => ShowCamps ? (band.Sedentary ? 18f : 8f) : Radius(band);
 
     public void Ping(Vector2 pos, Color color) => _pings.Add((pos, color, Time.GetTicksMsec() / 1000.0));
 
     public override void _Process(double delta)
     {
         if (_pings.Count > 0) QueueRedraw();
-        if (Camps)
-        {
-            int frame = (int)(Time.GetTicksMsec() / 1000.0 * 6.0);   // fires flicker at 6 fps, people idle at 3
-            if (frame != _animFrame) { _animFrame = frame; QueueRedraw(); }
-        }
+        if (ShowCamps) QueueRedraw();   // people walk and animals graze every frame
     }
 
     /// <summary>Width of the planet in world units; everything repeats every WrapWidth east-west.</summary>
@@ -102,7 +98,8 @@ public partial class BandLayer : Node2D
         float outline = 1f / MathF.Max(CameraZoom, 0.5f);
         double now = Time.GetTicksMsec() / 1000.0;
         _pings.RemoveAll(p => now - p.born > 2.5);
-        if (Camps && Sim.Day != _knowsDay) RefreshKnows();
+        if (ShowCamps && Sim.Day != _knowsDay) RefreshKnows();
+        if (ShowCamps) DrawCamps(outline, now);   // placed at the copy nearest the view already
         foreach (float offset in new[] { -WrapWidth, 0f, WrapWidth })
         {
             DrawSetTransform(new Vector2(offset, 0f));
@@ -113,8 +110,7 @@ public partial class BandLayer : Node2D
 
     void DrawWorld(float outline, double now)
     {
-        if (Camps) DrawCamps(outline, now);
-        else DrawMarkers(outline);
+        if (!ShowCamps) DrawMarkers(outline);
 
         DrawVoyages(outline);
         if (SelectedBandId >= 0 && Sim!.Bands.TryGetValue(SelectedBandId, out var selected)) DrawKnownShores(selected, outline);
@@ -151,74 +147,42 @@ public partial class BandLayer : Node2D
 
     // ---- camps ----------------------------------------------------------------------------------
 
-    static readonly Vector2[] ShelterSpots = { new(-4f, -2f), new(4f, -2f), new(-4.5f, 3f), new(4.5f, 3f) };
-
     void RefreshKnows()
     {
         _knowsDay = Sim!.Day;
         _bandKnows.Clear();
-        foreach (var band in Sim.Bands.Values)
-        {
-            ulong k = 0;
-            foreach (int id in band.Members) if (Sim.Living.TryGetValue(id, out var a)) k |= a.Knows;
-            _bandKnows[band.Id] = k;
-        }
+        foreach (var band in Sim.Bands.Values) _bandKnows[band.Id] = Settlements.Knows(Sim, band);
     }
+
+    /// <summary>What each band knows, refreshed daily while camps are shown.</summary>
+    public IReadOnlyDictionary<int, ulong> BandKnows => _bandKnows;
 
     void DrawCamps(float outline, double now)
     {
-        _camp.Clear();
-        foreach (var band in Sim!.Bands.Values) AddCamp(band, now);
-        _camp.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));   // y-sort: nearer things overlap farther ones
-        foreach (var s in _camp)
-            if (s.Shadow > 0f) DrawEllipse(s.Foot, s.Shadow, s.Shadow * 0.35f, new Color(0f, 0f, 0f, 0.28f));
-        foreach (var s in _camp)
-            DrawTextureRectRegion(s.Texture, new Rect2(s.Foot - s.Pivot * ArtScale, s.Source.Size * ArtScale), s.Source, s.Modulate);
+        _sprites.Clear();
+        int density = Art.DensityFor(CameraZoom);
+        var view = View.Grow(Main.CellPx * 6f);
+        var centre = View.GetCenter();
+        foreach (var band in Sim!.Bands.Values)
+        {
+            var pos = NearestCopy(BandPosition(band), centre);
+            if (!view.HasPoint(pos)) continue;
+            Camps.Add(new Camps.Context(Sim, band, pos, _bandKnows.GetValueOrDefault(band.Id), density, now, band.Id == SelectedBandId), _sprites);
+        }
+        Wildlife.Add(Sim, _bandKnows, View, density, now, _sprites);
+        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));   // y-sort: nearer things overlap farther ones
+        foreach (var s in _sprites)
+            if (s.Shadow > 0f) DrawEllipse(s.Foot, s.Shadow, s.Shadow * 0.35f, new Color(0f, 0f, 0f, 0.16f));
+        foreach (var s in _sprites)
+        {
+            var size = s.Source.Size * s.PixelSize;
+            var pivot = s.Flip ? new Vector2(s.Source.Size.X - s.Pivot.X, s.Pivot.Y) : s.Pivot;   // mirror about the foot
+            var topLeft = s.Foot - pivot * s.PixelSize;
+            var rect = s.Flip ? new Rect2(topLeft.X + size.X, topLeft.Y, -size.X, size.Y) : new Rect2(topLeft, size);
+            DrawTextureRectRegion(s.Texture, rect, s.Source, s.Modulate);
+        }
         if (SelectedBandId >= 0 && Sim.Bands.TryGetValue(SelectedBandId, out var selected))
-            DrawArc(BandPosition(selected), 7f, 0, Mathf.Tau, 32, Palette.Bone, outline * 1.5f);
-    }
-
-    void AddCamp(Band band, double now)
-    {
-        var w = Sim!.World;
-        var pos = BandPosition(band);
-        ulong knows = _bandKnows.GetValueOrDefault(band.Id);
-        bool Knows(TechId t) => (knows & Techs.Bit(t)) != 0;
-        var tint = band.PlagueUntil > Sim.Day ? new Color(0.85f, 1f, 0.7f) : Colors.White;
-        int n = band.Members.Count;
-
-        string shelter = band.Sedentary ? "pit_house" : Knows(TechId.Shelter) ? "hide_tent" : Knows(TechId.HideClothing) ? "lean_to" : "windbreak";
-        int shelters = Math.Clamp(1 + n / 10, 1, ShelterSpots.Length);
-        for (int k = 0; k < shelters; k++) AddStructure($"structures.{shelter}_complete", pos + ShelterSpots[k], 0, tint);
-        if (Knows(TechId.FoodStorage))
-            AddStructure(band.Sedentary && Knows(TechId.Agriculture) ? "structures.granary_complete" : "structures.storage_pit_complete", pos + new Vector2(0f, -3.8f), 0, tint);
-        if (Knows(TechId.ControlledFire)) AddStructure("structures.fire_pit_lit", pos + new Vector2(0f, 0.6f), (int)(now * 6.0), tint, shadow: false);
-
-        // A few of the band's real people, the leader first, standing round the fire.
-        int shown = Math.Min(n, Math.Min(8, 3 + n / 6));
-        bool cold = w.TempMean[band.Cell] < 8f;
-        int hue = Sim.Cultures[band.CultureId].Hue;
-        int placed = 0;
-        foreach (int id in band.Members.Where(m => m == band.LeaderId).Concat(band.Members.Where(m => m != band.LeaderId)))
-        {
-            if (placed >= shown) break;
-            if (!Sim.Living.TryGetValue(id, out var agent)) continue;
-            var texture = Figures.Texture(Figures.LookOf(agent, Sim.Day, hue, cold));
-            if (texture == null) return;
-            float angle = band.Id * 1.7f + placed * Mathf.Tau / shown;
-            var foot = pos + new Vector2(MathF.Cos(angle) * 2.6f, MathF.Sin(angle) * 1.8f + 0.8f);
-            int frame = (int)(now * Figures.IdleFps + id * 0.37) % Figures.IdleFrames;
-            _camp.Add(new CampSprite(foot, texture, new Rect2(frame * Figures.Size, 0, Figures.Size, Figures.Size),
-                                     new Vector2(Figures.PivotX, Figures.PivotY + 1), tint, 2.2f));
-            placed++;
-        }
-
-        void AddStructure(string id, Vector2 foot, int frame, Color modulate, bool shadow = true)
-        {
-            if (Art.Get(id) is not { } sheet) return;
-            _camp.Add(new CampSprite(foot, sheet.Texture, sheet.Region(frame % sheet.Frames, 0), new Vector2(sheet.PivotX, sheet.PivotY + 1),
-                                     modulate, shadow ? sheet.FrameW * ArtScale * 0.45f : 0f));
-        }
+            DrawArc(NearestCopy(BandPosition(selected), centre), selected.Sedentary ? 24f : 10f, 0, Mathf.Tau, 48, Palette.Bone, outline * 1.5f);
     }
 
     void DrawEllipse(Vector2 centre, float rx, float ry, Color color)
