@@ -6,6 +6,7 @@ public enum Power : byte
     Rain, Drought, Bless, Fertility, Heal, Game,                       // kindness
     Lightning, Wildfire, Flood, Earthquake, Blizzard, Plague, Meteor, Beasts, Curse,   // wrath
     Dream,                                                              // a word in someone's sleep
+    Message,                                                            // your own words, written, carved or sent as a vision
 }
 
 /// <summary>What a dream urges. The player's own words are flavour for the narrator; the kind decides the effect.</summary>
@@ -15,7 +16,7 @@ public enum PrayerNeed : byte { Rain, Food, Healing, Children, Protection }
 
 /// <summary>One act of the player, applied between days and logged for replay.</summary>
 public sealed record GodAction(Power Power, int Cell, int Radius = -1, int TargetAgentId = -1,
-                               DreamKind Dream = DreamKind.Worship, string Words = "");
+                               DreamKind Dream = DreamKind.Worship, string Words = "", MessageMedium Medium = MessageMedium.Ground);
 
 public sealed class Prayer
 {

@@ -1,8 +1,13 @@
+using Evolysia.Sim;
 using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>Top bar (date, stats, speed, overlays, new world), chronicle feed, inspector.</summary>
+/// <summary>
+/// The interface (refined dark earthy, see <see cref="Ui"/>): a slim top bar (date, numbers, minds,
+/// speed, overlay, new world), the powers bar grouped by kind, the chronicle on the right, the
+/// inspector on the left, voices below, and the dream and message dialogs.
+/// </summary>
 public partial class Hud : CanvasLayer
 {
     public Label Date = null!, Stats = null!, Perf = null!, VoiceStatus = null!;
@@ -13,112 +18,128 @@ public partial class Hud : CanvasLayer
     public OptionButton OverlayPick = null!;
     public LineEdit SeedEdit = null!;
     readonly List<Button> _speedButtons = new();
-
+    readonly Dictionary<Power, Button> _powerButtons = new();
     public event Action<string>? LinkClicked;
     public event Action<int>? SpeedChosen;
     public event Action<Overlay>? OverlayChosen;
-    public event Action<ulong>? NewWorldRequested;
+    public event Action? NewWorldRequested;
     public event Action? InspectorClosed;
 
-    // God powers
     public RichTextLabel PrayersList = null!;
     public Label PowerHint = null!;
-    public PanelContainer DreamDialog = null!;
+    public PanelContainer DreamDialog = null!, MessageDialog = null!;
     public OptionButton DreamKindPick = null!;
     public LineEdit DreamWords = null!;
-    readonly Dictionary<Evolysia.Sim.Power, Button> _powerButtons = new();
-    public event Action<Evolysia.Sim.Power?>? PowerPicked;
-    public event Action<Evolysia.Sim.DreamKind, string>? DreamSent;
+    public TextEdit MessageWords = null!;
+    OptionButton _messageMedium = null!;
+    Label _messageWhere = null!;
+
+    public event Action<Power?>? PowerPicked;
+    public event Action<DreamKind, string>? DreamSent;
+    /// <summary>The player's message: words and how they are given.</summary>
+    public event Action<string, MessageMedium>? MessageSent;
 
     public override void _Ready()
     {
-        var root = new Control { MouseFilter = Control.MouseFilterEnum.Ignore, Theme = BuildTheme() };
-        root.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+        var root = new Control { MouseFilter = Control.MouseFilterEnum.Ignore, Theme = Ui.Build() };
+        root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
         AddChild(root);
 
-        // ---- top bar
+        // ---- top bar: who and when on the left, controls on the right
         var top = new PanelContainer();
         top.SetAnchorsPreset(Control.LayoutPreset.TopWide);
-        top.OffsetBottom = 44;
+        top.OffsetLeft = 8; top.OffsetRight = -8; top.OffsetTop = 6; top.OffsetBottom = 46;
+        var topStyle = (StyleBoxFlat)root.Theme.GetStylebox("panel", "PanelContainer").Duplicate();
+        topStyle.SetContentMarginAll(6); topStyle.ContentMarginLeft = 14; topStyle.ContentMarginRight = 8;
+        top.AddThemeStyleboxOverride("panel", topStyle);
         root.AddChild(top);
         var bar = new HBoxContainer();
-        bar.AddThemeConstantOverride("separation", 14);
+        bar.AddThemeConstantOverride("separation", 12);
         top.AddChild(bar);
-        var title = new Label { Text = "EVOLYSIA" };
-        title.AddThemeColorOverride("font_color", Palette.Parchment);
-        title.AddThemeFontSizeOverride("font_size", 18);
+        var title = new Label { Text = Ui.Spaced("EVOLYSIA") };
+        title.AddThemeColorOverride("font_color", Palette.Divine);
+        title.AddThemeFontSizeOverride("font_size", 16);
         bar.AddChild(title);
-        bar.AddChild(Date = new Label { CustomMinimumSize = new Vector2(190, 0) });
+        bar.AddChild(Divider());
+        bar.AddChild(Date = new Label { CustomMinimumSize = new Vector2(170, 0) });
+        Date.AddThemeColorOverride("font_color", Palette.Parchment);
         bar.AddChild(Stats = new Label());
+        Stats.AddThemeColorOverride("font_color", Ui.Muted);
         bar.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill, MouseFilter = Control.MouseFilterEnum.Ignore });
         bar.AddChild(VoiceStatus = new Label { TooltipText = "Local language model that voices notable moments", MouseFilter = Control.MouseFilterEnum.Pass });
+        VoiceStatus.AddThemeFontSizeOverride("font_size", 12);
         StartModels = new Button { Text = "Start model", FocusMode = Control.FocusModeEnum.None, Visible = false,
                                    TooltipText = "Runs tools/llm_lab/lab.py serve (uses your lab profile)" };
         StartModels.Pressed += () => StartModelsRequested?.Invoke();
         bar.AddChild(StartModels);
         Minds = new Button { Text = "Minds", ToggleMode = true, ButtonPressed = true, FocusMode = Control.FocusModeEnum.None,
-                             TooltipText = "When on, pivotal choices (rejections, first contacts) are made by the local model in character. " +
+                             TooltipText = "When on, pivotal choices (rejections, first contacts, your messages) are made by the local model in character. " +
                                            "When off, by temperament alone." };
         Minds.AddThemeFontSizeOverride("font_size", 12);
         bar.AddChild(Minds);
-        bar.AddChild(Perf = new Label());
-        Perf.AddThemeColorOverride("font_color", Palette.Border.Lightened(0.3f));
+        bar.AddChild(Perf = new Label { CustomMinimumSize = new Vector2(64, 0), HorizontalAlignment = HorizontalAlignment.Right, MouseFilter = Control.MouseFilterEnum.Pass });
+        Perf.AddThemeColorOverride("font_color", new Color(Palette.Parchment, 0.45f));
+        Perf.AddThemeFontSizeOverride("font_size", 11);
 
-        string[] labels = { "II", "1×", "2×", "3×", "4×" };
-        string[] tips = { "Pause (Space)", "2 days/s", "10 days/s", "60 days/s", "360 days/s" };
-        for (int i = 0; i < labels.Length; i++)
+        // Speed: one segmented control.
+        var speeds = new HBoxContainer();
+        speeds.AddThemeConstantOverride("separation", 0);
+        var group = new ButtonGroup();
+        for (int i = 0; i < SimHost.SpeedNames.Length; i++)
         {
             int idx = i;
-            var b = new Button { Text = labels[i], ToggleMode = true, TooltipText = tips[i], CustomMinimumSize = new Vector2(36, 0), FocusMode = Control.FocusModeEnum.None };
+            var b = new Button
+            {
+                Text = SimHost.SpeedNames[i], ToggleMode = true, ButtonGroup = group, FocusMode = Control.FocusModeEnum.None,
+                CustomMinimumSize = new Vector2(i == 0 ? 30 : 38, 0),
+                TooltipText = i == 0 ? "Pause (Space)" : $"{SimHost.Speeds[i]:0} days a second (key {i})",
+            };
+            b.AddThemeFontSizeOverride("font_size", 12);
+            Segment(b, root.Theme, i == 0, i == SimHost.SpeedNames.Length - 1);
             b.Pressed += () => SpeedChosen?.Invoke(idx);
             _speedButtons.Add(b);
-            bar.AddChild(b);
+            speeds.AddChild(b);
         }
+        bar.AddChild(speeds);
 
         OverlayPick = new OptionButton { FocusMode = Control.FocusModeEnum.None, TooltipText = "Map overlay (Tab)" };
         foreach (var o in Enum.GetValues<Overlay>()) OverlayPick.AddItem(o.ToString(), (int)o);
         OverlayPick.ItemSelected += i => OverlayChosen?.Invoke((Overlay)(int)i);
         bar.AddChild(OverlayPick);
-
-        SeedEdit = new LineEdit { CustomMinimumSize = new Vector2(80, 0), PlaceholderText = "seed", TooltipText = "World seed (empty = random)" };
-        bar.AddChild(SeedEdit);
-        var newWorld = new Button { Text = "New world", FocusMode = Control.FocusModeEnum.None };
-        newWorld.Pressed += () =>
-        {
-            if (!ulong.TryParse(SeedEdit.Text, out var seed)) seed = (ulong)GD.Randi();
-            NewWorldRequested?.Invoke(seed);
-        };
+        SeedEdit = new LineEdit { Visible = false };   // the seed lives on the new-world screen
+        var newWorld = new Button { Text = "New world…", FocusMode = Control.FocusModeEnum.None, TooltipText = "Choose a planet and its first peoples" };
+        newWorld.Pressed += () => NewWorldRequested?.Invoke();
         bar.AddChild(newWorld);
 
         // ---- chronicle (right)
         var right = new PanelContainer();
         right.SetAnchorsPreset(Control.LayoutPreset.RightWide);
-        right.OffsetLeft = -380; right.OffsetTop = 52; right.OffsetBottom = -8; right.OffsetRight = -8;
+        right.OffsetLeft = -360; right.OffsetTop = 54; right.OffsetBottom = -8; right.OffsetRight = -8;
         root.AddChild(right);
         var rv = new VBoxContainer();
+        rv.AddThemeConstantOverride("separation", 8);
         right.AddChild(rv);
         PrayersList = new RichTextLabel { BbcodeEnabled = true, FitContent = true, ScrollActive = false, Visible = false, FocusMode = Control.FocusModeEnum.None };
         PrayersList.MetaClicked += meta => LinkClicked?.Invoke(meta.AsString());
         rv.AddChild(PrayersList);
-        rv.AddChild(Header("Chronicle"));
         Feed = Rich();
+        Feed.MetaUnderlined = false;   // every line is a link; the bullet colour says what kind
+        rv.AddChild(HeadRow(right, "Chronicle", Feed));
         rv.AddChild(Feed);
 
         // ---- inspector (left)
         InspectorPanel = new PanelContainer { Visible = false };
         InspectorPanel.SetAnchorsPreset(Control.LayoutPreset.LeftWide);
-        InspectorPanel.OffsetLeft = 8; InspectorPanel.OffsetRight = 420; InspectorPanel.OffsetTop = 52; InspectorPanel.OffsetBottom = -8;
+        InspectorPanel.OffsetLeft = 8; InspectorPanel.OffsetRight = 412; InspectorPanel.OffsetTop = 54; InspectorPanel.OffsetBottom = -8;
         root.AddChild(InspectorPanel);
         var lv = new VBoxContainer();
         InspectorPanel.AddChild(lv);
-        var head = new HBoxContainer();
-        head.AddChild(Header("Inspector"));
-        head.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
-        var close = new Button { Text = "✕", FocusMode = Control.FocusModeEnum.None, TooltipText = "Close (Esc)" };
+        Inspector = Rich();
+        var head = HeadRow(InspectorPanel, "Inspector", Inspector);
+        var close = new Button { Text = "✕", Flat = true, FocusMode = Control.FocusModeEnum.None, TooltipText = "Close (Esc)" };
         close.Pressed += () => InspectorClosed?.Invoke();
         head.AddChild(close);
         lv.AddChild(head);
-        Inspector = Rich();
         lv.AddChild(Inspector);
 
         BuildPowers(root);
@@ -126,87 +147,226 @@ public partial class Hud : CanvasLayer
         // ---- voices (bottom centre)
         var voices = new PanelContainer();
         voices.SetAnchorsPreset(Control.LayoutPreset.BottomWide);
-        voices.OffsetLeft = 428; voices.OffsetRight = -388; voices.OffsetTop = -236; voices.OffsetBottom = -32;
+        voices.OffsetLeft = 420; voices.OffsetRight = -368; voices.OffsetTop = -150; voices.OffsetBottom = -30;
         root.AddChild(voices);
         var vv = new VBoxContainer();
         voices.AddChild(vv);
-        vv.AddChild(Header("Voices"));
         Voices = Rich();
+        vv.AddChild(HeadRow(voices, "Voices", Voices));
         vv.AddChild(Voices);
 
         var help = new Label
         {
-            Text = "Right-drag / WASD: pan   Wheel: zoom   Click: inspect   Space: pause   1-4: speed   Tab: overlay",
+            Text = "Right-drag / WASD pan  ·  wheel zoom  ·  click inspect  ·  Space pause  ·  1-6 speed  ·  Tab overlay",
             MouseFilter = Control.MouseFilterEnum.Ignore,
         };
-        help.AddThemeColorOverride("font_color", new Color(Palette.Bone, 0.55f));
-        help.AddThemeFontSizeOverride("font_size", 12);
+        help.AddThemeColorOverride("font_color", new Color(Palette.Bone, 0.4f));
+        help.AddThemeFontSizeOverride("font_size", 11);
         help.SetAnchorsPreset(Control.LayoutPreset.BottomLeft);
-        help.OffsetLeft = 12; help.OffsetTop = -26;
+        help.OffsetLeft = 14; help.OffsetTop = -22;
         root.AddChild(help);
+    }
+
+    /// <summary>
+    /// A panel's heading with a collapse arrow: collapsed, the body hides and the panel shrinks to
+    /// its heading (towards the screen edge it is anchored to).
+    /// </summary>
+    HBoxContainer HeadRow(PanelContainer panel, string title, Control body)
+    {
+        var row = new HBoxContainer();
+        var fold = new Button { Text = "▾", Flat = true, FocusMode = Control.FocusModeEnum.None, TooltipText = "Collapse" };
+        fold.AddThemeColorOverride("font_color", new Color(Palette.Ochre, 0.8f));
+        fold.AddThemeFontSizeOverride("font_size", 12);
+        row.AddChild(fold);
+        var heading = Ui.Heading(title);
+        heading.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        heading.MouseFilter = Control.MouseFilterEnum.Stop;   // the heading itself also folds
+        heading.GuiInput += e => { if (e is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left }) fold.EmitSignal(BaseButton.SignalName.Pressed); };
+        row.AddChild(heading);
+        float anchorTop = panel.AnchorTop, anchorBottom = panel.AnchorBottom, top = panel.OffsetTop, bottom = panel.OffsetBottom;
+        bool fromBottom = anchorTop >= 1f;
+        _folds[title.ToLowerInvariant()] = fold;
+        fold.Pressed += () =>
+        {
+            bool collapse = body.Visible;
+            body.Visible = !collapse;
+            fold.Text = collapse ? "▸" : "▾";
+            fold.TooltipText = collapse ? "Expand" : "Collapse";
+            if (collapse && fromBottom) { panel.GrowVertical = Control.GrowDirection.Begin; panel.OffsetTop = bottom; }
+            else if (collapse) { panel.GrowVertical = Control.GrowDirection.End; panel.AnchorBottom = anchorTop; panel.OffsetBottom = top; }
+            else { panel.AnchorBottom = anchorBottom; panel.OffsetTop = top; panel.OffsetBottom = bottom; }
+        };
+        return row;
+    }
+
+    readonly Dictionary<string, Button> _folds = new();
+
+    /// <summary>Collapses or expands a panel by its heading (inspector, chronicle, voices).</summary>
+    public void Fold(string panel)
+    {
+        if (_folds.TryGetValue(panel.ToLowerInvariant(), out var b)) b.EmitSignal(BaseButton.SignalName.Pressed);
+    }
+
+    static Control Divider()
+    {
+        var d = new ColorRect { Color = new Color(Palette.Border, 0.6f), CustomMinimumSize = new Vector2(1, 22), MouseFilter = Control.MouseFilterEnum.Ignore };
+        d.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+        return d;
+    }
+
+    /// <summary>Squares off a button's inner corners so a row of them reads as one control.</summary>
+    static void Segment(Button b, Theme theme, bool first, bool last)
+    {
+        foreach (var state in new[] { "normal", "hover", "pressed", "hover_pressed" })
+        {
+            var sb = (StyleBoxFlat)theme.GetStylebox(state, "Button").Duplicate();
+            if (!first) { sb.CornerRadiusTopLeft = 0; sb.CornerRadiusBottomLeft = 0; }
+            if (!last) { sb.CornerRadiusTopRight = 0; sb.CornerRadiusBottomRight = 0; }
+            b.AddThemeStyleboxOverride(state, sb);
+        }
     }
 
     void BuildPowers(Control root)
     {
         var panel = new PanelContainer();
         panel.SetAnchorsPreset(Control.LayoutPreset.CenterTop);
-        panel.OffsetTop = 52;
+        panel.OffsetTop = 54;
         panel.GrowHorizontal = Control.GrowDirection.Both;
+        var style = (StyleBoxFlat)root.Theme.GetStylebox("panel", "PanelContainer").Duplicate();
+        style.SetContentMarginAll(6);
+        panel.AddThemeStyleboxOverride("panel", style);
         root.AddChild(panel);
         var col = new VBoxContainer();
         panel.AddChild(col);
         var row = new HBoxContainer();
-        row.AddThemeConstantOverride("separation", 3);
+        row.AddThemeConstantOverride("separation", 1);
         col.AddChild(row);
-        foreach (var p in Enum.GetValues<Evolysia.Sim.Power>())
+        // Kindness, wrath, then the word: grouped and tinted by kind.
+        var groups = new[]
         {
-            var power = p;
-            bool kind = Evolysia.Sim.Powers.IsKind(p);
-            var b = new Button
+            (Power[])[Power.Rain, Power.Drought, Power.Bless, Power.Fertility, Power.Heal, Power.Game],
+            [Power.Lightning, Power.Wildfire, Power.Flood, Power.Earthquake, Power.Blizzard, Power.Plague, Power.Meteor, Power.Beasts, Power.Curse],
+            [Power.Dream, Power.Message],
+        };
+        for (int g = 0; g < groups.Length; g++)
+        {
+            if (g > 0) row.AddChild(Divider());
+            foreach (var p in groups[g])
             {
-                Text = PowerLabel(p), ToggleMode = true, FocusMode = Control.FocusModeEnum.None,
-                TooltipText = PowerTip(p),
-            };
-            b.AddThemeColorOverride("font_color", kind ? Palette.Divine : p == Evolysia.Sim.Power.Dream ? new Color("9fd3e6") : new Color("e08a6e"));
-            b.AddThemeFontSizeOverride("font_size", 12);
-            b.Toggled += on => PowerPicked?.Invoke(on ? power : null);
-            _powerButtons[p] = b;
-            row.AddChild(b);
+                var power = p;
+                var colour = PowerColour(p);
+                var b = new Button { Text = PowerLabel(p), ToggleMode = true, FocusMode = Control.FocusModeEnum.None, TooltipText = PowerTip(p) };
+                b.AddThemeColorOverride("font_color", colour);
+                b.AddThemeColorOverride("font_hover_color", colour.Lightened(0.25f));
+                b.AddThemeColorOverride("font_pressed_color", Palette.Bone);
+                b.AddThemeFontSizeOverride("font_size", 12);
+                foreach (var state in new[] { "normal", "hover", "disabled" })
+                {
+                    var sb = (StyleBoxFlat)root.Theme.GetStylebox(state, "Button").Duplicate();
+                    sb.ContentMarginLeft = sb.ContentMarginRight = 5;
+                    if (state != "hover") { sb.BgColor = new Color(0, 0, 0, 0); sb.BorderColor = new Color(0, 0, 0, 0); }
+                    b.AddThemeStyleboxOverride(state, sb);
+                }
+                var pressed = (StyleBoxFlat)Ui.Card(colour);
+                pressed.BgColor = new Color(colour, 0.22f);
+                pressed.SetContentMarginAll(6);
+                pressed.ContentMarginLeft = pressed.ContentMarginRight = 5;
+                b.AddThemeStyleboxOverride("pressed", pressed);
+                b.AddThemeStyleboxOverride("hover_pressed", pressed);
+                b.Toggled += on => PowerPicked?.Invoke(on ? power : null);
+                _powerButtons[p] = b;
+                row.AddChild(b);
+            }
         }
         PowerHint = new Label { HorizontalAlignment = HorizontalAlignment.Center, Visible = false };
         PowerHint.AddThemeColorOverride("font_color", Palette.Parchment);
         PowerHint.AddThemeFontSizeOverride("font_size", 12);
         col.AddChild(PowerHint);
 
-        // Dream dialog
-        DreamDialog = new PanelContainer { Visible = false };
-        DreamDialog.SetAnchorsPreset(Control.LayoutPreset.Center);
-        DreamDialog.GrowHorizontal = Control.GrowDirection.Both;
-        DreamDialog.GrowVertical = Control.GrowDirection.Both;
-        DreamDialog.CustomMinimumSize = new Vector2(440, 0);
-        root.AddChild(DreamDialog);
-        var dv = new VBoxContainer();
-        dv.AddThemeConstantOverride("separation", 8);
-        DreamDialog.AddChild(dv);
-        dv.AddChild(Header("Send a dream"));
+        // ---- dream dialog
+        DreamDialog = Dialog(root, "Send a dream", 440);
+        var dv = (VBoxContainer)DreamDialog.GetChild(0);
         DreamKindPick = new OptionButton { FocusMode = Control.FocusModeEnum.None };
-        foreach (var k in Enum.GetValues<Evolysia.Sim.DreamKind>()) DreamKindPick.AddItem(DreamLabel(k), (int)k);
+        foreach (var k in Enum.GetValues<DreamKind>()) DreamKindPick.AddItem(DreamLabel(k), (int)k);
         dv.AddChild(DreamKindPick);
         DreamWords = new LineEdit { PlaceholderText = "Words they hear in the dream (optional)", MaxLength = 200 };
         dv.AddChild(DreamWords);
-        var buttons = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.End };
-        var cancel = new Button { Text = "Cancel", FocusMode = Control.FocusModeEnum.None };
-        cancel.Pressed += () => { DreamDialog.Visible = false; ShowPower(null); };
-        var send = new Button { Text = "Send dream", FocusMode = Control.FocusModeEnum.None };
-        send.Pressed += () =>
+        dv.AddChild(Buttons(() => { DreamDialog.Visible = false; ShowPower(null); }, "Send dream", () =>
         {
             DreamDialog.Visible = false;
-            DreamSent?.Invoke((Evolysia.Sim.DreamKind)DreamKindPick.GetSelectedId(), DreamWords.Text);
+            DreamSent?.Invoke((DreamKind)DreamKindPick.GetSelectedId(), DreamWords.Text);
             DreamWords.Text = "";
-        };
-        buttons.AddChild(cancel);
-        buttons.AddChild(send);
-        dv.AddChild(buttons);
+        }));
+
+        // ---- message dialog
+        MessageDialog = Dialog(root, "Leave a message", 480);
+        var mv = (VBoxContainer)MessageDialog.GetChild(0);
+        _messageWhere = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        _messageWhere.AddThemeColorOverride("font_color", Ui.Muted);
+        mv.AddChild(_messageWhere);
+        MessageWords = new TextEdit { PlaceholderText = "Your words, as they will appear", CustomMinimumSize = new Vector2(0, 96), WrapMode = TextEdit.LineWrappingMode.Boundary };
+        mv.AddChild(MessageWords);
+        _messageMedium = new OptionButton { FocusMode = Control.FocusModeEnum.None };
+        _messageMedium.AddItem("Written on the ground (fades in decades)", (int)MessageMedium.Ground);
+        _messageMedium.AddItem("Carved in a standing stone (lasts while it stands)", (int)MessageMedium.Stone);
+        _messageMedium.AddItem("Sent as a vision to everyone near", (int)MessageMedium.Vision);
+        mv.AddChild(_messageMedium);
+        var note = new Label { Text = "Each who reads it will take it their own way. You may speak like this once in 250 years.", AutowrapMode = TextServer.AutowrapMode.WordSmart };
+        note.AddThemeColorOverride("font_color", new Color(Palette.Divine, 0.75f));
+        note.AddThemeFontSizeOverride("font_size", 12);
+        mv.AddChild(note);
+        mv.AddChild(Buttons(() => { MessageDialog.Visible = false; ShowPower(null); }, "Leave it", () =>
+        {
+            if (MessageWords.Text.Trim().Length == 0) return;
+            MessageDialog.Visible = false;
+            MessageSent?.Invoke(MessageWords.Text.Trim(), (MessageMedium)_messageMedium.GetSelectedId());
+            MessageWords.Text = "";
+        }));
+    }
+
+    static PanelContainer Dialog(Control root, string title, float width)
+    {
+        var d = new PanelContainer { Visible = false, CustomMinimumSize = new Vector2(width, 0) };
+        d.SetAnchorsPreset(Control.LayoutPreset.Center);
+        d.GrowHorizontal = Control.GrowDirection.Both;
+        d.GrowVertical = Control.GrowDirection.Both;
+        root.AddChild(d);
+        var v = new VBoxContainer();
+        v.AddThemeConstantOverride("separation", 10);
+        d.AddChild(v);
+        v.AddChild(Ui.Heading(title));
+        return d;
+    }
+
+    static HBoxContainer Buttons(Action cancel, string ok, Action send)
+    {
+        var row = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.End };
+        row.AddThemeConstantOverride("separation", 8);
+        var c = new Button { Text = "Cancel", FocusMode = Control.FocusModeEnum.None };
+        c.Pressed += cancel;
+        var s = new Button { Text = ok, FocusMode = Control.FocusModeEnum.None };
+        s.AddThemeColorOverride("font_color", Palette.Divine);
+        s.Pressed += send;
+        row.AddChild(c);
+        row.AddChild(s);
+        return row;
+    }
+
+    /// <summary>Opens the message dialog for a chosen place.</summary>
+    public void AskMessage(string where)
+    {
+        _messageWhere.Text = where;
+        MessageDialog.Visible = true;
+        MessageWords.GrabFocus();
+    }
+
+    /// <summary>The message button shows how long until it can be used again.</summary>
+    public void ShowMessageCharge(int yearsLeft)
+    {
+        if (!_powerButtons.TryGetValue(Power.Message, out var b)) return;
+        b.Text = yearsLeft > 0 ? $"Message · {yearsLeft}y" : "Message";
+        b.TooltipText = yearsLeft > 0 ? $"Your words can be given again in {yearsLeft} years" : PowerTip(Power.Message);
+        b.Disabled = yearsLeft > 0;
     }
 
     public void Hint(string text)
@@ -215,47 +375,51 @@ public partial class Hud : CanvasLayer
         PowerHint.Visible = text.Length > 0;
     }
 
-    public void ShowPower(Evolysia.Sim.Power? active)
+    public void ShowPower(Power? active)
     {
         foreach (var (p, b) in _powerButtons) b.SetPressedNoSignal(p == active);
     }
 
-    static string PowerLabel(Evolysia.Sim.Power p) => p switch
+    static Color PowerColour(Power p) =>
+        Powers.IsKind(p) ? Palette.Divine : p is Power.Dream or Power.Message ? new Color("9fd3e6") : new Color("e08a6e");
+
+    static string PowerLabel(Power p) => p switch
     {
-        Evolysia.Sim.Power.Wildfire => "Fire",
-        Evolysia.Sim.Power.Earthquake => "Quake",
-        Evolysia.Sim.Power.Fertility => "Fertile",
-        Evolysia.Sim.Power.Lightning => "Bolt",
+        Power.Wildfire => "Fire",
+        Power.Earthquake => "Quake",
+        Power.Fertility => "Fertile",
+        Power.Lightning => "Bolt",
         _ => p.ToString(),
     };
 
-    static string PowerTip(Evolysia.Sim.Power p) => p switch
+    static string PowerTip(Power p) => p switch
     {
-        Evolysia.Sim.Power.Rain => "Rain for a year over a wide area: ends droughts, feeds the land",
-        Evolysia.Sim.Power.Drought => "Withhold the rains for a year",
-        Evolysia.Sim.Power.Bless => "Abundance: wild food and game fill the land; stores overflow",
-        Evolysia.Sim.Power.Fertility => "A year in which many children are born",
-        Evolysia.Sim.Power.Heal => "Cure every sickness in a band, end its plague",
-        Evolysia.Sim.Power.Game => "Herds multiply, permanently richer hunting",
-        Evolysia.Sim.Power.Lightning => "Strike one band from a clear sky",
-        Evolysia.Sim.Power.Wildfire => "Set the land ablaze",
-        Evolysia.Sim.Power.Flood => "Raise the waters out of season",
-        Evolysia.Sim.Power.Earthquake => "Shake the ground; homes fall",
-        Evolysia.Sim.Power.Blizzard => "Snow and killing cold",
-        Evolysia.Sim.Power.Plague => "A wasting sickness in one band (it can spread)",
-        Evolysia.Sim.Power.Meteor => "A falling star: devastation, ash, a cooler world; seen from far away",
-        Evolysia.Sim.Power.Beasts => "Predators gather, permanently more dangerous land",
-        Evolysia.Sim.Power.Curse => "Curse the selected person: sickness, shame, misfortune",
+        Power.Rain => "Rain for a year over a wide area: ends droughts, feeds the land",
+        Power.Drought => "Withhold the rains for a year",
+        Power.Bless => "Abundance: wild food and game fill the land; stores overflow",
+        Power.Fertility => "A year in which many children are born",
+        Power.Heal => "Cure every sickness in a band, end its plague",
+        Power.Game => "Herds multiply, permanently richer hunting",
+        Power.Lightning => "Strike one band from a clear sky",
+        Power.Wildfire => "Set the land ablaze",
+        Power.Flood => "Raise the waters out of season",
+        Power.Earthquake => "Shake the ground; homes fall",
+        Power.Blizzard => "Snow and killing cold",
+        Power.Plague => "A wasting sickness in one band (it can spread)",
+        Power.Meteor => "A falling star: devastation, ash, a cooler world; seen from far away",
+        Power.Beasts => "Predators gather, permanently more dangerous land",
+        Power.Curse => "Curse the selected person: sickness, shame, misfortune",
+        Power.Message => "Your own words, written on the ground, carved in stone or sent as a vision. Whoever reads them takes them their own way. Once in 250 years.",
         _ => "Speak to the selected person in a dream",
     };
 
-    static string DreamLabel(Evolysia.Sim.DreamKind k) => k switch
+    static string DreamLabel(DreamKind k) => k switch
     {
-        Evolysia.Sim.DreamKind.Worship => "Worship me (they become your prophet)",
-        Evolysia.Sim.DreamKind.Leave => "Leave this place (leads or splits the band)",
-        Evolysia.Sim.DreamKind.Peace => "Make peace (grudges and anger fall away)",
-        Evolysia.Sim.DreamKind.Seek => "Seek new things (a burst of invention)",
-        Evolysia.Sim.DreamKind.Courage => "Fear nothing (fears melt, courage grows)",
+        DreamKind.Worship => "Worship me (they become your prophet)",
+        DreamKind.Leave => "Leave this place (leads or splits the band)",
+        DreamKind.Peace => "Make peace (grudges and anger fall away)",
+        DreamKind.Seek => "Seek new things (a burst of invention)",
+        DreamKind.Courage => "Fear nothing (fears melt, courage grows)",
         _ => "Love (grief eases, love grows)",
     };
 
@@ -270,52 +434,8 @@ public partial class Hud : CanvasLayer
         return r;
     }
 
-    static Label Header(string text)
-    {
-        var l = new Label { Text = text.ToUpper() };
-        l.AddThemeColorOverride("font_color", Palette.Ochre);
-        l.AddThemeFontSizeOverride("font_size", 13);
-        return l;
-    }
-
     public void ShowSpeed(int index)
     {
         for (int i = 0; i < _speedButtons.Count; i++) _speedButtons[i].SetPressedNoSignal(i == index);
-    }
-
-    static Theme BuildTheme()
-    {
-        var theme = new Theme();
-        StyleBoxFlat Box(Color bg, Color border, int margin = 8)
-        {
-            var sb = new StyleBoxFlat { BgColor = bg, BorderColor = border };
-            sb.SetBorderWidthAll(1);
-            sb.SetCornerRadiusAll(3);
-            sb.SetContentMarginAll(margin);
-            return sb;
-        }
-        theme.SetStylebox("panel", "PanelContainer", Box(Palette.Panel, Palette.Border, 10));
-        theme.SetStylebox("normal", "Button", Box(Palette.Raised, Palette.Border, 5));
-        theme.SetStylebox("hover", "Button", Box(Palette.Raised.Lightened(0.12f), Palette.Ochre, 5));
-        theme.SetStylebox("pressed", "Button", Box(Palette.Ochre.Darkened(0.25f), Palette.Ochre, 5));
-        theme.SetStylebox("hover_pressed", "Button", Box(Palette.Ochre.Darkened(0.15f), Palette.Ochre, 5));
-        theme.SetStylebox("focus", "Button", new StyleBoxEmpty());
-        theme.SetStylebox("normal", "LineEdit", Box(Palette.Bg, Palette.Border, 5));
-        theme.SetStylebox("normal", "OptionButton", Box(Palette.Raised, Palette.Border, 5));
-        theme.SetStylebox("hover", "OptionButton", Box(Palette.Raised.Lightened(0.12f), Palette.Ochre, 5));
-        theme.SetStylebox("pressed", "OptionButton", Box(Palette.Raised, Palette.Ochre, 5));
-        theme.SetStylebox("panel", "PopupMenu", Box(Palette.Panel, Palette.Border, 6));
-        foreach (var type in new[] { "Label", "Button", "LineEdit", "OptionButton", "PopupMenu" })
-        {
-            theme.SetColor("font_color", type, Palette.Bone);
-            theme.SetFontSize("font_size", type, 14);
-        }
-        theme.SetColor("font_hover_color", "Button", Palette.Bone);
-        theme.SetColor("font_pressed_color", "Button", Palette.Bone);
-        theme.SetColor("default_color", "RichTextLabel", Palette.Bone);
-        theme.SetFontSize("normal_font_size", "RichTextLabel", 14);
-        theme.SetFontSize("bold_font_size", "RichTextLabel", 14);
-        theme.SetFontSize("italics_font_size", "RichTextLabel", 14);
-        return theme;
     }
 }

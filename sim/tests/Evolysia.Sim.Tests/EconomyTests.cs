@@ -48,7 +48,7 @@ public class EconomyTests
         Assert.Equal(2f, inv.Get("nuts"), 3);
         var other = new Inventory();
         inv.MoveFraction(other, 0.5f);
-        Assert.Equal(inv.FoodValue + other.FoodValue, 2.9f, 3);
+        Assert.Equal(2.9f, inv.FoodValue + other.FoodValue, 3);
     }
 
     [Fact]

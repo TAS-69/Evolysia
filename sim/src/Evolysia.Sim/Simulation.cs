@@ -25,7 +25,7 @@ public sealed partial class Simulation
     /// </summary>
     public Rng Rng => t_rng ?? _mainRng;
 
-    sealed class DayBuffer { public readonly List<Action> Deferred = new(); }
+    sealed class DayBuffer { public readonly List<Action> Deferred = new(); public readonly long[] Ticks = new long[8]; }
 
     /// <summary>Run now, or, inside a parallel band day, after all bands finish (in band order).</summary>
     internal void Later(Action action)
@@ -81,16 +81,62 @@ public sealed partial class Simulation
                 good.Add(i);
         if (good.Count == 0)
             for (int i = 0; i < w.Count; i++) if (w.IsLand(i) && w.PlantK[i] > 0f) good.Add(i);
+        // People begin on great landmasses, not stray islands (unless islands are all there is).
+        int biggest = w.LandmassSize.Length == 0 ? 0 : w.LandmassSize.Max();
+        var mainland = good.Where(i => w.Landmass[i] >= 0 && w.LandmassSize[w.Landmass[i]] >= biggest / 3).ToList();
+        if (mainland.Count > 0 && Config.Planet != PlanetType.Thalassia) good = mainland;
         good.Sort((a, b) => (w.PlantK[b] + w.PreyK[b]).CompareTo(w.PlantK[a] + w.PreyK[a]));
-        int home = good[Rng.Next(Math.Min(30, good.Count))];
+        var homes = TribeHomes(good);
 
-        var culture = NewCulture(null);
-        Chronicle.Add(new WorldEvent(0, EventCategory.Social, "dawn",
-            $"The first people, the {culture.Name}, wake in the {Ids.Snake(w.Biome[home]).Replace('_', ' ')} at {w.X(home)},{w.Y(home)}.", 1f));
-
-        for (int b = 0; b < Config.StartBands; b++)
+        var usedHues = new HashSet<int>();
+        for (int t = 0; t < homes.Count; t++)
         {
-            int cell = b == 0 ? home : NearbyLand(home, World.Cells(1 + b), World.Cells(3 + b));
+            // Each tribe is its own people: its own language, colours and ways.
+            var culture = NewCulture(null);
+            for (int k = 0; k < 12 && !usedHues.Add(culture.Hue); k++) culture.Hue = (culture.Hue + 5) % 12;
+            int home = homes[t];
+            Chronicle.Add(new WorldEvent(0, EventCategory.Social, "dawn",
+                $"{(t == 0 ? "The first people" : "Another people")}, the {culture.Name}, wake in the {Ids.Snake(w.Biome[home]).Replace('_', ' ')} at {w.X(home)},{w.Y(home)}.", 1f));
+            for (int b = 0; b < Config.StartBands; b++)
+                SeedBand(b == 0 ? home : NearbyLand(home, World.Cells(0.6f + b * 0.5f), World.Cells(1.2f + b)), culture);
+        }
+    }
+
+    /// <summary>
+    /// Where each tribe begins: the cells the player placed them on (moved to the nearest liveable
+    /// land), or else spread well apart across good land at random.
+    /// </summary>
+    List<int> TribeHomes(List<int> good)
+    {
+        var w = World;
+        var homes = new List<int>();
+        int tribes = Math.Clamp(Config.TribeCells.Length > 0 ? Config.TribeCells.Length : Config.Tribes, 1, 6);
+        if (Config.TribeCells.Length > 0)
+        {
+            foreach (int placed in Config.TribeCells.Take(6))
+                homes.Add(good.Count == 0 ? placed : good.OrderBy(c => w.Distance(c, placed)).First());
+            return homes;
+        }
+        homes.Add(good[Rng.Next(Math.Min(30, good.Count))]);
+        while (homes.Count < tribes)
+        {
+            // The farthest of a few dozen good places from every tribe already placed.
+            int best = good[0];
+            int bestD = -1;
+            for (int k = 0; k < 60; k++)
+            {
+                int c = good[Rng.Next(good.Count)];
+                int d = homes.Min(h => w.Distance(h, c));
+                if (d > bestD) { bestD = d; best = c; }
+            }
+            homes.Add(best);
+        }
+        return homes;
+    }
+
+    void SeedBand(int cell, Culture culture)
+    {
+        {
             var band = NewBand(cell, culture.Id, -1);
             bool fire = Rng.Chance(0.6f);
             var adults = new List<Agent>();
@@ -223,6 +269,7 @@ public sealed partial class Simulation
             Timed("contacts", Contacts);
             Timed("cultural_upkeep", CulturalUpkeep);
             PrayerUpkeep();
+            MessageUpkeep();
         }
         Day++;
         if (WorldMap.DayOfYear(Day) == 0) Timed("stats", () => Stats.CloseYear(this));
@@ -268,8 +315,17 @@ public sealed partial class Simulation
         }
         long t0 = System.Diagnostics.Stopwatch.GetTimestamp();
         foreach (var buffer in buffers)
+        {
             foreach (var action in buffer.Deferred) action();
+            for (int k = 0; k < _sectionTicks.Length; k++) _sectionTicks[k] += buffer.Ticks[k];
+        }
         Profile["band_commit"] = Profile.GetValueOrDefault("band_commit") + System.Diagnostics.Stopwatch.GetElapsedTime(t0).TotalSeconds;
+        for (int k = 0; k < _sectionTicks.Length; k++)
+        {
+            Profile[SectionNames[k]] = Profile.GetValueOrDefault(SectionNames[k]) + _sectionTicks[k] / (double)System.Diagnostics.Stopwatch.Frequency;
+            _sectionTicks[k] = 0;
+        }
+
     }
 
     public void RunYears(int years, Action<Simulation>? onYear = null)
@@ -312,6 +368,15 @@ public sealed partial class Simulation
             if (!parent) forget.Add(id);
         }
         foreach (int id in forget) Dead.Remove(id);
+        // The living let go of the dead and of acquaintances that never came to anything.
+        var drop = new List<int>();
+        foreach (var a in Living.Values)
+        {
+            drop.Clear();
+            foreach (var (other, r) in a.Relations)
+                if (!Living.ContainsKey(other) || (!r.Grudge && MathF.Abs(r.Affinity) < 0.05f && r.Trust < 0.1f)) drop.Add(other);
+            foreach (int other in drop) a.Relations.Remove(other);
+        }
     }
 
     internal void Kill(Agent a, DeathCause cause, Stimulus? witnessedAs = null, string how = "")

@@ -163,7 +163,7 @@ public partial class WorldView : Sprite2D
             }
             if (t < -1f) c = c.Lerp(new Color("f3f5f7"), Math.Clamp((-1f - t) / 7f, 0f, 0.92f));   // snow
             if (w.Ash[i] > 0.05f) c = c.Lerp(new Color("4a4440"), Math.Clamp(w.Ash[i], 0f, 0.8f));
-            if (w.Volcano[i]) c = new Color("7a2e22");
+            if (w.Volcano[i]) c = VolcanoPeak(w, i) ? new Color("e0552d") : c.Lerp(new Color("3b3230"), 0.7f);   // basalt cone, lava at the crater
         }
         if (territory != null)
         {
@@ -171,6 +171,16 @@ public partial class WorldView : Sprite2D
             if (territory.TryGetValue(i, out var tint)) c = c.Lerp(tint, 0.45f);
         }
         return c;
+    }
+
+    /// <summary>The highest cell of a volcano (none of its neighbours stands higher).</summary>
+    static bool VolcanoPeak(WorldMap w, int i)
+    {
+        int x = w.X(i), y = w.Y(i);
+        for (int dy = -1; dy <= 1; dy++)
+            for (int dx = -1; dx <= 1; dx++)
+                if ((dx != 0 || dy != 0) && y + dy >= 0 && y + dy < w.H && w.Elevation[w.Index(x + dx, y + dy)] > w.Elevation[i]) return false;
+        return true;
     }
 
     /// <summary>Land within a cell of each band, tinted by its culture.</summary>
@@ -261,6 +271,18 @@ public partial class WorldView : Sprite2D
             if (w.FishK[i] > 0) s += $"Fish {w.FishStock[i] / w.FishK[i] * 100:0}%\n";
             if (w.Volcano[i]) s += "[color=#b5553c]Volcano[/color]\n";
             if (w.Fault[i] > 0.6f) s += "Fault line: earthquakes possible\n";
+        }
+        // Your words, if any were left here (or carved in a stone nearby).
+        foreach (var ins in sim.Inscriptions)
+        {
+            if (ins.Medium == MessageMedium.Vision || w.Distance(ins.Cell, i) > 2) continue;
+            string medium = ins.Medium == MessageMedium.Stone ? "carved in stone" : ins.Visible(day) ? "written on the ground" : "once written here, now weathered away";
+            s += $"\n[color={Palette.Hex(Palette.Divine)}]Your words, {medium} (year {ins.Day / SimConfig.DaysPerYear}):[/color]\n[i]“{ins.Text}”[/i]\n";
+            foreach (var (rday, bandId, reading, understood) in ins.Readings)
+            {
+                string who = sim.Bands.TryGetValue(bandId, out var b) ? $"[url=band:{bandId}]the {b.Name}[/url]" : "a band now gone";
+                s += $"· {who}: {Ids.Snake(reading)}{(understood ? "" : " (could not read it)")}, year {rday / SimConfig.DaysPerYear}\n";
+            }
         }
         return s;
     }

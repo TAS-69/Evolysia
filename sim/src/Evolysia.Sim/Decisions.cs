@@ -4,7 +4,7 @@ using Evolysia.Sim.Psych;
 
 namespace Evolysia.Sim;
 
-public enum DecisionKind : byte { Pivot, Meeting }
+public enum DecisionKind : byte { Pivot, Meeting, Message }
 
 /// <summary>
 /// A choice someone is brooding over. The simulation has already limited it to options their
@@ -23,6 +23,7 @@ public sealed class Decision
     public string Source = "";                // "mind" or "instinct"
     internal PivotCase? Pivot;
     internal string MeetingInstinct = "";
+    internal int MessageId = -1;
 }
 
 /// <summary>Everything needed to carry out a pivot later, whichever way it is decided.</summary>
@@ -42,6 +43,15 @@ public static class DecisionText
         (_, PivotChoice.Withdraw) => "Pull away from everyone and keep to themself",
         (_, PivotChoice.Resent) => "Smile and say nothing, but never forgive those who laughed, and wait for a chance to get even",
         _ => allies > 0 ? $"Leave the band for good, taking the {allies} who sided with them" : "Leave the band for good, alone",
+    };
+
+    public static string Message(string option, bool understood) => option switch
+    {
+        "scripture" => understood ? "Keep these words as sacred and teach them to everyone" : "Keep these marks as sacred, though no one can read them",
+        "vision" => "Take it as a wonder, a sign from beyond, and marvel at it",
+        "command" => "Take the words as a command and do what they say",
+        "dismissed" => understood ? "Laugh it off: a trick, or a madman's scrawl" : "Ignore the scratches; they mean nothing",
+        _ => "Fear it as a curse and keep away from that place",
     };
 
     public static string Meeting(string option, string other) => option switch

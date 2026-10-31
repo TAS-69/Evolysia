@@ -13,14 +13,26 @@ The .NET build of Godot is in the repo root (`Godot_v4.7.2-stable_mono_win64`). 
 - **Editor:** open `Godot_v4.7.2-stable_mono_win64.exe`, choose Import, select `game/project.godot`, then press F5.
 - **Directly:**
   ```bash
-  ./Godot_v4.7.2-stable_mono_win64/Godot_v4.7.2-stable_mono_win64.exe --path game -- --seed 42
+  ./Godot_v4.7.2-stable_mono_win64/Godot_v4.7.2-stable_mono_win64.exe --path game
   ```
+
+## A new world
+A plain launch (and **New world…** in the top bar) opens the new-world screen:
+- **Seed:** type one or **Roll**.
+- **Planet:** *Terra* (balanced continents, every climate), *Ignis* (hot, dry, volcano-studded), *Cryos* (cold, ice-bound) or *Thalassia* (an ocean world of small islands). The map preview regenerates as you choose.
+- **Peoples:** 1 to 6. Each is its own people, with its own tongue, ways and colour, and starts as two bands.
+- **Scatter at random** puts them in good land as far apart as the land allows. **Place on the map** lets you click the preview to set each one down (click again to remove). Begin waits until all are placed.
 
 Options after `--`:
 
 | flag | effect |
 |---|---|
-| `--seed N` | world seed (also settable in the top bar) |
+| `--seed N` | world seed; with any flag the game skips the new-world screen |
+| `--planet Terra\|Ignis\|Cryos\|Thalassia` | planet type |
+| `--tribes N` | peoples at the start (1-6) |
+| `--setup` | open the new-world screen anyway |
+| `--fold inspector,chronicle,voices` | start with those panels collapsed |
+| `--speed N` | speed index (0 pause, 1-6 = 1× to 25×) |
 | `--days N` | fast-forward N days before showing (e.g. `54000` = 150 years) |
 | `--overlay Biome\|Elevation\|Temperature\|Rainfall\|Food\|Cultures` | starting map overlay |
 | `--select band\|agent` | open the inspector on the largest band, or on its most eventful adult |
@@ -31,8 +43,8 @@ Options after `--`:
 
 ## Controls
 Right/middle-drag or WASD to pan, mouse wheel to zoom, left-click a band or any land to inspect.
-Space pauses, 1-4 set the speed (2 / 10 / 60 / 360 days per second), Tab cycles overlays, Esc closes the inspector.
-Links in the chronicle and inspector jump to that band or person.
+Space pauses, 1-6 set the speed: 1×, 2×, 3×, 5×, 10×, 25× (12 to 300 days per second; how fast the top speeds really run depends on population). Tab cycles overlays, Esc closes the inspector.
+Links in the chronicle and inspector jump to that band or person. Click a panel's heading (or its arrow) to collapse it to a strip; click again to open it.
 
 ## What's on screen
 The planet **wraps east-west**, as the simulation does: pan forever in either direction and the far coasts and sea routes continue seamlessly. Terrain, markers, routes and effects are drawn on three copies, and the camera folds back into one planet-width, so the jump is invisible.
@@ -43,6 +55,7 @@ The planet **wraps east-west**, as the simulation does: pan forever in either di
 - **Bands, zoomed out:** circles are wandering bands, squares are farming villages. Colour is culture, size is population, and sick bands turn yellow-green.
 - **Both:** notable events flash as rings. Names are drawn crisply in screen space without overlapping.
 - **Sea routes:** dashed arcs. Recent voyages are bright and older ones fade into a map of where people went. Lost voyages are red and end at sea with an ×, and first landings are ringed in gold. Select a band to see the shores its scouts have sighted across the water.
+- **Look:** refined dark earthy (`Ui.cs`): translucent rounded panels, a slim top bar with a segmented speed control, and small colour cues in the text. Women are rose, men blue, children gold. Roles and today's activity are tinted by kind of work (food, making, spirit, people, mind). Goods are tinted by kind (food, material, fuel, metal, made, medicine), buildings by role, and peoples by their culture's hue. Section headings are ochre.
 - **Chronicle:** the simulation's notable events, newest first, colour-coded by category (the same 8 categories as the art guide's icons).
 - **Inspector:**
   - *Bands:* culture, leader, food and shelter, what they've built (and what's going up), their stores and animals, know-how, beliefs and how widely they're held, neighbours, members.
@@ -50,9 +63,11 @@ The planet **wraps east-west**, as the simulation does: pan forever in either di
   - *Land:* climate, water, food stocks, hazards.
 
 ## God powers
-The bar under the top bar holds your powers: **kind** ones in gold (Rain, Bless, Fertile, Heal, Game), **wrath** in red (Drought, Bolt, Fire, Flood, Quake, Blizzard, Plague, Meteor, Beasts, Curse), and **Dream** in blue.
+The bar under the top bar holds your powers in three groups: **kind** ones in gold (Rain, Drought, Bless, Fertile, Heal, Game), **wrath** in red (Bolt, Fire, Flood, Quake, Blizzard, Plague, Meteor, Beasts, Curse), and **the word** in blue (Dream, Message).
 - **Area powers:** pick one, see its reach as a ring at the cursor, and click the map to unleash it. Shift-click keeps it armed; Esc cancels. Acts land immediately, even while paused.
 - **Person powers:** Curse and Dream act on the person selected in the inspector. **Dream** opens a dialog: choose what the dream urges (worship me, leave this place, make peace, seek new things, fear nothing, love) and optionally the words they hear. The kind decides the effect; your words are what they remember and repeat.
+
+- **Message:** your own words, left at a place you click: **written on the ground** (weathers away in about 60 years), **carved in a standing stone** (a real structure; it lasts while it stands) or **sent as a vision** to every band near. Bands that come within reach read it once. Each adult takes it their own way, by temperament and whether they can read: as *scripture* (it becomes a belief, and may make you their god), as a *vision* (awe), as a literal *command* (peace, war, stay, go, sail, build an altar, learn, pray, matched from your words; only the literate), *dismissed*, or with *dread*. With Minds on, the leader's choice of reading goes to the model in character. It is the strongest and rarest power: the first can be given only after 250 years, then once every 250 years. The button counts down the years.
 
 **They notice you.** Witnessed wonders build *awe*. When it is high enough, a seer names you, each people in their own tongue: *"… the Watcher Above"* if you have been kind, *"… the Hand in the Sky"* if cruel. A dreamer you visit can become your prophet.
 - **Prayers:** believers in trouble pray for rain, food, healing, children or protection. Open prayers sit at the top of the chronicle with the days left to answer them.
@@ -67,11 +82,12 @@ Demo: `--demo gods` heals and blesses the largest band until it names you, then 
 With **Minds** on (top bar) and a model running, pivotal choices are made by the model, in character:
 - **Responses to rejection:** conform, double down, withdraw, resent, leave.
 - **How a leader greets a foreign people:** welcome, keep wary, raid.
+- **How a leader reads your message:** scripture, vision, command, dismiss, dread.
 
 How it works:
 - **The shortlist:** the simulation first narrows each choice to the three options that person's temperament makes plausible. The model can only pick from those.
 - **Brooding:** the person broods for 10 days. If no answer comes in time, instinct (the trait-weighted roll) decides.
-- **Holding time:** at speeds up to 3×, time pauses for up to 6 s when a choice is about to fall to instinct. At 4× instinct always rules.
+- **Holding time:** at speeds up to 5×, time pauses for up to 6 s when a choice is about to fall to instinct. At 10× and 25× instinct always rules.
 - **What you see:** the chosen option, the thought behind it and what they say appear in Voices and in the person's Inner voice. A late answer is discarded so voices never contradict what happened.
 - **Determinism:** choices are logged inputs (`Simulation.DecisionLog`), so worlds stay replayable.
 - **Watching it:** the top bar shows how many choices are *brooding*. Screenshot flags: `--speed 2 --select voice --wait-choices N`.
@@ -80,7 +96,7 @@ How it works:
 A local model voices notable moments: pivots after rejection, myths, inventions, schisms, overcome fears, killings and notable deaths.
 - **Starting it:** start the model with the **Start model** button in the top bar, or run `python tools/llm_lab/lab.py serve`. This uses your lab profile (default `lite`: Qwen3.5-4B on GPU, 0.8B helper on CPU). The top bar shows *Voices on/offline*; hover it for throughput.
 - **Where voices appear:** the **Voices** panel (inner thought in italics, speech in quotes, new beliefs and rituals highlighted), speech bubbles over the band on the map, and an **Inner voice** section in the person inspector.
-- **What gets voiced:** a bounded, prioritised queue (`Evolysia.Narration.Narrator`). Schisms and myths outrank routine moments. Whoever you have selected (+4), their band (+2) and anything on screen (+1) jump the queue. Stale moments lose priority, and the least important are dropped. At 1×-2× nearly everything is voiced; at 4× only the big moments are.
+- **What gets voiced:** a bounded, prioritised queue (`Evolysia.Narration.Narrator`). Schisms and myths outrank routine moments. Whoever you have selected (+4), their band (+2) and anything on screen (+1) jump the queue. Stale moments lose priority, and the least important are dropped. At 1×-3× nearly everything is voiced; at 10× and above only the big moments are.
 - **Narration never changes the simulation.** The model voices outcomes the simulation already decided, so worlds stay deterministic.
 - Add `--select voice --wait-voices N` to the screenshot flags to capture voices.
 
@@ -99,7 +115,8 @@ A local model voices notable moments: pivots after rejection, myths, inventions,
 | `Sprites.cs` | world sprites, enlarged and LUT-recoloured textures |
 | `BandLayer.cs`, `BandLabels.cs` | y-sorted camps (with plants in front), or markers; sea routes and event pings; screen-space labels |
 | `CameraRig.cs` | pan and zoom, clamped to the planet |
-| `Hud.cs`, `Describe.cs` | UI theme (art guide section 11.1 colours), chronicle and inspector BBCode |
+| `Hud.cs`, `Ui.cs`, `Describe.cs` | the interface (top bar, powers, collapsible panels, dream and message dialogs), its theme and colour tags, chronicle and inspector BBCode |
+| `SetupScreen.cs` | the new-world screen: seed, planet, peoples, map preview, placing tribes |
 | `Palette.cs` | zoomed-out biome colours, final UI colours, culture hues |
 | `shaders/pixel.gdshader` | keeps pixel art crisp at non-integer zoom |
 | `TargetOverlay.cs` | the armed power's reach at the cursor, and bursts where acts land |

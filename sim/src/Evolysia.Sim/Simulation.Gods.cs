@@ -149,6 +149,9 @@ public sealed partial class Simulation
             case Power.Curse:
                 if (Living.TryGetValue(a.TargetAgentId, out var cursed)) Curse(cursed);
                 return;
+            case Power.Message:
+                LeaveMessage(a);
+                return;
             case Power.Dream:
                 if (Living.TryGetValue(a.TargetAgentId, out var dreamer)) Dream(dreamer, a.Dream, a.Words);
                 return;

@@ -10,8 +10,9 @@ dotnet test tests/Evolysia.Sim.Tests
 dotnet run -c Release --project src/Evolysia.Sim.Runner -- --seed 42 --years 500 --out runs/seed42
 ```
 
-Runner flags: `--seed --years --out --width --height --bands --band-size --invention-rate --disaster-rate --quiet`
+Runner flags: `--seed --years --out --width --height --planet --tribes --bands --band-size --invention-rate --disaster-rate --quiet`
 and `--trace N`, which prints one band's monthly food economy for N years (useful for tuning).
+`--profile` prints, every 25 years, where the time went (phases, the sections of a band's day and each activity) and the working set.
 `--minds N` has the local model make up to N pivotal choices during the run (writes `minds.md`).
 `--narrate N` voices a mix of the N most important moments after the run, through the local model
 (`python tools/llm_lab/lab.py serve`), and writes `narrated.md`. `--llm URL` points it at a different server.
@@ -34,6 +35,14 @@ and `--trace N`, which prints one band's monthly food economy for N years (usefu
 | `world_*.png`, `end_*.png` | Biome, elevation and people/culture maps at the start and the end |
 
 ## What's modelled
+
+**Planets.** `SimConfig.Planet` picks the world:
+- *Terra:* balanced continents and every climate (34% land).
+- *Ignis:* 15 °C hotter, dry, with 20-70 volcanoes along its faults (42% land).
+- *Cryos:* 16 °C colder, with ice sheets and tundra (36% land).
+- *Thalassia:* an ocean world of small islands (about 7% land).
+
+`SimConfig.Tribes` (1-6) starts that many distinct peoples, each with its own culture, language and hue, as `StartBands` bands each. They go to good land as far apart as possible, preferring the large landmasses (except on Thalassia), or to `TribeCells` if the player placed them.
 
 **World** (`World/`). Continents and ridged mountains from cylindrical noise (wraps east-west); temperature by
 latitude, altitude and continentality; seasons from axial tilt; rain from prevailing-wind bands with rain shadows;
@@ -67,7 +76,7 @@ sulfur) that people fell, quarry and dig out; trees grow back over decades, ston
 
 **The sea** (`Simulation.Sea.cs`). World generation labels landmasses. Rafts hop narrow straits through ordinary migration.
 - **Sighting land:** with *boats*, which any coastal band can invent, islanders most readily, scouts sight land across open water. Each band remembers up to 12 shores.
-- **Range:** 6 sea cells with boats, 10 with boats plus weaving (sails).
+- **Range** (in original cells): 6 with boats, 10 with weaving (sails), 25 with sailing, 60 with shipbuilding.
 - **Who sails:** hungry pioneers bud off across the sea when a remembered shore beats the nearby valleys; a desperate band may sail as a whole.
 - **Risk:** losses grow with distance and winter, and sometimes a voyage is never seen again. First landing on a landmass is a world event, and survivors' fear of water shifts.
 - **Results:** across seeds 7, 42, 3 and 11, people reached 5-12 landmasses in 500 years, with 14-164 voyages.
@@ -76,8 +85,12 @@ sulfur) that people fell, quarry and dig out; trees grow back over decades, ston
 - **Recognition:** witnessed acts build awe until a seer names the player-god for that culture (Watcher Above or Hand in the Sky, depending on how kind you have been). Dreams can make a prophet directly.
 - **Prayers:** believers in crisis open prayers (rain, food, healing, children, protection). Answering one deepens faith; letting it expire after 120 days breeds doubt.
 - **Dreams:** worship, leave, peace, seek, courage and love each have a concrete effect. Your words reach the narrator, sanitised, as the dream's content.
+- **Messages** (`Simulation.Messages.cs`): the player's own words, written on the ground (fades after 60 years), carved in a standing stone (a real structure) or sent as a vision.
+  - **Reading:** bands that come within reach read them once. Each adult interprets them by temperament, faith and literacy (`Writing`, or any vision): scripture (a belief, and possibly a named player-god), vision (awe), command (obeyed by keyword: peace, war, stay, go, sail, build an altar, learn, pray), dismissed, or dread.
+  - **Choice:** the band acts on its leader's reading, which becomes a `Decision` for a mind when minds are on.
+  - **Cooldown:** the first only after `SimConfig.FirstMessageYear` (250), then one every 250 years.
 
-**Minds** (`Decisions.cs`, `Simulation.Decisions.cs`). With `DeferDecisions` on, pivots and first contacts between peoples become `Decision`s.
+**Minds** (`Decisions.cs`, `Simulation.Decisions.cs`). With `DeferDecisions` on, pivots, first contacts between peoples and readings of the player's messages become `Decision`s.
 - **The shortlist:** instinct's top three options, with plain-language descriptions. `Simulation.Decide(id, option)` accepts a choice only from that shortlist while the decision is pending.
 - **Fallback:** at the deadline, instinct rolls as before.
 - **Replay:** everything goes into `DecisionLog`.
@@ -87,16 +100,26 @@ sulfur) that people fell, quarry and dig out; trees grow back over decades, ston
 - `SimConfig`: world size, land fraction, axial tilt, starting bands, invention/disaster/predator multipliers, soft agent cap.
 - Main rates are commented in place: foraging yield (`Simulation.Day.cs`), fertility and mortality (`Body`/`Reproduce`), drift (`Psychology.DailyUpdate`), contact (`Contacts`).
 
-Typical outcome on the 800 x 400 world: about 200 founders reach 4-5 thousand in 250 years, with villages from
-roughly year 75; growth then levels off (see `docs/OVERHAUL.md`, phase 7).
+Typical outcome on the 800 x 400 world: about 150-200 founders reach 6-16 thousand by year 250 and 17-40 thousand by
+year 300, still growing, with villages from roughly year 75 (see `docs/OVERHAUL.md`, phase 7).
 
 **Performance.** Band days run in parallel: bands sharing a cell run together, different cells run concurrently, and the heaviest groups go first.
 - **Determinism:** each band uses its own random stream (seed, band, day). Global effects (births, death bookkeeping, chronicle entries, courtship across bands, inventions and schisms) are deferred and committed in a fixed order, so **any thread count gives the identical history**. `ParallelTests` checks 1, 4 and 16 threads.
 - **Also parallel:** ecology runs in parallel by row.
-- **Memory:** server GC is on, memes nobody remembers are pruned monthly, and the ordinary dead are forgotten 25 years on (`DeathLog` keeps every death compactly). Seed 42 peaks at about 0.6 GB.
-- **Timing:** seed 42 on the 800 x 400 world: 300 years in about 100 s on 16 threads.
+- **Memory:** server GC is on, memes nobody remembers are pruned monthly, and the ordinary dead are forgotten 25 years on (`DeathLog` keeps every death compactly). About 35 KB per person including GC headroom: 1.3 GB at 28k people, so ~120k fits in about 5 GB.
+- **Timing:** seed 42 on 16 threads. Cost grows with population, and about 40% of it is sequential (band decisions, the commit, cultural upkeep):
+
+  | population | ms per day | days per second |
+  |---|---|---|
+  | 10-17k | 3.5 | ~285 |
+  | 17-28k | 7.3 | ~135 |
+  | ~40k | ~13 | ~75 |
+
+  The game's top speed (25x, 300 days a second) holds up to roughly 15k people; above that it runs as fast as the machine allows. The game shows the speed actually reached.
+- **Hot paths kept cheap:** craftable items are ranked once per technique set (`Ranked`), food totals are cached per inventory, fields, jobs and workstations are listed once per band-day, material shortfalls are computed once per band-day, and the plague check looks up techniques only when the dice could matter.
+- **Profiling:** runner `--profile` prints time by phase and by section of the band day, the working set, GC pauses and allocations, every 25 years.
 - **Settings:** `SimConfig.Threads` (default: all cores) and runner `--threads N`.
 
 ## Next steps
 - **Godot 4 (.NET build):** the Godot in the repo root is the standard build, which can't run C#. Use the .NET build ("mono"), reference `Evolysia.Sim`, step the simulation on a worker thread, and render from `WorldMap` and `Simulation`.
-- **More speed:** the remaining sequential phases (band decisions and the commit, about 20% of runtime) are next.
+- **More speed:** the sequential phases (band decisions and the commit) could run per region in parallel. For ~120k at 25x, people would need updating less often than daily at the top speeds.

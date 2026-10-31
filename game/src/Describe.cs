@@ -48,6 +48,19 @@ public static class Describe
         Activity.Quarry => "quarrier", Activity.Mine => "miner", Activity.Gather => "gatherer", _ => "wanderer",
     };
 
+    /// <summary>A coloured sex-and-age mark: rose for women, blue for men, gold for children.</summary>
+    public static string SexAge(Agent a, int day) =>
+        Ui.C($"{(a.Sex == Sex.Female ? "♀" : "♂")}{a.Age(day):0}", a.IsChild(day) ? Ui.Child : a.Sex == Sex.Female ? Ui.Female : Ui.Male);
+
+    /// <summary>A role, tinted by the kind of work (food, making, spirit, people, mind).</summary>
+    public static string Work(Activity a) => Ui.C(Role(a), Ui.Work(a));
+
+    static string GoodText(Evolysia.Sim.Economy.GoodDef g, float qty) => $"{Ui.C(Title(g.Id), Ui.Good(g.Kind))} {qty:0}";
+
+    /// <summary>Section headings (a bold line after a break) in ochre.</summary>
+    static string Sections(string text) =>
+        System.Text.RegularExpressions.Regex.Replace(text, @"\n\[b\]([^\[]+)\[/b\]", m => $"\n[b]{Ui.C(m.Groups[1].Value, Palette.Ochre)}[/b]");
+
     public static string AgentLink(Simulation sim, int id)
     {
         var a = sim.Find(id);
@@ -56,7 +69,9 @@ public static class Describe
     }
 
     public static string BandLink(Simulation sim, int id) =>
-        sim.Bands.TryGetValue(id, out var b) ? $"[url=band:{id}]the {b.Name}[/url]" : "[color=#9a8f86](gone)[/color]";
+        sim.Bands.TryGetValue(id, out var b)
+            ? $"[url=band:{id}]the {Ui.C(b.Name, Palette.Culture(sim.Cultures[b.CultureId].Hue).Lerp(Palette.Bone, 0.35f))}[/url]"
+            : "[color=#9a8f86](gone)[/color]";
 
     public static string Band(Simulation sim, Band b)
     {
@@ -65,7 +80,7 @@ public static class Describe
         var members = b.Members.Select(id => sim.Living.GetValueOrDefault(id)).Where(a => a != null).Select(a => a!).ToList();
         int kids = members.Count(a => a.IsChild(sim.Day));
         sb.Append($"[font_size=20][b]The {b.Name}[/b][/font_size]\n");
-        sb.Append($"[color={Palette.Hex(Palette.Culture(culture.Hue))}]■[/color] {culture.Name} people · {(b.Sedentary ? "village" : "wandering band")}\n");
+        sb.Append($"{Ui.Tag(culture.Name, Palette.Culture(culture.Hue))} people · {(b.Sedentary ? "village" : "wandering band")}\n");
         sb.Append($"{members.Count} people ({kids} children) · led by {(b.LeaderId >= 0 ? AgentLink(sim, b.LeaderId) : "no one")}\n");
         sb.Append($"Founded year {b.FoundedDay / SimConfig.DaysPerYear}{(b.ParentBandId >= 0 ? $", from {BandLink(sim, b.ParentBandId)}" : "")}\n\n");
 
@@ -90,14 +105,14 @@ public static class Describe
         var built = b.Structures.Select(id => sim.Structures.GetValueOrDefault(id)).Where(s => s != null).Select(s => s!).ToList();
         if (built.Count > 0)
         {
-            var standing = built.Where(s => s.Standing).GroupBy(s => s.Kind.Id).OrderByDescending(g => g.Count())
-                .Select(g => g.Count() > 1 ? $"{g.Count()} {Title(g.Key)}s" : Title(g.Key));
+            var standing = built.Where(s => s.Standing).GroupBy(s => s.Kind).OrderByDescending(g => g.Count())
+                .Select(g => Ui.C(g.Count() > 1 ? $"{g.Count()} {Title(g.Key.Id)}s" : Title(g.Key.Id), Ui.Structure(g.Key.Role)));
             var going = built.Where(s => !s.Standing).Select(s => Title(s.Kind.Id)).Distinct();
             sb.Append($"\n[b]Built[/b]\n{string.Join(", ", standing)}\n");
             if (going.Any()) sb.Append($"[color={Muted}]Going up: {string.Join(", ", going)}[/color]\n");
         }
         var held = b.Stores.Held().Where(h => h.qty >= 1f).OrderByDescending(h => h.qty * MathF.Max(0.3f, h.good.Food)).Take(14)
-            .Select(h => $"{Title(h.good.Id)} {h.qty:0}");
+            .Select(h => GoodText(h.good, h.qty));
         if (held.Any()) sb.Append($"\n[b]Stores[/b]\n{string.Join(", ", held)}\n");
         if (b.Herds.Count > 0) sb.Append($"\n[b]Animals[/b]\n{string.Join(", ", b.Herds.Where(h => h.Value >= 1f).Select(h => $"{h.Value:0} {h.Key}"))}\n");
 
@@ -119,8 +134,8 @@ public static class Describe
 
         sb.Append($"\n[b]People[/b]\n");
         foreach (var a in members.OrderByDescending(a => a.Prestige).Take(60))
-            sb.Append($"{AgentLink(sim, a.Id)} [color={Muted}]{(a.Sex == Sex.Female ? "♀" : "♂")}{a.Age(sim.Day):0}{(a.IsChild(sim.Day) ? "" : " " + Role(a.MainActivity()))}[/color]\n");
-        return sb.ToString();
+            sb.Append($"{AgentLink(sim, a.Id)} {SexAge(a, sim.Day)}{(a.IsChild(sim.Day) ? "" : " " + Work(a.MainActivity()))}\n");
+        return Sections(sb.ToString());
     }
 
     public static string Person(Simulation sim, Agent a, IReadOnlyList<Narration.Narration>? voices = null)
@@ -131,9 +146,9 @@ public static class Describe
                 $"[color={Muted}]Y{n.Moment.Day / SimConfig.DaysPerYear}, {VoiceTitle(n)}[/color]\n{VoiceBody(n)}")) + "\n"
             : "";
         int day = a.Alive ? sim.Day : a.DeathDay;
-        sb.Append($"[font_size=20][b]{a.Name}[/b][/font_size]  [color={Muted}]{(a.Sex == Sex.Female ? "♀" : "♂")} {a.Age(day):0} years · gen {a.Generation}[/color]\n");
+        sb.Append($"[font_size=20][b]{a.Name}[/b][/font_size]  {SexAge(a, day)} [color={Muted}]years · gen {a.Generation}[/color]\n");
         if (!a.Alive) sb.Append($"[color=#9a8f86]Died year {a.DeathDay / SimConfig.DaysPerYear} ({Ids.Snake(a.DeathCause).Replace('_', ' ')})[/color]\n");
-        else sb.Append($"{Title(a.IsChild(day) ? "child" : Role(a.MainActivity()))} of {BandLink(sim, a.BandId)} · today: {Ids.Snake(a.Today).Replace('_', ' ')}\n");
+        else sb.Append($"{(a.IsChild(day) ? Ui.C("Child", Ui.Child) : Ui.C(Title(Role(a.MainActivity())), Ui.Work(a.MainActivity())))} of {BandLink(sim, a.BandId)} · today: {Ui.C(Ids.Snake(a.Today).Replace('_', ' '), Ui.Work(a.Today))}\n");
         if (a.Genome.Quirks != Quirk.None) sb.Append($"[color={Palette.Hex(Palette.Divine)}]{string.Join(", ", a.Genome.Quirks.ToString().Split(", ").Select(q => Title(Ids.Snake(Enum.Parse<Quirk>(q))).ToLower()))}[/color]\n");
 
         var family = new List<string>();
@@ -201,7 +216,7 @@ public static class Describe
             foreach (var m in a.Memory.OrderByDescending(m => m.Day).Take(8))
                 sb.Append($"[color={Muted}]Y{m.Day / SimConfig.DaysPerYear}[/color] {MemoryText(sim, m)}\n");
         }
-        return sb.ToString();
+        return Sections(sb.ToString());
     }
 
     static string TraitName(Trait t) => t switch

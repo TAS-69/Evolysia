@@ -34,6 +34,8 @@ public sealed record Recipe(string Id, TechId Tech, string Station, (ushort good
 public static class Crafts
 {
     public static readonly ItemDef[] Items;
+    /// <summary>Items by slot, in catalogue order.</summary>
+    public static readonly ItemDef[][] BySlot;
     public static readonly Recipe[] Recipes;
     static readonly Dictionary<string, ushort> ItemByName = new();
 
@@ -215,6 +217,7 @@ public static class Crafts
         I("respirator", Ac, "cloth:0.3,components:0.2", T(TechId.Chemistry), days: 1500);
 
         Items = _items.ToArray();
+        BySlot = Enum.GetValues<ItemSlot>().Select(s => Items.Where(d => d.Slot == s).ToArray()).ToArray();
 
         // ---- goods recipes --------------------------------------------------------------------
         Recipe R(string id, TechId tech, string station, string inputs, string outputs, float labour, Domain d = Domain.Crafting) =>

@@ -58,6 +58,9 @@ public sealed partial class Simulation
             if (Living.ContainsKey(d.AgentId) && Enum.GetValues<PivotChoice>().Where(c => Ids.Snake(c) == choice).ToArray() is [var picked])
                 FinishPivot(d.Pivot, picked);
         }
+        else if (d.Kind == DecisionKind.Message && Bands.TryGetValue(d.BandId, out var reader) && Inscriptions.Find(x => x.Id == d.MessageId) is { } ins
+                 && Enum.GetValues<MessageReading>().Where(r => Ids.Snake(r) == choice).ToArray() is [var reading])
+            ActOnMessage(reader, ins, reading, ins.Medium == MessageMedium.Vision || BandKnows(reader, TechId.Writing));
         else if (d.Kind == DecisionKind.Meeting && Bands.TryGetValue(d.BandId, out var a) && Bands.TryGetValue(d.OtherBandId, out var b))
             CarryOutMeeting(a, b, choice);
     }

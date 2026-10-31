@@ -19,8 +19,13 @@ public sealed partial class Simulation
 {
     public readonly List<Voyage> Voyages = new();
 
+    /// <summary>
+    /// How far a band can sail, in cells of open sea: boats hug the coast, sails (weaving) reach
+    /// further, sailing ships cross open seas, and shipbuilders cross oceans.
+    /// </summary>
     int SeaRange(TechSet tech) =>
-        !Techs.Has(tech, TechId.Boats) ? 0 : World.Cells(Techs.Has(tech, TechId.Weaving) ? 10 : 6);
+        !Techs.Has(tech, TechId.Boats) ? 0
+        : World.Cells(Techs.Has(tech, TechId.Shipbuilding) ? 60 : Techs.Has(tech, TechId.Sailing) ? 25 : Techs.Has(tech, TechId.Weaving) ? 10 : 6);
 
     public int SeaRange(Band band)
     {

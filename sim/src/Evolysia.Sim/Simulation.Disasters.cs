@@ -119,9 +119,10 @@ public sealed partial class Simulation
     {
         if (band.PlagueUntil < Day)
         {
-            float p = 0.00002f * Config.DisasterRate * (band.Members.Count / 25f)
-                      * (BandKnows(band, TechId.Domestication) ? 1.8f : 1f) * (band.Sedentary ? 1.5f : 1f);
-            if (!Rng.Chance(p)) return;
+            // One draw against the odds (Chance); what the band knows is only looked up when it could matter.
+            float u = Rng.NextFloat();
+            float p = 0.00002f * Config.DisasterRate * (band.Members.Count / 25f) * (band.Sedentary ? 1.5f : 1f);
+            if (u >= p * 1.8f || (u >= p && !BandKnows(band, TechId.Domestication))) return;
             StartPlague(band);
         }
         foreach (int id in band.Members)

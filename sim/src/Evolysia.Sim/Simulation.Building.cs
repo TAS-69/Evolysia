@@ -414,6 +414,22 @@ public sealed partial class Simulation
     /// goes to fetch them instead (felling, quarrying or gathering). Returns false if there was
     /// nothing to do.
     /// </summary>
+    // The band's unfinished and damaged works, listed once per band-day (jobs only finish during it).
+    [ThreadStatic] static List<Structure>? t_jobs;
+    [ThreadStatic] static Band? t_jobsBand;
+    [ThreadStatic] static int t_jobsDay;
+
+    List<Structure> JobsOf(Band band)
+    {
+        var jobs = t_jobs ??= new List<Structure>();
+        if (t_jobsBand == band && t_jobsDay == Day) return jobs;
+        jobs.Clear();
+        foreach (int sid in band.Structures)
+            if (Structures.TryGetValue(sid, out var s) && s.State is StructureState.Planned or StructureState.Building or StructureState.Damaged) jobs.Add(s);
+        t_jobsBand = band; t_jobsDay = Day;
+        return jobs;
+    }
+
     bool BuildWork(Agent a, Band band, in DayContext c)
     {
         // The most pressing job: a roof while people sleep outside, then the fire, stores and
@@ -421,12 +437,11 @@ public sealed partial class Simulation
         Structure? job = null;
         float best = float.MinValue;
         int fields = 0;
-        foreach (int sid in band.Structures)
-            if (Structures.TryGetValue(sid, out var f) && f.Standing && f.Kind.Role == StructureRole.Field) fields++;
+        foreach (var f in FieldsOf(band)) if (f.Standing) fields++;
         bool hungry = fields < band.Members.Count / 6 || band.FoodPool < band.Members.Count * 10f;   // food first
-        foreach (int sid in band.Structures)
+        foreach (var s in JobsOf(band))
         {
-            if (!Structures.TryGetValue(sid, out var s) || s.State is not (StructureState.Planned or StructureState.Building or StructureState.Damaged)) continue;
+            if (s.State is not (StructureState.Planned or StructureState.Building or StructureState.Damaged)) continue;
             var role = s.Kind.Role;
             float score = role switch
             {
@@ -516,8 +531,19 @@ public sealed partial class Simulation
         band.Structures.Clear();
         float carry = band.Members.Count * 6f;
         foreach (var (species, count) in band.Herds) if (species is "horse" or "camel") carry += count * 10f;
-        float bulk = band.Stores.Bulk;
-        if (bulk > carry) band.Stores.Scale(carry / bulk);
+        // Food is carried first; materials only as far as backs (and pack animals) allow.
+        float foodBulk = 0f;
+        foreach (var (good, qty) in band.Stores.Held()) if (good.Kind == GoodKind.Food) foodBulk += qty * good.Weight;
+        float room = MathF.Max(0f, carry - foodBulk);
+        if (foodBulk > carry)
+            foreach (var (good, qty) in band.Stores.Held().ToList()) band.Stores.Take(good.Index, good.Kind == GoodKind.Food ? qty * (1f - carry / foodBulk) : qty);
+        else
+        {
+            float materials = band.Stores.Bulk - foodBulk;
+            if (materials > room)
+                foreach (var (good, qty) in band.Stores.Held().ToList())
+                    if (good.Kind != GoodKind.Food) band.Stores.Take(good.Index, qty * (1f - room / materials));
+        }
         int was = band.Cell;
         band.Cell = newCell;
         foreach (var def in portable)

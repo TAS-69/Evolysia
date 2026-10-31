@@ -31,6 +31,8 @@ public sealed class Band
     public int BuildJobs;            // structures planned, going up or needing repair (refreshed each day)
     public int StorageRoom;          // bulk its stores can hold before goods spill and spoil
     public float Stress;             // smoothed hunger/shortage; drives budding and migration
+    public float CraftNeed;          // share of members lacking gear the stores could make (sampled every few days)
+    public int CraftNeedDay = int.MinValue / 2;
     public bool Sedentary;           // farming bands stop migrating
     public int LastMoveDay;
     public int PlagueUntil = -1;

@@ -88,6 +88,11 @@ public static class Goods
     public static bool TryId(string id, out ushort index) => ByName.TryGetValue(id, out index);
     public static GoodDef Get(ushort index) => All[index];
 
+    /// <summary>Goods that are not food (materials, fuel, metal, made things, medicine), in index order.</summary>
+    public static readonly ushort[] NonFood = Table.Select((t, i) => (t, i)).Where(x => x.t.kind != GoodKind.Food).Select(x => (ushort)x.i).ToArray();
+    /// <summary>Goods that spoil, in index order.</summary>
+    public static readonly ushort[] Perishable = Table.Select((t, i) => (t, i)).Where(x => x.t.spoil > 0f).Select(x => (ushort)x.i).ToArray();
+
     /// <summary>Food goods, most perishable first: what people eat before it goes off.</summary>
     public static readonly ushort[] FoodsByPerishability = Table.Select((t, i) => (t, i)).Where(x => x.t.food > 0.15f)
         .OrderByDescending(x => x.t.spoil).Select(x => (ushort)x.i).ToArray();

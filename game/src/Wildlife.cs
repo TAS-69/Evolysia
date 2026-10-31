@@ -68,7 +68,7 @@ public static class Wildlife
                 int i = w.Index(x, y);
                 var centre = new Vector2(x + 0.5f, y + 0.5f) * Main.CellPx;   // unwrapped: x may run off the planet's edge
                 uint h = TileBake.Hash(i, 41);
-                if (w.IsDryLand(i) && !peopled.Contains(i))
+                if (w.IsDryLand(i) && !peopled.Contains(i) && Inland(w, i, water: false))
                 {
                     float game = w.PreyK[i] > 0f ? w.PreyStock[i] / w.PreyK[i] : 0f;
                     if ((h & 0xFF) < game * 22f && Prey(w.Biome[i], h >> 8) is { } prey)
@@ -76,7 +76,8 @@ public static class Wildlife
                     if (w.Predators[i] > 0.45f && (h >> 12 & 0xFF) < w.Predators[i] * 20f && Predator(w.Biome[i]) is { } predator)
                         Herd(predator, centre, i + 7919, 1, density, now, into);
                 }
-                else if (w.Biome[i] is Biome.Coast or Biome.Lake or Biome.Ocean && w.FishK[i] > 0f && (h & 0xFF) < w.FishStock[i] / w.FishK[i] * 25f)
+                else if (w.Biome[i] is Biome.Coast or Biome.Lake or Biome.Ocean && Inland(w, i, water: true)
+                         && w.FishK[i] > 0f && (h & 0xFF) < w.FishStock[i] / w.FishK[i] * 25f)
                     Fish(centre, i, density, now, into);
             }
         foreach (var band in sim.Bands.Values)
@@ -91,6 +92,23 @@ public static class Wildlife
             if (!view.Grow(Main.CellPx * 6).HasPoint(pos)) continue;
             Domestic(band, penCell == band.Cell ? pos + new Vector2(24f, 6f) * Unit : pos, density, now, into);
         }
+    }
+
+    /// <summary>
+    /// Whether every neighbour of a cell is water (or dry land): animals wander beyond their own cell
+    /// and the shore art blends across cell edges, so fish keep a cell off the shore and herds off the water.
+    /// </summary>
+    static bool Inland(WorldMap w, int i, bool water)
+    {
+        int x = w.X(i), y = w.Y(i);
+        for (int dy = -1; dy <= 1; dy++)
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                if (y + dy < 0 || y + dy >= w.H) continue;
+                int n = w.Index(x + dx, y + dy);
+                if (w.IsWater(n) != water) return false;
+            }
+        return true;
     }
 
     /// <summary>Where a wandering animal is: stopped at a spot, or walking on to the next.</summary>

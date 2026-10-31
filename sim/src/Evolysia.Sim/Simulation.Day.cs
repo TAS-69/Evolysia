@@ -16,6 +16,7 @@ public sealed partial class Simulation
         public int Range, PreySite, FishSite;   // tiles: where the game is today, the best fishing water (-1: none)
         public int Fields, Herd;                 // the band's fields and tame animals (not counting dogs)
         public float CraftNeed;                  // 0..1: how many members lack gear the band could make
+        public float ShortWood, ShortStone, ShortOre, ShortGathered;   // 0..1: the stores' shortfall of each kind of material
         public TechSet Tech;
         public Season Season;
         public bool ColdAhead;
@@ -43,8 +44,19 @@ public sealed partial class Simulation
         return World.Index(World.X(cell) + Rng.Range(-r, r + 1), y);
     }
 
+    /// <summary>CPU time inside a band's day by section, summed over threads (Profile "bd_*").</summary>
+    static readonly string[] SectionNames = { "bd_survey", "bd_craft_need", "bd_choose", "bd_hunt", "bd_resolve", "bd_share", "bd_body_mind" };
+    readonly long[] _sectionTicks = new long[7];
+    void Section(int k, ref long t)
+    {
+        long now = System.Diagnostics.Stopwatch.GetTimestamp();
+        if (t_buffer is { } b) b.Ticks[k] += now - t;
+        t = now;
+    }
+
     void BandDay(Band band)
     {
+        long t = System.Diagnostics.Stopwatch.GetTimestamp();
         var w = World;
         int cell = band.Cell;
         _members.Clear();
@@ -61,6 +73,7 @@ public sealed partial class Simulation
             Range = RangeOf(band),
         };
         Survey(band, ref ctx);
+        Section(0, ref t);
         ctx.Water = MathF.Max(w.WaterAccess[cell] * (0.5f + 0.5f * MathF.Min(ctx.Wet, 1f)), band.WaterBonus);
         band.BuildJobs = 0;
         foreach (int sid in band.Structures)
@@ -72,15 +85,22 @@ public sealed partial class Simulation
         foreach (var (species, head) in band.Herds) if (species != "dog") ctx.Herd += (int)head;
         float stored = band.FoodPool;
         foreach (var m in _members) { ctx.Tech |= m.Knows; stored += m.Food; }
-        int lacking = 0, looked = 0;
-        for (int k = 0; k < Math.Min(4, _members.Count); k++)
+        // Who lacks gear the stores could make: a few people looked over every third day.
+        if (Day - band.CraftNeedDay >= 3)
         {
-            var m = _members[Rng.Next(_members.Count)];
-            if (m.IsChild(Day)) continue;
-            looked++;
-            if (WantedItem(m, band, ctx.Tech, band) is not null) lacking++;
+            int lacking = 0, looked = 0;
+            for (int k = 0; k < Math.Min(4, _members.Count); k++)
+            {
+                var m = _members[Rng.Next(_members.Count)];
+                if (m.IsChild(Day)) continue;
+                looked++;
+                if (WantedItem(m, band, ctx.Tech, band) is not null) lacking++;
+            }
+            band.CraftNeed = looked == 0 ? 0f : lacking / (float)looked;
+            band.CraftNeedDay = Day;
         }
-        ctx.CraftNeed = looked == 0 ? 0f : lacking / (float)looked;
+        ctx.CraftNeed = band.CraftNeed;
+        Section(1, ref t);
         ctx.Shortage = Math.Clamp(1f - stored / (_members.Count * 4f), 0f, 1f);
         float hungerNow = 0f;
         foreach (var m in _members) hungerNow += m.NeedOf(Need.Hunger);
@@ -88,6 +108,10 @@ public sealed partial class Simulation
         ctx.ColdAhead = ctx.Season == Season.Autumn || (w.TempMean[cell] - w.TempAmp[cell] < 2f && ctx.Season != Season.Summer);
 
         // 1. Everyone decides what to do today.
+        ctx.ShortWood = ShortageOf(band, GLog, GWood);
+        ctx.ShortStone = ShortageOf(band, GStone, GFlint);
+        ctx.ShortOre = ShortageOf(band, Ores);
+        ctx.ShortGathered = ShortageOf(band, GClay, GReed, GSand, GFiber, GSalt, GBamboo, GHerbs);
         _hunters.Clear();
         foreach (var a in _members)
         {
@@ -96,13 +120,18 @@ public sealed partial class Simulation
             if (a.Today == Activity.Hunt) _hunters.Add(a);
         }
 
+        Section(2, ref t);
+
         // 2. Group hunt, then individual activities.
         if (_hunters.Count > 0) Hunt(band, ctx);
+        Section(3, ref t);
         foreach (var a in _members)
             if (a.Alive && a.Today != Activity.Hunt) Resolve(a, band, ctx);
+        Section(4, ref t);
 
         // 3. Sharing, eating, bodies, babies, minds.
         ShareAndEat(band, ctx);
+        Section(5, ref t);
         foreach (var a in _members)
         {
             if (!a.Alive) continue;
@@ -112,6 +141,7 @@ public sealed partial class Simulation
             Psychology.DailyUpdate(a, Day);
             if (a.AgeDays(Day) == 12 * SimConfig.DaysPerYear) ComeOfAge(a, band);
         }
+        Section(6, ref t);
     }
 
     static float Avail(float stock, float cap) => cap <= 0f ? 0f : stock / (stock + 0.25f * cap);
@@ -255,12 +285,12 @@ public sealed partial class Simulation
         // Materials: wood, stone, ore and the rest, by how short the band is of them.
         float strong = 0.1f * a.Gene(Gene.Strength);
         // (A background chore: enough to keep stocks up, not enough to crowd out food and family.)
-        s[(int)Activity.Chop] = -0.3f + 0.55f * ShortageOf(band, GLog, GWood) + strong + (Techs.Has(c.Tech, TechId.Woodcutting) ? 0.05f : -0.15f);
+        s[(int)Activity.Chop] = -0.3f + 0.55f * c.ShortWood + strong + (Techs.Has(c.Tech, TechId.Woodcutting) ? 0.05f : -0.15f);
         if (Techs.Has(c.Tech, TechId.StoneTools))
-            s[(int)Activity.Quarry] = -0.35f + 0.5f * ShortageOf(band, GStone, GFlint) + strong;
+            s[(int)Activity.Quarry] = -0.35f + 0.5f * c.ShortStone + strong;
         if (Techs.Has(c.Tech, TechId.Copper) || Techs.Has(c.Tech, TechId.Mining))
-            s[(int)Activity.Mine] = -0.4f + 0.55f * ShortageOf(band, Goods.Id("copper_ore"), Goods.Id("tin_ore"), Goods.Id("iron_ore"), Goods.Id("coal"), Goods.Id("gold_ore")) + strong;
-        s[(int)Activity.Gather] = -0.3f + 0.5f * ShortageOf(band, GClay, GReed, GSand, GFiber, GSalt, GBamboo, GHerbs);
+            s[(int)Activity.Mine] = -0.4f + 0.55f * c.ShortOre + strong;
+        s[(int)Activity.Gather] = -0.3f + 0.5f * c.ShortGathered;
 
         float social = a.NeedOf(Need.Social);
         s[(int)Activity.Socialize] = 0.05f + social * (0.6f + 0.6f * rd) - (a.WithdrawnUntil > Day ? 1.2f : 0f);
@@ -518,7 +548,7 @@ public sealed partial class Simulation
                 if (!a.Alive) continue;
                 bool priority = a.IsChild(Day) || a.Pregnant;
                 if ((pass == 0) != priority) continue;
-                if (a.Food > 0f) a.Pack.Spoil(0.5f * heat);
+                if (a.Food > 0f) a.Pack.Spoil(0.3f * heat);
                 float age = a.Age(Day);
                 bool nursed = age < 1f && Living.TryGetValue(a.MotherId, out var mom) && mom.BandId == a.BandId;
                 if (nursed) { a.Needs[(int)Need.Hunger] = MathF.Max(0f, a.NeedOf(Need.Hunger) - 0.3f); continue; }

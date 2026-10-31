@@ -16,7 +16,7 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 var cfg = new SimConfig();
 int years = 500;
 string outDir = "runs/latest";
-bool quiet = false;
+bool quiet = false, profile = false;
 int traceYears = 0, narrateCount = 0, mindsBudget = 0;
 string llmUrl = "http://127.0.0.1:8081";
 for (int i = 0; i < args.Length; i++)
@@ -30,10 +30,13 @@ for (int i = 0; i < args.Length; i++)
         case "--width": cfg.Width = int.Parse(Next()); break;
         case "--height": cfg.Height = int.Parse(Next()); break;
         case "--bands": cfg.StartBands = int.Parse(Next()); break;
+        case "--tribes": cfg.Tribes = int.Parse(Next()); break;
+        case "--planet": cfg.Planet = Enum.Parse<PlanetType>(Next(), ignoreCase: true); break;
         case "--band-size": cfg.StartBandSize = int.Parse(Next()); break;
         case "--invention-rate": cfg.InventionRate = float.Parse(Next()); break;
         case "--disaster-rate": cfg.DisasterRate = float.Parse(Next()); break;
         case "--quiet": quiet = true; break;
+        case "--profile": profile = true; break;   // time by phase every 25 years
         case "--trace": traceYears = int.Parse(Next()); break;
         case "--narrate": narrateCount = int.Parse(Next()); break;
         case "--minds": mindsBudget = int.Parse(Next()); break;
@@ -52,12 +55,23 @@ WriteMaps(sim, Path.Combine(outDir, "world"));
 var startTraits = TraitSnapshot(sim);
 if (traceYears > 0) Trace(sim, traceYears);
 
+var lastProfile = new Dictionary<string, double>();
+var lastPause = TimeSpan.Zero; long lastAlloc = 0;
 void OnYear(Simulation s)
 {
     var r = s.Stats.History[^1];
     if (!quiet && (r.Year % 25 == 0 || s.Living.Count == 0))
         Console.WriteLine($"  year {r.Year,4}: pop {r.Population,6}  bands {r.Bands,4}  cultures {r.Cultures,3}  techs {r.TechsKnownWorld,2}  " +
                           $"memes {r.Memes,4}  births {r.Births,4}  deaths {r.Deaths.Sum(),4}  ({sw.Elapsed.TotalSeconds:0.0}s)");
+    if (profile && r.Year % 25 == 0)
+    {
+        Console.WriteLine("    " + string.Join(", ", s.Profile.Select(p => (p.Key, d: p.Value - lastProfile.GetValueOrDefault(p.Key)))
+            .OrderByDescending(p => p.d).Take(40).Select(p => $"{p.Key} {p.d:0.0}s")) +
+            $"  · {System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / 1_000_000} MB" +
+            $" · GC paused {(GC.GetTotalPauseDuration() - lastPause).TotalSeconds:0.0}s, allocated {(GC.GetTotalAllocatedBytes() - lastAlloc) / 1_000_000_000.0:0.0} GB");
+        lastPause = GC.GetTotalPauseDuration(); lastAlloc = GC.GetTotalAllocatedBytes();
+        foreach (var (k, v) in s.Profile) lastProfile[k] = v;
+    }
 }
 if (mindsBudget > 0) await RunWithMinds(sim, years, mindsBudget, llmUrl, Path.Combine(outDir, "minds.md"), OnYear);
 else sim.RunYears(years, OnYear);

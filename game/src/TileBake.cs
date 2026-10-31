@@ -36,12 +36,12 @@ public static class TileBake
         float n = Patch(w, i);
         float t = w.TempMean[i], rain = w.Precip[i];
         if (Beach(w, i))
-            return t < 4f ? "gravel" : n > 0.8f ? "shell_beach" : t > 22f ? "fine_sand" : "sand";
+            return t < 4f ? "gravel" : n > 0.8f ? "shell_beach" : t > 22f ? (n > 0.55f ? "coral_shore" : "fine_sand") : "sand";
         return w.Biome[i] switch
         {
             Biome.DeepOcean => "deep_water",
             Biome.Ocean or Biome.Lake => "water",
-            Biome.Coast => t > 22f && n > 0.7f ? "coral_shore" : "shallow_water",
+            Biome.Coast => "shallow_water",   // coral_shore is a beach (sand), not a reef
             Biome.IceSheet => "ice",
             Biome.Tundra => t < -9f ? "permafrost" : n > 0.66f ? "lichen_rock" : n < 0.2f ? "frozen_mud" : "tundra",
             Biome.BorealForest => rain > 700f && n > 0.55f ? "moss_floor" : "pine_needles",

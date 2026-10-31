@@ -41,7 +41,7 @@ public static class Prompts
         // A choice waiting on a mind is time-critical: instinct takes over at the deadline.
         ["decision"] = 11f,
         // Moments the player caused come first: they are watching for the response.
-        ["dream"] = 12f, ["prayer_answered"] = 10f, ["revelation"] = 10f, ["prayer"] = 8f,
+        ["dream"] = 12f, ["message_read"] = 12f, ["prayer_answered"] = 10f, ["revelation"] = 10f, ["prayer"] = 8f,
         ["schism"] = 9f, ["myth"] = 8f, ["voyage"] = 9f, ["killing"] = 7f, ["invention"] = 6f, ["pivot"] = 5f,
         ["notable_death"] = 4f, ["fear_overcome"] = 2f,
     };
@@ -95,6 +95,9 @@ public static class Prompts
         string situation = F(m, "trigger") switch
         {
             "courtship" => $"{name} offered {F(m, "subject")} hoping for love, and was turned down in front of others.",
+            "message" => F(m, "message").Length > 0
+                ? $"{name} leads the {band}. Words have appeared {(F(m, "medium") == "vision" ? "to them in a vision" : F(m, "medium") == "stone" ? "carved into a stone that was not there before" : "written on the ground where no one wrote them")}: \"{F(m, "message")}\". Everyone is asking {name} what it means."
+                : $"{name} leads the {band}. Strange marks have appeared {(F(m, "medium") == "stone" ? "on a stone that was not there before" : "on the ground")}, like nothing any of them has seen. No one can read them. Everyone is asking {name} what they mean.",
             "first_contact" => $"{name} leads the {band} ({F(m, "own_size")} people{(F(m, "hungry") == "True" ? ", and they are hungry" : "")}). " +
                                $"For the first time they have met strangers: the {F(m, "other_band")} of the {F(m, "other_culture")} people, " +
                                $"{F(m, "other_size")} strong, speaking a tongue no one understands.",
@@ -209,6 +212,12 @@ public static class Prompts
                 Obj(("thought", 400), ("says", 260)),
                 $"thought ({name}'s inner voice as they step onto the shore, 1-2 sentences), says (what they tell the others there)",
                 ModelRole.Main, 260),
+            "message_read" => (
+                (F(m, "message").Length > 0 ? $"Words have appeared to the {band}: \"{F(m, "message")}\". " : $"Marks no one can read have appeared before the {band}. ") +
+                $"{name}, who leads them, takes them as {F(m, "reading") switch { "scripture" => "sacred words to keep and teach", "vision" => "a wonder, a sign from beyond", "command" => "a command to be obeyed", "dismissed" => "nonsense, a trick", _ => "a curse on that place" }}.",
+                Obj(("thought", 400), ("says", 300)),
+                $"thought ({name}'s inner voice on what the words mean, 1-2 sentences), says (what {name} tells the {band} the words mean and what they will do)",
+                ModelRole.Main, 300),
             "notable_death" => (
                 $"{name} has died, aged {F(m, "age")}, of {F(m, "cause").Replace('_', ' ')}.{(F(m, "was_leader") == "True" ? $" They led the {band}." : "")}",
                 Obj(("epitaph", 360)),

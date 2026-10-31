@@ -291,7 +291,7 @@ public sealed partial class Simulation
         if (IsCoastal(site) || b == Biome.ColdDesert) options.Add((GSalt, want(GSalt) * 0.6f));
         if (b is Biome.TemperateGrassland or Biome.Savanna or Biome.Shrubland or Biome.Wetland) options.Add((GFiber, want(GFiber)));
         if (b is Biome.TropicalRainforest or Biome.TropicalSeasonalForest) options.Add((GBamboo, want(GBamboo)));
-        options.Add((GHerbs, 0.1f + (BandKnows(band, TechId.Herbalism) ? 0.3f : 0f)));
+        options.Add((GHerbs, 0.1f + (BandKnowsCached(c, TechId.Herbalism) ? 0.3f : 0f)));
         options.Add((GFiber, 0.15f));
         ushort g = PickGood(options.ToArray());
         a.Pack.Add(g, 1.6f * ToolBonus(a, Activity.Gather));
@@ -308,6 +308,8 @@ public sealed partial class Simulation
         if (want <= 0f) return 0f;
         return Math.Clamp((want - band.Stores[good]) / want, 0f, 1f);
     }
+
+    static readonly ushort[] Ores = { Goods.Id("copper_ore"), Goods.Id("tin_ore"), Goods.Id("iron_ore"), Goods.Id("coal"), Goods.Id("gold_ore") };
 
     static float ShortageOf(Band band, params ushort[] goods)
     {
@@ -391,43 +393,72 @@ public sealed partial class Simulation
     ItemDef? WantedItem(Agent a, Band band, TechSet known, Band? from = null)
     {
         // With a store to make it from, only what its materials allow; otherwise the best known (what to gather for).
-        ItemDef? BestItem(TechSet k, ItemSlot slot, Func<ItemDef, float> score) =>
-            Simulation.BestItem(k, slot, d => from == null || HasInputs(from, d.Inputs) ? score(d) : 0f);
+        ItemDef? BestItem(TechSet k, ItemSlot slot, ItemMeasure measure, Activity act = default)
+        {
+            foreach (var d in Ranked(k, slot, measure, act))
+                if (from == null || HasInputs(from, d.Inputs)) return d;
+            return null;
+        }
         float cold = MathF.Max(0f, 12f - (World.TempMean[band.Cell] - World.TempAmp[band.Cell] * 0.7f));
         if (Warmth(a) < cold)
             for (var slot = ItemSlot.Top; slot >= ItemSlot.Legwear; slot--)
-                if (Worn(a, slot) is null && BestItem(known, slot, d => d.Warmth) is { } warm) return warm;
-        if (Worn(a, ItemSlot.Top) is null && BestItem(known, ItemSlot.Top, d => d.Warmth + 1f) is { } top) return top;
-        if (Worn(a, ItemSlot.Legwear) is null && BestItem(known, ItemSlot.Legwear, d => d.Warmth + 1f) is { } legs) return legs;
+                if (Worn(a, slot) is null && BestItem(known, slot, ItemMeasure.Warmth) is { } warm) return warm;
+        if (Worn(a, ItemSlot.Top) is null && BestItem(known, ItemSlot.Top, ItemMeasure.Clothing) is { } top) return top;
+        if (Worn(a, ItemSlot.Legwear) is null && BestItem(known, ItemSlot.Legwear, ItemMeasure.Clothing) is { } legs) return legs;
         var main = a.MainActivity();
         int tools = 0;
         foreach (var item in a.Gear) if (item.Kind.Slot == ItemSlot.Tool) tools++;
         if (tools < 3)
         {
-            if (HeldTool(a, main) is null && BestItem(known, ItemSlot.Tool, d => Serves(d, main) ? Crafts.Use(d, main) : 0f) is { } tool) return tool;
-            if (main == Activity.Hunt && WeaponPower(a) <= 0f && BestItem(known, ItemSlot.Tool, d => d.Power) is { } weapon) return weapon;
+            if (HeldTool(a, main) is null && BestItem(known, ItemSlot.Tool, ItemMeasure.Use, main) is { } tool) return tool;
+            if (main == Activity.Hunt && WeaponPower(a) <= 0f && BestItem(known, ItemSlot.Tool, ItemMeasure.Power) is { } weapon) return weapon;
         }
-        if (Worn(a, ItemSlot.Footwear) is null && BestItem(known, ItemSlot.Footwear, d => d.Warmth + 0.5f) is { } shoes) return shoes;
-        if (band.LeaderId == a.Id && GearPrestige(a) < 0.3f && BestItem(known, ItemSlot.Headwear, d => d.Prestige) is { } crown) return crown;
+        if (Worn(a, ItemSlot.Footwear) is null && BestItem(known, ItemSlot.Footwear, ItemMeasure.Shoes) is { } shoes) return shoes;
+        if (band.LeaderId == a.Id && GearPrestige(a) < 0.3f && BestItem(known, ItemSlot.Headwear, ItemMeasure.Prestige) is { } crown) return crown;
         if (Day - band.LastRaidedDay < 2 * SimConfig.DaysPerYear && a.Id % 2 == 0 && Protection(a) < 0.1f
-            && BestItem(known, ItemSlot.Armour, d => d.Protection) is { } armour) return armour;
+            && BestItem(known, ItemSlot.Armour, ItemMeasure.Protection) is { } armour) return armour;
         return null;
     }
 
-    /// <summary>The best item in a slot by some measure, among those the band can make (score must be positive).</summary>
-    static ItemDef? BestItem(TechSet known, ItemSlot slot, Func<ItemDef, float> score)
+    /// <summary>What an item is judged by when choosing what to make someone.</summary>
+    enum ItemMeasure : byte { Warmth, Clothing, Shoes, Use, Power, Prestige, Protection }
+
+    static float Measure(ItemDef d, ItemMeasure m, Activity act) => m switch
     {
-        ItemDef? best = null;
-        float bestScore = 0f;
-        foreach (var d in Crafts.Items)
+        ItemMeasure.Warmth => d.Warmth,
+        ItemMeasure.Clothing => d.Warmth + 1f,
+        ItemMeasure.Shoes => d.Warmth + 0.5f,
+        ItemMeasure.Use => Serves(d, act) ? Crafts.Use(d, act) : 0f,
+        ItemMeasure.Power => d.Power,
+        ItemMeasure.Prestige => d.Prestige,
+        _ => d.Protection,
+    };
+
+    static readonly System.Collections.Concurrent.ConcurrentDictionary<(TechSet, ItemSlot, ItemMeasure, Activity), ItemDef[]> RankedCache = new();
+
+    /// <summary>
+    /// The items in a slot that <paramref name="known"/> can make and that score on a measure, best
+    /// first (ties to the more lasting, then catalogue order). A pure function of its key, so cached
+    /// and shared across threads and worlds.
+    /// </summary>
+    static ItemDef[] Ranked(TechSet known, ItemSlot slot, ItemMeasure measure, Activity act)
+    {
+        if (measure != ItemMeasure.Use) act = default;
+        if (RankedCache.TryGetValue((known, slot, measure, act), out var hit)) return hit;
+        if (RankedCache.Count > 100_000) RankedCache.Clear();   // bounded over very long histories
+        var ranked = new List<(ItemDef d, float s, int i)>();
+        var items = Crafts.BySlot[(int)slot];
+        for (int i = 0; i < items.Length; i++)
         {
-            if (d.Slot != slot || !Crafts.CanMake(known, d)) continue;
-            float s = score(d);
+            var d = items[i];
+            if (!Crafts.CanMake(known, d)) continue;
+            float s = Measure(d, measure, act);
             if (s <= 0f) continue;
-            s += d.Days / 20000f;   // ties go to the more lasting
-            if (s > bestScore) { bestScore = s; best = d; }
+            ranked.Add((d, s + d.Days / 20000f, i));
         }
-        return best;
+        var result = ranked.OrderByDescending(r => r.s).ThenBy(r => r.i).Select(r => r.d).ToArray();
+        RankedCache[(known, slot, measure, act)] = result;
+        return result;
     }
 
     // ------------------------------------------------------------------ crafting
@@ -440,10 +471,11 @@ public sealed partial class Simulation
     void CraftWork(Agent a, Band band, in DayContext c)
     {
         float skill = (0.6f + 0.6f * a.Efficacy[(int)Domain.Crafting]) * ToolBonus(a, Activity.Craft);
-        // 1. Gear someone lacks.
-        foreach (int id in band.Members)
+        // 1. Gear someone lacks (asking round a few people).
+        for (int k = 0; k < Math.Min(8, band.Members.Count); k++)
         {
-            if (!Living.TryGetValue(id, out var m) || m.IsChild(Day) || Rng.Chance(0.5f)) continue;
+            int id = band.Members[Rng.Next(band.Members.Count)];
+            if (!Living.TryGetValue(id, out var m) || m.IsChild(Day)) continue;
             if (WantedItem(m, band, a.Knows, band) is not { } want || !HasStation(band, want.Station, out int at)) continue;
             foreach (var (g, q) in want.Inputs) band.Stores.Take(g, q);
             Equip(m, band, want);
@@ -483,10 +515,28 @@ public sealed partial class Simulation
     }
 
     /// <summary>Whether the band has a standing workstation of this kind (none needed: true), and where.</summary>
+    // During a band's day: its standing workstations by kind (the first of each), listed once.
+    [ThreadStatic] static Dictionary<string, int>? t_stations;
+    [ThreadStatic] static Band? t_stationsBand;
+    [ThreadStatic] static int t_stationsDay;
+
     bool HasStation(Band band, string station, out int cell)
     {
         cell = -1;
         if (station.Length == 0) return true;
+        if (t_buffer != null)
+        {
+            var map = t_stations ??= new Dictionary<string, int>();
+            if (t_stationsBand != band || t_stationsDay != Day)
+            {
+                map.Clear();
+                foreach (int sid in band.Structures)
+                    if (Structures.TryGetValue(sid, out var st) && st.Standing) map.TryAdd(st.Kind.Id, st.Cell);
+                t_stationsBand = band; t_stationsDay = Day;
+            }
+            if (map.TryGetValue(station, out int at)) { cell = at; return true; }
+            return false;
+        }
         foreach (int sid in band.Structures)
             if (Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Id == station) { cell = s.Cell; return true; }
         return false;
@@ -498,22 +548,37 @@ public sealed partial class Simulation
     /// A day in the fields: sowing at the start of the growing season, tending (each day of work
     /// adds to the harvest), and bringing the crop in when it is ripe or the season turns.
     /// </summary>
+    // The band's standing fields, listed once per band-day (farmers each tend the least grown).
+    [ThreadStatic] static List<Structure>? t_fields;
+    [ThreadStatic] static Band? t_fieldsBand;
+    [ThreadStatic] static int t_fieldsDay;
+
+    List<Structure> FieldsOf(Band band)
+    {
+        var fields = t_fields ??= new List<Structure>();
+        if (t_fieldsBand == band && t_fieldsDay == Day) return fields;
+        fields.Clear();
+        foreach (int sid in band.Structures)
+            if (Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Role == StructureRole.Field) fields.Add(s);
+        t_fieldsBand = band; t_fieldsDay = Day;
+        return fields;
+    }
+
     void FarmWork(Agent a, Band band, in DayContext c)
     {
         Structure? field = null;
-        foreach (int sid in band.Structures)
-            if (Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Role == StructureRole.Field && (field == null || s.Growth < field.Growth))
-                field = s;
+        foreach (var s in FieldsOf(band))
+            if (s.Standing && (field == null || s.Growth < field.Growth)) field = s;
         if (field == null) { a.Site = band.Cell; return; }
         a.Site = field.Cell;
         float growth = World.Growth(field.Cell, Day);
-        float work = (0.6f + 0.4f * a.Efficacy[(int)Domain.Farming]) * ToolBonus(a, Activity.Farm) * (BandKnows(band, TechId.Plough) ? 1.25f : 1f)
-                     * (World.Precip[field.Cell] < 600f && BandKnows(band, TechId.Irrigation) ? 1.3f : 1f);
+        float work = (0.6f + 0.4f * a.Efficacy[(int)Domain.Farming]) * ToolBonus(a, Activity.Farm) * (BandKnowsCached(c, TechId.Plough) ? 1.25f : 1f)
+                     * (World.Precip[field.Cell] < 600f && BandKnowsCached(c, TechId.Irrigation) ? 1.3f : 1f);
         if (growth > 0.15f)
         {
             if (field.Growth <= 0f) { field.Crop = CropFor(field); field.Growth = 0.02f; }
             field.Growth = MathF.Min(1.05f, field.Growth + 0.04f * MathF.Min(1.2f, growth + 0.2f) * work);
-            field.Yield += 2.6f * MathF.Min(1.2f, growth + 0.2f) * MathF.Min(World.YearRain[field.Cell], 1.1f) * work;
+            field.Yield += 6.5f * MathF.Min(1.2f, growth + 0.2f) * MathF.Min(World.YearRain[field.Cell], 1.1f) * work;
         }
         if (field.Growth >= 1f || (growth < 0.1f && field.Growth > 0.3f))
         {
@@ -575,7 +640,7 @@ public sealed partial class Simulation
                 case "pig" or "horse": band.Stores.Add(GMeat, 0.5f * share); break;
             }
         }
-        if (BandKnows(band, TechId.Beekeeping) && HasStation(band, "beehive", out _)) band.Stores.Add(GHoney, 0.1f);
+        if (BandKnowsCached(c, TechId.Beekeeping) && HasStation(band, "beehive", out _)) band.Stores.Add(GHoney, 0.1f);
         a.Needs[(int)Need.Energy] += 0.1f;
     }
 
@@ -621,8 +686,7 @@ public sealed partial class Simulation
     void Deposit(Agent a, Band band, float keep)
     {
         if (a.Pack is not { } pack) return;
-        foreach (var (good, qty) in pack.Held().ToList())
-            if (good.Kind != GoodKind.Food) band.Stores.Add(good.Index, pack.Take(good.Index, qty));
+        pack.MoveNonFood(band.Stores);
         float food = pack.FoodValue;
         if (food > keep) pack.GiveFood(band.Stores, (food - keep));
     }
@@ -651,6 +715,6 @@ public sealed partial class Simulation
         // out and goes off faster.
         float food = band.Stores.FoodValue, room = 20f + n * (band.Shelter > 0f ? 12f : 6f) + band.StorageRoom;
         float overflow = food > room ? MathF.Min(2.5f, 1f + 0.5f * (food - room) / room) : 1f;
-        band.Stores.Spoil(0.5f * heat * kept * overflow);
+        band.Stores.Spoil(0.3f * heat * kept * overflow);
     }
 }

@@ -89,7 +89,8 @@ These rules stay:
 - [x] 6 Rendering: terrain from the sim (felled woods, quarried boulders, fields by crop and growth, built-on cells,
   per-chunk rebakes); structures by kind and state; people dressed in their own gear with the tool they use;
   herds by their pens; inspector lists built works, stores, animals and each person's possessions.
-- [ ] 7 Balance: runs are stable and fast (300 years in ~100 s, ~0.6 GB), but population plateaus near 4-5k by
-  year 250 rather than the ~120k target. The limits found so far were all spatial/economic (fixed: overflow
-  spoilage, unhoused villages, field-less villages, crowded land); what remains is mostly demographic (small
-  bands, few marriages, birth spacing, crowding sickness). Needs its own tuning pass.
+- [ ] 7 Balance (2026-10-31):
+  - **Growth fixed.** The ~5k plateau came from seed 42's start on a small island with the continents 120-150 cells away. Peoples now start on the large landmasses (`SeedPopulation`), sea range grows with sails, sailing and shipbuilding, field yields went up 2.5x, spoilage came down, and nomads carry their food first when they move camp. Seed 42 now reaches ~16k by year 250, ~28k by 275 and ~40-47k by 300-325, still growing.
+  - **Memory:** about 35 KB per person including GC headroom (1.4 GB at 40k), so ~120k people needs roughly 4-5 GB.
+  - **Speed:** see the sim README's performance notes. Per-day cost grows with population: the band day is parallel, while band decisions, the commit and disasters are sequential.
+  - Still open: a full 500-year run to ~120k, and the tuning that follows.
