@@ -1,0 +1,372 @@
+{
+  "id": "wardrobe.footwear_sleep_lod32",
+  "family": "wardrobe",
+  "asset_id": "footwear",
+  "animation": "sleep",
+  "files": [
+    "wardrobe/footwear_sleep_lod32.png",
+    "wardrobe/footwear_sleep_lod32_idx.png"
+  ],
+  "sidecar": "wardrobe/footwear_sleep_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 2,
+  "fps": 2,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    16,
+    28
+  ],
+  "density": 32,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 12,
+  "sheet_rows": [
+    "sandals/child/slim/side",
+    "sandals/adult/slim/side",
+    "sandals/elder/slim/side",
+    "leather_boots/child/slim/side",
+    "leather_boots/adult/slim/side",
+    "leather_boots/elder/slim/side",
+    "fur_boots/child/slim/side",
+    "fur_boots/adult/slim/side",
+    "fur_boots/elder/slim/side",
+    "metal_boots/child/slim/side",
+    "metal_boots/adult/slim/side",
+    "metal_boots/elder/slim/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "sandals",
+    "soft_shoes",
+    "leather_boots",
+    "fur_boots",
+    "work_boots",
+    "metal_boots",
+    "cloth_wraps",
+    "ceremonial_shoes",
+    "environment_boots",
+    "water_shoes"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      9,
+      9,
+      9,
+      10,
+      10,
+      10,
+      11,
+      11,
+      11
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      9,
+      9,
+      9,
+      10,
+      10,
+      10,
+      11,
+      11,
+      11
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ]
+  ],
+  "sim_actions": [
+    "sleep"
+  ],
+  "hand_anchors": [
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ],
+      [
+        18,
+        26
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ]
+  ],
+  "anims": {
+    "sleep": {
+      "frames": 2,
+      "fps": 2
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "footwear"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "cloth_a_0",
+    "cloth_a_2",
+    "cloth_b_3"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

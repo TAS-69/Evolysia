@@ -1,0 +1,61 @@
+{
+  "id": "civilisation.wall_granite_14_lod64",
+  "family": "civilisation",
+  "asset_id": "wall_granite_14",
+  "files": [
+    "civilisation/wall_granite_14_lod64.png",
+    "civilisation/wall_granite_14_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/wall_granite_14_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "wall",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "wall"
+  ],
+  "recolor_slots": [
+    "fixed_rock_0",
+    "fixed_rock_1",
+    "fixed_rock_2",
+    "fixed_rock_3",
+    "fixed_rock_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "granite",
+  "connection_mask": 14,
+  "connection_bits": {
+    "N": 1,
+    "E": 2,
+    "S": 4,
+    "W": 8
+  }
+}

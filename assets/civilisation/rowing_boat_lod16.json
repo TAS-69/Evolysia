@@ -1,0 +1,54 @@
+{
+  "id": "civilisation.rowing_boat_lod16",
+  "family": "civilisation",
+  "asset_id": "rowing_boat",
+  "files": [
+    "civilisation/rowing_boat_lod16.png",
+    "civilisation/rowing_boat_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/rowing_boat_lod16.json",
+  "frame": [
+    16,
+    24
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    23
+  ],
+  "logical_frame": [
+    16,
+    24
+  ],
+  "logical_pivot": [
+    8.0,
+    23.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "vehicle",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "vehicle"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "transport_mode": "water"
+}

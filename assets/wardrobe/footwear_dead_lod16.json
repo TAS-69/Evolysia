@@ -1,0 +1,333 @@
+{
+  "id": "wardrobe.footwear_dead_lod16",
+  "family": "wardrobe",
+  "asset_id": "footwear",
+  "animation": "dead",
+  "files": [
+    "wardrobe/footwear_dead_lod16.png",
+    "wardrobe/footwear_dead_lod16_idx.png"
+  ],
+  "sidecar": "wardrobe/footwear_dead_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    8,
+    14
+  ],
+  "density": 16,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 9,
+  "sheet_rows": [
+    "sandals/child/slim/side",
+    "sandals/adult/slim/side",
+    "sandals/elder/slim/side",
+    "leather_boots/child/slim/side",
+    "leather_boots/adult/slim/side",
+    "leather_boots/elder/slim/side",
+    "fur_boots/child/slim/side",
+    "fur_boots/adult/slim/side",
+    "fur_boots/elder/slim/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "sandals",
+    "soft_shoes",
+    "leather_boots",
+    "fur_boots",
+    "work_boots",
+    "metal_boots",
+    "cloth_wraps",
+    "ceremonial_shoes",
+    "environment_boots",
+    "water_shoes"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ],
+    [
+      3,
+      3,
+      3,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      2,
+      2,
+      2
+    ]
+  ],
+  "sim_actions": [
+    "dead"
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ]
+  ],
+  "anims": {
+    "dead": {
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "footwear"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "cloth_a_0",
+    "cloth_a_2",
+    "cloth_b_3"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

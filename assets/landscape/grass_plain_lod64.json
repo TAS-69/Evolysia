@@ -1,0 +1,63 @@
+{
+  "id": "landscape.grass_plain_lod64",
+  "family": "landscape",
+  "asset_id": "grass",
+  "kind": "plain",
+  "files": [
+    "landscape/grass_plain_lod64.png",
+    "landscape/grass_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/grass_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "grass",
+  "layer_priority": 11,
+  "priority_offset": 4,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "grass_1",
+    "grass_2",
+    "grass_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "grass"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

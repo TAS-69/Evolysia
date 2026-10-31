@@ -1,0 +1,346 @@
+{
+  "id": "wardrobe.body_paint_craft_lod16",
+  "family": "wardrobe",
+  "asset_id": "body_paint",
+  "animation": "craft",
+  "files": [
+    "wardrobe/body_paint_craft_lod16.png",
+    "wardrobe/body_paint_craft_lod16_idx.png"
+  ],
+  "sidecar": "wardrobe/body_paint_craft_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 3,
+  "fps": 6,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    8,
+    14
+  ],
+  "density": 16,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 1,
+  "strip_count": 1,
+  "sheet_rows": [
+    "cheek_dots/child/slim/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "cheek_dots",
+    "brow_band",
+    "arm_bands",
+    "leg_marks",
+    "face_streak",
+    "shoulder_dabs"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "sim_actions": [
+    "craft",
+    "cook"
+  ],
+  "hand_anchors": [
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ],
+    [
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ],
+    [
+      8,
+      14
+    ]
+  ],
+  "anims": {
+    "craft": {
+      "frames": 3,
+      "fps": 6
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "body_paint"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

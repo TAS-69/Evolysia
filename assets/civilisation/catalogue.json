@@ -1,0 +1,4941 @@
+{
+  "version": 1,
+  "scope": "coverage_plan_not_complete_asset_library",
+  "progression": "capabilities_and_materials_emerge_independently_stages_are_review_groups",
+  "entries": [
+    {
+      "id": "gathering_ground",
+      "coverage_stage": "foraging",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "butchery",
+      "coverage_stage": "foraging",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "drying_rack",
+      "coverage_stage": "foraging",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_barrel",
+      "coverage_stage": "foraging",
+      "system": "food_water",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "spring_access",
+      "coverage_stage": "foraging",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "camp",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "windbreak",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lean_to",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bed",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hearth",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wash_basin",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "latrine",
+      "coverage_stage": "foraging",
+      "system": "shelter_health",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "basket",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "backpack",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "knapping_block",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "chopping_block",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hide_scraper",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bone_awl",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "storage_pit",
+      "coverage_stage": "foraging",
+      "system": "craft_storage",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone_workshop",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone_drill",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grinding_slab",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "millstone",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "spear_rack",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "net_rack",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "canoe",
+      "coverage_stage": "stonecraft",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "home",
+      "coverage_stage": "stonecraft",
+      "system": "community",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "meeting_house",
+      "coverage_stage": "stonecraft",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "burial_ground",
+      "coverage_stage": "stonecraft",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "care_shelter",
+      "coverage_stage": "stonecraft",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "granary",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grain_bin",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grain_sack",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "barn",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_pen",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "irrigation_gate",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "well",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bakery",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oven",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "apiary",
+      "coverage_stage": "agriculture",
+      "system": "food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pottery_workshop",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "potter_wheel",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "kiln",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "weaver",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "loom",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dye_vat",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tannery",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "reed_workshop",
+      "coverage_stage": "agriculture",
+      "system": "craft",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "chest",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "crate",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pallet",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "handcart",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sledge",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "raft",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dock",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bridge",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "market_stall",
+      "coverage_stage": "agriculture",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "smithy",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "forge",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "anvil",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ore_sorting_table",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "smelter",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "charcoal_clamp",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "foundry",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "casting_bench",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "quarry",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mine_head",
+      "coverage_stage": "metallurgy",
+      "system": "materials",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "infirmary",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "school",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "archive",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bath_house",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_cistern",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sewer_outlet",
+      "coverage_stage": "metallurgy",
+      "system": "community",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wagon",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pack_saddle",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "warehouse",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "trade_office",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "harbour",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sailboat",
+      "coverage_stage": "metallurgy",
+      "system": "logistics",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "machine_shop",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lathe",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "drill_press",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "power_loom",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sawmill",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "paper_mill",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "steam_engine",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "boiler",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "factory",
+      "coverage_stage": "mechanisation",
+      "system": "production",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pump_house",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_tower",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rail_station",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "locomotive",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "freight_wagon",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "canal_lock",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dry_dock",
+      "coverage_stage": "mechanisation",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hospital",
+      "coverage_stage": "mechanisation",
+      "system": "care",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fire_station",
+      "coverage_stage": "mechanisation",
+      "system": "care",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "waste_sorting",
+      "coverage_stage": "mechanisation",
+      "system": "care",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "housing_block",
+      "coverage_stage": "mechanisation",
+      "system": "care",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "generator",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "turbine",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "substation",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "power_line",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "battery_bank",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "solar_panel",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wind_turbine",
+      "coverage_stage": "electrification",
+      "system": "power",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "refrigerated_store",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_treatment",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sewage_treatment",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "silo",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "greenhouse",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "commercial_kitchen",
+      "coverage_stage": "electrification",
+      "system": "food_water",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "truck",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bus",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "car",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "airfield",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "aircraft",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "container_port",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cargo_ship",
+      "coverage_stage": "electrification",
+      "system": "transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "clinic",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "laboratory",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "library",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "communications_mast",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "electronics_bench",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "concrete_plant",
+      "coverage_stage": "electrification",
+      "system": "services",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "research_lab",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "console",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "server_rack",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "chip_fabricator",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sensor_station",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "medical_scanner",
+      "coverage_stage": "information",
+      "system": "research",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "distribution_centre",
+      "coverage_stage": "information",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cold_chain_container",
+      "coverage_stage": "information",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "electric_vehicle",
+      "coverage_stage": "information",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "recycling_plant",
+      "coverage_stage": "information",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wastewater_reuse",
+      "coverage_stage": "information",
+      "system": "networks",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "theatre",
+      "coverage_stage": "information",
+      "system": "culture",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "music_studio",
+      "coverage_stage": "information",
+      "system": "culture",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sports_ground",
+      "coverage_stage": "information",
+      "system": "culture",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "civic_hall",
+      "coverage_stage": "information",
+      "system": "culture",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "botanical_garden",
+      "coverage_stage": "information",
+      "system": "culture",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "future_fabricator",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "robot_arm",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "autonomous_cart",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cargo_pod",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "additive_printer",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "drone_dock",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "robot_repair_bay",
+      "coverage_stage": "advanced",
+      "system": "automation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "biotech_vat",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hydroponic_rack",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "vertical_farm",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bioreactor",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "clean_room",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "prosthetics_bench",
+      "coverage_stage": "advanced",
+      "system": "life_support",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fusion_chamber",
+      "coverage_stage": "advanced",
+      "system": "energy",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "thermal_storage",
+      "coverage_stage": "advanced",
+      "system": "energy",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "high_density_battery",
+      "coverage_stage": "advanced",
+      "system": "energy",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grid_controller",
+      "coverage_stage": "advanced",
+      "system": "energy",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pressure_habitat",
+      "coverage_stage": "space",
+      "system": "habitation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "airlock",
+      "coverage_stage": "space",
+      "system": "habitation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oxygen_recycler",
+      "coverage_stage": "space",
+      "system": "habitation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "radiation_shelter",
+      "coverage_stage": "space",
+      "system": "habitation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "orbital_greenhouse",
+      "coverage_stage": "space",
+      "system": "habitation",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "regolith_processor",
+      "coverage_stage": "space",
+      "system": "industry",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "vacuum_furnace",
+      "coverage_stage": "space",
+      "system": "industry",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "orbital_foundry",
+      "coverage_stage": "space",
+      "system": "industry",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fuel_processor",
+      "coverage_stage": "space",
+      "system": "industry",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "repair_drone",
+      "coverage_stage": "space",
+      "system": "industry",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "launch_pad",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "landing_pad",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rover",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "orbital_dock",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cargo_lander",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "interplanetary_vehicle",
+      "coverage_stage": "space",
+      "system": "transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "council_hall",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "royal_hall",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "court_house",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "assembly_house",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "record_office",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "diplomatic_hall",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "treasury",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "palace",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "audience_chamber",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "administration_office",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "election_hall",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "public_square",
+      "coverage_stage": "capability_based",
+      "system": "politics_royalty",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ritual_hall",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ceremonial_hall",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "memorial_hall",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pilgrimage_shelter",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "festival_ground",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "processional_way",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "funerary_workshop",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "magic_workshop",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "arcane_observatory",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "focus_workshop",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "alchemy_lab",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ward_generator",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mana_reservoir",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ritual_circle",
+      "coverage_stage": "capability_based",
+      "system": "religion_ceremony_magic",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fort_gatehouse",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "barracks",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "watch_post",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "palisade_gate",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone_gate",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "portcullis",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "drawbridge",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "battlement",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "arrow_slit",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rampart",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "moat",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "watchtower",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "signal_tower",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "keep",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "citadel",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bunker",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "blast_door",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shield_wall",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "defence_turret",
+      "coverage_stage": "capability_based",
+      "system": "fortification",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rural_home",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ranch",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fishing_hut",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "orchard_store",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "market",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "brew_house",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dairy",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cheesemaker",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "smokehouse",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fishery",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mushroom_house",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "seed_store",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "root_cellar",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fruit_press",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oil_press",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "butcher_workshop",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "poultry_coop",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "goose_pen",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "duck_pond",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stable",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fodder_store",
+      "coverage_stage": "capability_based",
+      "system": "rural_food",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "carpentry_workshop",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "construction_yard",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ropewalk",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "basketmaker",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "leatherworker",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tailor",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cobbler",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "glassblower",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "jeweller",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sculptor",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "instrument_maker",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tile_workshop",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "brickworks",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lime_kiln",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "scaffold",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "crane",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mortar_tub",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wheelbarrow",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sawhorse",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mould_rack",
+      "coverage_stage": "capability_based",
+      "system": "artisan_construction",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "industrial_hall",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shipyard",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "transport_depot",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ore_washer",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ore_crusher",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rolling_mill",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wire_mill",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cement_works",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "chemical_works",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "textile_mill",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "vehicle_workshop",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "boat_shed",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shipwright_workshop",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "carriage_house",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "freight_yard",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fuel_depot",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "charging_station",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hover_dock",
+      "coverage_stage": "capability_based",
+      "system": "industry_transport",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "chalk",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "chalk",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "limestone",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "limestone",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "granite",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "granite",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "slate",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "slate",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "shale",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "shale",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "sandstone",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "sandstone",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "obsidian",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "obsidian",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "peat",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "peat",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "loam",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "loam",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "silt",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "silt",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "red_clay",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "red_clay",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "yellow_clay",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "yellow_clay",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "black_soil",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "black_soil",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "gravel",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "gravel",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "coarse_sand",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "coarse_sand",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "fine_sand",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "fine_sand",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "dune",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "dune",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "bog",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "bog",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "salt_marsh",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "salt_marsh",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "mudflat",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "mudflat",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "coral_shore",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "coral_shore",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "mangrove_floor",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "mangrove_floor",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "leaf_litter",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "leaf_litter",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "pine_needles",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "pine_needles",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "moss_floor",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "moss_floor",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "lichen_rock",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "lichen_rock",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "frozen_mud",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "frozen_mud",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "permafrost",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "permafrost",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "rockface_granite",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "granite",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_sandstone",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "sandstone",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_basalt",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "basalt",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_ice",
+      "coverage_stage": "capability_based",
+      "system": "terrain_detail",
+      "art_status": "separate_family_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "ice",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "birch_bare",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oak_bare",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "willow_bare",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "palm_fruiting",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fruit_tree_blossom",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fruit_tree_ripe",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "regional_understory",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "flowering_meadow",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "autumn_leaf_litter",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tropical_vines",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "creeping_vines",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "marsh_ferns",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "desert_ephemerals",
+      "coverage_stage": "capability_based",
+      "system": "flora_states",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fox",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hare",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "badger",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "otter",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "beaver",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lynx",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "leopard",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lion",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tiger",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "elephant",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rhinoceros",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "gazelle",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "antelope",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "yak",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_buffalo",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "reindeer",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "donkey",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mule",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "turkey",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pigeon",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "quail",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pheasant",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "swan",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "heron",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stork",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "gull",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "eagle",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "owl",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bat",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "turtle",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "frog",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "salmon",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "trout",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "carp",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tuna",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cod",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "herring",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shark",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "eel",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "whale",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dolphin",
+      "coverage_stage": "capability_based",
+      "system": "fauna_variants",
+      "art_status": "planned",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_broadleaf",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_conifer",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "crop_grain_detail",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "boulder_detail",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_oak",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_birch",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_willow",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_cedar",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_spruce",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_fir",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_pine",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_juniper",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_palm",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_acacia",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_jungle",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_mangrove",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_baobab",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tree_fruit_tree",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_berry_shrub",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_thorn_shrub",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_flowering_shrub",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_dry_shrub",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_heath",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_fern",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_succulent",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_cactus",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_reeds",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_sedge",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_meadow_grass",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_dry_grass",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_weeds",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_clover",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_moss",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_wildflowers",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_mushroom_patch",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_fallen_log",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_tree_stump",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_scree",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_sandstone_outcrop",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_basalt_outcrop",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_granite_outcrop",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_clay_deposit",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nature_ore_outcrop",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_rabbit",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_goat",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_sheep",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_deer",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_elk",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_bison",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_cattle",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_horse",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_camel",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_wolf",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_dog",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_bear",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_big_cat",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_pig",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_fowl",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_duck",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_goose",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_crow",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_hawk",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_parrot",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_fish",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_snake",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "animal_crocodile",
+      "coverage_stage": "capability_based",
+      "system": "generated_nature",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rowing_boat",
+      "coverage_stage": "capability_based",
+      "system": "transport_visuals",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sled",
+      "coverage_stage": "capability_based",
+      "system": "transport_visuals",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bicycle",
+      "coverage_stage": "capability_based",
+      "system": "transport_visuals",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hover_carrier",
+      "coverage_stage": "capability_based",
+      "system": "transport_visuals",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grain",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "log",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "clay",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "copper_ore",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "iron_ingot",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cloth",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "medicine",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "food",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "components",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "snow",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ice",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sand",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wood",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bamboo",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "brick",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone_blocks",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "berries",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "nuts",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roots",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "meat_raw",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "meat_cooked",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fish",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fruit",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "honey",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bread",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dried_meat",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "milk",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "eggs",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "apple",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pear",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "peach",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "plum",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "orange",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lemon",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "grapes",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "melon",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "banana",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "coconut",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dates",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fig",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "carrot",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "potato",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "beet",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "onion",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cabbage",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lettuce",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tomato",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pepper",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pumpkin",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "squash",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "peas",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "beans",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "mushrooms",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wheat",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "barley",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oats",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rice",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "maize",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "millet",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rye",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lentils",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "freshwater_fish",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "saltwater_fish",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "dried_fish",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shellfish",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "crab",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shrimp",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "squid",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "poultry",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cheese",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "butter",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "flour",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oil",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tea",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "coffee",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "herbs",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "spices",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "flint",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tin_ore",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "iron_ore",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "gold_ore",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "silver_ore",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "coal",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sulfur",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "quartz",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "copper_ingot",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bronze_ingot",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "salt",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ochre",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "charcoal",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fiber",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "reed",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hide",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fur",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bone",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "antler",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "rope",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "leather",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "steel",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "glass",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ceramic",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "concrete",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "electronics",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "battery",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "advanced_alloy",
+      "coverage_stage": "capability_based",
+      "system": "stored_resources",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_wattle",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_wood",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_mudbrick",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_stone",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_fired_brick",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_palisade",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_metal",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_glass",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_bamboo",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_reed",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_hide",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_rammed_earth",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_adobe",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_sandstone",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_limestone",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_granite",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_basalt",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_ice",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_snow",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_concrete",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_ceramic",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_composite",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "wall_salvage",
+      "coverage_stage": "capability_based",
+      "system": "regional_walls",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_earth",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_reed_mat",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_plank",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_flagstone",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_concrete",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_metal_deck",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_grass",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_packed_path",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_bamboo",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_packed_clay",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_sandstone",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_granite",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_basalt",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_ceramic_tile",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_ice",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "floor_composite",
+      "coverage_stage": "capability_based",
+      "system": "regional_floors",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_thatch",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_tile",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_metal",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_hide",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_bark",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_reed",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_wood_shingle",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_slate",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_copper",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_glass",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_composite",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "roof_solar",
+      "coverage_stage": "capability_based",
+      "system": "regional_roofs",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "medical_clinic",
+      "coverage_stage": "capability_based",
+      "system": "specialist_rooms",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stool",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "table",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "workbench",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "shelf",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lamp",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "pot",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "door_wood_open",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "door_wood_closed",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "door_metal_open",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "door_metal_closed",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "hearth_unlit",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "kiln_unlit",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "forge_unlit",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "oven_unlit",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "throne",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "lectern",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "ceremonial_screen",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "altar",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "brazier",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "weapons_rack",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "armour_stand",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "sawbench",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fish_drying_rack",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "feed_trough",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "alchemy_table",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "telescope",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "water_pump",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "construction_crane",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "windlass",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "press",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "spinning_wheel",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "brew_vat",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "beehive",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "compost_bin",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "tool_rack",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "cooking_pot",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "stone_quern",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "medical_table",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "bookcase",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "communication_terminal",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "fabricator",
+      "coverage_stage": "capability_based",
+      "system": "fixtures",
+      "art_status": "sample_ready",
+      "simulation_status": "not_implemented_by_asset_pipeline"
+    },
+    {
+      "id": "deep_water",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "deep_water",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "shallow_water",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "shallow_water",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "grass",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "grass",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "dry_grass",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "dry_grass",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "forest_floor",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "forest_floor",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "jungle_floor",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "jungle_floor",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "tundra",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "tundra",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "dirt",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "dirt",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "mud",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "mud",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "marsh",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "marsh",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "rock",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "rock",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "scree",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "scree",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "basalt",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "basalt",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "lava",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "lava",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "ash",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "ash",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "salt_flat",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "salt_flat",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "tilled_soil",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "tilled_soil",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "path",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "path",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "red_sand",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "red_sand",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "shell_beach",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "shell_beach",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "meadow",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "meadow",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "heathland",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "heathland",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "steppe",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "steppe",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "volcanic_glass",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "volcanic_glass",
+        "kind": "plain"
+      }
+    },
+    {
+      "id": "rockface_rock",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "rock",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_scree",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "scree",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_chalk",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "chalk",
+        "kind": "cliff_corners"
+      }
+    },
+    {
+      "id": "rockface_limestone",
+      "coverage_stage": "capability_based",
+      "system": "landscape_visuals",
+      "simulation_status": "not_implemented_by_asset_pipeline",
+      "art_status": "separate_family_ready",
+      "source_family": "landscape",
+      "visual_selector": {
+        "asset_id": "limestone",
+        "kind": "cliff_corners"
+      }
+    }
+  ]
+}

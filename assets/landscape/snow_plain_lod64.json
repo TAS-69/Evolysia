@@ -1,0 +1,63 @@
+{
+  "id": "landscape.snow_plain_lod64",
+  "family": "landscape",
+  "asset_id": "snow",
+  "kind": "plain",
+  "files": [
+    "landscape/snow_plain_lod64.png",
+    "landscape/snow_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/snow_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "snow",
+  "layer_priority": 19,
+  "priority_offset": 14,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_snow_1",
+    "fixed_snow_2",
+    "fixed_snow_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "snow"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

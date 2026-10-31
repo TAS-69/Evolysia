@@ -1,0 +1,225 @@
+{
+  "id": "wardrobe.body_dead_lod16",
+  "family": "wardrobe",
+  "asset_id": "body",
+  "animation": "dead",
+  "files": [
+    "wardrobe/body_dead_lod16.png",
+    "wardrobe/body_dead_lod16_idx.png"
+  ],
+  "sidecar": "wardrobe/body_dead_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    8,
+    14
+  ],
+  "density": 16,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 9,
+  "sheet_rows": [
+    "base/child/slim/side",
+    "base/child/average/side",
+    "base/child/stout/side",
+    "base/adult/slim/side",
+    "base/adult/average/side",
+    "base/adult/stout/side",
+    "base/elder/slim/side",
+    "base/elder/average/side",
+    "base/elder/stout/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "base"
+  ],
+  "row_lookup": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  ],
+  "sim_actions": [
+    "dead"
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ]
+  ],
+  "anims": {
+    "dead": {
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "body"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "skin_0",
+    "skin_2",
+    "skin_3"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

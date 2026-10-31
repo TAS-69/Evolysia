@@ -1,0 +1,50 @@
+{
+  "id": "civilisation.stored_coffee_lod16",
+  "family": "civilisation",
+  "asset_id": "stored_coffee",
+  "files": [
+    "civilisation/stored_coffee_lod16.png",
+    "civilisation/stored_coffee_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/stored_coffee_lod16.json",
+  "frame": [
+    4,
+    4
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    2,
+    3
+  ],
+  "logical_frame": [
+    4,
+    4
+  ],
+  "logical_pivot": [
+    2.0,
+    3.75
+  ],
+  "placement_footprint": [
+    4,
+    4
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "stored_item",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "stored_item"
+  ],
+  "recolor_slots": [
+    "fixed_wood_2"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "resource_id": "coffee"
+}

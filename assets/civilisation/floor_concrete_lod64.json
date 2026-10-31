@@ -1,0 +1,52 @@
+{
+  "id": "civilisation.floor_concrete_lod64",
+  "family": "civilisation",
+  "asset_id": "floor_concrete",
+  "files": [
+    "civilisation/floor_concrete_lod64.png",
+    "civilisation/floor_concrete_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/floor_concrete_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "floor",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "floor"
+  ],
+  "recolor_slots": [
+    "fixed_rock_0",
+    "fixed_rock_2",
+    "fixed_rock_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "concrete"
+}

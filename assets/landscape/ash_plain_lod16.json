@@ -1,0 +1,63 @@
+{
+  "id": "landscape.ash_plain_lod16",
+  "family": "landscape",
+  "asset_id": "ash",
+  "kind": "plain",
+  "files": [
+    "landscape/ash_plain_lod16.png",
+    "landscape/ash_plain_lod16_idx.png"
+  ],
+  "sidecar": "landscape/ash_plain_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 16,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    8,
+    15
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "ash",
+  "layer_priority": 18,
+  "priority_offset": 18,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_ash_1",
+    "fixed_ash_2",
+    "fixed_ash_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "ash"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

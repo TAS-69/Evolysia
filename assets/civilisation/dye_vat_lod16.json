@@ -1,0 +1,52 @@
+{
+  "id": "civilisation.dye_vat_lod16",
+  "family": "civilisation",
+  "asset_id": "dye_vat",
+  "files": [
+    "civilisation/dye_vat_lod16.png",
+    "civilisation/dye_vat_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/dye_vat_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "object",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "object"
+  ],
+  "recolor_slots": [
+    "fixed_wood_1",
+    "fixed_wood_3",
+    "fixed_clay_0",
+    "cloth_a_2"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

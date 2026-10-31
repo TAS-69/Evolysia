@@ -1,0 +1,53 @@
+{
+  "id": "civilisation.roof_bark_lod64",
+  "family": "civilisation",
+  "asset_id": "roof_bark",
+  "files": [
+    "civilisation/roof_bark_lod64.png",
+    "civilisation/roof_bark_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/roof_bark_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "roof",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "roof"
+  ],
+  "recolor_slots": [
+    "bark_0",
+    "bark_1",
+    "bark_2",
+    "bark_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "bark"
+}

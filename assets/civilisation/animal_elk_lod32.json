@@ -1,0 +1,52 @@
+{
+  "id": "civilisation.animal_elk_lod32",
+  "family": "civilisation",
+  "asset_id": "animal_elk",
+  "files": [
+    "civilisation/animal_elk_lod32.png",
+    "civilisation/animal_elk_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/animal_elk_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "outdoor",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "outdoor"
+  ],
+  "recolor_slots": [
+    "fixed_wood_3",
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

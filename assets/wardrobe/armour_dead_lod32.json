@@ -1,0 +1,386 @@
+{
+  "id": "wardrobe.armour_dead_lod32",
+  "family": "wardrobe",
+  "asset_id": "armour",
+  "animation": "dead",
+  "files": [
+    "wardrobe/armour_dead_lod32.png",
+    "wardrobe/armour_dead_lod32_idx.png"
+  ],
+  "sidecar": "wardrobe/armour_dead_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    16,
+    28
+  ],
+  "density": 32,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 32,
+  "sheet_rows": [
+    "padded/child/slim/side",
+    "padded/child/average/side",
+    "padded/child/stout/side",
+    "padded/adult/slim/side",
+    "padded/adult/average/side",
+    "padded/adult/stout/side",
+    "bone/child/average/side",
+    "bone/child/stout/side",
+    "bone/adult/average/side",
+    "bone/adult/stout/side",
+    "copper_scale/child/slim/side",
+    "copper_scale/child/average/side",
+    "copper_scale/child/stout/side",
+    "copper_scale/adult/slim/side",
+    "copper_scale/adult/average/side",
+    "copper_scale/adult/stout/side",
+    "iron_chain/child/slim/side",
+    "iron_chain/child/average/side",
+    "iron_chain/child/stout/side",
+    "iron_chain/adult/slim/side",
+    "iron_chain/adult/average/side",
+    "iron_chain/adult/stout/side",
+    "iron_plate/child/average/side",
+    "iron_plate/child/stout/side",
+    "iron_plate/adult/average/side",
+    "iron_plate/adult/stout/side",
+    "powered/child/slim/side",
+    "powered/child/average/side",
+    "powered/child/stout/side",
+    "powered/adult/slim/side",
+    "powered/adult/average/side",
+    "powered/adult/stout/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "padded",
+    "hide",
+    "bone",
+    "wood_lamellar",
+    "woven_guard",
+    "leather_scale",
+    "copper_scale",
+    "iron_chain",
+    "iron_plate",
+    "ceramic_plate",
+    "composite",
+    "powered"
+  ],
+  "row_lookup": [
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      3,
+      4,
+      5
+    ],
+    [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      3,
+      4,
+      5
+    ],
+    [
+      0,
+      6,
+      7,
+      3,
+      8,
+      9,
+      3,
+      8,
+      9
+    ],
+    [
+      0,
+      6,
+      7,
+      3,
+      8,
+      9,
+      3,
+      8,
+      9
+    ],
+    [
+      0,
+      6,
+      7,
+      3,
+      8,
+      9,
+      3,
+      8,
+      9
+    ],
+    [
+      0,
+      6,
+      7,
+      3,
+      8,
+      9,
+      3,
+      8,
+      9
+    ],
+    [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      13,
+      14,
+      15
+    ],
+    [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      19,
+      20,
+      21
+    ],
+    [
+      16,
+      22,
+      23,
+      19,
+      24,
+      25,
+      19,
+      24,
+      25
+    ],
+    [
+      16,
+      22,
+      23,
+      19,
+      24,
+      25,
+      19,
+      24,
+      25
+    ],
+    [
+      16,
+      22,
+      23,
+      19,
+      24,
+      25,
+      19,
+      24,
+      25
+    ],
+    [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      29,
+      30,
+      31
+    ]
+  ],
+  "sim_actions": [
+    "dead"
+  ],
+  "hand_anchors": [
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ]
+  ],
+  "anims": {
+    "dead": {
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "armour"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "fixed_metal_copper_1",
+    "fixed_metal_copper_3",
+    "fixed_metal_iron_1",
+    "fixed_metal_iron_3",
+    "cloth_a_1",
+    "cloth_a_2",
+    "cloth_a_3",
+    "cloth_b_1",
+    "cloth_b_3"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

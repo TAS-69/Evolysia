@@ -1,0 +1,54 @@
+{
+  "id": "civilisation.sailboat_lod64",
+  "family": "civilisation",
+  "asset_id": "sailboat",
+  "files": [
+    "civilisation/sailboat_lod64.png",
+    "civilisation/sailboat_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/sailboat_lod64.json",
+  "frame": [
+    128,
+    128
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    64,
+    127
+  ],
+  "logical_frame": [
+    32,
+    32
+  ],
+  "logical_pivot": [
+    16.0,
+    31.75
+  ],
+  "placement_footprint": [
+    32,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "vehicle",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "vehicle"
+  ],
+  "recolor_slots": [
+    "fixed_wood_1",
+    "fixed_wood_3",
+    "cloth_a_2",
+    "cloth_a_3",
+    "cloth_b_2"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "transport_mode": "water"
+}

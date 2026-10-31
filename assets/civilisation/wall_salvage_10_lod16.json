@@ -1,0 +1,59 @@
+{
+  "id": "civilisation.wall_salvage_10_lod16",
+  "family": "civilisation",
+  "asset_id": "wall_salvage_10",
+  "files": [
+    "civilisation/wall_salvage_10_lod16.png",
+    "civilisation/wall_salvage_10_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/wall_salvage_10_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "wall",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "wall"
+  ],
+  "recolor_slots": [
+    "fixed_metal_copper_1",
+    "fixed_metal_copper_2",
+    "fixed_metal_copper_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "salvage",
+  "connection_mask": 10,
+  "connection_bits": {
+    "N": 1,
+    "E": 2,
+    "S": 4,
+    "W": 8
+  }
+}

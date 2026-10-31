@@ -1,0 +1,56 @@
+{
+  "id": "civilisation.handcart_back_lod32",
+  "family": "civilisation",
+  "asset_id": "handcart_back",
+  "files": [
+    "civilisation/handcart_back_lod32.png",
+    "civilisation/handcart_back_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/handcart_back_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "container_layer",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "container_layer"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4",
+    "fixed_metal_iron_2"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "container_id": "handcart",
+  "layer": "back"
+}

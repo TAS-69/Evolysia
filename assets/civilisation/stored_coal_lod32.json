@@ -1,0 +1,51 @@
+{
+  "id": "civilisation.stored_coal_lod32",
+  "family": "civilisation",
+  "asset_id": "stored_coal",
+  "files": [
+    "civilisation/stored_coal_lod32.png",
+    "civilisation/stored_coal_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/stored_coal_lod32.json",
+  "frame": [
+    8,
+    8
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    4,
+    7
+  ],
+  "logical_frame": [
+    4,
+    4
+  ],
+  "logical_pivot": [
+    2.0,
+    3.75
+  ],
+  "placement_footprint": [
+    4,
+    4
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "stored_item",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "stored_item"
+  ],
+  "recolor_slots": [
+    "fixed_basalt_2",
+    "fixed_basalt_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "resource_id": "coal"
+}

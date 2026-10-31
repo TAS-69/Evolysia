@@ -1,0 +1,63 @@
+{
+  "id": "civilisation.workbench_lod64",
+  "family": "civilisation",
+  "asset_id": "workbench",
+  "files": [
+    "civilisation/workbench_lod64.png",
+    "civilisation/workbench_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/workbench_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "object",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "object"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4",
+    "fixed_stone_0",
+    "fixed_stone_1",
+    "fixed_stone_2",
+    "fixed_stone_3",
+    "fixed_stone_4",
+    "fixed_metal_iron_0",
+    "fixed_metal_iron_1",
+    "fixed_metal_iron_2",
+    "fixed_metal_iron_3",
+    "fixed_metal_iron_4"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

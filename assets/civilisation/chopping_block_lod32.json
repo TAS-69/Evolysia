@@ -1,0 +1,53 @@
+{
+  "id": "civilisation.chopping_block_lod32",
+  "family": "civilisation",
+  "asset_id": "chopping_block",
+  "files": [
+    "civilisation/chopping_block_lod32.png",
+    "civilisation/chopping_block_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/chopping_block_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "object",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "object"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_stone_2"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

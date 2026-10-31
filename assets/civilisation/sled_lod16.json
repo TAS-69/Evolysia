@@ -1,0 +1,54 @@
+{
+  "id": "civilisation.sled_lod16",
+  "family": "civilisation",
+  "asset_id": "sled",
+  "files": [
+    "civilisation/sled_lod16.png",
+    "civilisation/sled_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/sled_lod16.json",
+  "frame": [
+    24,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    12,
+    15
+  ],
+  "logical_frame": [
+    24,
+    16
+  ],
+  "logical_pivot": [
+    12.0,
+    15.75
+  ],
+  "placement_footprint": [
+    24,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "vehicle",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "vehicle"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "transport_mode": "land"
+}

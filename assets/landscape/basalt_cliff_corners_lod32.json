@@ -1,0 +1,92 @@
+{
+  "id": "landscape.basalt_cliff_corners_lod32",
+  "family": "landscape",
+  "asset_id": "basalt",
+  "kind": "cliff_corners",
+  "files": [
+    "landscape/basalt_cliff_corners_lod32.png",
+    "landscape/basalt_cliff_corners_lod32_idx.png"
+  ],
+  "sidecar": "landscape/basalt_cliff_corners_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 32,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03",
+    "none_04",
+    "none_05",
+    "none_06",
+    "none_07",
+    "none_08",
+    "none_09",
+    "none_10",
+    "none_11",
+    "none_12",
+    "none_13",
+    "none_14",
+    "none_15"
+  ],
+  "pivot": [
+    16,
+    31
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "priority_anchor": "basalt",
+  "layer_priority": 17,
+  "priority_offset": 16,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 16,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_basalt_1",
+    "fixed_basalt_2",
+    "fixed_basalt_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "basalt"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

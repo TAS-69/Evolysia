@@ -1,0 +1,53 @@
+{
+  "id": "civilisation.boulder_detail_lod16",
+  "family": "civilisation",
+  "asset_id": "boulder_detail",
+  "files": [
+    "civilisation/boulder_detail_lod16.png",
+    "civilisation/boulder_detail_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/boulder_detail_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "outdoor",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "outdoor"
+  ],
+  "recolor_slots": [
+    "fixed_rock_0",
+    "fixed_rock_1",
+    "fixed_rock_2",
+    "fixed_rock_3",
+    "fixed_rock_4"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

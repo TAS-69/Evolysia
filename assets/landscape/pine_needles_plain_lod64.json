@@ -1,0 +1,63 @@
+{
+  "id": "landscape.pine_needles_plain_lod64",
+  "family": "landscape",
+  "asset_id": "pine_needles",
+  "kind": "plain",
+  "files": [
+    "landscape/pine_needles_plain_lod64.png",
+    "landscape/pine_needles_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/pine_needles_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "forest_floor",
+  "layer_priority": 13,
+  "priority_offset": 47,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "bark_1",
+    "bark_2",
+    "bark_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "forest_floor"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

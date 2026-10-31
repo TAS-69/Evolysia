@@ -1,0 +1,64 @@
+{
+  "id": "landscape.permafrost_plain_lod32",
+  "family": "landscape",
+  "asset_id": "permafrost",
+  "kind": "plain",
+  "files": [
+    "landscape/permafrost_plain_lod32.png",
+    "landscape/permafrost_plain_lod32_idx.png"
+  ],
+  "sidecar": "landscape/permafrost_plain_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 32,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    16,
+    31
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "tundra",
+  "layer_priority": 12,
+  "priority_offset": 51,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_rock_1",
+    "fixed_rock_2",
+    "fixed_rock_3",
+    "fixed_ice_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "tundra"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

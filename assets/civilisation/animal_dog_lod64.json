@@ -1,0 +1,51 @@
+{
+  "id": "civilisation.animal_dog_lod64",
+  "family": "civilisation",
+  "asset_id": "animal_dog",
+  "files": [
+    "civilisation/animal_dog_lod64.png",
+    "civilisation/animal_dog_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/animal_dog_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "outdoor",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "outdoor"
+  ],
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_hide_1",
+    "fixed_hide_2"
+  ],
+  "emissive_slots": [],
+  "anims": {}
+}

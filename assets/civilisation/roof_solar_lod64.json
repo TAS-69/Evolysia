@@ -1,0 +1,53 @@
+{
+  "id": "civilisation.roof_solar_lod64",
+  "family": "civilisation",
+  "asset_id": "roof_solar",
+  "files": [
+    "civilisation/roof_solar_lod64.png",
+    "civilisation/roof_solar_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/roof_solar_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    32,
+    63
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "roof",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "roof"
+  ],
+  "recolor_slots": [
+    "fixed_ice_0",
+    "fixed_ice_1",
+    "fixed_ice_2",
+    "fixed_ice_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "solar"
+}

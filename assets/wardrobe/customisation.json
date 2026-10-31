@@ -1,0 +1,2078 @@
+{
+  "version": 1,
+  "seed": 0,
+  "layer_order": [
+    "hair_back",
+    "body",
+    "legwear",
+    "footwear",
+    "top",
+    "outerwear",
+    "armour",
+    "body_paint",
+    "hair_front",
+    "headwear",
+    "accessory",
+    "held_item"
+  ],
+  "parts": {
+    "hair_back": [
+      "short",
+      "cropped",
+      "long",
+      "braided",
+      "topknot",
+      "mane",
+      "tied_back",
+      "locks",
+      "child_tuft",
+      "side_swept",
+      "curly",
+      "twin_braids",
+      "braid_crown",
+      "high_tail",
+      "bob",
+      "coils"
+    ],
+    "body": [
+      "base"
+    ],
+    "legwear": [
+      "shorts",
+      "trousers",
+      "loose_trousers",
+      "skirt",
+      "long_skirt",
+      "wrap_skirt",
+      "leggings",
+      "fur_leggings",
+      "work_trousers",
+      "formal_trousers",
+      "padded_trousers",
+      "environment_trousers"
+    ],
+    "footwear": [
+      "sandals",
+      "soft_shoes",
+      "leather_boots",
+      "fur_boots",
+      "work_boots",
+      "metal_boots",
+      "cloth_wraps",
+      "ceremonial_shoes",
+      "environment_boots",
+      "water_shoes"
+    ],
+    "top": [
+      "hide_wrap",
+      "woven_tunic",
+      "linen_shirt",
+      "wrap_shirt",
+      "long_tunic",
+      "work_shirt",
+      "farmer_smock",
+      "fisher_coat",
+      "hunter_vest",
+      "artisan_apron",
+      "smith_apron",
+      "cook_apron",
+      "healer_coat",
+      "scholar_robe",
+      "traveller_coat",
+      "merchant_coat",
+      "guard_tabard",
+      "ceremonial_robe",
+      "royal_robe",
+      "court_coat",
+      "winter_parka",
+      "fur_coat",
+      "desert_robe",
+      "raincoat",
+      "sailor_shirt",
+      "mechanic_coverall",
+      "engineer_jacket",
+      "lab_coat",
+      "formal_jacket",
+      "flight_suit",
+      "environment_suit",
+      "mage_robe"
+    ],
+    "outerwear": [
+      "short_cape",
+      "long_cape",
+      "hooded_cloak",
+      "fur_mantle",
+      "rain_cape",
+      "desert_shawl",
+      "traveller_mantle",
+      "ceremonial_mantle",
+      "royal_mantle",
+      "officer_coat",
+      "artisan_overcoat",
+      "insulated_overcoat"
+    ],
+    "armour": [
+      "padded",
+      "hide",
+      "bone",
+      "wood_lamellar",
+      "woven_guard",
+      "leather_scale",
+      "copper_scale",
+      "iron_chain",
+      "iron_plate",
+      "ceramic_plate",
+      "composite",
+      "powered"
+    ],
+    "body_paint": [
+      "cheek_dots",
+      "brow_band",
+      "arm_bands",
+      "leg_marks",
+      "face_streak",
+      "shoulder_dabs"
+    ],
+    "hair_front": [
+      "short",
+      "cropped",
+      "long",
+      "braided",
+      "topknot",
+      "mane",
+      "tied_back",
+      "locks",
+      "child_tuft",
+      "side_swept",
+      "curly",
+      "twin_braids",
+      "braid_crown",
+      "high_tail",
+      "bob",
+      "coils"
+    ],
+    "headwear": [
+      "cloth_cap",
+      "woven_hat",
+      "wide_brim_hat",
+      "fur_hat",
+      "hood",
+      "headwrap",
+      "veil",
+      "feather_band",
+      "beaded_band",
+      "ceremonial_headdress",
+      "royal_circlet",
+      "royal_crown",
+      "leather_helmet",
+      "bone_helmet",
+      "copper_helmet",
+      "iron_helmet",
+      "guard_helmet",
+      "visor_helmet",
+      "work_helmet",
+      "cook_hat",
+      "scholar_cap",
+      "respirator_hood",
+      "environment_helmet",
+      "mage_hat"
+    ],
+    "accessory": [
+      "belt_pouch",
+      "necklace",
+      "beads",
+      "scarf",
+      "spectacles",
+      "goggles",
+      "face_wrap",
+      "respirator",
+      "backpack_straps",
+      "tool_belt",
+      "ceremonial_sash",
+      "royal_chain"
+    ],
+    "held_item": [
+      "club",
+      "spear",
+      "stone_axe",
+      "axe",
+      "pick",
+      "hoe",
+      "shovel",
+      "hammer",
+      "chisel",
+      "knife",
+      "sword",
+      "mace",
+      "bow",
+      "crossbow",
+      "shield",
+      "net",
+      "fishing_rod",
+      "basket",
+      "torch",
+      "staff",
+      "orb_focus",
+      "wand",
+      "medicine_bag",
+      "book",
+      "measuring_rod",
+      "wrench",
+      "tongs",
+      "rifle",
+      "pistol",
+      "energy_tool",
+      "energy_blade",
+      "construction_plan"
+    ]
+  },
+  "outfits": [
+    {
+      "id": "forager",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "wrap_skirt",
+        "footwear": "sandals",
+        "top": "hide_wrap",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "woven_hat",
+        "accessory": null,
+        "held_item": "basket"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 6,
+          "trim": 7
+        },
+        "footwear": {
+          "main": 9,
+          "trim": 8
+        },
+        "top": {
+          "main": 12,
+          "trim": 9
+        },
+        "outerwear": {
+          "main": 2,
+          "trim": 10
+        },
+        "armour": {
+          "main": 5,
+          "trim": 11
+        },
+        "headwear": {
+          "main": 1,
+          "trim": 1
+        },
+        "accessory": {
+          "main": 4,
+          "trim": 2
+        },
+        "held_item": {
+          "main": 7,
+          "trim": 3
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 0,
+      "editable": true
+    },
+    {
+      "id": "farmer",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "work_boots",
+        "top": "farmer_smock",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "wide_brim_hat",
+        "accessory": "tool_belt",
+        "held_item": "hoe"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 7,
+          "trim": 10
+        },
+        "footwear": {
+          "main": 10,
+          "trim": 11
+        },
+        "top": {
+          "main": 0,
+          "trim": 12
+        },
+        "outerwear": {
+          "main": 3,
+          "trim": 0
+        },
+        "armour": {
+          "main": 6,
+          "trim": 1
+        },
+        "headwear": {
+          "main": 2,
+          "trim": 4
+        },
+        "accessory": {
+          "main": 5,
+          "trim": 5
+        },
+        "held_item": {
+          "main": 8,
+          "trim": 6
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 1,
+      "editable": true
+    },
+    {
+      "id": "fisher",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "shorts",
+        "footwear": "water_shoes",
+        "top": "fisher_coat",
+        "outerwear": "rain_cape",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cloth_cap",
+        "accessory": null,
+        "held_item": "fishing_rod"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 8,
+          "trim": 0
+        },
+        "footwear": {
+          "main": 11,
+          "trim": 1
+        },
+        "top": {
+          "main": 1,
+          "trim": 2
+        },
+        "outerwear": {
+          "main": 4,
+          "trim": 3
+        },
+        "armour": {
+          "main": 7,
+          "trim": 4
+        },
+        "headwear": {
+          "main": 3,
+          "trim": 7
+        },
+        "accessory": {
+          "main": 6,
+          "trim": 8
+        },
+        "held_item": {
+          "main": 9,
+          "trim": 9
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 2,
+      "editable": true
+    },
+    {
+      "id": "hunter",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "leggings",
+        "footwear": "leather_boots",
+        "top": "hunter_vest",
+        "outerwear": "short_cape",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "hood",
+        "accessory": "belt_pouch",
+        "held_item": "bow"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 9,
+          "trim": 3
+        },
+        "footwear": {
+          "main": 12,
+          "trim": 4
+        },
+        "top": {
+          "main": 2,
+          "trim": 5
+        },
+        "outerwear": {
+          "main": 5,
+          "trim": 6
+        },
+        "armour": {
+          "main": 8,
+          "trim": 7
+        },
+        "headwear": {
+          "main": 4,
+          "trim": 10
+        },
+        "accessory": {
+          "main": 7,
+          "trim": 11
+        },
+        "held_item": {
+          "main": 10,
+          "trim": 12
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 3,
+      "editable": true
+    },
+    {
+      "id": "woodworker",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "work_boots",
+        "top": "work_shirt",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cloth_cap",
+        "accessory": "tool_belt",
+        "held_item": "axe"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 10,
+          "trim": 6
+        },
+        "footwear": {
+          "main": 0,
+          "trim": 7
+        },
+        "top": {
+          "main": 3,
+          "trim": 8
+        },
+        "outerwear": {
+          "main": 6,
+          "trim": 9
+        },
+        "armour": {
+          "main": 9,
+          "trim": 10
+        },
+        "headwear": {
+          "main": 5,
+          "trim": 0
+        },
+        "accessory": {
+          "main": 8,
+          "trim": 1
+        },
+        "held_item": {
+          "main": 11,
+          "trim": 2
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 4,
+      "editable": true
+    },
+    {
+      "id": "mason",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "trousers",
+        "footwear": "work_boots",
+        "top": "linen_shirt",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "work_helmet",
+        "accessory": "tool_belt",
+        "held_item": "hammer"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 11,
+          "trim": 9
+        },
+        "footwear": {
+          "main": 1,
+          "trim": 10
+        },
+        "top": {
+          "main": 4,
+          "trim": 11
+        },
+        "outerwear": {
+          "main": 7,
+          "trim": 12
+        },
+        "armour": {
+          "main": 10,
+          "trim": 0
+        },
+        "headwear": {
+          "main": 6,
+          "trim": 3
+        },
+        "accessory": {
+          "main": 9,
+          "trim": 4
+        },
+        "held_item": {
+          "main": 12,
+          "trim": 5
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 5,
+      "editable": true
+    },
+    {
+      "id": "potter",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "loose_trousers",
+        "footwear": "sandals",
+        "top": "artisan_apron",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "headwrap",
+        "accessory": null,
+        "held_item": "chisel"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 12,
+          "trim": 12
+        },
+        "footwear": {
+          "main": 2,
+          "trim": 0
+        },
+        "top": {
+          "main": 5,
+          "trim": 1
+        },
+        "outerwear": {
+          "main": 8,
+          "trim": 2
+        },
+        "armour": {
+          "main": 11,
+          "trim": 3
+        },
+        "headwear": {
+          "main": 7,
+          "trim": 6
+        },
+        "accessory": {
+          "main": 10,
+          "trim": 7
+        },
+        "held_item": {
+          "main": 0,
+          "trim": 8
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 6,
+      "editable": true
+    },
+    {
+      "id": "smith",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "work_boots",
+        "top": "smith_apron",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "leather_helmet",
+        "accessory": "goggles",
+        "held_item": "tongs"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 0,
+          "trim": 2
+        },
+        "footwear": {
+          "main": 3,
+          "trim": 3
+        },
+        "top": {
+          "main": 6,
+          "trim": 4
+        },
+        "outerwear": {
+          "main": 9,
+          "trim": 5
+        },
+        "armour": {
+          "main": 12,
+          "trim": 6
+        },
+        "headwear": {
+          "main": 8,
+          "trim": 9
+        },
+        "accessory": {
+          "main": 11,
+          "trim": 10
+        },
+        "held_item": {
+          "main": 1,
+          "trim": 11
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 7,
+      "editable": true
+    },
+    {
+      "id": "cook",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "trousers",
+        "footwear": "soft_shoes",
+        "top": "cook_apron",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cook_hat",
+        "accessory": null,
+        "held_item": "knife"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 1,
+          "trim": 5
+        },
+        "footwear": {
+          "main": 4,
+          "trim": 6
+        },
+        "top": {
+          "main": 7,
+          "trim": 7
+        },
+        "outerwear": {
+          "main": 10,
+          "trim": 8
+        },
+        "armour": {
+          "main": 0,
+          "trim": 9
+        },
+        "headwear": {
+          "main": 9,
+          "trim": 12
+        },
+        "accessory": {
+          "main": 12,
+          "trim": 0
+        },
+        "held_item": {
+          "main": 2,
+          "trim": 1
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 8,
+      "editable": true
+    },
+    {
+      "id": "healer",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "loose_trousers",
+        "footwear": "soft_shoes",
+        "top": "healer_coat",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "veil",
+        "accessory": "necklace",
+        "held_item": "medicine_bag"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 2,
+          "trim": 8
+        },
+        "footwear": {
+          "main": 5,
+          "trim": 9
+        },
+        "top": {
+          "main": 8,
+          "trim": 10
+        },
+        "outerwear": {
+          "main": 11,
+          "trim": 11
+        },
+        "armour": {
+          "main": 1,
+          "trim": 12
+        },
+        "headwear": {
+          "main": 10,
+          "trim": 2
+        },
+        "accessory": {
+          "main": 0,
+          "trim": 3
+        },
+        "held_item": {
+          "main": 3,
+          "trim": 4
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 9,
+      "editable": true
+    },
+    {
+      "id": "scholar",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "trousers",
+        "footwear": "soft_shoes",
+        "top": "scholar_robe",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "scholar_cap",
+        "accessory": "spectacles",
+        "held_item": "book"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 3,
+          "trim": 11
+        },
+        "footwear": {
+          "main": 6,
+          "trim": 12
+        },
+        "top": {
+          "main": 9,
+          "trim": 0
+        },
+        "outerwear": {
+          "main": 12,
+          "trim": 1
+        },
+        "armour": {
+          "main": 2,
+          "trim": 2
+        },
+        "headwear": {
+          "main": 11,
+          "trim": 5
+        },
+        "accessory": {
+          "main": 1,
+          "trim": 6
+        },
+        "held_item": {
+          "main": 4,
+          "trim": 7
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 10,
+      "editable": true
+    },
+    {
+      "id": "traveller",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "leggings",
+        "footwear": "leather_boots",
+        "top": "traveller_coat",
+        "outerwear": "traveller_mantle",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "hood",
+        "accessory": "backpack_straps",
+        "held_item": "staff"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 4,
+          "trim": 1
+        },
+        "footwear": {
+          "main": 7,
+          "trim": 2
+        },
+        "top": {
+          "main": 10,
+          "trim": 3
+        },
+        "outerwear": {
+          "main": 0,
+          "trim": 4
+        },
+        "armour": {
+          "main": 3,
+          "trim": 5
+        },
+        "headwear": {
+          "main": 12,
+          "trim": 8
+        },
+        "accessory": {
+          "main": 2,
+          "trim": 9
+        },
+        "held_item": {
+          "main": 5,
+          "trim": 10
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 11,
+      "editable": true
+    },
+    {
+      "id": "merchant",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "formal_trousers",
+        "footwear": "ceremonial_shoes",
+        "top": "merchant_coat",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "woven_hat",
+        "accessory": "belt_pouch",
+        "held_item": "measuring_rod"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 5,
+          "trim": 4
+        },
+        "footwear": {
+          "main": 8,
+          "trim": 5
+        },
+        "top": {
+          "main": 11,
+          "trim": 6
+        },
+        "outerwear": {
+          "main": 1,
+          "trim": 7
+        },
+        "armour": {
+          "main": 4,
+          "trim": 8
+        },
+        "headwear": {
+          "main": 0,
+          "trim": 11
+        },
+        "accessory": {
+          "main": 3,
+          "trim": 12
+        },
+        "held_item": {
+          "main": 6,
+          "trim": 0
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 0,
+      "editable": true
+    },
+    {
+      "id": "guard",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "padded_trousers",
+        "footwear": "metal_boots",
+        "top": "guard_tabard",
+        "outerwear": null,
+        "armour": "padded",
+        "body_paint": null,
+        "headwear": "guard_helmet",
+        "accessory": null,
+        "held_item": "spear"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 6,
+          "trim": 7
+        },
+        "footwear": {
+          "main": 9,
+          "trim": 8
+        },
+        "top": {
+          "main": 12,
+          "trim": 9
+        },
+        "outerwear": {
+          "main": 2,
+          "trim": 10
+        },
+        "armour": {
+          "main": 5,
+          "trim": 11
+        },
+        "headwear": {
+          "main": 1,
+          "trim": 1
+        },
+        "accessory": {
+          "main": 4,
+          "trim": 2
+        },
+        "held_item": {
+          "main": 7,
+          "trim": 3
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 1,
+      "editable": true
+    },
+    {
+      "id": "ceremonial",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "long_skirt",
+        "footwear": "ceremonial_shoes",
+        "top": "ceremonial_robe",
+        "outerwear": "ceremonial_mantle",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "ceremonial_headdress",
+        "accessory": "ceremonial_sash",
+        "held_item": "staff"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 7,
+          "trim": 10
+        },
+        "footwear": {
+          "main": 10,
+          "trim": 11
+        },
+        "top": {
+          "main": 0,
+          "trim": 12
+        },
+        "outerwear": {
+          "main": 3,
+          "trim": 0
+        },
+        "armour": {
+          "main": 6,
+          "trim": 1
+        },
+        "headwear": {
+          "main": 2,
+          "trim": 4
+        },
+        "accessory": {
+          "main": 5,
+          "trim": 5
+        },
+        "held_item": {
+          "main": 8,
+          "trim": 6
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 2,
+      "editable": true
+    },
+    {
+      "id": "royal",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "formal_trousers",
+        "footwear": "ceremonial_shoes",
+        "top": "royal_robe",
+        "outerwear": "royal_mantle",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "royal_crown",
+        "accessory": "royal_chain",
+        "held_item": "orb_focus"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 8,
+          "trim": 0
+        },
+        "footwear": {
+          "main": 11,
+          "trim": 1
+        },
+        "top": {
+          "main": 1,
+          "trim": 2
+        },
+        "outerwear": {
+          "main": 4,
+          "trim": 3
+        },
+        "armour": {
+          "main": 7,
+          "trim": 4
+        },
+        "headwear": {
+          "main": 3,
+          "trim": 7
+        },
+        "accessory": {
+          "main": 6,
+          "trim": 8
+        },
+        "held_item": {
+          "main": 9,
+          "trim": 9
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 3,
+      "editable": true
+    },
+    {
+      "id": "court",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "formal_trousers",
+        "footwear": "ceremonial_shoes",
+        "top": "court_coat",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "royal_circlet",
+        "accessory": "necklace",
+        "held_item": "construction_plan"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 9,
+          "trim": 3
+        },
+        "footwear": {
+          "main": 12,
+          "trim": 4
+        },
+        "top": {
+          "main": 2,
+          "trim": 5
+        },
+        "outerwear": {
+          "main": 5,
+          "trim": 6
+        },
+        "armour": {
+          "main": 8,
+          "trim": 7
+        },
+        "headwear": {
+          "main": 4,
+          "trim": 10
+        },
+        "accessory": {
+          "main": 7,
+          "trim": 11
+        },
+        "held_item": {
+          "main": 10,
+          "trim": 12
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 4,
+      "editable": true
+    },
+    {
+      "id": "winter",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "fur_leggings",
+        "footwear": "fur_boots",
+        "top": "winter_parka",
+        "outerwear": "fur_mantle",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "fur_hat",
+        "accessory": "scarf",
+        "held_item": "spear"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 10,
+          "trim": 6
+        },
+        "footwear": {
+          "main": 0,
+          "trim": 7
+        },
+        "top": {
+          "main": 3,
+          "trim": 8
+        },
+        "outerwear": {
+          "main": 6,
+          "trim": 9
+        },
+        "armour": {
+          "main": 9,
+          "trim": 10
+        },
+        "headwear": {
+          "main": 5,
+          "trim": 0
+        },
+        "accessory": {
+          "main": 8,
+          "trim": 1
+        },
+        "held_item": {
+          "main": 11,
+          "trim": 2
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 5,
+      "editable": true
+    },
+    {
+      "id": "desert",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "loose_trousers",
+        "footwear": "sandals",
+        "top": "desert_robe",
+        "outerwear": "desert_shawl",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "headwrap",
+        "accessory": "face_wrap",
+        "held_item": "staff"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 11,
+          "trim": 9
+        },
+        "footwear": {
+          "main": 1,
+          "trim": 10
+        },
+        "top": {
+          "main": 4,
+          "trim": 11
+        },
+        "outerwear": {
+          "main": 7,
+          "trim": 12
+        },
+        "armour": {
+          "main": 10,
+          "trim": 0
+        },
+        "headwear": {
+          "main": 6,
+          "trim": 3
+        },
+        "accessory": {
+          "main": 9,
+          "trim": 4
+        },
+        "held_item": {
+          "main": 12,
+          "trim": 5
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 6,
+      "editable": true
+    },
+    {
+      "id": "sailor",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "shorts",
+        "footwear": "water_shoes",
+        "top": "sailor_shirt",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cloth_cap",
+        "accessory": "scarf",
+        "held_item": "net"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 12,
+          "trim": 12
+        },
+        "footwear": {
+          "main": 2,
+          "trim": 0
+        },
+        "top": {
+          "main": 5,
+          "trim": 1
+        },
+        "outerwear": {
+          "main": 8,
+          "trim": 2
+        },
+        "armour": {
+          "main": 11,
+          "trim": 3
+        },
+        "headwear": {
+          "main": 7,
+          "trim": 6
+        },
+        "accessory": {
+          "main": 10,
+          "trim": 7
+        },
+        "held_item": {
+          "main": 0,
+          "trim": 8
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 7,
+      "editable": true
+    },
+    {
+      "id": "engineer",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "work_boots",
+        "top": "engineer_jacket",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "work_helmet",
+        "accessory": "goggles",
+        "held_item": "wrench"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 0,
+          "trim": 2
+        },
+        "footwear": {
+          "main": 3,
+          "trim": 3
+        },
+        "top": {
+          "main": 6,
+          "trim": 4
+        },
+        "outerwear": {
+          "main": 9,
+          "trim": 5
+        },
+        "armour": {
+          "main": 12,
+          "trim": 6
+        },
+        "headwear": {
+          "main": 8,
+          "trim": 9
+        },
+        "accessory": {
+          "main": 11,
+          "trim": 10
+        },
+        "held_item": {
+          "main": 1,
+          "trim": 11
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 8,
+      "editable": true
+    },
+    {
+      "id": "mechanic",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "work_boots",
+        "top": "mechanic_coverall",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cloth_cap",
+        "accessory": "tool_belt",
+        "held_item": "wrench"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 1,
+          "trim": 5
+        },
+        "footwear": {
+          "main": 4,
+          "trim": 6
+        },
+        "top": {
+          "main": 7,
+          "trim": 7
+        },
+        "outerwear": {
+          "main": 10,
+          "trim": 8
+        },
+        "armour": {
+          "main": 0,
+          "trim": 9
+        },
+        "headwear": {
+          "main": 9,
+          "trim": 12
+        },
+        "accessory": {
+          "main": 12,
+          "trim": 0
+        },
+        "held_item": {
+          "main": 2,
+          "trim": 1
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 9,
+      "editable": true
+    },
+    {
+      "id": "researcher",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "formal_trousers",
+        "footwear": "soft_shoes",
+        "top": "lab_coat",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "cloth_cap",
+        "accessory": "spectacles",
+        "held_item": "book"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 2,
+          "trim": 8
+        },
+        "footwear": {
+          "main": 5,
+          "trim": 9
+        },
+        "top": {
+          "main": 8,
+          "trim": 10
+        },
+        "outerwear": {
+          "main": 11,
+          "trim": 11
+        },
+        "armour": {
+          "main": 1,
+          "trim": 12
+        },
+        "headwear": {
+          "main": 10,
+          "trim": 2
+        },
+        "accessory": {
+          "main": 0,
+          "trim": 3
+        },
+        "held_item": {
+          "main": 3,
+          "trim": 4
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 10,
+      "editable": true
+    },
+    {
+      "id": "pilot",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "environment_trousers",
+        "footwear": "environment_boots",
+        "top": "flight_suit",
+        "outerwear": null,
+        "armour": null,
+        "body_paint": null,
+        "headwear": "visor_helmet",
+        "accessory": "respirator",
+        "held_item": "measuring_rod"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 3,
+          "trim": 11
+        },
+        "footwear": {
+          "main": 6,
+          "trim": 12
+        },
+        "top": {
+          "main": 9,
+          "trim": 0
+        },
+        "outerwear": {
+          "main": 12,
+          "trim": 1
+        },
+        "armour": {
+          "main": 2,
+          "trim": 2
+        },
+        "headwear": {
+          "main": 11,
+          "trim": 5
+        },
+        "accessory": {
+          "main": 1,
+          "trim": 6
+        },
+        "held_item": {
+          "main": 4,
+          "trim": 7
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 11,
+      "editable": true
+    },
+    {
+      "id": "spaceworker",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "environment_trousers",
+        "footwear": "environment_boots",
+        "top": "environment_suit",
+        "outerwear": "insulated_overcoat",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "environment_helmet",
+        "accessory": "respirator",
+        "held_item": "energy_tool"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 4,
+          "trim": 1
+        },
+        "footwear": {
+          "main": 7,
+          "trim": 2
+        },
+        "top": {
+          "main": 10,
+          "trim": 3
+        },
+        "outerwear": {
+          "main": 0,
+          "trim": 4
+        },
+        "armour": {
+          "main": 3,
+          "trim": 5
+        },
+        "headwear": {
+          "main": 12,
+          "trim": 8
+        },
+        "accessory": {
+          "main": 2,
+          "trim": 9
+        },
+        "held_item": {
+          "main": 5,
+          "trim": 10
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 0,
+      "editable": true
+    },
+    {
+      "id": "mage",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "long_skirt",
+        "footwear": "cloth_wraps",
+        "top": "mage_robe",
+        "outerwear": "hooded_cloak",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "mage_hat",
+        "accessory": "beads",
+        "held_item": "wand"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 5,
+          "trim": 4
+        },
+        "footwear": {
+          "main": 8,
+          "trim": 5
+        },
+        "top": {
+          "main": 11,
+          "trim": 6
+        },
+        "outerwear": {
+          "main": 1,
+          "trim": 7
+        },
+        "armour": {
+          "main": 4,
+          "trim": 8
+        },
+        "headwear": {
+          "main": 0,
+          "trim": 11
+        },
+        "accessory": {
+          "main": 3,
+          "trim": 12
+        },
+        "held_item": {
+          "main": 6,
+          "trim": 0
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 1,
+      "editable": true
+    },
+    {
+      "id": "ranger",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "leggings",
+        "footwear": "leather_boots",
+        "top": "long_tunic",
+        "outerwear": "short_cape",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "hood",
+        "accessory": "belt_pouch",
+        "held_item": "crossbow"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 6,
+          "trim": 7
+        },
+        "footwear": {
+          "main": 9,
+          "trim": 8
+        },
+        "top": {
+          "main": 12,
+          "trim": 9
+        },
+        "outerwear": {
+          "main": 2,
+          "trim": 10
+        },
+        "armour": {
+          "main": 5,
+          "trim": 11
+        },
+        "headwear": {
+          "main": 1,
+          "trim": 1
+        },
+        "accessory": {
+          "main": 4,
+          "trim": 2
+        },
+        "held_item": {
+          "main": 7,
+          "trim": 3
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 2,
+      "editable": true
+    },
+    {
+      "id": "infantry",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "padded_trousers",
+        "footwear": "metal_boots",
+        "top": "guard_tabard",
+        "outerwear": null,
+        "armour": "iron_plate",
+        "body_paint": null,
+        "headwear": "iron_helmet",
+        "accessory": "tool_belt",
+        "held_item": "sword"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 7,
+          "trim": 10
+        },
+        "footwear": {
+          "main": 10,
+          "trim": 11
+        },
+        "top": {
+          "main": 0,
+          "trim": 12
+        },
+        "outerwear": {
+          "main": 3,
+          "trim": 0
+        },
+        "armour": {
+          "main": 6,
+          "trim": 1
+        },
+        "headwear": {
+          "main": 2,
+          "trim": 4
+        },
+        "accessory": {
+          "main": 5,
+          "trim": 5
+        },
+        "held_item": {
+          "main": 8,
+          "trim": 6
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 3,
+      "editable": true
+    },
+    {
+      "id": "firekeeper",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "wrap_skirt",
+        "footwear": "sandals",
+        "top": "woven_tunic",
+        "outerwear": "short_cape",
+        "armour": null,
+        "body_paint": null,
+        "headwear": "feather_band",
+        "accessory": "beads",
+        "held_item": "torch"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 8,
+          "trim": 0
+        },
+        "footwear": {
+          "main": 11,
+          "trim": 1
+        },
+        "top": {
+          "main": 1,
+          "trim": 2
+        },
+        "outerwear": {
+          "main": 4,
+          "trim": 3
+        },
+        "armour": {
+          "main": 7,
+          "trim": 4
+        },
+        "headwear": {
+          "main": 3,
+          "trim": 7
+        },
+        "accessory": {
+          "main": 6,
+          "trim": 8
+        },
+        "held_item": {
+          "main": 9,
+          "trim": 9
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 4,
+      "editable": true
+    },
+    {
+      "id": "ceremony_guard",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "padded_trousers",
+        "footwear": "ceremonial_shoes",
+        "top": "ceremonial_robe",
+        "outerwear": "ceremonial_mantle",
+        "armour": "copper_scale",
+        "body_paint": null,
+        "headwear": "copper_helmet",
+        "accessory": "ceremonial_sash",
+        "held_item": "shield"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 9,
+          "trim": 3
+        },
+        "footwear": {
+          "main": 12,
+          "trim": 4
+        },
+        "top": {
+          "main": 2,
+          "trim": 5
+        },
+        "outerwear": {
+          "main": 5,
+          "trim": 6
+        },
+        "armour": {
+          "main": 8,
+          "trim": 7
+        },
+        "headwear": {
+          "main": 4,
+          "trim": 10
+        },
+        "accessory": {
+          "main": 7,
+          "trim": 11
+        },
+        "held_item": {
+          "main": 10,
+          "trim": 12
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 5,
+      "editable": true
+    },
+    {
+      "id": "industrial_guard",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "work_trousers",
+        "footwear": "metal_boots",
+        "top": "work_shirt",
+        "outerwear": "officer_coat",
+        "armour": "composite",
+        "body_paint": null,
+        "headwear": "visor_helmet",
+        "accessory": "respirator",
+        "held_item": "rifle"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 10,
+          "trim": 6
+        },
+        "footwear": {
+          "main": 0,
+          "trim": 7
+        },
+        "top": {
+          "main": 3,
+          "trim": 8
+        },
+        "outerwear": {
+          "main": 6,
+          "trim": 9
+        },
+        "armour": {
+          "main": 9,
+          "trim": 10
+        },
+        "headwear": {
+          "main": 5,
+          "trim": 0
+        },
+        "accessory": {
+          "main": 8,
+          "trim": 1
+        },
+        "held_item": {
+          "main": 11,
+          "trim": 2
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 6,
+      "editable": true
+    },
+    {
+      "id": "future_guard",
+      "pieces": {
+        "body": "base",
+        "hair_back": null,
+        "hair_front": "short",
+        "legwear": "environment_trousers",
+        "footwear": "environment_boots",
+        "top": "environment_suit",
+        "outerwear": null,
+        "armour": "powered",
+        "body_paint": null,
+        "headwear": "environment_helmet",
+        "accessory": "goggles",
+        "held_item": "energy_blade"
+      },
+      "dyes": {
+        "legwear": {
+          "main": 11,
+          "trim": 9
+        },
+        "footwear": {
+          "main": 1,
+          "trim": 10
+        },
+        "top": {
+          "main": 4,
+          "trim": 11
+        },
+        "outerwear": {
+          "main": 7,
+          "trim": 12
+        },
+        "armour": {
+          "main": 10,
+          "trim": 0
+        },
+        "headwear": {
+          "main": 6,
+          "trim": 3
+        },
+        "accessory": {
+          "main": 9,
+          "trim": 4
+        },
+        "held_item": {
+          "main": 12,
+          "trim": 5
+        }
+      },
+      "skin": 3,
+      "hair": 2,
+      "culture": 7,
+      "editable": true
+    }
+  ],
+  "hair_styles": {
+    "shaved": {
+      "front": null,
+      "back": null
+    },
+    "short": {
+      "front": "short",
+      "back": null
+    },
+    "cropped": {
+      "front": "cropped",
+      "back": null
+    },
+    "long": {
+      "front": "long",
+      "back": "long"
+    },
+    "braided": {
+      "front": "braided",
+      "back": "braided"
+    },
+    "topknot": {
+      "front": "topknot",
+      "back": "topknot"
+    },
+    "mane": {
+      "front": "mane",
+      "back": "mane"
+    },
+    "tied_back": {
+      "front": "tied_back",
+      "back": "tied_back"
+    },
+    "locks": {
+      "front": "locks",
+      "back": "locks"
+    },
+    "child_tuft": {
+      "front": "child_tuft",
+      "back": null
+    },
+    "side_swept": {
+      "front": "side_swept",
+      "back": null
+    },
+    "curly": {
+      "front": "curly",
+      "back": null
+    },
+    "twin_braids": {
+      "front": "twin_braids",
+      "back": "twin_braids"
+    },
+    "braid_crown": {
+      "front": "braid_crown",
+      "back": null
+    },
+    "high_tail": {
+      "front": "high_tail",
+      "back": "high_tail"
+    },
+    "bob": {
+      "front": "bob",
+      "back": "bob"
+    },
+    "coils": {
+      "front": "coils",
+      "back": "coils"
+    }
+  },
+  "selection_policy": "every_piece_can_be_overridden_or_removed_independently_outfits_are_presets_not_class_locks",
+  "colour_policy": "each_piece_has_its_own_main_and_trim_cloth_LUT_rows_skin_hair_and_culture_are_independent",
+  "dye_groups": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "dye_lut_rows": 13,
+  "skin_rows": 8,
+  "hair_rows": 8,
+  "culture_rows": 12,
+  "body_paint_clip": "visible_skin_after_all_clothing_armour_and_outerwear",
+  "major_layer_order_compatibility": "hair_back_body_clothing_subparts_body_paint_hair_front_accessories_held_item",
+  "mirror_side_left": "mirror_pixels_pivots_and_hand_anchors_together",
+  "animation_rig": "people_shared_logical_pose_coordinates_same_action_ids_all_ages_builds_and_supported_directions",
+  "magic": "fictional_orbs_gems_staves_and_energy_forms_no_real_symbols_or_alphabetic_runes",
+  "runtime_status": "art_and_reference_compositor_only_no_game_inventory_or_equipment_implementation"
+}

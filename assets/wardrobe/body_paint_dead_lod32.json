@@ -1,0 +1,290 @@
+{
+  "id": "wardrobe.body_paint_dead_lod32",
+  "family": "wardrobe",
+  "asset_id": "body_paint",
+  "animation": "dead",
+  "files": [
+    "wardrobe/body_paint_dead_lod32.png",
+    "wardrobe/body_paint_dead_lod32_idx.png"
+  ],
+  "sidecar": "wardrobe/body_paint_dead_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    16,
+    28
+  ],
+  "density": 32,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 16,
+  "sheet_rows": [
+    "cheek_dots/child/slim/side",
+    "cheek_dots/adult/slim/side",
+    "brow_band/child/slim/side",
+    "brow_band/adult/slim/side",
+    "arm_bands/child/slim/side",
+    "leg_marks/child/slim/side",
+    "leg_marks/adult/slim/side",
+    "leg_marks/elder/slim/side",
+    "face_streak/child/slim/side",
+    "face_streak/adult/slim/side",
+    "shoulder_dabs/child/slim/side",
+    "shoulder_dabs/child/average/side",
+    "shoulder_dabs/child/stout/side",
+    "shoulder_dabs/adult/slim/side",
+    "shoulder_dabs/adult/average/side",
+    "shoulder_dabs/adult/stout/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "cheek_dots",
+    "brow_band",
+    "arm_bands",
+    "leg_marks",
+    "face_streak",
+    "shoulder_dabs"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    [
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      8,
+      8,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ],
+    [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      13,
+      14,
+      15
+    ]
+  ],
+  "sim_actions": [
+    "dead"
+  ],
+  "hand_anchors": [
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ],
+    [
+      [
+        18,
+        24
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      20,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      24,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ],
+    [
+      22,
+      28
+    ]
+  ],
+  "anims": {
+    "dead": {
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "body_paint"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "culture_2"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

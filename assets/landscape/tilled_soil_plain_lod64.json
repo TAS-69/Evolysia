@@ -1,0 +1,68 @@
+{
+  "id": "landscape.tilled_soil_plain_lod64",
+  "family": "landscape",
+  "asset_id": "tilled_soil",
+  "kind": "plain",
+  "files": [
+    "landscape/tilled_soil_plain_lod64.png",
+    "landscape/tilled_soil_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/tilled_soil_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "ns_00",
+    "ns_01",
+    "ns_02",
+    "ns_03",
+    "ew_00",
+    "ew_01",
+    "ew_02",
+    "ew_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "tilled_soil",
+  "layer_priority": 9,
+  "priority_offset": 20,
+  "orientations": [
+    "ns",
+    "ew"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "tilled_soil"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

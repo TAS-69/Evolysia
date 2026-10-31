@@ -1,0 +1,65 @@
+{
+  "id": "landscape.salt_marsh_plain_lod32",
+  "family": "landscape",
+  "asset_id": "salt_marsh",
+  "kind": "plain",
+  "files": [
+    "landscape/salt_marsh_plain_lod32.png",
+    "landscape/salt_marsh_plain_lod32_idx.png"
+  ],
+  "sidecar": "landscape/salt_marsh_plain_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 32,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    16,
+    31
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "marsh",
+  "layer_priority": 3,
+  "priority_offset": 41,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_water_1",
+    "fixed_water_3",
+    "grass_1",
+    "grass_2",
+    "grass_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "marsh"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

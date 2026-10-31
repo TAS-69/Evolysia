@@ -1,0 +1,55 @@
+{
+  "id": "civilisation.hover_carrier_lod32",
+  "family": "civilisation",
+  "asset_id": "hover_carrier",
+  "files": [
+    "civilisation/hover_carrier_lod32.png",
+    "civilisation/hover_carrier_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/hover_carrier_lod32.json",
+  "frame": [
+    48,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    24,
+    31
+  ],
+  "logical_frame": [
+    24,
+    16
+  ],
+  "logical_pivot": [
+    12.0,
+    15.75
+  ],
+  "placement_footprint": [
+    24,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "vehicle",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "vehicle"
+  ],
+  "recolor_slots": [
+    "fixed_ice_3",
+    "fixed_metal_iron_0",
+    "fixed_metal_iron_1",
+    "fixed_metal_iron_2",
+    "fixed_metal_iron_3",
+    "fixed_metal_iron_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "transport_mode": "land"
+}

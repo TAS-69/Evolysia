@@ -1,0 +1,326 @@
+{
+  "id": "wardrobe.body_paint_sleep_lod64",
+  "family": "wardrobe",
+  "asset_id": "body_paint",
+  "animation": "sleep",
+  "files": [
+    "wardrobe/body_paint_sleep_lod64.png",
+    "wardrobe/body_paint_sleep_lod64_idx.png"
+  ],
+  "sidecar": "wardrobe/body_paint_sleep_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "frames": 2,
+  "fps": 2,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    32,
+    56
+  ],
+  "density": 64,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 16,
+  "sheet_rows": [
+    "cheek_dots/child/slim/side",
+    "cheek_dots/adult/slim/side",
+    "brow_band/child/slim/side",
+    "brow_band/adult/slim/side",
+    "arm_bands/child/slim/side",
+    "leg_marks/child/slim/side",
+    "leg_marks/adult/slim/side",
+    "leg_marks/elder/slim/side",
+    "face_streak/child/slim/side",
+    "face_streak/adult/slim/side",
+    "shoulder_dabs/child/slim/side",
+    "shoulder_dabs/child/average/side",
+    "shoulder_dabs/child/stout/side",
+    "shoulder_dabs/adult/slim/side",
+    "shoulder_dabs/adult/average/side",
+    "shoulder_dabs/adult/stout/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "cheek_dots",
+    "brow_band",
+    "arm_bands",
+    "leg_marks",
+    "face_streak",
+    "shoulder_dabs"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+    ],
+    [
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      8,
+      8,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ],
+    [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      13,
+      14,
+      15
+    ]
+  ],
+  "sim_actions": [
+    "sleep"
+  ],
+  "hand_anchors": [
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ],
+    [
+      [
+        36,
+        48
+      ],
+      [
+        36,
+        52
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      40,
+      56
+    ],
+    [
+      40,
+      56
+    ],
+    [
+      40,
+      56
+    ],
+    [
+      48,
+      56
+    ],
+    [
+      48,
+      56
+    ],
+    [
+      48,
+      56
+    ],
+    [
+      44,
+      56
+    ],
+    [
+      44,
+      56
+    ],
+    [
+      44,
+      56
+    ]
+  ],
+  "anims": {
+    "sleep": {
+      "frames": 2,
+      "fps": 2
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "body_paint"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "culture_2"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

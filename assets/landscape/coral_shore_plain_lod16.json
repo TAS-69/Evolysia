@@ -1,0 +1,63 @@
+{
+  "id": "landscape.coral_shore_plain_lod16",
+  "family": "landscape",
+  "asset_id": "coral_shore",
+  "kind": "plain",
+  "files": [
+    "landscape/coral_shore_plain_lod16.png",
+    "landscape/coral_shore_plain_lod16_idx.png"
+  ],
+  "sidecar": "landscape/coral_shore_plain_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 16,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    8,
+    15
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "sand",
+  "layer_priority": 5,
+  "priority_offset": 43,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_clay_1",
+    "fixed_clay_2",
+    "fixed_clay_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "sand"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

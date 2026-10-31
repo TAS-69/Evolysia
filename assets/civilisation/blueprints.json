@@ -1,0 +1,4503 @@
+{
+  "version": 1,
+  "logical_cell_px": 16,
+  "blueprints": [
+    {
+      "id": "camp",
+      "asset_id": "camp",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "earth",
+      "wall": null,
+      "roof": null,
+      "capabilities": [
+        "rest",
+        "prepare_food",
+        "gather",
+        "craft_hand_tools"
+      ],
+      "objects": [
+        {
+          "asset_id": "hearth",
+          "cell": [
+            3,
+            2
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "knapping_block",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            2,
+            1
+          ],
+          "resource": "food",
+          "count": 3
+        },
+        {
+          "asset_id": "backpack",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "stone",
+          "count": 2
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "forager",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": null,
+      "production_building": false
+    },
+    {
+      "id": "granary",
+      "asset_id": "granary",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "thatch",
+      "capabilities": [
+        "store_grain",
+        "dry_food",
+        "dispatch_goods"
+      ],
+      "objects": [
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            1,
+            1
+          ],
+          "resource": "grain",
+          "count": 9
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            2,
+            1
+          ],
+          "resource": "grain",
+          "count": 5
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            4,
+            1
+          ],
+          "resource": "grain",
+          "count": 8
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            5,
+            1
+          ],
+          "resource": "grain",
+          "count": 2
+        },
+        {
+          "asset_id": "grain_sack",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "grain_sack",
+          "cell": [
+            2,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "grain",
+          "count": 6
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            4,
+            3
+          ],
+          "resource": "grain",
+          "count": 5
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "farmer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "pottery_workshop",
+      "asset_id": "pottery_workshop",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "earth",
+      "wall": "wattle",
+      "roof": "thatch",
+      "capabilities": [
+        "shape_clay",
+        "fire_ceramics"
+      ],
+      "objects": [
+        {
+          "asset_id": "kiln",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "shelf",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "potter_wheel",
+          "cell": [
+            2,
+            3
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            2,
+            2
+          ]
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            4,
+            1
+          ],
+          "resource": "clay",
+          "count": 4
+        },
+        {
+          "asset_id": "pot",
+          "cell": [
+            5,
+            3
+          ]
+        },
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            4,
+            3
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "potter",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "weaver",
+      "asset_id": "weaver",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "reed_mat",
+      "wall": "wood",
+      "roof": "thatch",
+      "capabilities": [
+        "spin_fiber",
+        "weave_cloth",
+        "store_textiles"
+      ],
+      "objects": [
+        {
+          "asset_id": "loom",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "loom",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "shelf",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            1,
+            2
+          ]
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 4
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            2,
+            4
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            4,
+            3
+          ],
+          "resource": "cloth",
+          "count": 5
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "potter",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "smithy",
+      "asset_id": "smithy",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "flagstone",
+      "wall": "stone",
+      "roof": "tile",
+      "capabilities": [
+        "forge_metal",
+        "repair_tools"
+      ],
+      "objects": [
+        {
+          "asset_id": "forge",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "anvil",
+          "cell": [
+            2,
+            3
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            1,
+            4
+          ]
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            5,
+            4
+          ],
+          "resource": "copper_ore",
+          "count": 7
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            4,
+            2
+          ],
+          "resource": "iron_ingot",
+          "count": 5
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "smith",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "home",
+      "asset_id": "home",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "thatch",
+      "capabilities": [
+        "rest",
+        "prepare_food",
+        "store_personal_goods"
+      ],
+      "objects": [
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            2,
+            1
+          ]
+        },
+        {
+          "asset_id": "hearth",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            2,
+            2
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            4,
+            1
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            2,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 3
+        },
+        {
+          "asset_id": "wash_basin",
+          "cell": [
+            5,
+            4
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "farmer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "bakery",
+      "asset_id": "bakery",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "flagstone",
+      "wall": "fired_brick",
+      "roof": "tile",
+      "capabilities": [
+        "mill_grain",
+        "bake_food"
+      ],
+      "objects": [
+        {
+          "asset_id": "oven",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "millstone",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            2,
+            3
+          ]
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "grain",
+          "count": 7
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            4,
+            3
+          ],
+          "resource": "food",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "cook",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "infirmary",
+      "asset_id": "infirmary",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "mudbrick",
+      "roof": "tile",
+      "capabilities": [
+        "care",
+        "rest",
+        "prepare_medicine"
+      ],
+      "objects": [
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "wash_basin",
+          "cell": [
+            1,
+            4
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            4
+          ],
+          "resource": "medicine",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "healer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "machine_shop",
+      "asset_id": "machine_shop",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "concrete",
+      "wall": "fired_brick",
+      "roof": "metal",
+      "capabilities": [
+        "machine_parts",
+        "maintain_equipment"
+      ],
+      "objects": [
+        {
+          "asset_id": "lathe",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "generator",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "shelf",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "pallet",
+          "cell": [
+            4,
+            3
+          ],
+          "resource": "iron_ingot",
+          "count": 6
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            5,
+            4
+          ],
+          "resource": "components",
+          "count": 7
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "engineer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "research_lab",
+      "asset_id": "research_lab",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "metal_deck",
+      "wall": "glass",
+      "roof": "metal",
+      "capabilities": [
+        "research",
+        "analyse",
+        "culture_biological_samples"
+      ],
+      "objects": [
+        {
+          "asset_id": "console",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "biotech_vat",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "biotech_vat",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "wash_basin",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "cargo_pod",
+          "cell": [
+            5,
+            4
+          ],
+          "resource": "medicine",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "researcher",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_metal_open",
+      "production_building": false
+    },
+    {
+      "id": "future_fabricator",
+      "asset_id": "future_fabricator",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "metal_deck",
+      "wall": "metal",
+      "roof": "metal",
+      "capabilities": [
+        "fabricate_parts",
+        "automate_handling"
+      ],
+      "objects": [
+        {
+          "asset_id": "robot_arm",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "robot_arm",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "console",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "generator",
+          "cell": [
+            1,
+            4
+          ]
+        },
+        {
+          "asset_id": "cargo_pod",
+          "cell": [
+            4,
+            3
+          ],
+          "resource": "components",
+          "count": 9
+        },
+        {
+          "asset_id": "pallet",
+          "cell": [
+            5,
+            4
+          ],
+          "resource": "iron_ingot",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "spaceworker",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_metal_open",
+      "production_building": false
+    },
+    {
+      "id": "royal_hall",
+      "asset_id": "royal_hall",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "flagstone",
+      "wall": "limestone",
+      "roof": "copper",
+      "capabilities": [
+        "govern",
+        "receive_visitors",
+        "ceremony"
+      ],
+      "objects": [
+        {
+          "asset_id": "throne",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "ceremonial_screen",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "cloth",
+          "count": 5
+        },
+        {
+          "asset_id": "brazier",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "gold_ore",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "royal",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "council_hall",
+      "asset_id": "council_hall",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "stone",
+      "roof": "wood_shingle",
+      "capabilities": [
+        "deliberate",
+        "record",
+        "administer"
+      ],
+      "objects": [
+        {
+          "asset_id": "table",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "bookcase",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 3
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "court",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "ritual_hall",
+      "asset_id": "ritual_hall",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "flagstone",
+      "wall": "granite",
+      "roof": "slate",
+      "capabilities": [
+        "ritual",
+        "gather",
+        "remember"
+      ],
+      "objects": [
+        {
+          "asset_id": "altar",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "brazier",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "ceremonial_screen",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "pot",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "herbs",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "ceremonial",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "ceremonial_hall",
+      "asset_id": "ceremonial_hall",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "ceramic_tile",
+      "wall": "adobe",
+      "roof": "tile",
+      "capabilities": [
+        "celebrate",
+        "perform",
+        "ceremony"
+      ],
+      "objects": [
+        {
+          "asset_id": "ceremonial_screen",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "ceremonial_screen",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "brazier",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "ceremonial",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "magic_workshop",
+      "asset_id": "magic_workshop",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "glass",
+      "capabilities": [
+        "prepare_foci",
+        "study_magic",
+        "experiment"
+      ],
+      "objects": [
+        {
+          "asset_id": "brazier",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "alchemy_table",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "bookcase",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "dye_vat",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "quartz",
+          "count": 5
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "medicine",
+          "count": 3
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "mage",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "fort_gatehouse",
+      "asset_id": "fort_gatehouse",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "flagstone",
+      "wall": "stone",
+      "roof": "slate",
+      "capabilities": [
+        "control_access",
+        "defend",
+        "store_arms"
+      ],
+      "objects": [
+        {
+          "asset_id": "weapons_rack",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "armour_stand",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "iron_ingot",
+          "count": 4
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "components",
+          "count": 4
+        },
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            5,
+            3
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "guard",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "barracks",
+      "asset_id": "barracks",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "stone",
+      "roof": "tile",
+      "capabilities": [
+        "rest",
+        "equip",
+        "train"
+      ],
+      "objects": [
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "weapons_rack",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "armour_stand",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "infantry",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "watch_post",
+      "asset_id": "watch_post",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "palisade",
+      "roof": "wood_shingle",
+      "capabilities": [
+        "observe",
+        "warn",
+        "defend"
+      ],
+      "objects": [
+        {
+          "asset_id": "stool",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "telescope",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "weapons_rack",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "grain",
+          "count": 3
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            3
+          ]
+        }
+      ],
+      "actor_outfit": "guard",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "construction_yard",
+      "asset_id": "construction_yard",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "packed_clay",
+      "wall": null,
+      "roof": null,
+      "capabilities": [
+        "shape_materials",
+        "lift",
+        "construct"
+      ],
+      "objects": [
+        {
+          "asset_id": "scaffold",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "construction_crane",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "pallet",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "log",
+          "count": 6
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "stone",
+          "count": 6
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "clay",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "mason",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": null,
+      "production_building": false
+    },
+    {
+      "id": "carpentry_workshop",
+      "asset_id": "carpentry_workshop",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "capabilities": [
+        "saw",
+        "join_wood",
+        "repair"
+      ],
+      "objects": [
+        {
+          "asset_id": "sawbench",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "chopping_block",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "tool_rack",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "pallet",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "log",
+          "count": 6
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "log",
+          "count": 3
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "woodworker",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "fishing_hut",
+      "asset_id": "fishing_hut",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "capabilities": [
+        "fish",
+        "dry_fish",
+        "repair_nets"
+      ],
+      "objects": [
+        {
+          "asset_id": "fish_drying_rack",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "fish",
+          "count": 4
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "dried_fish",
+          "count": 5
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "rope",
+          "count": 3
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "fisher",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "ranch",
+      "asset_id": "ranch",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "earth",
+      "wall": "wood",
+      "roof": "thatch",
+      "capabilities": [
+        "care_for_animals",
+        "store_feed"
+      ],
+      "objects": [
+        {
+          "asset_id": "feed_trough",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            3,
+            1
+          ],
+          "resource": "grain",
+          "count": 8
+        },
+        {
+          "asset_id": "crate",
+          "cell": [
+            5,
+            1
+          ],
+          "resource": "grain",
+          "count": 3
+        },
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "grain",
+          "count": 5
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "farmer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "market",
+      "asset_id": "market",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "packed_path",
+      "wall": null,
+      "roof": null,
+      "capabilities": [
+        "trade",
+        "display_goods",
+        "weigh"
+      ],
+      "objects": [
+        {
+          "asset_id": "market_stall",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "market_stall",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "market_stall",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "apple",
+          "count": 4
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "carrot",
+          "count": 4
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "fish",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "merchant",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": null,
+      "production_building": false
+    },
+    {
+      "id": "industrial_hall",
+      "asset_id": "industrial_hall",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "concrete",
+      "wall": "concrete",
+      "roof": "metal",
+      "capabilities": [
+        "machine",
+        "power",
+        "assemble"
+      ],
+      "objects": [
+        {
+          "asset_id": "lathe",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "press",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "generator",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "battery_bank",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "pallet",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "steel",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "mechanic",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "shipyard",
+      "asset_id": "shipyard",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "packed_path",
+      "wall": null,
+      "roof": null,
+      "capabilities": [
+        "build_watercraft",
+        "repair_hulls",
+        "load"
+      ],
+      "objects": [
+        {
+          "asset_id": "sawbench",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "construction_crane",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "raft",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "scaffold",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "rope",
+          "count": 5
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "log",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "sailor",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": null,
+      "production_building": false
+    },
+    {
+      "id": "transport_depot",
+      "asset_id": "transport_depot",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "concrete",
+      "wall": "metal",
+      "roof": "metal",
+      "capabilities": [
+        "dispatch",
+        "load",
+        "maintain_transport"
+      ],
+      "objects": [
+        {
+          "asset_id": "windlass",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "workbench",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "shelf",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "cargo_pod",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "components",
+          "count": 8
+        },
+        {
+          "asset_id": "handcart",
+          "cell": [
+            3,
+            3
+          ],
+          "resource": "iron_ingot",
+          "count": 6
+        },
+        {
+          "asset_id": "cargo_pod",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "food",
+          "count": 6
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "engineer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_metal_open",
+      "production_building": false
+    },
+    {
+      "id": "brew_house",
+      "asset_id": "brew_house",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "packed_clay",
+      "wall": "adobe",
+      "roof": "tile",
+      "capabilities": [
+        "ferment",
+        "mill",
+        "store_drinks"
+      ],
+      "objects": [
+        {
+          "asset_id": "water_barrel",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "brew_vat",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "grain_bin",
+          "cell": [
+            5,
+            1
+          ],
+          "resource": "barley",
+          "count": 8
+        },
+        {
+          "asset_id": "stone_quern",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "cooking_pot",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            5,
+            3
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "cook",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "medical_clinic",
+      "asset_id": "medical_clinic",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "concrete",
+      "wall": "sandstone",
+      "roof": "glass",
+      "capabilities": [
+        "care",
+        "sterilise",
+        "prepare_medicine"
+      ],
+      "objects": [
+        {
+          "asset_id": "medical_table",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "medical_table",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "wash_basin",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "cargo_pod",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "medicine",
+          "count": 6
+        },
+        {
+          "asset_id": "bookcase",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "console",
+          "cell": [
+            5,
+            3
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "healer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "library",
+      "asset_id": "library",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "plank",
+      "wall": "limestone",
+      "roof": "tile",
+      "capabilities": [
+        "teach",
+        "research",
+        "preserve_records"
+      ],
+      "objects": [
+        {
+          "asset_id": "bookcase",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "lectern",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "bookcase",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            1,
+            3
+          ]
+        },
+        {
+          "asset_id": "stool",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "scholar",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    },
+    {
+      "id": "rural_home",
+      "asset_id": "rural_home",
+      "size_cells": [
+        7,
+        6
+      ],
+      "entrance_cell": [
+        3,
+        5
+      ],
+      "walkable_cells": [
+        [
+          2,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "floor": "reed_mat",
+      "wall": "wattle",
+      "roof": "thatch",
+      "capabilities": [
+        "rest",
+        "prepare_food",
+        "store_personal_goods"
+      ],
+      "objects": [
+        {
+          "asset_id": "bed",
+          "cell": [
+            1,
+            1
+          ]
+        },
+        {
+          "asset_id": "hearth",
+          "cell": [
+            3,
+            1
+          ]
+        },
+        {
+          "asset_id": "shelf",
+          "cell": [
+            5,
+            1
+          ]
+        },
+        {
+          "asset_id": "basket",
+          "cell": [
+            1,
+            3
+          ],
+          "resource": "roots",
+          "count": 4
+        },
+        {
+          "asset_id": "table",
+          "cell": [
+            3,
+            3
+          ]
+        },
+        {
+          "asset_id": "chest",
+          "cell": [
+            5,
+            3
+          ],
+          "resource": "cloth",
+          "count": 4
+        }
+      ],
+      "actors": [
+        {
+          "asset_id": "person_detail",
+          "cell": [
+            3,
+            2
+          ]
+        }
+      ],
+      "actor_outfit": "farmer",
+      "roof_policy": "removable_per_room",
+      "cutaway_policy": "hide_south_wall",
+      "navigation_status": "illustrative_layout_not_navigation_baked",
+      "entrance_visual": "door_wood_open",
+      "production_building": false
+    }
+  ]
+}

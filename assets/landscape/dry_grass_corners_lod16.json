@@ -1,0 +1,92 @@
+{
+  "id": "landscape.dry_grass_corners_lod16",
+  "family": "landscape",
+  "asset_id": "dry_grass",
+  "kind": "corners",
+  "files": [
+    "landscape/dry_grass_corners_lod16.png",
+    "landscape/dry_grass_corners_lod16_idx.png"
+  ],
+  "sidecar": "landscape/dry_grass_corners_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 16,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03",
+    "none_04",
+    "none_05",
+    "none_06",
+    "none_07",
+    "none_08",
+    "none_09",
+    "none_10",
+    "none_11",
+    "none_12",
+    "none_13",
+    "none_14",
+    "none_15"
+  ],
+  "pivot": [
+    8,
+    15
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "priority_anchor": "dry_grass",
+  "layer_priority": 10,
+  "priority_offset": 5,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 16,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_thatch_1",
+    "fixed_thatch_2",
+    "fixed_thatch_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "dry_grass"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

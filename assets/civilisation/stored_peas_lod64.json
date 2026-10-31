@@ -1,0 +1,51 @@
+{
+  "id": "civilisation.stored_peas_lod64",
+  "family": "civilisation",
+  "asset_id": "stored_peas",
+  "files": [
+    "civilisation/stored_peas_lod64.png",
+    "civilisation/stored_peas_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/stored_peas_lod64.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "logical_frame": [
+    4,
+    4
+  ],
+  "logical_pivot": [
+    2.0,
+    3.75
+  ],
+  "placement_footprint": [
+    4,
+    4
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "stored_item",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "stored_item"
+  ],
+  "recolor_slots": [
+    "foliage_1",
+    "foliage_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "resource_id": "peas"
+}

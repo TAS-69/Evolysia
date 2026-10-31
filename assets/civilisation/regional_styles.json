@@ -1,0 +1,2729 @@
+{
+  "version": 1,
+  "styles": {
+    "cold_woodland": {
+      "biomes": [
+        "tundra",
+        "boreal_forest"
+      ],
+      "wall": "wood",
+      "roof": "bark",
+      "floor": "plank",
+      "outfits": [
+        "winter",
+        "hunter",
+        "woodworker"
+      ],
+      "resources": [
+        "log",
+        "stone",
+        "hide",
+        "fur",
+        "fiber"
+      ]
+    },
+    "temperate_woodland": {
+      "biomes": [
+        "temperate_forest",
+        "temperate_rainforest",
+        "temperate_grassland"
+      ],
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "floor": "plank",
+      "outfits": [
+        "farmer",
+        "potter",
+        "traveller"
+      ],
+      "resources": [
+        "log",
+        "clay",
+        "stone",
+        "fiber",
+        "reed"
+      ]
+    },
+    "arid_earth": {
+      "biomes": [
+        "hot_desert",
+        "cold_desert",
+        "shrubland"
+      ],
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "floor": "packed_clay",
+      "outfits": [
+        "desert",
+        "merchant",
+        "potter"
+      ],
+      "resources": [
+        "clay",
+        "stone",
+        "fiber",
+        "hide"
+      ]
+    },
+    "humid_reed": {
+      "biomes": [
+        "tropical_rainforest",
+        "tropical_seasonal_forest",
+        "savanna"
+      ],
+      "wall": "bamboo",
+      "roof": "reed",
+      "floor": "bamboo",
+      "outfits": [
+        "forager",
+        "farmer",
+        "fisher"
+      ],
+      "resources": [
+        "reed",
+        "log",
+        "fiber",
+        "clay"
+      ]
+    },
+    "mountain_stone": {
+      "biomes": [
+        "alpine"
+      ],
+      "wall": "granite",
+      "roof": "slate",
+      "floor": "granite",
+      "outfits": [
+        "winter",
+        "mason",
+        "hunter"
+      ],
+      "resources": [
+        "stone",
+        "log",
+        "hide",
+        "fur"
+      ]
+    },
+    "wetland_stilts": {
+      "biomes": [
+        "wetland"
+      ],
+      "wall": "reed",
+      "roof": "reed",
+      "floor": "bamboo",
+      "outfits": [
+        "fisher",
+        "forager",
+        "sailor"
+      ],
+      "resources": [
+        "reed",
+        "log",
+        "fiber",
+        "clay"
+      ]
+    },
+    "volcanic_stone": {
+      "biomes": [
+        "volcanic"
+      ],
+      "wall": "basalt",
+      "roof": "tile",
+      "floor": "basalt",
+      "outfits": [
+        "mason",
+        "smith",
+        "engineer"
+      ],
+      "resources": [
+        "stone",
+        "clay",
+        "iron_ore",
+        "copper_ore"
+      ]
+    },
+    "polar_shelter": {
+      "biomes": [
+        "ice_sheet"
+      ],
+      "wall": "snow",
+      "roof": "hide",
+      "floor": "ice",
+      "outfits": [
+        "winter",
+        "hunter"
+      ],
+      "resources": [
+        "hide",
+        "fur",
+        "bone",
+        "stone"
+      ]
+    },
+    "coastal_trade": {
+      "biomes": [
+        "coast",
+        "lake",
+        "ocean",
+        "deep_ocean"
+      ],
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "floor": "plank",
+      "outfits": [
+        "sailor",
+        "fisher",
+        "merchant"
+      ],
+      "resources": [
+        "log",
+        "stone",
+        "fiber",
+        "salt"
+      ]
+    }
+  },
+  "variants": [
+    {
+      "id": "granary__cold_woodland",
+      "base_blueprint": "granary",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__temperate_woodland",
+      "base_blueprint": "granary",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__arid_earth",
+      "base_blueprint": "granary",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__humid_reed",
+      "base_blueprint": "granary",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__mountain_stone",
+      "base_blueprint": "granary",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__wetland_stilts",
+      "base_blueprint": "granary",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__volcanic_stone",
+      "base_blueprint": "granary",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__polar_shelter",
+      "base_blueprint": "granary",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "granary__coastal_trade",
+      "base_blueprint": "granary",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__cold_woodland",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__temperate_woodland",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__arid_earth",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__humid_reed",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__mountain_stone",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__wetland_stilts",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__volcanic_stone",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__polar_shelter",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "pottery_workshop__coastal_trade",
+      "base_blueprint": "pottery_workshop",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__cold_woodland",
+      "base_blueprint": "weaver",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__temperate_woodland",
+      "base_blueprint": "weaver",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__arid_earth",
+      "base_blueprint": "weaver",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__humid_reed",
+      "base_blueprint": "weaver",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__mountain_stone",
+      "base_blueprint": "weaver",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__wetland_stilts",
+      "base_blueprint": "weaver",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__volcanic_stone",
+      "base_blueprint": "weaver",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__polar_shelter",
+      "base_blueprint": "weaver",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "weaver__coastal_trade",
+      "base_blueprint": "weaver",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__cold_woodland",
+      "base_blueprint": "smithy",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__temperate_woodland",
+      "base_blueprint": "smithy",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__arid_earth",
+      "base_blueprint": "smithy",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__humid_reed",
+      "base_blueprint": "smithy",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__mountain_stone",
+      "base_blueprint": "smithy",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__wetland_stilts",
+      "base_blueprint": "smithy",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__volcanic_stone",
+      "base_blueprint": "smithy",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__polar_shelter",
+      "base_blueprint": "smithy",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "smithy__coastal_trade",
+      "base_blueprint": "smithy",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__cold_woodland",
+      "base_blueprint": "home",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__temperate_woodland",
+      "base_blueprint": "home",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__arid_earth",
+      "base_blueprint": "home",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__humid_reed",
+      "base_blueprint": "home",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__mountain_stone",
+      "base_blueprint": "home",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__wetland_stilts",
+      "base_blueprint": "home",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__volcanic_stone",
+      "base_blueprint": "home",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__polar_shelter",
+      "base_blueprint": "home",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "home__coastal_trade",
+      "base_blueprint": "home",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__cold_woodland",
+      "base_blueprint": "bakery",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__temperate_woodland",
+      "base_blueprint": "bakery",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__arid_earth",
+      "base_blueprint": "bakery",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__humid_reed",
+      "base_blueprint": "bakery",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__mountain_stone",
+      "base_blueprint": "bakery",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__wetland_stilts",
+      "base_blueprint": "bakery",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__volcanic_stone",
+      "base_blueprint": "bakery",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__polar_shelter",
+      "base_blueprint": "bakery",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "bakery__coastal_trade",
+      "base_blueprint": "bakery",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__cold_woodland",
+      "base_blueprint": "infirmary",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__temperate_woodland",
+      "base_blueprint": "infirmary",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__arid_earth",
+      "base_blueprint": "infirmary",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__humid_reed",
+      "base_blueprint": "infirmary",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__mountain_stone",
+      "base_blueprint": "infirmary",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__wetland_stilts",
+      "base_blueprint": "infirmary",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__volcanic_stone",
+      "base_blueprint": "infirmary",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__polar_shelter",
+      "base_blueprint": "infirmary",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "infirmary__coastal_trade",
+      "base_blueprint": "infirmary",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__cold_woodland",
+      "base_blueprint": "machine_shop",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__temperate_woodland",
+      "base_blueprint": "machine_shop",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__arid_earth",
+      "base_blueprint": "machine_shop",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__humid_reed",
+      "base_blueprint": "machine_shop",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__mountain_stone",
+      "base_blueprint": "machine_shop",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__wetland_stilts",
+      "base_blueprint": "machine_shop",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__volcanic_stone",
+      "base_blueprint": "machine_shop",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__polar_shelter",
+      "base_blueprint": "machine_shop",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "machine_shop__coastal_trade",
+      "base_blueprint": "machine_shop",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__cold_woodland",
+      "base_blueprint": "research_lab",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__temperate_woodland",
+      "base_blueprint": "research_lab",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__arid_earth",
+      "base_blueprint": "research_lab",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__humid_reed",
+      "base_blueprint": "research_lab",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__mountain_stone",
+      "base_blueprint": "research_lab",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__wetland_stilts",
+      "base_blueprint": "research_lab",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__volcanic_stone",
+      "base_blueprint": "research_lab",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__polar_shelter",
+      "base_blueprint": "research_lab",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "research_lab__coastal_trade",
+      "base_blueprint": "research_lab",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__cold_woodland",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__temperate_woodland",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__arid_earth",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__humid_reed",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__mountain_stone",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__wetland_stilts",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__volcanic_stone",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__polar_shelter",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "future_fabricator__coastal_trade",
+      "base_blueprint": "future_fabricator",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__cold_woodland",
+      "base_blueprint": "royal_hall",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__temperate_woodland",
+      "base_blueprint": "royal_hall",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__arid_earth",
+      "base_blueprint": "royal_hall",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__humid_reed",
+      "base_blueprint": "royal_hall",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__mountain_stone",
+      "base_blueprint": "royal_hall",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__wetland_stilts",
+      "base_blueprint": "royal_hall",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__volcanic_stone",
+      "base_blueprint": "royal_hall",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__polar_shelter",
+      "base_blueprint": "royal_hall",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "royal_hall__coastal_trade",
+      "base_blueprint": "royal_hall",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__cold_woodland",
+      "base_blueprint": "council_hall",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__temperate_woodland",
+      "base_blueprint": "council_hall",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__arid_earth",
+      "base_blueprint": "council_hall",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__humid_reed",
+      "base_blueprint": "council_hall",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__mountain_stone",
+      "base_blueprint": "council_hall",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__wetland_stilts",
+      "base_blueprint": "council_hall",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__volcanic_stone",
+      "base_blueprint": "council_hall",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__polar_shelter",
+      "base_blueprint": "council_hall",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "council_hall__coastal_trade",
+      "base_blueprint": "council_hall",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__cold_woodland",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__temperate_woodland",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__arid_earth",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__humid_reed",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__mountain_stone",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__wetland_stilts",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__volcanic_stone",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__polar_shelter",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ritual_hall__coastal_trade",
+      "base_blueprint": "ritual_hall",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__cold_woodland",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__temperate_woodland",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__arid_earth",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__humid_reed",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__mountain_stone",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__wetland_stilts",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__volcanic_stone",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__polar_shelter",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ceremonial_hall__coastal_trade",
+      "base_blueprint": "ceremonial_hall",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__cold_woodland",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__temperate_woodland",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__arid_earth",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__humid_reed",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__mountain_stone",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__wetland_stilts",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__volcanic_stone",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__polar_shelter",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "magic_workshop__coastal_trade",
+      "base_blueprint": "magic_workshop",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__cold_woodland",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__temperate_woodland",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__arid_earth",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__humid_reed",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__mountain_stone",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__wetland_stilts",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__volcanic_stone",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__polar_shelter",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fort_gatehouse__coastal_trade",
+      "base_blueprint": "fort_gatehouse",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__cold_woodland",
+      "base_blueprint": "barracks",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__temperate_woodland",
+      "base_blueprint": "barracks",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__arid_earth",
+      "base_blueprint": "barracks",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__humid_reed",
+      "base_blueprint": "barracks",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__mountain_stone",
+      "base_blueprint": "barracks",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__wetland_stilts",
+      "base_blueprint": "barracks",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__volcanic_stone",
+      "base_blueprint": "barracks",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__polar_shelter",
+      "base_blueprint": "barracks",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "barracks__coastal_trade",
+      "base_blueprint": "barracks",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__cold_woodland",
+      "base_blueprint": "watch_post",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__temperate_woodland",
+      "base_blueprint": "watch_post",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__arid_earth",
+      "base_blueprint": "watch_post",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__humid_reed",
+      "base_blueprint": "watch_post",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__mountain_stone",
+      "base_blueprint": "watch_post",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__wetland_stilts",
+      "base_blueprint": "watch_post",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__volcanic_stone",
+      "base_blueprint": "watch_post",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__polar_shelter",
+      "base_blueprint": "watch_post",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "watch_post__coastal_trade",
+      "base_blueprint": "watch_post",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__cold_woodland",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__temperate_woodland",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__arid_earth",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__humid_reed",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__mountain_stone",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__wetland_stilts",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__volcanic_stone",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__polar_shelter",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "carpentry_workshop__coastal_trade",
+      "base_blueprint": "carpentry_workshop",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__cold_woodland",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__temperate_woodland",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__arid_earth",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__humid_reed",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__mountain_stone",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__wetland_stilts",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__volcanic_stone",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__polar_shelter",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "fishing_hut__coastal_trade",
+      "base_blueprint": "fishing_hut",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__cold_woodland",
+      "base_blueprint": "ranch",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__temperate_woodland",
+      "base_blueprint": "ranch",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__arid_earth",
+      "base_blueprint": "ranch",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__humid_reed",
+      "base_blueprint": "ranch",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__mountain_stone",
+      "base_blueprint": "ranch",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__wetland_stilts",
+      "base_blueprint": "ranch",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__volcanic_stone",
+      "base_blueprint": "ranch",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__polar_shelter",
+      "base_blueprint": "ranch",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "ranch__coastal_trade",
+      "base_blueprint": "ranch",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__cold_woodland",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__temperate_woodland",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__arid_earth",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__humid_reed",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__mountain_stone",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__wetland_stilts",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__volcanic_stone",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__polar_shelter",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "industrial_hall__coastal_trade",
+      "base_blueprint": "industrial_hall",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__cold_woodland",
+      "base_blueprint": "transport_depot",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__temperate_woodland",
+      "base_blueprint": "transport_depot",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__arid_earth",
+      "base_blueprint": "transport_depot",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__humid_reed",
+      "base_blueprint": "transport_depot",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__mountain_stone",
+      "base_blueprint": "transport_depot",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__wetland_stilts",
+      "base_blueprint": "transport_depot",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__volcanic_stone",
+      "base_blueprint": "transport_depot",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__polar_shelter",
+      "base_blueprint": "transport_depot",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "transport_depot__coastal_trade",
+      "base_blueprint": "transport_depot",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__cold_woodland",
+      "base_blueprint": "brew_house",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__temperate_woodland",
+      "base_blueprint": "brew_house",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__arid_earth",
+      "base_blueprint": "brew_house",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__humid_reed",
+      "base_blueprint": "brew_house",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__mountain_stone",
+      "base_blueprint": "brew_house",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__wetland_stilts",
+      "base_blueprint": "brew_house",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__volcanic_stone",
+      "base_blueprint": "brew_house",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__polar_shelter",
+      "base_blueprint": "brew_house",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "brew_house__coastal_trade",
+      "base_blueprint": "brew_house",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__cold_woodland",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__temperate_woodland",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__arid_earth",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__humid_reed",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__mountain_stone",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__wetland_stilts",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__volcanic_stone",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__polar_shelter",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "medical_clinic__coastal_trade",
+      "base_blueprint": "medical_clinic",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__cold_woodland",
+      "base_blueprint": "library",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__temperate_woodland",
+      "base_blueprint": "library",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__arid_earth",
+      "base_blueprint": "library",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__humid_reed",
+      "base_blueprint": "library",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__mountain_stone",
+      "base_blueprint": "library",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__wetland_stilts",
+      "base_blueprint": "library",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__volcanic_stone",
+      "base_blueprint": "library",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__polar_shelter",
+      "base_blueprint": "library",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "library__coastal_trade",
+      "base_blueprint": "library",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__cold_woodland",
+      "base_blueprint": "rural_home",
+      "regional_style": "cold_woodland",
+      "floor": "plank",
+      "wall": "wood",
+      "roof": "bark",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__temperate_woodland",
+      "base_blueprint": "rural_home",
+      "regional_style": "temperate_woodland",
+      "floor": "plank",
+      "wall": "wattle",
+      "roof": "wood_shingle",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__arid_earth",
+      "base_blueprint": "rural_home",
+      "regional_style": "arid_earth",
+      "floor": "packed_clay",
+      "wall": "rammed_earth",
+      "roof": "hide",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__humid_reed",
+      "base_blueprint": "rural_home",
+      "regional_style": "humid_reed",
+      "floor": "bamboo",
+      "wall": "bamboo",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__mountain_stone",
+      "base_blueprint": "rural_home",
+      "regional_style": "mountain_stone",
+      "floor": "granite",
+      "wall": "granite",
+      "roof": "slate",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__wetland_stilts",
+      "base_blueprint": "rural_home",
+      "regional_style": "wetland_stilts",
+      "floor": "bamboo",
+      "wall": "reed",
+      "roof": "reed",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__volcanic_stone",
+      "base_blueprint": "rural_home",
+      "regional_style": "volcanic_stone",
+      "floor": "basalt",
+      "wall": "basalt",
+      "roof": "tile",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__polar_shelter",
+      "base_blueprint": "rural_home",
+      "regional_style": "polar_shelter",
+      "floor": "ice",
+      "wall": "snow",
+      "roof": "hide",
+      "layout_variant": "mirror_x",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    },
+    {
+      "id": "rural_home__coastal_trade",
+      "base_blueprint": "rural_home",
+      "regional_style": "coastal_trade",
+      "floor": "plank",
+      "wall": "sandstone",
+      "roof": "wood_shingle",
+      "layout_variant": "original",
+      "resource_policy": "choose_only_when_local_or_imported_inputs_and_capabilities_are_available"
+    }
+  ],
+  "wall_resource_categories": {
+    "wattle": [
+      "wood",
+      "reed",
+      "fiber"
+    ],
+    "wood": [
+      "log",
+      "wood"
+    ],
+    "mudbrick": [
+      "clay",
+      "fiber"
+    ],
+    "stone": [
+      "stone"
+    ],
+    "fired_brick": [
+      "clay"
+    ],
+    "palisade": [
+      "log"
+    ],
+    "metal": [
+      "iron_ingot"
+    ],
+    "glass": [
+      "glass"
+    ],
+    "bamboo": [
+      "reed",
+      "wood",
+      "fiber"
+    ],
+    "reed": [
+      "reed",
+      "fiber"
+    ],
+    "hide": [
+      "hide",
+      "wood",
+      "fiber"
+    ],
+    "rammed_earth": [
+      "clay",
+      "stone"
+    ],
+    "adobe": [
+      "clay",
+      "fiber"
+    ],
+    "sandstone": [
+      "stone"
+    ],
+    "limestone": [
+      "stone"
+    ],
+    "granite": [
+      "stone"
+    ],
+    "basalt": [
+      "stone"
+    ],
+    "ice": [
+      "water"
+    ],
+    "snow": [
+      "water"
+    ],
+    "concrete": [
+      "stone",
+      "clay"
+    ],
+    "ceramic": [
+      "clay"
+    ],
+    "composite": [
+      "fiber",
+      "advanced_alloy"
+    ],
+    "salvage": [
+      "iron_ingot",
+      "copper_ingot"
+    ]
+  },
+  "selection": "resource_availability_climate_and_cultural_preference_not_ethnicity_or_fixed_era",
+  "outfit_policy": "recommendations_only_every_character_piece_and_dye_remains_player_choosable",
+  "recipes_status": "input_categories_only_not_quantitative_simulation_recipes",
+  "process_requirements": {
+    "fired_brick": [
+      "kiln"
+    ],
+    "ceramic": [
+      "kiln"
+    ],
+    "metal": [
+      "metalworking"
+    ],
+    "glass": [
+      "glassworking"
+    ],
+    "concrete": [
+      "binder_production"
+    ],
+    "composite": [
+      "advanced_materials"
+    ]
+  },
+  "glyphs": "reserved_overlay_anchors_no_real_world_political_or_religious_symbols",
+  "construction_variants": "material_and_mirrored_layout_samples_full_damage_construction_and_multistorey_art_pending"
+}

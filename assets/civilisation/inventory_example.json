@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "review_example_only": true,
+  "items": {
+    "grain_stack_001": {
+      "resource_id": "grain",
+      "quantity": 10
+    },
+    "grain_stack_002": {
+      "resource_id": "grain",
+      "quantity": 10
+    },
+    "grain_stack_003": {
+      "resource_id": "grain",
+      "quantity": 10
+    },
+    "grain_stack_004": {
+      "resource_id": "grain",
+      "quantity": 10
+    },
+    "grain_stack_005": {
+      "resource_id": "grain",
+      "quantity": 10
+    },
+    "grain_stack_006": {
+      "resource_id": "grain",
+      "quantity": 10
+    }
+  },
+  "containers": {
+    "granary": "grain_bin",
+    "cart": "handcart",
+    "backpack": "backpack",
+    "chest": "chest"
+  },
+  "snapshots": [
+    {
+      "granary": [
+        "grain_stack_001",
+        "grain_stack_002",
+        "grain_stack_003",
+        "grain_stack_004",
+        "grain_stack_005",
+        "grain_stack_006"
+      ],
+      "cart": [],
+      "backpack": [],
+      "chest": []
+    },
+    {
+      "granary": [
+        "grain_stack_001",
+        "grain_stack_002",
+        "grain_stack_003",
+        "grain_stack_004"
+      ],
+      "cart": [
+        "grain_stack_005",
+        "grain_stack_006"
+      ],
+      "backpack": [],
+      "chest": []
+    },
+    {
+      "granary": [
+        "grain_stack_001",
+        "grain_stack_002",
+        "grain_stack_003",
+        "grain_stack_004"
+      ],
+      "cart": [
+        "grain_stack_005"
+      ],
+      "backpack": [
+        "grain_stack_006"
+      ],
+      "chest": []
+    },
+    {
+      "granary": [
+        "grain_stack_001",
+        "grain_stack_002",
+        "grain_stack_003",
+        "grain_stack_004"
+      ],
+      "cart": [
+        "grain_stack_005"
+      ],
+      "backpack": [],
+      "chest": [
+        "grain_stack_006"
+      ]
+    }
+  ],
+  "transfer_labels": [
+    "stored_in_granary",
+    "load_cart",
+    "equip_backpack",
+    "deliver_to_chest"
+  ],
+  "runtime_requirement": "simulation_owns_item_identity_quantity_capacity_save_load_and_transfer_atomicity"
+}

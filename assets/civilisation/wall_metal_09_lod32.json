@@ -1,0 +1,61 @@
+{
+  "id": "civilisation.wall_metal_09_lod32",
+  "family": "civilisation",
+  "asset_id": "wall_metal_09",
+  "files": [
+    "civilisation/wall_metal_09_lod32.png",
+    "civilisation/wall_metal_09_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/wall_metal_09_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "wall",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "wall"
+  ],
+  "recolor_slots": [
+    "fixed_metal_iron_0",
+    "fixed_metal_iron_1",
+    "fixed_metal_iron_2",
+    "fixed_metal_iron_3",
+    "fixed_metal_iron_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "metal",
+  "connection_mask": 9,
+  "connection_bits": {
+    "N": 1,
+    "E": 2,
+    "S": 4,
+    "W": 8
+  }
+}

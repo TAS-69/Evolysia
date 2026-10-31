@@ -1,0 +1,63 @@
+{
+  "id": "landscape.heathland_plain_lod64",
+  "family": "landscape",
+  "asset_id": "heathland",
+  "kind": "plain",
+  "files": [
+    "landscape/heathland_plain_lod64.png",
+    "landscape/heathland_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/heathland_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "tundra",
+  "layer_priority": 12,
+  "priority_offset": 53,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "foliage_1",
+    "foliage_2",
+    "foliage_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "tundra"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

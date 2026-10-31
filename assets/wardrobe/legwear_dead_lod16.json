@@ -1,0 +1,370 @@
+{
+  "id": "wardrobe.legwear_dead_lod16",
+  "family": "wardrobe",
+  "asset_id": "legwear",
+  "animation": "dead",
+  "files": [
+    "wardrobe/legwear_dead_lod16.png",
+    "wardrobe/legwear_dead_lod16_idx.png"
+  ],
+  "sidecar": "wardrobe/legwear_dead_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "side"
+  ],
+  "pivot": [
+    8,
+    14
+  ],
+  "density": 16,
+  "logical_frame": [
+    16,
+    16
+  ],
+  "strip_columns": 8,
+  "strip_count": 21,
+  "sheet_rows": [
+    "shorts/child/slim/side",
+    "shorts/adult/slim/side",
+    "trousers/adult/slim/side",
+    "trousers/elder/slim/side",
+    "loose_trousers/adult/slim/side",
+    "loose_trousers/elder/slim/side",
+    "skirt/child/slim/side",
+    "skirt/adult/slim/side",
+    "wrap_skirt/child/slim/side",
+    "wrap_skirt/child/average/side",
+    "wrap_skirt/child/stout/side",
+    "wrap_skirt/adult/average/side",
+    "wrap_skirt/adult/stout/side",
+    "leggings/child/slim/side",
+    "leggings/adult/slim/side",
+    "leggings/elder/slim/side",
+    "work_trousers/child/slim/side",
+    "work_trousers/adult/slim/side",
+    "work_trousers/elder/slim/side",
+    "formal_trousers/adult/slim/side",
+    "formal_trousers/elder/slim/side"
+  ],
+  "profiles": [
+    [
+      "child",
+      "slim",
+      "side"
+    ],
+    [
+      "child",
+      "average",
+      "side"
+    ],
+    [
+      "child",
+      "stout",
+      "side"
+    ],
+    [
+      "adult",
+      "slim",
+      "side"
+    ],
+    [
+      "adult",
+      "average",
+      "side"
+    ],
+    [
+      "adult",
+      "stout",
+      "side"
+    ],
+    [
+      "elder",
+      "slim",
+      "side"
+    ],
+    [
+      "elder",
+      "average",
+      "side"
+    ],
+    [
+      "elder",
+      "stout",
+      "side"
+    ]
+  ],
+  "variants": [
+    "shorts",
+    "trousers",
+    "loose_trousers",
+    "skirt",
+    "long_skirt",
+    "wrap_skirt",
+    "leggings",
+    "fur_leggings",
+    "work_trousers",
+    "formal_trousers",
+    "padded_trousers",
+    "environment_trousers"
+  ],
+  "row_lookup": [
+    [
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3
+    ],
+    [
+      1,
+      1,
+      1,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    [
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+    ],
+    [
+      8,
+      9,
+      10,
+      8,
+      11,
+      12,
+      8,
+      11,
+      12
+    ],
+    [
+      13,
+      13,
+      13,
+      14,
+      14,
+      14,
+      15,
+      15,
+      15
+    ],
+    [
+      1,
+      1,
+      1,
+      4,
+      4,
+      4,
+      5,
+      5,
+      5
+    ],
+    [
+      16,
+      16,
+      16,
+      17,
+      17,
+      17,
+      18,
+      18,
+      18
+    ],
+    [
+      1,
+      1,
+      1,
+      19,
+      19,
+      19,
+      20,
+      20,
+      20
+    ],
+    [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3
+    ],
+    [
+      16,
+      16,
+      16,
+      17,
+      17,
+      17,
+      18,
+      18,
+      18
+    ]
+  ],
+  "sim_actions": [
+    "dead"
+  ],
+  "hand_anchors": [
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ],
+    [
+      [
+        9,
+        12
+      ]
+    ]
+  ],
+  "row_pivots": [
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      10,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ],
+    [
+      11,
+      14
+    ]
+  ],
+  "anims": {
+    "dead": {
+      "frames": 1,
+      "fps": 0
+    }
+  },
+  "seed": 0,
+  "tags": [
+    "modular_outfit",
+    "legwear"
+  ],
+  "shadow": "engine",
+  "recolor_slots": [
+    "cloth_a_0",
+    "cloth_a_2",
+    "cloth_b_1",
+    "cloth_b_3"
+  ],
+  "dye_channels": {
+    "main": "cloth_a",
+    "trim": "cloth_b",
+    "culture": "culture"
+  },
+  "per_piece_dyes": true
+}

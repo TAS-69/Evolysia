@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "profiles": {
+    "raft": {
+      "coordinate_density": 64,
+      "frame": [
+        64,
+        64
+      ],
+      "logical_frame": [
+        16,
+        16
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            0,
+            -6
+          ],
+          "container": "basket"
+        }
+      ],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "canoe": {
+      "coordinate_density": 64,
+      "frame": [
+        64,
+        64
+      ],
+      "logical_frame": [
+        16,
+        16
+      ],
+      "attachment_slots": [],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "rowing_boat": {
+      "coordinate_density": 64,
+      "frame": [
+        64,
+        96
+      ],
+      "logical_frame": [
+        16,
+        24
+      ],
+      "attachment_slots": [],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "sailboat": {
+      "coordinate_density": 64,
+      "frame": [
+        128,
+        128
+      ],
+      "logical_frame": [
+        32,
+        32
+      ],
+      "attachment_slots": [],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "cargo_ship": {
+      "coordinate_density": 64,
+      "frame": [
+        192,
+        128
+      ],
+      "logical_frame": [
+        48,
+        32
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            14,
+            44
+          ],
+          "container": "cargo_pod"
+        },
+        {
+          "position": [
+            70,
+            42
+          ],
+          "container": "cargo_pod"
+        }
+      ],
+      "foreground_polygon": [
+        [
+          28,
+          108
+        ],
+        [
+          182,
+          96
+        ],
+        [
+          188,
+          98
+        ],
+        [
+          171,
+          118
+        ],
+        [
+          25,
+          121
+        ],
+        [
+          6,
+          86
+        ]
+      ],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "wagon": {
+      "coordinate_density": 64,
+      "frame": [
+        96,
+        64
+      ],
+      "logical_frame": [
+        24,
+        16
+      ],
+      "attachment_slots": [],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "sled": {
+      "coordinate_density": 64,
+      "frame": [
+        96,
+        64
+      ],
+      "logical_frame": [
+        24,
+        16
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            8,
+            -10
+          ],
+          "container": "crate"
+        }
+      ],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "bicycle": {
+      "coordinate_density": 64,
+      "frame": [
+        64,
+        64
+      ],
+      "logical_frame": [
+        16,
+        16
+      ],
+      "attachment_slots": [],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "truck": {
+      "coordinate_density": 64,
+      "frame": [
+        96,
+        64
+      ],
+      "logical_frame": [
+        24,
+        16
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            8,
+            -10
+          ],
+          "container": "crate"
+        }
+      ],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "rover": {
+      "coordinate_density": 64,
+      "frame": [
+        96,
+        64
+      ],
+      "logical_frame": [
+        24,
+        16
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            8,
+            -10
+          ],
+          "container": "crate"
+        }
+      ],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    },
+    "hover_carrier": {
+      "coordinate_density": 64,
+      "frame": [
+        96,
+        64
+      ],
+      "logical_frame": [
+        24,
+        16
+      ],
+      "attachment_slots": [
+        {
+          "position": [
+            8,
+            -10
+          ],
+          "container": "crate"
+        }
+      ],
+      "foreground_polygon": [],
+      "draw_order": [
+        "vehicle_base",
+        "attached_containers",
+        "base_pixels_inside_foreground_polygon"
+      ],
+      "inventory_owner": "persistent_attached_container_not_vehicle_decoration",
+      "payload_in_base_png": false
+    }
+  },
+  "integration_status": "review_compositor_and_attachment_contract_only"
+}

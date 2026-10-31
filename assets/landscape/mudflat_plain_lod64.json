@@ -1,0 +1,65 @@
+{
+  "id": "landscape.mudflat_plain_lod64",
+  "family": "landscape",
+  "asset_id": "mudflat",
+  "kind": "plain",
+  "files": [
+    "landscape/mudflat_plain_lod64.png",
+    "landscape/mudflat_plain_lod64_idx.png"
+  ],
+  "sidecar": "landscape/mudflat_plain_lod64.json",
+  "frame": [
+    64,
+    64
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 64,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02",
+    "none_03"
+  ],
+  "pivot": [
+    32,
+    63
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "mud",
+  "layer_priority": 4,
+  "priority_offset": 42,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 4,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_soil_1",
+    "fixed_soil_2",
+    "fixed_soil_3",
+    "fixed_water_1",
+    "fixed_water_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "mud"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

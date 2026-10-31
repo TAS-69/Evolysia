@@ -1,0 +1,62 @@
+{
+  "id": "landscape.sandstone_cliff_wall_lod16",
+  "family": "landscape",
+  "asset_id": "sandstone",
+  "kind": "cliff_wall",
+  "files": [
+    "landscape/sandstone_cliff_wall_lod16.png",
+    "landscape/sandstone_cliff_wall_lod16_idx.png"
+  ],
+  "sidecar": "landscape/sandstone_cliff_wall_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "density": 16,
+  "frames": 1,
+  "fps": 0,
+  "directions": [
+    "none"
+  ],
+  "sheet_rows": [
+    "none_00",
+    "none_01",
+    "none_02"
+  ],
+  "pivot": [
+    8,
+    15
+  ],
+  "anims": {},
+  "mask_bits": {
+    "tl": 1,
+    "tr": 2,
+    "br": 4,
+    "bl": 8
+  },
+  "masks": [],
+  "priority_anchor": "rock",
+  "layer_priority": 16,
+  "priority_offset": 27,
+  "orientations": [
+    "none"
+  ],
+  "variants_per_orientation": 3,
+  "seed": 0,
+  "recolor_slots": [
+    "fixed_sand_1",
+    "fixed_sand_2",
+    "fixed_sand_3"
+  ],
+  "emissive_slots": [],
+  "tags": [
+    "detailed_terrain",
+    "rock"
+  ],
+  "shadow": "engine",
+  "homogeneous_mask_15": "choose_any_matching_plain_variant_to_break_repetition"
+}

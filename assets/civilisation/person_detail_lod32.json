@@ -1,0 +1,63 @@
+{
+  "id": "civilisation.person_detail_lod32",
+  "family": "civilisation",
+  "asset_id": "person_detail",
+  "files": [
+    "civilisation/person_detail_lod32.png",
+    "civilisation/person_detail_lod32_idx.png"
+  ],
+  "sidecar": "civilisation/person_detail_lod32.json",
+  "frame": [
+    32,
+    32
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    16,
+    31
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 32,
+  "detail_source": 64,
+  "kind": "person",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "person"
+  ],
+  "recolor_slots": [
+    "fixed_hide_0",
+    "fixed_metal_copper_3",
+    "skin_0",
+    "skin_1",
+    "skin_2",
+    "skin_3",
+    "hair_1",
+    "hair_2",
+    "hair_3",
+    "cloth_a_0",
+    "cloth_a_1",
+    "cloth_a_2",
+    "cloth_a_3"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "pose": "standing_reference",
+  "production_animation": false
+}

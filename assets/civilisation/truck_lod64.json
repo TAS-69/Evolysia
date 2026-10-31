@@ -1,0 +1,56 @@
+{
+  "id": "civilisation.truck_lod64",
+  "family": "civilisation",
+  "asset_id": "truck",
+  "files": [
+    "civilisation/truck_lod64.png",
+    "civilisation/truck_lod64_idx.png"
+  ],
+  "sidecar": "civilisation/truck_lod64.json",
+  "frame": [
+    96,
+    64
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    48,
+    63
+  ],
+  "logical_frame": [
+    24,
+    16
+  ],
+  "logical_pivot": [
+    12.0,
+    15.75
+  ],
+  "placement_footprint": [
+    24,
+    16
+  ],
+  "density": 64,
+  "detail_source": 64,
+  "kind": "vehicle",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "vehicle"
+  ],
+  "recolor_slots": [
+    "fixed_ice_1",
+    "fixed_ice_3",
+    "fixed_metal_iron_0",
+    "fixed_metal_iron_1",
+    "fixed_metal_iron_2",
+    "fixed_metal_iron_3",
+    "fixed_metal_iron_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "transport_mode": "land"
+}

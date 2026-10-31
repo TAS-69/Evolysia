@@ -15,6 +15,11 @@ def main():
     manifest=json.loads((ROOT/'assets/manifest.json').read_text())
     colours={tuple(c) for c in data['colours']}
     slots=data['slots']; indices={s['index'] for s in slots}
+    reference_lookup=np.zeros((256,3),dtype=np.uint8)
+    valid_indices=np.zeros(256,dtype=bool)
+    for slot in slots:
+        reference_lookup[slot['index']]=slot['reference']; valid_indices[slot['index']]=True
+    palette_codes={r*65536+g*256+b for r,g,b in colours}
     check(len(indices)==len(slots) and indices==set(range(len(slots))) and len(slots)<=256,'Invalid slot registry')
     check(len({s['name'] for s in slots})==len(slots),'Duplicate slot names')
     for name,ramp in data['ramps'].items():
@@ -26,27 +31,32 @@ def main():
         w,h=entry['frame']; x,y=entry['pivot']
         check(0<=x<w and 0<=y<h,f'Pivot outside frame: {ident}')
         side=json.loads((ROOT/'assets'/entry['sidecar']).read_text())
-        for key in ['frame','pivot','directions','frames','fps','files','sheet_rows','recolor_slots','anims','seasonal_states','wind_sway','composite_over','animation','mirror_left','coat_lut','form','source_species','row_lookup','hand_anchors','row_pivots','profiles','variants','sim_actions','clip_rule','atlas_columns','asset_id','state','lighting','materials','emissive_slots','glyph_anchor','fire_window']:
+        for key in ['frame','pivot','directions','frames','fps','files','sheet_rows','recolor_slots','anims','seasonal_states','wind_sway','composite_over','animation','mirror_left','coat_lut','form','source_species','row_lookup','hand_anchors','row_pivots','profiles','variants','sim_actions','clip_rule','atlas_columns','asset_id','state','lighting','materials','emissive_slots','glyph_anchor','fire_window','logical_frame','logical_pivot','density','detail_source','kind','connection_mask','connection_bits','container_id','layer','resource_id']:
             if key not in entry: continue
             check(side[key]==entry[key],f'Sidecar differs: {ident}.{key}')
+        if 'placement_footprint' in entry: check(side['placement_footprint']==entry['placement_footprint'],f'Sidecar footprint differs: {ident}')
+        for key in ['strip_columns','strip_count','dye_channels','per_piece_dyes','priority_anchor','layer_priority','priority_offset','mask_bits','masks','orientations','homogeneous_mask_15']:
+            if key in entry: check(side[key]==entry[key],f'Sidecar differs: {ident}.{key}')
         for file in entry['files']:
             check(file not in files,f'Duplicate output: {file}'); files.add(file)
             image=Image.open(ROOT/'assets'/file)
             check(image.mode=='RGBA',f'Not PNG RGBA: {file}')
             a=np.asarray(image)
-            expected_size=(w*entry['atlas_columns'],h*math.ceil(len(entry['sheet_rows'])/entry['atlas_columns'])) if 'atlas_columns' in entry else (w*entry['frames'],h*len(entry.get('sheet_rows',entry['directions'])))
+            row_count=entry['strip_count'] if 'strip_count' in entry else len(entry.get('sheet_rows',entry['directions']))
+            if 'strip_columns' in entry: expected_size=(w*entry['frames']*entry['strip_columns'],h*math.ceil(row_count/entry['strip_columns']))
+            elif 'atlas_columns' in entry: expected_size=(w*entry['atlas_columns'],h*math.ceil(row_count/entry['atlas_columns']))
+            else: expected_size=(w*entry['frames'],h*row_count)
             check(image.size==expected_size,f'Sheet dimensions: {file}')
             check(bool(np.isin(a[:,:,3],[0,255]).all()),f'Partial alpha: {file}')
             visible=a[a[:,:,3]>0]
             if file.endswith('_idx.png'):
-                check(all(int(c[0]) in indices and c[1]==c[2]==0 for c in visible),f'Invalid index: {file}')
+                check(bool(valid_indices[visible[:,0]].all() and (visible[:,1:3]==0).all()),f'Invalid index: {file}')
                 ref=np.asarray(Image.open(ROOT/'assets'/file.replace('_idx.png','.png')))
                 check(bool(np.array_equal(a[:,:,3],ref[:,:,3])),f'Index alpha mismatch: {file}')
-                for s in slots:
-                    selected=(a[:,:,0]==s['index']) & (a[:,:,3]>0)
-                    check(bool((ref[selected,:3]==s['reference']).all()),f'Index/reference colour mismatch: {file}')
+                check(bool(np.array_equal(ref[a[:,:,3]>0,:3],reference_lookup[visible[:,0]])),f'Index/reference colour mismatch: {file}')
             else:
-                check(all(tuple(c[:3]) in colours for c in visible),f'Off-palette: {file}')
+                rgb=visible[:,:3].astype(np.uint32); codes=np.unique(rgb[:,0]*65536+rgb[:,1]*256+rgb[:,2])
+                check(all(int(c) in palette_codes for c in codes),f'Off-palette: {file}')
     for png in (ROOT/'assets').rglob('*.png'):
         relative=png.relative_to(ROOT/'assets').as_posix()
         if not relative.startswith('_preview/'):
@@ -72,6 +82,15 @@ def main():
     if any(e['family']=='structures' for e in manifest['assets']):
         from structure_checks import validate_structures
         validate_structures(ROOT,manifest,check)
+    if any(e['family']=='civilisation' for e in manifest['assets']):
+        from civilisation_checks import validate_civilisation
+        validate_civilisation(ROOT,manifest,check)
+    if any(e['family']=='wardrobe' for e in manifest['assets']):
+        from wardrobe_checks import validate_wardrobe
+        validate_wardrobe(ROOT,manifest,check)
+    if any(e['family']=='landscape' for e in manifest['assets']):
+        from landscape_checks import validate_landscape
+        validate_landscape(ROOT,manifest,check)
     for name,meta in data['luts'].items():
         a=np.asarray(Image.open(ROOT/f'assets/palette/{name}.png'))
         check(len(set(meta['rows']))==len(meta['rows']),f'Duplicate LUT labels: {name}')

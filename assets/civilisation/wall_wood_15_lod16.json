@@ -1,0 +1,61 @@
+{
+  "id": "civilisation.wall_wood_15_lod16",
+  "family": "civilisation",
+  "asset_id": "wall_wood_15",
+  "files": [
+    "civilisation/wall_wood_15_lod16.png",
+    "civilisation/wall_wood_15_lod16_idx.png"
+  ],
+  "sidecar": "civilisation/wall_wood_15_lod16.json",
+  "frame": [
+    16,
+    16
+  ],
+  "frames": 1,
+  "directions": [
+    "none"
+  ],
+  "fps": 0,
+  "pivot": [
+    8,
+    15
+  ],
+  "logical_frame": [
+    16,
+    16
+  ],
+  "logical_pivot": [
+    8.0,
+    15.75
+  ],
+  "placement_footprint": [
+    16,
+    16
+  ],
+  "density": 16,
+  "detail_source": 64,
+  "kind": "wall",
+  "seed": 0,
+  "shadow": "engine",
+  "tags": [
+    "detail",
+    "wall"
+  ],
+  "recolor_slots": [
+    "fixed_wood_0",
+    "fixed_wood_1",
+    "fixed_wood_2",
+    "fixed_wood_3",
+    "fixed_wood_4"
+  ],
+  "emissive_slots": [],
+  "anims": {},
+  "material": "wood",
+  "connection_mask": 15,
+  "connection_bits": {
+    "N": 1,
+    "E": 2,
+    "S": 4,
+    "W": 8
+  }
+}
