@@ -1,5 +1,7 @@
 using System.Text.Json;
+using Evolysia.Sim;
 using Evolysia.Sim.Agents;
+using Evolysia.Sim.Economy;
 using Evolysia.Sim.Core;
 using Godot;
 
@@ -57,34 +59,18 @@ public static class People
             Activity.Socialize or Activity.Court or Activity.Teach => "talk",
             Activity.Ritual => "pray",
             Activity.Mourn => "mourn",
+            Activity.Chop => "chop",
+            Activity.Quarry or Activity.Mine => "dig",
+            Activity.Gather => "gather",
             Activity.Play => "play",
             _ => "idle",
         };
     }
 
-    /// <summary>What a person holds while doing something.</summary>
-    static string? Held(Activity activity, ulong knows, bool child)
-    {
-        if (child) return null;
-        bool K(TechId t) => (knows & Techs.Bit(t)) != 0;
-        return activity switch
-        {
-            Activity.Hunt => K(TechId.Bow) ? "bow" : K(TechId.Spear) ? "spear" : "club",
-            Activity.Fish => K(TechId.Fishing) ? (K(TechId.Weaving) ? "net" : "fishing_rod") : "spear",
-            Activity.Farm => "hoe",
-            Activity.Forage => K(TechId.Baskets) ? "basket" : null,
-            Activity.Build => K(TechId.Copper) ? "axe" : "stone_axe",
-            Activity.Craft => K(TechId.Copper) ? "chisel" : "knife",
-            Activity.Experiment => "knife",
-            Activity.Herd or Activity.Explore => "staff",
-            Activity.Ritual => "staff",
-            _ => null,
-        };
-    }
-
     /// <summary>
     /// How an agent looks today: age and build from life and genes, colours from genes and culture,
-    /// dress from what they know and the climate, the tool in hand from what they are doing.
+    /// and exactly the clothes they own (Simulation.Worn) and the tool they work with
+    /// (Simulation.HeldTool). Woven pieces are dyed in their people's colours; hides and furs are not.
     /// </summary>
     public static Look LookOf(Agent a, int day, int cultureHue, float temperature, bool leader, Activity activity)
     {
@@ -107,40 +93,18 @@ public static class People
         look.Set("hair_front", hair.front);
         look.Set("body", "base");
 
-        bool K(TechId t) => (a.Knows & Techs.Bit(t)) != 0;
-        bool cold = temperature < 6f, freezing = temperature < -4f, hot = temperature > 24f;
-        int dye = K(TechId.Weaving) ? hue : 12, trim = K(TechId.Weaving) ? (hue + 5) % 12 : 12;
-        uint h = TileBake.Hash(a.Id, 3);
-        if (K(TechId.Weaving))
-        {
-            string[] tops = hot ? new[] { "wrap_shirt", "linen_shirt", "desert_robe" } : new[] { "woven_tunic", "long_tunic", "wrap_shirt" };
-            look.Set("top", freezing ? "fur_coat" : tops[(hue + (int)(h % 2)) % tops.Length], dye, trim);
-            string[] legs = { "trousers", "skirt", "loose_trousers", "long_skirt", "wrap_skirt" };
-            look.Set("legwear", cold ? "fur_leggings" : legs[(hue + (a.Sex == Sex.Female ? 1 : 0) + (int)(h >> 4) % 2) % legs.Length], (hue + 7) % 12, trim);
-            look.Set("footwear", freezing ? "fur_boots" : hot ? "sandals" : cold ? "leather_boots" : "soft_shoes", 12, 12);
-            if (hot && hue % 2 == 0) look.Set("headwear", "headwrap", trim, dye);
-        }
-        else if (K(TechId.HideClothing))
-        {
-            look.Set("top", freezing && !child ? "fur_coat" : "hide_wrap");
-            look.Set("legwear", cold ? "fur_leggings" : "wrap_skirt");
-            look.Set("footwear", cold ? "fur_boots" : "cloth_wraps");
-        }
-        else
-            look.Set("legwear", "wrap_skirt");   // a plain hide skirt before tailored clothing
-        if (freezing && !child && K(TechId.HideClothing)) { look.Set("outerwear", "fur_mantle"); if (h % 3 == 0) look.Set("headwear", "fur_hat"); }
-        if (hot && !child && look.Pieces[Array.IndexOf(Layers, "headwear")].Part == null && h % 4 == 0 && K(TechId.Baskets)) look.Set("headwear", "woven_hat");
-
-        // Culture marks: paint for some peoples, beads for others; the leader stands out.
-        if (hue % 3 == 1 && !child) look.Set("body_paint", new[] { "cheek_dots", "brow_band", "arm_bands", "face_streak", "shoulder_dabs", "leg_marks" }[hue / 3 % 6], 12, 12);
-        if (hue % 3 == 2 && !child && h % 2 == 0) look.Set("accessory", "beads");
-        if (leader)
-        {
-            look.Set("headwear", K(TechId.Weaving) ? "beaded_band" : "feather_band", dye, trim);
-            if (K(TechId.Weaving) && !hot) look.Set("outerwear", "ceremonial_mantle", dye, trim);
-            else look.Set("accessory", "necklace");
-        }
-        look.Set("held_item", Held(activity, a.Knows, child), 12, 12);
+        int dye = hue, trim = (hue + 5) % 12;
+        foreach (var (layer, slot) in new[] { ("legwear", ItemSlot.Legwear), ("footwear", ItemSlot.Footwear), ("top", ItemSlot.Top),
+                                              ("outerwear", ItemSlot.Outerwear), ("armour", ItemSlot.Armour), ("headwear", ItemSlot.Headwear), ("accessory", ItemSlot.Accessory) })
+            if (Simulation.Worn(a, slot) is { } item)
+            {
+                bool dyed = item.Inputs.Any(i => Goods.All[i.good].Id is "cloth" or "fiber");
+                look.Set(layer, item.Id, dyed ? dye : 12, dyed ? trim : 12);
+            }
+        // Peoples who know pigments paint themselves.
+        if (!child && Techs.Has(a.Knows, TechId.Pigments))
+            look.Set("body_paint", new[] { "cheek_dots", "brow_band", "arm_bands", "face_streak", "shoulder_dabs", "leg_marks" }[hue % 6], 12, 12);
+        look.Set("held_item", child ? null : Simulation.HeldTool(a, activity)?.Id, 12, 12);
         return look;
     }
 

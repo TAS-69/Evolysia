@@ -24,7 +24,7 @@ public static class WorldGen
         Rivers(w);
         Biomes(w, noise, rng);
         Landmasses(w);
-        Ecology.InitCapacities(w, noise);
+        Ecology.InitCapacities(w, noise, cfg.CapacityScale);
         return w;
     }
 
@@ -38,11 +38,12 @@ public static class WorldGen
             float u = (float)w.X(i) / w.W, v = (float)w.Y(i) / w.H;
             float continent = noise.Cylinder(u, v, 3.2f, 5);
             float detail = noise.Cylinder(u, v, 11f, 4, 17.3f);
+            float fine = w.Scale > 1.5f ? noise.Cylinder(u, v, 48f, 3, 29.9f) : 0f;   // coves and headlands a fine grid can show
             float r = 1f - MathF.Abs(noise.Cylinder(u, v, 5.5f, 3, 41.7f));   // ridged: peaks where noise crosses 0
             ridge[i] = r * r * r;
             // Keep the poles mostly oceanic so the map has no giant polar strip.
             float pole = MathF.Abs(v - 0.5f) * 2f;
-            raw[i] = continent + 0.25f * detail - 0.35f * MathF.Max(0f, pole - 0.75f);
+            raw[i] = continent + 0.25f * detail + 0.07f * fine - 0.35f * MathF.Max(0f, pole - 0.75f);
         }
 
         // Pick sea level so the requested fraction of cells is land.
@@ -98,7 +99,7 @@ public static class WorldGen
             float lat = w.RowLat[w.Y(i)] * MathF.PI / 180f;
             float t = -15f + 42f * MathF.Cos(lat);
             if (w.IsLand(i)) t -= w.Elevation[i] * 0.0065f;               // lapse rate
-            float continental = Math.Clamp(distToSea[i] / 8f, 0f, 1f);
+            float continental = Math.Clamp(distToSea[i] / (8f * w.Scale), 0f, 1f);
             w.TempMean[i] = t;
             w.TempAmp[i] = (1.5f + 16f * MathF.Abs(MathF.Sin(lat)) * tilt) * (0.55f + 0.45f * continental);
         }
@@ -124,6 +125,8 @@ public static class WorldGen
     {
         // Walk each row downwind, carrying moisture: refilled over sea, drained over land,
         // dumped on rising ground (orographic rain) which leaves rain shadows behind mountains.
+        // Rates are per original cell, so a finer grid takes smaller steps.
+        float drain = MathF.Pow(0.955f, 1f / w.Scale), refill = 0.3f / w.Scale;
         for (int y = 0; y < w.H; y++)
         {
             float absLat = MathF.Abs(w.RowLat[y]);
@@ -136,10 +139,10 @@ public static class WorldGen
                 {
                     int x = dir > 0 ? s : w.W - 1 - s;
                     int i = w.Index(x, y), prev = w.Index(x - dir, y);
-                    if (!w.IsLand(i)) { moisture = MathF.Min(1f, moisture + 0.3f); w.Precip[i] = 2000f * baseRain; continue; }
+                    if (!w.IsLand(i)) { moisture = MathF.Min(1f, moisture + refill); w.Precip[i] = 2000f * baseRain; continue; }
                     float rise = MathF.Max(0f, w.Elevation[i] - MathF.Max(0f, w.Elevation[prev]));
                     float orographic = MathF.Min(moisture, rise / 2500f);
-                    moisture = MathF.Max(0.05f, moisture * 0.955f - orographic);
+                    moisture = MathF.Max(0.05f, moisture * drain - orographic);
                     if (pass == 1)
                     {
                         float u = (float)x / w.W, v = (float)y / w.H;
@@ -186,7 +189,7 @@ public static class WorldGen
         foreach (int i in order)
         {
             if (!w.IsLand(i)) continue;
-            w.Flow[i] += MathF.Max(0f, w.Precip[i] - 250f) / 1000f;   // evaporation eats the first 250 mm
+            w.Flow[i] += MathF.Max(0f, w.Precip[i] - 250f) / 1000f * w.CellArea;   // evaporation eats the first 250 mm; per original-cell area
             int k = w.Neighbors(i, nb), best = -1;
             float lowest = filled[i];
             for (int j = 0; j < k; j++)
@@ -198,6 +201,27 @@ public static class WorldGen
         for (int i = 0; i < n; i++)
             if (w.IsLand(i) && filled[i] - w.Elevation[i] > 25f && w.Precip[i] > 350f)
                 w.Biome[i] = Biome.Lake;
+    }
+
+    /// <summary>Cells from the nearest land (0 on land).</summary>
+    static int[] DistanceToLand(WorldMap w)
+    {
+        var dist = new int[w.Count];
+        var queue = new Queue<int>();
+        for (int i = 0; i < w.Count; i++)
+        {
+            dist[i] = w.IsLand(i) ? 0 : int.MaxValue;
+            if (w.IsLand(i)) queue.Enqueue(i);
+        }
+        Span<int> nb = stackalloc int[8];
+        while (queue.Count > 0)
+        {
+            int c = queue.Dequeue();
+            int k = w.Neighbors(c, nb);
+            for (int j = 0; j < k; j++)
+                if (dist[nb[j]] == int.MaxValue) { dist[nb[j]] = dist[c] + 1; queue.Enqueue(nb[j]); }
+        }
+        return dist;
     }
 
     /// <summary>Label connected land (8-neighbour), so voyages can tell a new continent from home.</summary>
@@ -231,15 +255,15 @@ public static class WorldGen
     static void Biomes(WorldMap w, Noise noise, Rng rng)
     {
         Span<int> nb = stackalloc int[8];
+        // Shallow coastal water reaches a little way out from land (about a fifth of an original cell).
+        var shore = DistanceToLand(w);
+        int coastWidth = Math.Max(1, (int)MathF.Round(w.Scale * 0.4f));
         for (int i = 0; i < w.Count; i++)
         {
             if (w.Biome[i] == Biome.Lake) continue;
             if (!w.IsLand(i))
             {
-                int k = w.Neighbors(i, nb);
-                bool nearLand = false;
-                for (int j = 0; j < k; j++) nearLand |= w.IsLand(nb[j]);
-                w.Biome[i] = nearLand ? Biome.Coast : w.Elevation[i] > -1500f ? Biome.Ocean : Biome.DeepOcean;
+                w.Biome[i] = shore[i] <= coastWidth ? Biome.Coast : w.Elevation[i] > -1500f ? Biome.Ocean : Biome.DeepOcean;
                 continue;
             }
             float t = w.TempMean[i], p = w.Precip[i], e = w.Elevation[i];
@@ -260,7 +284,7 @@ public static class WorldGen
         var candidates = new List<int>();
         for (int i = 0; i < w.Count; i++)
             if (w.IsLand(i) && w.Biome[i] != Biome.Lake && w.Fault[i] > 0.75f) candidates.Add(i);
-        int volcanoes = Math.Clamp(candidates.Count / 80, 4, 14);
+        int volcanoes = Math.Clamp((int)(candidates.Count * w.CellArea / 80f), 4, 14);
         for (int k = 0; k < volcanoes && candidates.Count > 0; k++)
         {
             int idx = rng.Next(candidates.Count);
@@ -268,6 +292,16 @@ public static class WorldGen
             candidates.RemoveAt(idx);
             w.Volcano[c] = true;
             w.Biome[c] = Biome.Volcanic;
+            // The volcano's flanks: a ring of volcanic ground as wide as the old single cell.
+            int r = Math.Max(0, (int)(w.Scale * 0.5f));
+            for (int dy = -r; dy <= r; dy++)
+                for (int dx = -r; dx <= r; dx++)
+                {
+                    int y = w.Y(c) + dy;
+                    if (y < 0 || y >= w.H) continue;
+                    int f = w.Index(w.X(c) + dx, y);
+                    if (w.IsLand(f) && w.Biome[f] != Biome.Lake) w.Biome[f] = Biome.Volcanic;
+                }
         }
 
         for (int i = 0; i < w.Count; i++)

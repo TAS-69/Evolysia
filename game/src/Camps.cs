@@ -1,190 +1,182 @@
 using Evolysia.Sim;
 using Evolysia.Sim.Agents;
 using Evolysia.Sim.Core;
+using Evolysia.Sim.Economy;
 using Evolysia.Sim.Society;
-using Evolysia.Sim.World;
 using Godot;
 
 namespace Evolysia.Game;
 
 /// <summary>
-/// A band's home in art, laid out in logical units (16 per cell) around the band's position, so
-/// the same camp stands in the same place at every density. Wandering bands camp in the open:
-/// shelters by what they know (windbreak, lean-to, hide tent), a hearth, knapping block, baskets,
-/// drying racks, a totem where they keep rituals. Farming villages build houses in their region's
-/// style (regional_styles.json) with a granary, kiln and loom. A selection of the band's real
-/// people go about their day: out to forage, hunt, fish or farm and back to the fire, or crafting,
-/// talking, praying and playing in camp.
+/// The simulation's built world and its people, in art. Structures stand where bands sited them
+/// (Simulation.Structures): dwellings composited from regional wall and roof pieces by building
+/// type, workstations, stores showing what the band holds, shrines, boats, pens and palisades,
+/// with scaffolding while they go up and damaged, ruined or burned looks after. Each person walks
+/// between home and the tile they actually work today, dressed in the clothes they own and
+/// holding the tool they work with.
 /// </summary>
 public static class Camps
 {
     const float Unit = Main.CellPx / 16f;   // world units per logical unit
 
-    static Vector2 L(float x, float y) => new Vector2(x, y) * Unit;
-
-    static readonly Vector2[] ShelterSpots = { L(-10, -5), L(10, -5), L(-13, 7), L(13, 7) };
-    static readonly Vector2[] HouseSpots = { L(-28, -14), L(28, -14), L(-30, 24), L(30, 24), L(0, -30), L(0, 38) };
-
-    /// <summary>What the layer needs to know about a band this frame.</summary>
-    public sealed record Context(Simulation Sim, Band Band, Vector2 Pos, ulong Knows, int Density, double Now, bool Selected);
-
-    public static void Add(Context c, List<WorldSprite> into)
+    /// <summary>World position of a cell's top-left corner, unwrapped to the copy nearest <paramref name="near"/>.</summary>
+    static Vector2 CellPos(Simulation sim, int cell, Vector2 near)
     {
-        var sim = c.Sim;
-        var band = c.Band;
-        int d = c.Density;
-        bool K(TechId t) => (c.Knows & Techs.Bit(t)) != 0;
-        var tint = band.PlagueUntil > sim.Day ? new Color(0.85f, 1f, 0.7f) : Colors.White;
-        int n = band.Members.Count;
-        int hue = sim.Cultures[band.CultureId].Hue % 12;
-        var pos = c.Pos;
         var w = sim.World;
-        int animFrame = (int)(c.Now * 6.0);
-
-        void Put(string? lod, string? baseId, Vector2 at, int frame = 0, float shadow = -1f, int culture = -1)
-        {
-            if (Sprites.Make(lod != null ? "civilisation." + lod : null, baseId, d, pos + at, tint, frame, shadow: shadow, cultureRow: culture) is { } s) into.Add(s);
-        }
-
-        if (band.Sedentary)
-        {
-            var style = Settlements.StyleOf(w.Biome[band.Cell]);
-            if (style.Roof == "tile" && !K(TechId.Pottery)) style = style with { Roof = "thatch" };
-            int houses = Math.Clamp(1 + n / 8, 2, HouseSpots.Length);
-            for (int k = 0; k < houses; k++)
-                if (House(style, 3, 2, d, roofed: !(c.Selected && d >= 64)) is { } house)
-                    into.Add(new WorldSprite(pos + HouseSpots[k], house.Texture, new Rect2(Vector2.Zero, house.Texture.GetSize()), house.Pivot,
-                                             Sprites.PixelSize(d), tint, 3f * 16 * Unit * 0.42f));
-            if (K(TechId.FoodStorage))
-            {
-                if (K(TechId.Agriculture)) Container("grain_bin", "grain", Fill(band), L(-8, -12));
-                else Container("crate", "dried_meat", Fill(band), L(-8, -12));
-            }
-            if (K(TechId.Pottery)) Put("kiln", null, L(14, 6), animFrame);
-            if (K(TechId.Weaving)) Put("loom", null, L(-14, 6));
-            if (K(TechId.Domestication)) Put("feed_trough", null, L(44, 4));
-        }
-        else
-        {
-            // Shelters from the multi-density pieces: a reed windbreak, a wattle lean-to, a hide-roofed hut.
-            var shelter = K(TechId.Shelter) ? House(new Settlements.Style("hide", "hide", "earth"), 2, 2, d, roofed: true)
-                        : Fence(K(TechId.HideClothing) ? "wattle" : "reed", K(TechId.HideClothing) ? 2 : 1, d);
-            int shelters = Math.Clamp(1 + n / 10, 1, ShelterSpots.Length);
-            for (int k = 0; shelter != null && k < shelters; k++)
-                into.Add(new WorldSprite(pos + ShelterSpots[k], shelter.Texture, new Rect2(Vector2.Zero, shelter.Texture.GetSize()), shelter.Pivot,
-                                         Sprites.PixelSize(d), tint, shelter.Texture.GetWidth() * Sprites.PixelSize(d) * 0.42f));
-            if (K(TechId.FoodStorage)) Container("crate", K(TechId.Fishing) ? "dried_fish" : "dried_meat", Fill(band), L(0, -10));
-            if (K(TechId.Baskets)) Container("basket", K(TechId.Fishing) ? "fish" : "berries", Fill(band), L(-5, -6));
-            if (K(TechId.Fishing) && NearWater(w, band.Cell) != null) Put("fish_drying_rack", null, L(10, 1));
-            if (K(TechId.Weaving)) Put("loom", null, L(-10, 2));
-        }
-        if (K(TechId.ControlledFire)) Put("hearth", null, L(0, 1), animFrame, shadow: 0f);
-        if (K(TechId.StoneTools)) Put("knapping_block", null, L(-6, 4));
-        if (K(TechId.Cooking) && K(TechId.Pottery)) Put("cooking_pot", null, L(5, 3));
-        if (K(TechId.Pottery)) Put("pot", null, L(7, -4));
-        if (K(TechId.Copper)) Put("anvil", null, L(-16, -2));
-        if (K(TechId.Boats) && NearWater(w, band.Cell) is { } shore) Put("canoe", null, Rel(c, shore) * 0.85f);
-        if (HoldsRitual(sim, band, out bool god))
-        {
-            if (god) Put("altar", null, L(0, -15));
-            else Put(null, "structures.totem_complete", L(0, -15), culture: hue);
-        }
-        if (c.Selected && band.Sedentary && d >= 64) Put("bed", null, L(-28, -20));
-
-        AddPeople(c, into, tint);
-
-        void Container(string profile, string resource, int filled, Vector2 at)
-        {
-            if (Stocked(profile, resource, filled, d) is { } s)
-                into.Add(new WorldSprite(pos + at, s.Texture, new Rect2(Vector2.Zero, s.Texture.GetSize()), s.Pivot, Sprites.PixelSize(d), tint, 5f * Unit));
-        }
-    }
-
-    static int Fill(Band band) => Math.Clamp((int)MathF.Ceiling(band.FoodPool / Math.Max(1, band.Members.Count) / 3f), 0, 9);
-
-    static bool HoldsRitual(Simulation sim, Band band, out bool god)
-    {
-        god = false;
-        bool ritual = false;
-        foreach (var (id, share) in band.MemePrevalence)
-        {
-            if (share < 0.3f || !sim.Memes.TryGetValue(id, out var m)) continue;
-            if (m.IsPlayerGod) god = true;
-            if (m.Kind is MemeKind.Ritual or MemeKind.SpiritBelief) ritual = true;
-        }
-        return ritual || god;
-    }
-
-    static int? NearWater(WorldMap w, int cell)
-    {
-        int x = w.X(cell), y = w.Y(cell);
-        for (int r = 1; r <= 2; r++)
-            for (int dy = -r; dy <= r; dy++)
-                for (int dx = -r; dx <= r; dx++)
-                {
-                    int ny = y + dy;
-                    if (ny < 0 || ny >= w.H) continue;
-                    int i = w.Index(x + dx, ny);
-                    if (w.IsWater(i) || TileBake.IsRiver(w, i)) return i;
-                }
-        return null;
-    }
-
-    /// <summary>A cell's centre relative to the band's position, the short way round the planet.</summary>
-    static Vector2 Rel(Context c, int cell)
-    {
-        var w = c.Sim.World;
-        var v = new Vector2(w.X(cell) + 0.5f, w.Y(cell) + 0.5f) * Main.CellPx - c.Pos;
+        var p = new Vector2(w.X(cell), w.Y(cell)) * Main.CellPx;
         float width = w.W * Main.CellPx;
-        v.X -= MathF.Round(v.X / width) * width;
-        return v;
+        p.X += MathF.Round((near.X - p.X) / width) * width;
+        return p;
+    }
+
+    // ---- structures -----------------------------------------------------------------------------
+
+    /// <summary>Every structure in (or near) the view.</summary>
+    public static void AddStructures(Simulation sim, Rect2 view, int density, double now, int selectedBand, List<WorldSprite> into)
+    {
+        var grown = view.Grow(Main.CellPx * 4f);
+        var centre = view.GetCenter();
+        foreach (var s in sim.Structures.Values)
+        {
+            var k = s.Kind;
+            if (k.Role == StructureRole.Field || s.State == StructureState.Planned) continue;   // fields are in the terrain
+            var corner = CellPos(sim, s.Cell, centre);
+            var foot = corner + new Vector2(k.W * 0.5f, k.H) * Main.CellPx;
+            if (!grown.HasPoint(foot)) continue;
+            sim.Bands.TryGetValue(s.BandId, out var band);
+            if (Visual(sim, s, band, density, now, selectedBand) is not { } v) continue;
+            var modulate = s.State switch
+            {
+                StructureState.Building => new Color(1f, 1f, 1f, 0.6f),
+                StructureState.Damaged => new Color(0.85f, 0.8f, 0.75f),
+                StructureState.Ruined => new Color(0.6f, 0.58f, 0.55f, 0.85f),
+                StructureState.Burned => new Color(0.35f, 0.3f, 0.3f, 0.9f),
+                _ => Colors.White,
+            };
+            if (band != null && band.PlagueUntil > sim.Day) modulate *= new Color(0.85f, 1f, 0.7f);
+            into.Add(new WorldSprite(foot, v.Texture, v.Source, v.Pivot, Sprites.PixelSize(density), modulate, v.Shadow));
+            if (s.State == StructureState.Building && Sprites.Make("civilisation.scaffold", null, density, foot + new Vector2(0, 0.01f), Colors.White, shadow: 0f) is { } scaffold)
+                into.Add(scaffold);
+        }
+    }
+
+    readonly record struct Look(Texture2D Texture, Rect2 Source, Vector2 Pivot, float Shadow);
+
+    static Look Whole(Composite c, float shadow) => new(c.Texture, new Rect2(Vector2.Zero, c.Texture.GetSize()), c.Pivot, shadow);
+
+    static Look? From(WorldSprite? s) => s is { } x ? new Look(x.Texture, x.Source, x.Pivot, x.Shadow) : null;
+
+    /// <summary>How a structure looks at a density.</summary>
+    static Look? Visual(Simulation sim, Structure s, Band? band, int d, double now, int selectedBand)
+    {
+        var k = s.Kind;
+        var w = sim.World;
+        int frame = (int)(now * 6.0);
+        float shadow = k.W * Main.CellPx * 0.42f;
+        var style = Settlements.StyleOf(w.Biome[s.Cell]);
+        bool ruined = s.State is StructureState.Ruined or StructureState.Burned;
+        bool roofed = !ruined && !(selectedBand >= 0 && s.BandId == selectedBand && d >= 64);   // the selected village, close up: roofs off
+        Look? Building(Settlements.Style st, int cw, int ch) => House(st, cw, ch, d, roofed) is { } h ? Whole(h, shadow) : null;
+        switch (k.Id)
+        {
+            case "windbreak": return Fence("reed", 1, d) is { } wb ? Whole(wb, shadow) : null;
+            case "lean_to": return Fence("wattle", 2, d) is { } lt ? Whole(lt, shadow) : null;
+            case "hide_tent": return Building(new Settlements.Style("hide", "hide", "earth"), 2, 2);
+            case "hut" or "pit_house": return Building(style with { Roof = style.Roof is "reed" or "thatch" or "hide" or "bark" ? style.Roof : "thatch" }, 2, 2);
+            case "house": return Building(style with { Roof = style.Roof == "tile" ? "wood_shingle" : style.Roof }, 3, 2);
+            case "mudbrick_house": return Building(new Settlements.Style(w.TempMean[s.Cell] > 18f ? "adobe" : "mudbrick", style.Roof == "slate" ? "tile" : style.Roof, "packed_clay"), 3, 2);
+            case "stone_house": return Building(new Settlements.Style(style.Wall is "granite" or "basalt" or "sandstone" or "limestone" ? style.Wall : "stone", "slate", "flagstone"), 3, 2);
+            case "brick_house": return Building(new Settlements.Style("fired_brick", "tile", "ceramic_tile"), 3, 2);
+            case "housing_block": return Building(new Settlements.Style("concrete", "metal", "concrete"), 4, 3);
+            case "pressure_habitat": return Building(new Settlements.Style("composite", "glass", "metal_deck"), 3, 3);
+            case "animal_pen": return Pen(d) is { } pen ? Whole(pen, 0f) : null;
+            case "palisade": return Palisade(sim, s, d) is { } pal ? Whole(pal, 0f) : null;
+            case "hearth":
+                bool lit = band is { HasFireToday: true } && !ruined;
+                return From(Sprites.Make(lit ? "civilisation.hearth" : "civilisation.hearth_unlit", null, d, Vector2.Zero, Colors.White, lit ? frame : 0, shadow: 0f));
+            case "kiln" or "forge" or "oven":
+                bool fired = band is { HasFireToday: true } && !ruined;
+                return From(Sprites.Make($"civilisation.{k.Id}{(fired ? "" : "_unlit")}", null, d, Vector2.Zero, Colors.White, fired ? frame : 0));
+            case "basket" or "crate" or "chest" or "grain_bin":
+                if (band != null && Stocked(k.Id, StoredGood(band), Math.Clamp((int)MathF.Ceiling(band.FoodPool / Math.Max(1, band.Members.Count) / 3f), 0, 9), d) is { } store)
+                    return Whole(store, Main.CellPx * 0.35f);
+                break;
+            case "totem":
+                return From(Sprites.Make(null, $"structures.totem_{EarlyState(s)}", d, Vector2.Zero, Colors.White,
+                                         cultureRow: band != null ? sim.Cultures[band.CultureId].Hue % 12 : 0));
+        }
+        // Early structures have their own condition art; everything else is civilisation detail art.
+        if (Art.Get($"structures.{k.Id}_{EarlyState(s)}") != null)
+            return From(Sprites.Make(null, $"structures.{k.Id}_{EarlyState(s)}", d, Vector2.Zero, Colors.White));
+        return From(Sprites.Make("civilisation." + k.Id, null, d, Vector2.Zero, Colors.White, frame));
+    }
+
+    static string EarlyState(Structure s) => s.State switch
+    {
+        StructureState.Building => "building", StructureState.Damaged => "damaged", StructureState.Ruined => "ruined", StructureState.Burned => "burned", _ => "complete",
+    };
+
+    /// <summary>The food the band has most of that has stored-item art (what its baskets and bins show).</summary>
+    static string StoredGood(Band band)
+    {
+        string best = "food";
+        float most = 0f;
+        foreach (var (good, qty) in band.Stores.Held())
+            if (good.Kind == GoodKind.Food && qty > most && Art.Lod($"civilisation.stored_{good.Id}", 16) != null) { most = qty; best = good.Id; }
+        return best;
     }
 
     // ---- people ---------------------------------------------------------------------------------
 
-    static void AddPeople(Context c, List<WorldSprite> into, Color tint)
+    /// <summary>
+    /// A band's people: each between home (outside the dwelling they share, or by the fire) and the
+    /// tile they work today, walking out, working, walking back and resting, on their own clock.
+    /// </summary>
+    public static void AddPeople(Simulation sim, Band band, Vector2 camp, int density, double now, List<WorldSprite> into)
     {
-        var sim = c.Sim;
-        var band = c.Band;
         var w = sim.World;
-        int n = band.Members.Count;
-        int shown = Math.Min(n, Math.Min(18, 4 + n / 3));
+        var tint = band.PlagueUntil > sim.Day ? new Color(0.85f, 1f, 0.7f) : Colors.White;
         int hue = sim.Cultures[band.CultureId].Hue;
         float temp = w.Temperature(band.Cell, sim.Day);
-        int placed = 0;
-        var water = NearWater(w, band.Cell);
-        foreach (int id in band.Members.Where(m => m == band.LeaderId).Concat(band.Members.Where(m => m != band.LeaderId)))
-        {
-            if (placed >= shown) break;
-            if (!sim.Living.TryGetValue(id, out var agent)) continue;
-            bool child = agent.IsChild(sim.Day);
-            var activity = child ? (agent.Today == Activity.Play || id % 2 == 0 ? Activity.Play : Activity.Rest) : agent.Today;
-            float ring = (band.Sedentary ? 12f : 9f) + shown * 0.35f;
-            float angle = band.Id * 1.7f + placed * Mathf.Tau / shown;
-            var home = L(MathF.Cos(angle) * ring, MathF.Sin(angle) * ring * 0.7f + 2f);
-            var spot = Ashore(c, Spot(c, activity, id, angle, home, water));
-            uint h = TileBake.Hash(id, 9);
-
-            // A day's rhythm in a short loop: out to the work spot, work, back, rest by the fire.
-            double period = 18.0 + h % 7;
-            double phase = (c.Now / period + (h & 0xFF) / 255.0) % 1.0;
-            Vector2 at, velocity = Vector2.Zero;
-            bool away = spot.DistanceSquaredTo(home) > 4f;
-            bool working = true;
-            if (!away || agent.Sick) at = agent.Sick ? home : spot;
-            else if (phase < 0.12) { at = home.Lerp(spot, (float)(phase / 0.12)); velocity = spot - home; }
-            else if (phase < 0.75) at = spot;
-            else if (phase < 0.87) { at = spot.Lerp(home, (float)((phase - 0.75) / 0.12)); velocity = home - spot; }
-            else { at = home; working = false; }
-            if (child && activity == Activity.Play)   // children chase each other round the fire
+        var homes = new List<Vector2>();
+        foreach (int sid in band.Structures)
+            if (sim.Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Housing > 0)
             {
-                float a = (float)(c.Now * 0.9 + (h & 0xFF) / 40.0);
-                at = L(MathF.Cos(a) * 14f, MathF.Sin(a) * 9f + 4f);
+                var corner = CellPos(sim, s.Cell, camp);
+                for (int k = 0; k < Math.Max(1, s.Kind.Housing / 3); k++) homes.Add(corner + new Vector2(s.Kind.W * 0.5f, s.Kind.H + 0.3f) * Main.CellPx);
+            }
+        int placed = 0;
+        foreach (int id in band.Members)
+        {
+            if (!sim.Living.TryGetValue(id, out var agent)) continue;
+            uint h = TileBake.Hash(id, 9);
+            bool child = agent.IsChild(sim.Day);
+            float angle = (h & 0xFFFF) / 65535f * Mathf.Tau;
+            var home = homes.Count > 0 ? homes[placed % homes.Count] + new Vector2((h >> 16) % 9 - 4f, (h >> 20) % 5) * Unit
+                                       : camp + new Vector2(MathF.Cos(angle) * 12f, MathF.Sin(angle) * 8f + 2f) * Unit;
+            placed++;
+            var site = agent.Site >= 0 ? CellPos(sim, agent.Site, camp) + new Vector2(0.5f + ((h >> 4) % 7 - 3) / 16f, 0.75f) * Main.CellPx : home;
+            var activity = agent.Today;
+            double period = 18.0 + h % 7;
+            double phase = (now / period + (h & 0xFF) / 255.0) % 1.0;
+            Vector2 at, velocity = Vector2.Zero;
+            bool working = true;
+            bool away = site.DistanceSquaredTo(home) > 4f;
+            if (agent.Sick) at = home;
+            else if (!away) at = site;
+            else if (phase < 0.12) { at = home.Lerp(site, (float)(phase / 0.12)); velocity = site - home; }
+            else if (phase < 0.75) at = site;
+            else if (phase < 0.87) { at = site.Lerp(home, (float)((phase - 0.75) / 0.12)); velocity = home - site; }
+            else { at = home; working = false; }
+            bool playing = child && activity == Activity.Play;
+            if (playing)   // children chase each other round camp
+            {
+                float a = (float)(now * 0.9 + (h & 0xFF) / 40.0);
+                at = camp + new Vector2(MathF.Cos(a) * 14f, MathF.Sin(a) * 9f + 4f) * Unit;
                 velocity = new Vector2(-MathF.Sin(a), MathF.Cos(a) * 0.6f);
             }
-            bool moving = velocity != Vector2.Zero && !(child && activity == Activity.Play);
-            string anim = People.Animation(working ? activity : Activity.Rest, moving, child, agent.Sick);
-            if (child && activity == Activity.Play) anim = "run";
+            bool moving = velocity != Vector2.Zero && !playing;
+            string anim = playing ? "run" : People.Animation(working ? activity : Activity.Rest, moving, child, agent.Sick);
             string dir = "down";
             bool flip = false;
             if (velocity != Vector2.Zero)
@@ -192,55 +184,13 @@ public static class Camps
                 if (MathF.Abs(velocity.X) > MathF.Abs(velocity.Y) * 0.8f) { dir = "side"; flip = velocity.X < 0; }
                 else dir = velocity.Y > 0 ? "down" : "up";
             }
-            else if (anim is "craft" or "talk" or "attack" or "sleep") { dir = "side"; flip = at.X > 0; }   // face the fire
+            else if (anim is "craft" or "talk" or "attack" or "sleep" or "chop" or "dig" or "build") { dir = "side"; flip = (h & 1) == 0; }
 
             var look = People.LookOf(agent, sim.Day, hue, temp, id == band.LeaderId, working ? activity : Activity.Rest);
-            if (People.Get(look, anim, dir, c.Density) is not { } strip) return;
-            int frame = (int)(c.Now * strip.Fps + (h & 0xF) * 0.37) % strip.Frames;
-            var pivot = strip.Pivot + new Vector2(0, 1);
-            into.Add(new WorldSprite(c.Pos + at, strip.Texture, new Rect2(frame * strip.FrameW, 0, strip.FrameW, strip.FrameH), pivot,
-                                     Sprites.PixelSize(c.Density), tint, 3.5f * Unit, flip));
-            placed++;
-        }
-    }
-
-    /// <summary>Pulls a spot back towards camp until it is on land.</summary>
-    static Vector2 Ashore(Context c, Vector2 spot)
-    {
-        var w = c.Sim.World;
-        for (int k = 0; k < 6 && spot.LengthSquared() > 4f; k++)
-        {
-            var p = c.Pos + spot;
-            int y = (int)MathF.Floor(p.Y / Main.CellPx);
-            if (y < 0 || y >= w.H) { spot *= 0.6f; continue; }
-            if (!w.IsWater(w.Index((int)MathF.Floor(p.X / Main.CellPx), y))) break;
-            spot *= 0.6f;
-        }
-        return spot;
-    }
-
-    /// <summary>Where an activity takes someone, relative to the band's position.</summary>
-    static Vector2 Spot(Context c, Activity activity, int id, float angle, Vector2 home, int? water)
-    {
-        var w = c.Sim.World;
-        uint h = TileBake.Hash(id, c.Sim.Day / 5);
-        float a = (h & 0xFFFF) / 65535f * Mathf.Tau;
-        Vector2 Out(float r) => L(MathF.Cos(a) * r, MathF.Sin(a) * r * 0.8f);
-        switch (activity)
-        {
-            case Activity.Forage: return Out(20f + h % 10);
-            case Activity.Hunt: return Out(34f + h % 10);
-            case Activity.Explore: return Out(44f);
-            case Activity.Herd: return L(40 + h % 8, 8 + h % 10);
-            case Activity.Fish when water is { } cell: return Rel(c, cell) * 0.4f + L((h % 5) - 2f, (h >> 8) % 5 - 2f);   // at the water's edge
-            case Activity.Fish: return Out(24f);
-            case Activity.Farm when c.Band.Sedentary: return Out(32f);   // the field ring two cells out
-            case Activity.Build: return (c.Band.Sedentary ? HouseSpots[id % 4] : ShelterSpots[id % 2]) + L(6, 2);
-            case Activity.Craft or Activity.Experiment: return L(-8 + (h % 3) * 2, 6);
-            case Activity.Socialize or Activity.Court or Activity.Teach: return home * 0.6f;
-            case Activity.Ritual: return L(MathF.Cos(angle) * 6f, -11f + MathF.Sin(angle) * 3f);
-            case Activity.Mourn: return L(18f, -16f);
-            default: return home;
+            if (People.Get(look, anim, dir, density) is not { } strip) return;
+            int f = (int)(now * strip.Fps + (h & 0xF) * 0.37) % strip.Frames;
+            into.Add(new WorldSprite(at, strip.Texture, new Rect2(f * strip.FrameW, 0, strip.FrameW, strip.FrameH), strip.Pivot + new Vector2(0, 1),
+                                     Sprites.PixelSize(density), tint, 3.5f * Unit, flip));
         }
     }
 
@@ -251,10 +201,10 @@ public static class Camps
     static readonly Dictionary<string, Composite?> Composites = new();
 
     /// <summary>
-    /// A rectangular house of <paramref name="cw"/> x <paramref name="ch"/> cells from civilisation
+    /// A rectangular building of <paramref name="cw"/> x <paramref name="ch"/> cells from civilisation
     /// pieces: floor inside the wall line, a ring of connected walls (N=1 E=2 S=4 W=8), a door in
     /// the south wall, and a roof over it all with a shaded eave - or, roofless, a cut-away with the
-    /// south wall removed (render_contract roof_occlusion) and the room's furniture showing.
+    /// south wall removed (render_contract roof_occlusion) and its hearth, bed and pots showing.
     /// </summary>
     public static Composite? House(Settlements.Style style, int cw, int ch, int d, bool roofed)
     {
@@ -268,7 +218,7 @@ public static class Camps
         {
             int width = cw * d, height = ch * d;
             var img = new byte[width * height * 4];
-            void Stamp(Sheet s, int ox, int oy, Rect2I? clip = null, float shade = 1f)
+            void Stamp(Sheet s, int ox, int oy, Rect2I? clip = null)
             {
                 for (int y = 0; y < s.FrameH; y++)
                     for (int x = 0; x < s.FrameW; x++)
@@ -279,7 +229,7 @@ public static class Camps
                         var c = s.Reference.GetPixel(x, y);
                         if (c.A < 0.5f) continue;
                         int o = (ty * width + tx) * 4;
-                        img[o] = (byte)(c.R * 255 * shade); img[o + 1] = (byte)(c.G * 255 * shade); img[o + 2] = (byte)(c.B * 255 * shade); img[o + 3] = 255;
+                        img[o] = (byte)(c.R * 255); img[o + 1] = (byte)(c.G * 255); img[o + 2] = (byte)(c.B * 255); img[o + 3] = 255;
                     }
             }
             var inside = new Rect2I(d / 2, d / 2, width - d, height - d);
@@ -313,8 +263,9 @@ public static class Camps
             }
             else
             {
-                if (Art.Lod("civilisation.hearth", d) is { } hearth) Stamp(hearth, 2 * d - d / 2, d / 2);
-                if (Art.Lod("civilisation.pot", d) is { } pot) Stamp(pot, (cw - 1) * d - d / 4, d / 2);
+                if (Art.Lod("civilisation.hearth", d) is { } hearth) Stamp(hearth, d / 2, d / 2);
+                if (Art.Lod("civilisation.bed", d) is { } bed && cw >= 3) Stamp(bed, (cw - 2) * d + d / 2, d / 2);
+                if (Art.Lod("civilisation.pot", d) is { } pot) Stamp(pot, (cw - 1) * d - d / 2, d / 2);
             }
             var tex = ImageTexture.CreateFromImage(Image.CreateFromData(width, height, false, Image.Format.Rgba8, img));
             result = new Composite(tex, new Vector2(width / 2f, height));
@@ -333,13 +284,51 @@ public static class Camps
         bool any = false;
         for (int x = 0; x < cells; x++)
         {
-            int mask = (x < cells - 1 ? 2 : 0) | (x > 0 ? 8 : 0);
-            if (cells == 1) mask = 10;
+            int mask = cells == 1 ? 10 : (x < cells - 1 ? 2 : 0) | (x > 0 ? 8 : 0);
             if (Art.Lod($"civilisation.wall_{wall}_{mask:00}", d) is not { } piece) continue;
             image.BlendRect(piece.Reference, new Rect2I(0, 0, piece.FrameW, piece.FrameH), new Vector2I(x * d, 0));
             any = true;
         }
         if (any) result = new Composite(ImageTexture.CreateFromImage(image), new Vector2(cells * d / 2f, d));
+        Composites[key] = result;
+        return result;
+    }
+
+    /// <summary>An animal pen: a 2 x 2 ring of wattle fencing with a feed trough.</summary>
+    static Composite? Pen(int d)
+    {
+        string key = $"pen|{d}";
+        if (Composites.TryGetValue(key, out var cached)) return cached;
+        var image = Image.CreateEmpty(2 * d, 2 * d, false, Image.Format.Rgba8);
+        int[] masks = { 6, 12, 3, 9 };   // TL, TR, BL, BR corners
+        for (int k = 0; k < 4; k++)
+            if (Art.Lod($"civilisation.wall_wattle_{masks[k]:00}", d) is { } piece)
+                image.BlendRect(piece.Reference, new Rect2I(0, 0, piece.FrameW, piece.FrameH), new Vector2I(k % 2 * d, k / 2 * d));
+        if (Art.Lod("civilisation.feed_trough", d) is { } trough)
+            image.BlendRect(trough.Reference, new Rect2I(0, 0, trough.FrameW, trough.FrameH), new Vector2I(d / 2, d / 2));
+        var result = new Composite(ImageTexture.CreateFromImage(image), new Vector2(d, 2 * d));
+        Composites[key] = result;
+        return result;
+    }
+
+    /// <summary>A palisade segment joined to its neighbours (N=1 E=2 S=4 W=8).</summary>
+    static Composite? Palisade(Simulation sim, Structure s, int d)
+    {
+        var w = sim.World;
+        int mask = 0;
+        int[] dx = { 0, 1, 0, -1 }, dy = { -1, 0, 1, 0 };
+        for (int k = 0; k < 4; k++)
+        {
+            int y = w.Y(s.Cell) + dy[k];
+            if (y < 0 || y >= w.H) continue;
+            int id = w.StructureAt[w.Index(w.X(s.Cell) + dx[k], y)];
+            if (id != 0 && sim.Structures.TryGetValue(id, out var n) && n.Kind.Id == "palisade") mask |= 1 << k;
+        }
+        string key = $"palisade|{mask}|{d}";
+        if (Composites.TryGetValue(key, out var cached)) return cached;
+        Composite? result = null;
+        if (Art.Lod($"civilisation.wall_palisade_{mask:00}", d) is { } piece)
+            result = new Composite(ImageTexture.CreateFromImage(piece.Reference.GetRegion(new Rect2I(0, 0, piece.FrameW, piece.FrameH))), new Vector2(piece.PivotX, piece.PivotY + 1));
         Composites[key] = result;
         return result;
     }

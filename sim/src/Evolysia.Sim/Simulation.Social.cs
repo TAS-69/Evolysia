@@ -180,8 +180,8 @@ public sealed partial class Simulation
         // Techniques pass on by watching and talking.
         if (Rng.Chance(0.04f * a.T(Trait.Cooperativeness)))
         {
-            ulong teachable = a.Knows & ~other.Knows;
-            if (teachable != 0) LearnOne(other, teachable);
+            var teachable = a.Knows & ~other.Knows;
+            if (!teachable.IsEmpty) LearnOne(other, teachable);
         }
 
         if (a.T(Trait.Cooperativeness) < 0.4f && other.Prestige > a.Prestige + 0.5f) Psychology.Envy(a, 0.2f);
@@ -203,16 +203,19 @@ public sealed partial class Simulation
         return best;
     }
 
-    void LearnOne(Agent learner, ulong options)
+    /// <summary>Picks up one of <paramref name="options"/> - only one the learner has the grounding for.</summary>
+    void LearnOne(Agent learner, TechSet options)
     {
-        int count = System.Numerics.BitOperations.PopCount(options);
+        int count = 0;
+        foreach (var t in options.Ids()) if (Techs.CanLearn(learner.Knows, t)) count++;
+        if (count == 0) return;
         int pick = Rng.Next(count);
-        for (int t = 0; t < Techs.Count; t++)
-            if ((options & (1UL << t)) != 0 && pick-- == 0)
+        foreach (var t in options.Ids())
+            if (Techs.CanLearn(learner.Knows, t) && pick-- == 0)
             {
                 // People who once gave in about a domain are reluctant to pick it up again.
-                if (learner.IsSuppressed(Techs.All[t].Domain) && Rng.Chance(0.8f)) return;
-                learner.Knows |= 1UL << t;
+                if (learner.IsSuppressed(Techs.Get(t).Domain) && Rng.Chance(0.8f)) return;
+                learner.Knows |= Techs.Bit(t);
                 return;
             }
     }
@@ -255,7 +258,7 @@ public sealed partial class Simulation
         // Most foragers marry out: look to friendly neighbouring bands too, especially from a small band.
         if (target == null || band.Members.Count < 25)
             foreach (var other in Bands.Values)
-                if (other.Id != band.Id && World.Distance(other.Cell, band.Cell) <= 2 && band.RelationTo(other.Id) > -0.3f)
+                if (other.Id != band.Id && World.Distance(other.Cell, band.Cell) <= World.Cells(2) && band.RelationTo(other.Id) > -0.3f)
                     Consider(other, 3, 0.1f + (other.CultureId != band.CultureId ? 0.1f : 0f));
         if (target == null) return;
 
@@ -317,11 +320,11 @@ public sealed partial class Simulation
 
     bool CanTeach(Agent a, Band band)
     {
-        if (a.Knows == 0 || a.IsChild(Day)) return false;
+        if (a.Knows.IsEmpty || a.IsChild(Day)) return false;
         for (int k = 0; k < 3; k++)
         {
             int id = band.Members[Rng.Next(band.Members.Count)];
-            if (Living.TryGetValue(id, out var o) && (a.Knows & ~o.Knows) != 0) return true;
+            if (Living.TryGetValue(id, out var o) && !(a.Knows & ~o.Knows).IsEmpty) return true;
         }
         return false;
     }
@@ -330,8 +333,8 @@ public sealed partial class Simulation
     {
         var learner = PickSomeone(a, band, adultsOnly: false);
         if (learner == null) return;
-        ulong teachable = a.Knows & ~learner.Knows;
-        if (teachable == 0) return;
+        var teachable = a.Knows & ~learner.Knows;
+        if (teachable.IsEmpty) return;
         if (Rng.Chance(0.25f * (0.5f + learner.Gene(Gene.Intellect)) * (0.5f + a.Efficacy[(int)Domain.Social])))
         {
             LearnOne(learner, teachable);
@@ -349,7 +352,7 @@ public sealed partial class Simulation
         a.Emotions[(int)Emotion.Fear] *= 1f - 0.2f * (0.5f + conv);
         a.Emotions[(int)Emotion.Sadness] *= 0.9f;
         a.Belonging = MathF.Min(1f, a.Belonging + 0.02f * conv);
-        band.FoodPool = MathF.Max(0f, band.FoodPool - 0.2f * conv);   // offerings
+        band.Stores.TakeFood(0.2f * conv);   // offerings
         Psychology.Practice(a, Domain.Spiritual, true, 0.5f);
         a.Prestige += 0.01f * conv * a.T(Trait.SelfTranscendence);
         a.Shift(Trait.SelfTranscendence, 0.0008f * conv, Day);   // practice deepens faith, slowly
@@ -482,7 +485,7 @@ public sealed partial class Simulation
                     : (w.FishK[cell] > 300f ? 1.3f : 1f) * (w.LandmassSize[w.Landmass[cell]] < 300 ? 2f : 1f) * (1f + c.Shortage),
                 TechId.Pottery => w.Flow[cell] > WorldGen.RiverFlow || w.Biome[cell] is Biome.Wetland ? 1.3f : 0.5f,
                 TechId.Copper or TechId.Bronze => w.Fault[cell] > 0.3f ? 1f : 0.2f,
-                _ => 1f,
+                _ => Affords(band, def.Needs),
             };
             if (def.Id == TechId.Agriculture && w.Biome[cell] is not (Biome.TemperateGrassland or Biome.TemperateForest or Biome.Savanna
                     or Biome.TropicalSeasonalForest or Biome.Shrubland or Biome.Wetland)) need = 0f;
@@ -497,10 +500,49 @@ public sealed partial class Simulation
         }
     }
 
+    /// <summary>
+    /// How strongly a band's surroundings suggest a technique: materials at hand (forest, rock,
+    /// ore, clay, sand), climate, water, a settled or large community, herds, a spiritual life.
+    /// </summary>
+    float Affords(Band band, Affordance need)
+    {
+        var w = World;
+        int cell = band.Cell;
+        bool forest = w.Biome[cell] is Biome.BorealForest or Biome.TemperateForest or Biome.TemperateRainforest
+                      or Biome.TropicalSeasonalForest or Biome.TropicalRainforest;
+        bool present = need switch
+        {
+            Affordance.None => true,
+            Affordance.Water => w.FishK[cell] > 0f || w.Flow[cell] > WorldGen.RiverFlow || IsCoastal(cell),
+            Affordance.Coast => IsCoastal(cell),
+            Affordance.Forest => forest,
+            Affordance.Rock => w.Elevation[cell] > 1200f || w.Fault[cell] > 0.35f || w.Biome[cell] is Biome.Alpine or Biome.ColdDesert or Biome.Volcanic,
+            Affordance.Ore => w.Fault[cell] > 0.3f,
+            Affordance.Clay => w.Flow[cell] > WorldGen.RiverFlow || w.Biome[cell] is Biome.Wetland,
+            Affordance.Sand => w.Biome[cell] is Biome.HotDesert or Biome.ColdDesert || IsCoastal(cell),
+            Affordance.Cold => w.TempMean[cell] - w.TempAmp[cell] < -2f,
+            Affordance.Hot => w.TempMean[cell] > 20f,
+            Affordance.Dry => w.Precip[cell] < 600f,
+            Affordance.Grass => w.Biome[cell] is Biome.TemperateGrassland or Biome.Savanna or Biome.Shrubland,
+            Affordance.Settled => band.Sedentary,
+            Affordance.Many => band.Members.Count >= 45 || band.Sedentary,
+            Affordance.Herds => BandKnows(band, TechId.Domestication),
+            Affordance.Spirit => band.MemePrevalence.Count > 0,
+            _ => true,
+        };
+        return present ? (need == Affordance.None ? 1f : 1.4f) : 0.12f;
+    }
+
     void Discover(Agent a, Band band, TechDef def)
     {
         a.Knows |= Techs.Bit(def.Id);
         Stats.Year.Inventions++;
+        if (def.Id == TechId.Domestication && band.Herds.Count == 0)
+        {
+            // The idea comes with the animals that gave it: a few young ones kept, and the dogs that hang about camp.
+            band.Herds[HerdSpecies(band.Cell)] = 3f;
+            band.Herds["dog"] = 2f;
+        }
         bool worldFirst = Chronicle.First("tech:" + def.Id);
         string tech = Techs.Name(def.Id).Replace('_', ' ');
 

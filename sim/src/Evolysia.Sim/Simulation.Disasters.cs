@@ -31,12 +31,12 @@ public sealed partial class Simulation
             if (flammable && t > 22f && wet < 0.7f && Rng.Chance(0.0007f * rate * (1.2f - wet)))
             {
                 w.PlantStock[c] *= 0.25f; w.PreyStock[c] *= 0.6f; w.Ash[c] = MathF.Min(1f, w.Ash[c] + 0.25f);
-                band.Shelter *= 0.5f; band.FoodPool *= 0.7f;
+                DamageStructures(c, w.Cells(0.6f), 0.6f, fire: true); band.Stores.Scale(0.7f);
                 Strike(band, "wildfire", Stimulus.Wildfire, 0.75f, 0.012f, DeathCause.Disaster);
             }
             if (w.Flow[c] > WorldGen.RiverFlow * 2f && wet > 1.35f && Rng.Chance(0.0015f * rate))
             {
-                band.FoodPool *= 0.5f; band.Shelter *= 0.4f;
+                band.Stores.Scale(0.5f); DamageStructures(c, w.Cells(0.4f), 0.5f, fire: false);
                 Strike(band, "flood", Stimulus.Flood, 0.65f, 0.01f, DeathCause.Accident);
             }
             if (season == Season.Winter && t < -12f && Rng.Chance(0.01f * rate))
@@ -48,7 +48,7 @@ public sealed partial class Simulation
                 Strike(band, "lightning strike", Stimulus.Lightning, 0.8f, 0f, DeathCause.Disaster, lightning: true);
             if (w.Fault[c] > 0.55f && Rng.Chance(0.00006f * rate * w.Fault[c]))
             {
-                band.Shelter *= 0.3f;
+                DamageStructures(c, w.Cells(0.6f), 0.7f, fire: false);
                 Strike(band, "earthquake", Stimulus.Earthquake, 0.85f, 0.02f, DeathCause.Disaster);
             }
             if (biome is Biome.Savanna or Biome.TemperateGrassland && season is Season.Summer or Season.Dry && Rng.Chance(0.0002f * rate))
@@ -86,7 +86,7 @@ public sealed partial class Simulation
     {
         var w = World;
         bool big = Rng.Chance(0.12f);
-        int radius = big ? 5 : 3;
+        int radius = w.Cells(big ? 5 : 3);
         for (int dy = -radius; dy <= radius; dy++)
             for (int dx = -radius; dx <= radius; dx++)
             {
@@ -94,8 +94,9 @@ public sealed partial class Simulation
                 if (y < 0 || y >= w.H) continue;
                 int c = w.Index(w.X(volcano) + dx, y);
                 int d = w.Distance(volcano, c);
-                w.Ash[c] = MathF.Min(1f, w.Ash[c] + (big ? 0.9f : 0.6f) / (1 + d));
-                w.PlantStock[c] *= 0.3f + 0.1f * d;
+                float od = d / w.Scale;   // distance in original cells
+                w.Ash[c] = MathF.Min(1f, w.Ash[c] + (big ? 0.9f : 0.6f) / (1 + od));
+                w.PlantStock[c] *= MathF.Min(1f, 0.3f + 0.1f * od);
             }
         if (big) _volcanicCooling += 1.4f;
         Stats.Year.Disasters++;
@@ -104,8 +105,8 @@ public sealed partial class Simulation
 
         foreach (var band in Bands.Values.ToArray())
         {
-            int d = w.Distance(volcano, band.Cell);
-            if (band.Disbanded || d > radius + 2) continue;
+            int d = (int)(w.Distance(volcano, band.Cell) / w.Scale);   // original cells
+            if (band.Disbanded || d > radius / w.Scale + 2) continue;
             if (d <= 1) Strike(band, "eruption", Stimulus.Eruption, 1f, d == 0 ? 0.35f : 0.1f, DeathCause.Disaster);
             else
                 foreach (int id in band.Members)

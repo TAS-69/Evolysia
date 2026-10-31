@@ -44,7 +44,8 @@ public static class Describe
         Activity.Forage => "gatherer", Activity.Hunt => "hunter", Activity.Fish => "fisher", Activity.Farm => "farmer",
         Activity.Herd => "herder", Activity.Craft => "crafter", Activity.Build => "builder", Activity.Ritual => "shaman",
         Activity.Teach => "teacher", Activity.Experiment => "tinkerer", Activity.Explore => "scout", Activity.CareChild => "caregiver",
-        Activity.Socialize => "storyteller", Activity.Court => "suitor", Activity.Mourn => "mourner", _ => "wanderer",
+        Activity.Socialize => "storyteller", Activity.Court => "suitor", Activity.Mourn => "mourner", Activity.Chop => "woodcutter",
+        Activity.Quarry => "quarrier", Activity.Mine => "miner", Activity.Gather => "gatherer", _ => "wanderer",
     };
 
     public static string AgentLink(Simulation sim, int id)
@@ -85,7 +86,22 @@ public static class Describe
         else if (b.Awe > 0.2f)
             sb.Append($"[color={Palette.Hex(Palette.Divine)}]They have begun to wonder who is watching ({b.Awe:0.0} awe).[/color]\n");
 
-        ulong known = 0; foreach (var a in members) known |= a.Knows;
+        // What they have built, keep and herd.
+        var built = b.Structures.Select(id => sim.Structures.GetValueOrDefault(id)).Where(s => s != null).Select(s => s!).ToList();
+        if (built.Count > 0)
+        {
+            var standing = built.Where(s => s.Standing).GroupBy(s => s.Kind.Id).OrderByDescending(g => g.Count())
+                .Select(g => g.Count() > 1 ? $"{g.Count()} {Title(g.Key)}s" : Title(g.Key));
+            var going = built.Where(s => !s.Standing).Select(s => Title(s.Kind.Id)).Distinct();
+            sb.Append($"\n[b]Built[/b]\n{string.Join(", ", standing)}\n");
+            if (going.Any()) sb.Append($"[color={Muted}]Going up: {string.Join(", ", going)}[/color]\n");
+        }
+        var held = b.Stores.Held().Where(h => h.qty >= 1f).OrderByDescending(h => h.qty * MathF.Max(0.3f, h.good.Food)).Take(14)
+            .Select(h => $"{Title(h.good.Id)} {h.qty:0}");
+        if (held.Any()) sb.Append($"\n[b]Stores[/b]\n{string.Join(", ", held)}\n");
+        if (b.Herds.Count > 0) sb.Append($"\n[b]Animals[/b]\n{string.Join(", ", b.Herds.Where(h => h.Value >= 1f).Select(h => $"{h.Value:0} {h.Key}"))}\n");
+
+        TechSet known = default; foreach (var a in members) known |= a.Knows;
         var techs = Techs.All.Where(t => Techs.Has(known, t.Id)).Select(t => Title(Techs.Name(t.Id)));
         sb.Append($"\n[b]Know-how[/b]\n{string.Join(", ", techs)}\n");
 
@@ -164,6 +180,8 @@ public static class Describe
 
         var techs = Techs.All.Where(t => Techs.Has(a.Knows, t.Id)).Select(t => Techs.Name(t.Id).Replace('_', ' '));
         sb.Append($"Knows {string.Join(", ", techs)}\n");
+        if (a.Gear.Count > 0)
+            sb.Append($"Owns {string.Join(", ", a.Gear.Select(i => $"{i.Kind.Id.Replace('_', ' ')}{(i.Wear > 0.7f ? " (worn)" : "")}"))}\n");
         var beliefs = a.Memes.Where(kv => kv.Value > 0.3f).OrderByDescending(kv => kv.Value).Take(5)
             .Select(kv => $"{Title(sim.Memes[kv.Key].Name)} [color={Muted}]{kv.Value * 100:0}%[/color]").ToList();
         if (beliefs.Count > 0) sb.Append("\n[b]Believes in[/b]\n" + string.Join("\n", beliefs) + "\n");

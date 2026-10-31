@@ -6,8 +6,8 @@ public sealed class SimConfig
     public ulong Seed = 42;
 
     // World
-    public int Width = 160;
-    public int Height = 80;
+    public int Width = 800;
+    public int Height = 400;
     public float LandFraction = 0.34f;
     public float AxialTiltDegrees = 23.5f;
 
@@ -16,11 +16,11 @@ public sealed class SimConfig
     public int EcologyStepDays = 5;
 
     // Starting population
-    public int StartBands = 4;
+    public int StartBands = 8;
     public int StartBandSize = 25;
 
     // Safety valve for headless runs: fertility falls off above this many living agents.
-    public int SoftMaxAgents = 20000;
+    public int SoftMaxAgents = 200000;
 
     // Worker threads for band days (results are identical for any value).
     public int Threads = Environment.ProcessorCount;
@@ -29,4 +29,6 @@ public sealed class SimConfig
     public float InventionRate = 1f;
     public float DisasterRate = 1f;
     public float PredatorDanger = 1f;
+    /// <summary>Food the land supports per area, relative to the original tuning (sets how crowded the planet gets).</summary>
+    public float CapacityScale = 1f;
 }

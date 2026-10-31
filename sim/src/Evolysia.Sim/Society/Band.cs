@@ -1,4 +1,5 @@
 using Evolysia.Sim.Core;
+using Evolysia.Sim.Economy;
 
 namespace Evolysia.Sim.Society;
 
@@ -13,8 +14,22 @@ public sealed class Band
     public int FoundedDay;
     public int ParentBandId = -1;
     public readonly List<int> Members = new();
-    public float FoodPool;
-    public float Shelter;            // 0..1 quality of dwellings
+    /// <summary>The band's stores: food and materials kept in its baskets, pits, granaries and chests.</summary>
+    public readonly Inventory Stores = new();
+    /// <summary>Person-days of food in the stores.</summary>
+    public float FoodPool => Stores.FoodValue;
+    public readonly List<int> Structures = new();                   // ids of what the band has built (or is building)
+    public readonly SortedDictionary<string, float> Herds = new();  // domestic species -> head
+    public readonly List<Item> Spares = new();                      // tools and clothes nobody is using
+    public float[] Targets = Array.Empty<float>();                  // per good: how much the band wants on hand
+    public float Shelter;            // 0..1: how well its dwellings house and warm everyone (from its structures)
+    public float ShelterWarmth;      // degrees of cold its dwellings keep off
+    public bool HasFire;             // the band has a hearth
+    public bool HasFireToday = true; // ... and wood to burn on it today
+    public bool HasColdStore;        // refrigerated storage slows spoiling
+    public float WaterBonus;         // wells and pumps: fresh water where there is little
+    public int BuildJobs;            // structures planned, going up or needing repair (refreshed each day)
+    public int StorageRoom;          // bulk its stores can hold before goods spill and spoil
     public float Stress;             // smoothed hunger/shortage; drives budding and migration
     public bool Sedentary;           // farming bands stop migrating
     public int LastMoveDay;

@@ -39,7 +39,12 @@ public sealed partial class Simulation
     public int Year => Day / SimConfig.DaysPerYear;
 
     public readonly Dictionary<int, Agent> Living = new();
+    /// <summary>The dead still remembered: everyone for 25 years, the notable for good (see PruneDead).</summary>
     public readonly Dictionary<int, Agent> Dead = new();
+    /// <summary>Every death, compactly: (id, day, age in years, cause, sex, generation).</summary>
+    public readonly List<(int Id, int Day, float Age, DeathCause Cause, Sex Sex, int Generation)> DeathLog = new();
+    /// <summary>Everyone who has ever lived.</summary>
+    public int EverLived => _nextAgent - 1;
     public readonly SortedDictionary<int, Band> Bands = new();
     public readonly Dictionary<int, Culture> Cultures = new();
     public readonly Dictionary<int, Meme> Memes = new();
@@ -85,7 +90,7 @@ public sealed partial class Simulation
 
         for (int b = 0; b < Config.StartBands; b++)
         {
-            int cell = b == 0 ? home : NearbyLand(home, 1 + b, 3 + b);
+            int cell = b == 0 ? home : NearbyLand(home, World.Cells(1 + b), World.Cells(3 + b));
             var band = NewBand(cell, culture.Id, -1);
             bool fire = Rng.Chance(0.6f);
             var adults = new List<Agent>();
@@ -93,7 +98,8 @@ public sealed partial class Simulation
             for (int k = 0; k < n * 0.65f; k++)
             {
                 var a = NewAgent(Genome.Random(Rng), band, birthDay: -Rng.Range(16, 50) * SimConfig.DaysPerYear - Rng.Next(360));
-                a.Knows = Techs.Bit(TechId.StoneTools) | (fire ? Techs.Bit(TechId.ControlledFire) : 0UL);
+                a.Knows = Techs.Bit(TechId.StoneTools) | (fire ? Techs.Bit(TechId.ControlledFire) : default);
+                a.Gear.Add(new Economy.Item(Economy.Crafts.Item(Economy.ItemSlot.Tool, "knife")!.Index));
                 adults.Add(a);
             }
             // Pair some adults and give them children.
@@ -163,13 +169,20 @@ public sealed partial class Simulation
         var a = new Agent
         {
             Id = _nextAgent++, Genome = g, Sex = Rng.Chance(0.5f) ? Sex.Female : Sex.Male, BirthDay = birthDay,
-            BandId = band.Id, CultureId = band.CultureId, Food = 3f,
+            BandId = band.Id, CultureId = band.CultureId,
         };
+        a.Pack.Add("roots", 4f);
         a.Name = Names.Make(Cultures[band.CultureId].Syllables, Rng);
         for (int d = 0; d < Ids.DomainCount; d++) a.Efficacy[d] = Rng.Range(0.15f, 0.45f);
         Living[a.Id] = a;
-        band.Members.Add(a.Id);
+        AddMember(band, a.Id);
         return a;
+    }
+
+    /// <summary>Lists someone as a member (once: a person living their day twice would be fed, aged and birthed twice).</summary>
+    internal static void AddMember(Band band, int id)
+    {
+        if (!band.Members.Contains(id)) band.Members.Add(id);
     }
 
     internal void Bond(Agent x, Agent y, int day)
@@ -224,12 +237,14 @@ public sealed partial class Simulation
     void BandDays()
     {
         var groups = Bands.Values.Where(b => !b.Disbanded).GroupBy(b => b.Cell).Select(g => g.ToArray()).ToArray();
+
         var buffers = new DayBuffer[groups.Length];
         ulong daySeed = Rng.Mix(Config.Seed ^ ((ulong)(uint)Day << 20));
         void Live(int gi)
         {
             var buffer = buffers[gi] = new DayBuffer();
             t_buffer = buffer;
+            t_taken ??= new Dictionary<long, float>();
             try
             {
                 foreach (var band in groups[gi])
@@ -237,8 +252,9 @@ public sealed partial class Simulation
                     t_rng = Rng.Derive(daySeed, (ulong)band.Id);
                     BandDay(band);
                 }
+                CommitTaken();
             }
-            finally { t_rng = null; t_buffer = null; }
+            finally { t_rng = null; t_buffer = null; t_taken?.Clear(); t_taken = null; }
         }
         if (Config.Threads <= 1 || groups.Length < 4)
             for (int gi = 0; gi < groups.Length; gi++) Live(gi);
@@ -269,6 +285,8 @@ public sealed partial class Simulation
 
     void NewYear()
     {
+        ClearRuins();
+        PruneDead();
         Ecology.NewYear(World, _climateNoise, Year);
         _volcanicCooling *= 0.55f;
         World.GlobalTempAnomaly = World.GlobalTempAnomaly * 0.7f + Rng.Normal(0f, 0.35f) - _volcanicCooling;
@@ -277,6 +295,24 @@ public sealed partial class Simulation
     }
 
     // ------------------------------------------------------------------ life and death
+
+    /// <summary>
+    /// Memory stays bounded however many generations pass: the ordinary dead are forgotten 25 years
+    /// on; leaders, the renowned and parents of the living are kept.
+    /// </summary>
+    void PruneDead()
+    {
+        int cutoff = Day - 25 * SimConfig.DaysPerYear;
+        var forget = new List<int>();
+        foreach (var (id, a) in Dead)
+        {
+            if (a.DeathDay > cutoff || a.Prestige > 2f) continue;
+            bool parent = false;
+            foreach (int c in a.Children) if (Living.ContainsKey(c)) { parent = true; break; }
+            if (!parent) forget.Add(id);
+        }
+        foreach (int id in forget) Dead.Remove(id);
+    }
 
     internal void Kill(Agent a, DeathCause cause, Stimulus? witnessedAs = null, string how = "")
     {
@@ -322,6 +358,15 @@ public sealed partial class Simulation
         {
             Living.Remove(a.Id);
             Dead[a.Id] = a;
+            DeathLog.Add((a.Id, a.DeathDay, (a.DeathDay - a.BirthDay) / (float)SimConfig.DaysPerYear, a.DeathCause, a.Sex, a.Generation));
+            // What they carried and owned goes to their people.
+            if (Bands.TryGetValue(a.BandId, out var heirs))
+            {
+                if (a.Food > 0f || a.Pack.Bulk > 0f) a.Pack.MoveAllTo(heirs.Stores);
+                foreach (var item in a.Gear) if (heirs.Spares.Count < 40) heirs.Spares.Add(item);
+            }
+            a.DropPack();
+            a.Gear.Clear();
             a.Relations.Clear();      // keep the archive light
             a.Memes.Clear();
             if (Bands.TryGetValue(a.BandId, out var band))
@@ -332,7 +377,7 @@ public sealed partial class Simulation
             }
         }
         _dying.Clear();
-        foreach (var c in _newborns) if (Bands.TryGetValue(c.BandId, out var b) && !b.Disbanded) b.Members.Add(c.Id);
+        foreach (var c in _newborns) if (Bands.TryGetValue(c.BandId, out var b) && !b.Disbanded) AddMember(b, c.Id);
         _newborns.Clear();
     }
 

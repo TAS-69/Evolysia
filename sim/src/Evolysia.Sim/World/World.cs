@@ -3,7 +3,8 @@ using Evolysia.Sim.Core;
 namespace Evolysia.Sim.World;
 
 /// <summary>
-/// The planet as a coarse grid (each cell is a region a band can live in). Stored as parallel
+/// The planet as a grid of tiles (800 x 400 by default; each cell is one art tile, a few minutes'
+/// walk across). A band camps on one cell and works the cells around it. Stored as parallel
 /// arrays for speed. x wraps around the planet; y runs from the north pole (0) to the south pole.
 /// </summary>
 public sealed class WorldMap
@@ -38,6 +39,13 @@ public sealed class WorldMap
     public readonly float[] RainBias;             // god-given rain (>1) or drought (<1); 1 = none
     public readonly int[] RainBiasUntil;          // day it ends
 
+    // Materials on the ground (dynamic): felled, quarried and dug by people.
+    public readonly float[] Trees, TreesK;        // standing timber, in logs (fire burns it, it regrows slowly)
+    public readonly float[] Rock, RockK;          // loose stone, boulders and outcrops, in stone units (doesn't regrow)
+    public readonly float[] Ore, OreK;            // a surface deposit, in ore units
+    public readonly ushort[] OreGood;             // which good the deposit yields (a Goods index; 0 = none)
+    public readonly int[] StructureAt;            // structure id standing on each cell (0 = none)
+
     public float GlobalTempAnomaly;
 
     public WorldMap(int w, int h, float axialTilt)
@@ -52,8 +60,17 @@ public sealed class WorldMap
         FishK = new float[n]; FishStock = new float[n]; Predators = new float[n]; PredatorBase = new float[n];
         Ash = new float[n]; YearRain = new float[n]; HumanPressure = new float[n];
         RainBias = new float[n]; RainBiasUntil = new int[n];
+        Trees = new float[n]; TreesK = new float[n]; Rock = new float[n]; RockK = new float[n];
+        Ore = new float[n]; OreK = new float[n]; OreGood = new ushort[n]; StructureAt = new int[n];
         for (int i = 0; i < n; i++) { YearRain[i] = 1f; RainBias[i] = 1f; }
     }
+
+    /// <summary>Cells per original (160-wide) cell along a side: 5 on the 800 x 400 planet.</summary>
+    public float Scale => W / 160f;
+    /// <summary>A cell's area relative to an original cell (1 / Scale^2).</summary>
+    public float CellArea => 1f / (Scale * Scale);
+    /// <summary>A distance written in original cells, in this world's cells (at least 1).</summary>
+    public int Cells(float original) => Math.Max(1, (int)MathF.Round(original * Scale));
 
     public int Count => W * H;
     public int Index(int x, int y) => y * W + Wrap(x);

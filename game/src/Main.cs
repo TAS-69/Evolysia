@@ -50,7 +50,7 @@ public partial class Main : Node2D
         AddChild(_host = new SimHost());
         AddChild(_view = new WorldView());
         AddChild(_tiles = new TileView());
-        AddChild(_bands = new BandLayer());
+        AddChild(_bands = new BandLayer { Tiles = _tiles });
         AddChild(_target = new TargetOverlay());
         AddChild(_camera = new CameraRig());
         AddChild(_hud = new Hud());
@@ -149,7 +149,7 @@ public partial class Main : Node2D
         if (_mapDirty || (sim.Day - _lastMapDay >= 5 && _mapTimer <= 0) || sim.Day < _lastMapDay)
         {
             _view.Redraw(sim);
-            _tiles.Redraw(sim, _view.Overlay, Settlements.BakeInput(sim));
+            _tiles.Redraw(sim, _view.Overlay);
             _lastMapDay = sim.Day;
             _mapDirty = false;
             _mapTimer = 0.33;
@@ -206,7 +206,7 @@ public partial class Main : Node2D
         string[] seasons = { "spring", "summer", "autumn", "winter" };
         _hud.Date.Text = $"Year {year}, {seasons[doy / 90]} (day {doy + 1})";
         int cultures = sim.Bands.Values.Select(b => b.CultureId).Distinct().Count();
-        ulong known = 0; foreach (var a in sim.Living.Values) known |= a.Knows;
+        TechSet known = default; foreach (var a in sim.Living.Values) known |= a.Knows;
         _hud.Stats.Text = sim.Living.Count == 0 ? "Humanity is gone."
             : $"{sim.Living.Count} people · {sim.Bands.Count} bands · {cultures} culture{(cultures == 1 ? "" : "s")} · {Evolysia.Sim.Agents.Techs.CountKnown(known)} techniques";
         _hud.Perf.Text = _host.Paused ? "paused" : $"{_host.MsPerDay:0.0} ms/day";
@@ -430,12 +430,17 @@ public partial class Main : Node2D
     {
         var sim = _host.Sim!;
         if (_sel != Selection.Band || !sim.Bands.TryGetValue(_selId, out var band)) return;
-        ulong all = 0;
-        foreach (var t in Enum.GetValues<TechId>()) if (t is not (TechId.Copper or TechId.Bronze)) all |= Techs.Bit(t);
+        // Everything up to iron and the first cities; then two years for them to build with it.
+        TechSet all = default;
+        foreach (var t in Techs.All)
+            if (t.Stage is "foraging" or "stonecraft" or "agriculture" or "metallurgy") all |= Techs.Bit(t.Id);
         foreach (int id in band.Members) if (sim.Living.TryGetValue(id, out var a)) a.Knows |= all;
         band.Sedentary = true;
-        band.FoodPool = band.Members.Count * 20f;
-        _tiles.Redraw(sim, _view.Overlay, Settlements.BakeInput(sim));
+        foreach (var (good, qty) in new[] { ("log", 60f), ("wood", 60f), ("fiber", 60f), ("stone", 40f), ("clay", 30f), ("reed", 30f), ("hide", 20f), ("rope", 10f), ("grain", 200f) })
+            band.Stores.Add(good, qty);
+        band.Herds["sheep"] = 8f; band.Herds["dog"] = 2f; band.Herds["fowl"] = 6f;
+        _host.FastForward(2 * Evolysia.Sim.SimConfig.DaysPerYear);
+        _tiles.Redraw(sim, _view.Overlay);
         _mapDirty = true;
     }
 

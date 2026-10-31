@@ -39,13 +39,14 @@ public static class Powers
         _ => 0.4f,
     };
 
-    public static int DefaultRadius(Power p) => p switch
+    /// <summary>A power's reach in cells; <paramref name="scale"/> is the world's cells per original cell.</summary>
+    public static int DefaultRadius(Power p, float scale = 1f) => (int)MathF.Round(scale * p switch
     {
         Power.Rain or Power.Drought => 3,
         Power.Meteor or Power.Earthquake or Power.Beasts or Power.Game => 2,
         Power.Bless or Power.Fertility or Power.Heal or Power.Flood or Power.Wildfire or Power.Blizzard => 1,
         _ => 0,
-    };
+    });
 
     public static bool Answers(Power p, PrayerNeed need) => need switch
     {

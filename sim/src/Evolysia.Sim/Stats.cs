@@ -67,11 +67,11 @@ public sealed class Stats
                 for (int c = 0; c < Ids.CategoryCount; c++)
                     r.CategoryFearMean[c] = adults.Average(a => a.CategoryFear[c]);
             }
-            ulong world = 0;
+            TechSet world = default;
             float perBand = 0f;
             foreach (var b in sim.Bands.Values)
             {
-                ulong k = 0;
+                TechSet k = default;
                 foreach (int id in b.Members) if (sim.Living.TryGetValue(id, out var a)) k |= a.Knows;
                 world |= k;
                 perBand += Techs.CountKnown(k);

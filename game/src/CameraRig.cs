@@ -6,7 +6,7 @@ namespace Evolysia.Game;
 public partial class CameraRig : Camera2D
 {
     public Vector2 WorldSize;
-    public const float MinZoom = 0.7f, MaxZoom = 16f;   // at 0.7 the view stays within the three drawn copies
+    public const float MinZoom = 0.2f, MaxZoom = 16f;   // at 0.2 the whole planet fits; the view stays within the three drawn copies
     bool _dragging;
 
     public event Action? Changed;

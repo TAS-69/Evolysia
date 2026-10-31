@@ -7,8 +7,8 @@ namespace Evolysia.Game;
 
 /// <summary>
 /// The planet in Codex's tile art, drawn over the procedural <see cref="WorldView"/> when zoomed
-/// in. Three density levels share one layout: the whole planet baked at 16 px per cell, and, as
-/// the camera closes in, 32 and 64 px chunks baked in the background around the view
+/// in. Three density levels share one layout, each baked in the background as 512 px chunks
+/// around the view: 16 px per cell, then, as the camera closes in, 32 and 64 px
 /// (render_contract.json: up to 24 screen px per cell -> 16, up to 48 -> 32, beyond -> 64). Each
 /// level fades in over the one below, which stays visible until the finer chunks are ready. The
 /// art is baked to slot indices (<see cref="TileBake"/>); every redraw only refreshes small
@@ -16,7 +16,8 @@ namespace Evolysia.Game;
 /// </summary>
 public partial class TileView : Node2D
 {
-    const int ChunkCells = 16;
+    /// <summary>Cells per chunk side at a density: every chunk is 512 px square.</summary>
+    static int ChunkCells(int density) => 512 / density;
     static readonly string[] Animated = { "deep_water", "water", "shallow_water", "lava" };   // cell_c.b kinds 1..4
 
     WorldMap? _world;
@@ -26,14 +27,13 @@ public partial class TileView : Node2D
     byte[] _a = Array.Empty<byte>(), _b = Array.Empty<byte>(), _c = Array.Empty<byte>();
     byte[] _kind = Array.Empty<byte>();     // per cell: animated material kind
     int[] _rows = Array.Empty<int>();       // per biome x season: lut_nature row
-    long _bakedSignature;
-    int _bakedDay = int.MinValue / 2, _version;
+    int _inputDay = int.MinValue / 2;
     bool _desaturate;
     float _zoom = 1f;
     Vector2 _viewCentre, _viewSize;
     readonly Level[] _levels = new Level[3];
 
-    /// <summary>One density: its shared shader inputs and its baked pieces (the whole planet at 16 px, chunks above).</summary>
+    /// <summary>One density: its shared shader inputs and its baked chunks.</summary>
     sealed class Level
     {
         public int D;
@@ -45,15 +45,27 @@ public partial class TileView : Node2D
 
     sealed class Chunk
     {
-        public int Cx, Cy, Cw, Ch, Version = -1, Pending = -1;
+        public int Cx, Cy, Cw, Ch;
+        public bool Baked, Stale;       // has a texture; its patch of world has changed since
+        public long Signature;          // of its patch of world when last baked
         public Sprite2D? Sprite;
         public ShaderMaterial? Material;
-        public ImageTexture? Texture;
-        public Task<byte[]>? Task;
+        public ImageTexture? Texture, Roots;
+        public Task<TileBake.Baked>? Task;
         public ulong LastSeen;
     }
 
     public bool Active => _world != null && Art.Available;
+    /// <summary>What the current bake was made from (plants and fields), for drawing plants as sprites.</summary>
+    public TileBake.Input? Input => _input;
+
+    /// <summary>A cell's nature LUT rows and blend today, and whether it is off season (as the shader sees it).</summary>
+    public (int rowA, int rowB, float blend, bool off) SeasonOf(int cell)
+    {
+        if (_a.Length <= cell * 4) return (Art.ReferenceRow, Art.ReferenceRow, 0f, false);
+        int o = cell * 4;
+        return (_a[o], _a[o + 1], _a[o + 2] / 255f, (_c[o + 1] & 1) != 0);
+    }
     /// <summary>Chunks under the view are still baking.</summary>
     public bool Busy { get; private set; }
     /// <summary>The density currently drawn on top (16 when no finer chunks are showing).</summary>
@@ -72,19 +84,8 @@ public partial class TileView : Node2D
         (_cellC, _texC, _c) = CellTexture(world);
         _lut = ImageTexture.CreateFromImage(Art.Nature.Image);
         for (int k = 0; k < 3; k++) _levels[k] = NewLevel(Art.Densities[k]);
-        _version = 0;
         RefreshKinds();
-        _bakedSignature = Signature();
 
-        // The 16 px level is the whole planet, baked now; it wraps east-west with a copy each side.
-        var whole = new Chunk { Cx = 0, Cy = 0, Cw = world.W, Ch = world.H };
-        _levels[0].Chunks[(0, 0)] = whole;
-        var started = Time.GetTicksMsec();
-        Finish(_levels[0], whole, TileBake.Bake(input, 16, 0, 0, world.W, world.H), 0);
-        GD.Print($"[tiles] baked {world.W}x{world.H} cells at 16 px in {Time.GetTicksMsec() - started} ms");
-        int width = world.W * Main.CellPx;
-        foreach (int side in new[] { -1, 1 })
-            whole.Sprite!.AddChild(new Sprite2D { Texture = whole.Texture, Centered = false, Position = new Vector2(side * width, 0) / whole.Sprite.Scale, UseParentMaterial = true });
     }
 
     Level NewLevel(int d)
@@ -118,12 +119,17 @@ public partial class TileView : Node2D
     }
 
     /// <summary>Puts a finished bake on screen: the chunk's sprite, texture and shader inputs.</summary>
-    void Finish(Level level, Chunk chunk, byte[] px, int version)
+    void Finish(Level level, Chunk chunk, TileBake.Baked baked)
     {
         int d = level.D;
-        var image = Image.CreateFromData(chunk.Cw * d, chunk.Ch * d, false, Image.Format.Rgba8, px);
-        if (chunk.Texture == null || chunk.Texture.GetWidth() != image.GetWidth()) chunk.Texture = ImageTexture.CreateFromImage(image);
-        else chunk.Texture.Update(image);
+        var image = Image.CreateFromData(chunk.Cw * d, chunk.Ch * d, false, Image.Format.Rgba8, baked.Px);
+        var roots = Image.CreateFromData(chunk.Cw * d, chunk.Ch * d, false, Image.Format.Rg8, baked.Anchor);
+        if (chunk.Texture == null || chunk.Texture.GetWidth() != image.GetWidth())
+        {
+            chunk.Texture = ImageTexture.CreateFromImage(image);
+            chunk.Roots = ImageTexture.CreateFromImage(roots);
+        }
+        else { chunk.Texture.Update(image); chunk.Roots!.Update(roots); }
         if (chunk.Sprite == null)
         {
             chunk.Material = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/tiles.gdshader") };
@@ -145,13 +151,14 @@ public partial class TileView : Node2D
             m.SetShaderParameter("tile", d);
             m.SetShaderParameter("origin", new Vector2I(chunk.Cx, chunk.Cy));
             m.SetShaderParameter("cells", new Vector2I(_world!.W, _world.H));
-            m.SetShaderParameter("wrap", chunk.Cw == _world.W);
+            m.SetShaderParameter("wrap", false);
             m.SetShaderParameter("fade", level.Fade);
             m.SetShaderParameter("desaturate", _desaturate);
         }
         chunk.Sprite.Texture = chunk.Texture;
         chunk.Material!.SetShaderParameter("world", chunk.Texture);
-        chunk.Version = version;
+        chunk.Material.SetShaderParameter("roots", chunk.Roots!);
+        chunk.Baked = true;
         foreach (var copy in chunk.Sprite.GetChildren().OfType<Sprite2D>()) copy.Texture = chunk.Texture;
     }
 
@@ -178,30 +185,31 @@ public partial class TileView : Node2D
             var level = _levels[k];
             bool wanted = level.Fade > 0f && Visible;
             bool complete = true;
-            if (k > 0 && wanted) complete = UpdateChunks(level, now);
+            if (wanted) complete = UpdateChunks(level, now);
             busy |= !complete;
             foreach (var chunk in level.Chunks.Values)
             {
                 if (chunk.Sprite == null) continue;
-                bool show = wanted && !coveredAbove && (k == 0 || chunk.LastSeen + 500 > now);
+                bool show = wanted && !coveredAbove && chunk.LastSeen + 500 > now;
                 chunk.Sprite.Visible = show;
                 if (show) chunk.Material!.SetShaderParameter("fade", level.Fade);
             }
             // A finer level that is fully faded in and fully baked hides the coarser ones (saves fill).
-            if (wanted && level.Fade >= 1f && complete && k > 0) coveredAbove = true;
+            if (wanted && level.Fade >= 1f && complete) coveredAbove = true;
         }
-        Busy = busy || _levels[0].Chunks[(0, 0)].Task != null;
+        Busy = busy;
     }
 
     /// <summary>Keeps the chunks under the view baked (nearest first, a few at a time in the background).</summary>
     bool UpdateChunks(Level level, ulong now)
     {
         var w = _world!;
-        int chunksX = (w.W + ChunkCells - 1) / ChunkCells, chunksY = (w.H + ChunkCells - 1) / ChunkCells;
+        int size = ChunkCells(level.D);
+        int chunksX = (w.W + size - 1) / size, chunksY = (w.H + size - 1) / size;
         float cell = Main.CellPx;
         var half = _viewSize / 2f + Vector2.One * cell;
-        int ux0 = (int)MathF.Floor((_viewCentre.X - half.X) / cell / ChunkCells), ux1 = (int)MathF.Floor((_viewCentre.X + half.X) / cell / ChunkCells);
-        int uy0 = Math.Max(0, (int)MathF.Floor((_viewCentre.Y - half.Y) / cell / ChunkCells)), uy1 = Math.Min(chunksY - 1, (int)MathF.Floor((_viewCentre.Y + half.Y) / cell / ChunkCells));
+        int ux0 = (int)MathF.Floor((_viewCentre.X - half.X) / cell / size), ux1 = (int)MathF.Floor((_viewCentre.X + half.X) / cell / size);
+        int uy0 = Math.Max(0, (int)MathF.Floor((_viewCentre.Y - half.Y) / cell / size)), uy1 = Math.Min(chunksY - 1, (int)MathF.Floor((_viewCentre.Y + half.Y) / cell / size));
         bool complete = true;
         var needed = new List<(Chunk chunk, float distance)>();
         for (int uy = uy0; uy <= uy1; uy++)
@@ -209,13 +217,13 @@ public partial class TileView : Node2D
             {
                 int kx = ((ux % chunksX) + chunksX) % chunksX;
                 if (!level.Chunks.TryGetValue((kx, uy), out var chunk))
-                    level.Chunks[(kx, uy)] = chunk = new Chunk { Cx = kx * ChunkCells, Cy = uy * ChunkCells, Cw = Math.Min(ChunkCells, w.W - kx * ChunkCells), Ch = Math.Min(ChunkCells, w.H - uy * ChunkCells) };
+                    level.Chunks[(kx, uy)] = chunk = new Chunk { Cx = kx * size, Cy = uy * size, Cw = Math.Min(size, w.W - kx * size), Ch = Math.Min(size, w.H - uy * size) };
                 chunk.LastSeen = now;
-                if (chunk.Sprite != null) chunk.Sprite.Position = new Vector2(ux * ChunkCells, uy * ChunkCells) * cell;
-                if (chunk.Version != _version) complete = false;
-                if (chunk.Version != _version && chunk.Task == null)
+                if (chunk.Sprite != null) chunk.Sprite.Position = new Vector2(ux * size, uy * size) * cell;
+                if (!chunk.Baked || chunk.Stale) complete = false;
+                if ((!chunk.Baked || chunk.Stale) && chunk.Task == null)
                 {
-                    var centre = (new Vector2(ux, uy) + Vector2.One * 0.5f) * ChunkCells * cell;
+                    var centre = (new Vector2(ux, uy) + Vector2.One * 0.5f) * size * cell;
                     needed.Add((chunk, centre.DistanceSquaredTo(_viewCentre)));
                 }
             }
@@ -226,7 +234,7 @@ public partial class TileView : Node2D
             if (chunk.Task == null) continue;
             if (chunk.Task.IsCompleted)
             {
-                if (chunk.Task.IsCompletedSuccessfully) Finish(level, chunk, chunk.Task.Result, chunk.Pending);
+                if (chunk.Task.IsCompletedSuccessfully) Finish(level, chunk, chunk.Task.Result);
                 else GD.PrintErr($"[tiles] chunk bake failed: {chunk.Task.Exception?.GetBaseException().Message}");
                 chunk.Task = null;
             }
@@ -234,10 +242,11 @@ public partial class TileView : Node2D
         }
         foreach (var (chunk, _) in needed.OrderBy(n => n.distance))
         {
-            if (running >= 3) break;
+            if (running >= 4) break;
             var input = _input!;
             int d = level.D, cx = chunk.Cx, cy = chunk.Cy, cw = chunk.Cw, ch = chunk.Ch;
-            chunk.Pending = _version;
+            chunk.Signature = ChunkSignature(chunk, input);
+            chunk.Stale = false;
             chunk.Task = Task.Run(() => TileBake.Bake(input, d, cx, cy, cw, ch));
             running++;
         }
@@ -248,7 +257,7 @@ public partial class TileView : Node2D
     /// <summary>Frees the chunks seen longest ago once a level holds more than it needs.</summary>
     static void Evict(Level level, ulong now)
     {
-        int keep = level.D >= 64 ? 24 : 40;
+        int keep = 72;   // 512 px chunks: about 110 MB at most per level
         if (level.Chunks.Count <= keep) return;
         foreach (var (key, chunk) in level.Chunks.Where(c => c.Value.Task == null && c.Value.LastSeen + 2000 < now)
                                                  .OrderBy(c => c.Value.LastSeen).Take(level.Chunks.Count - keep).ToList())
@@ -258,35 +267,23 @@ public partial class TileView : Node2D
         }
     }
 
-    public void Redraw(Simulation sim, Overlay overlay, TileBake.Input input)
+    public void Redraw(Simulation sim, Overlay overlay)
     {
         if (!Active || _world == null) return;
         Visible = overlay is Overlay.Biome or Overlay.Cultures;
         if (!Visible) return;
         var w = _world;
         int day = sim.Day;
-        // Eruptions, fires and new fields change the ground: rebake, at most monthly.
-        if (day - _bakedDay >= 30)
+        // People fell, quarry, build and farm; eruptions burn. Every fortnight, the chunks whose patch
+        // of world has changed rebake as they come into view.
+        if (day - _inputDay >= 15 || day < _inputDay)
         {
-            _input = input;
-            long signature = Signature();
-            if (signature != _bakedSignature)
-            {
-                _bakedSignature = signature;
-                _bakedDay = day;
-                _version++;
-                RefreshKinds();
-                var whole = _levels[0].Chunks[(0, 0)];
-                int v = _version;
-                whole.Pending = v;
-                whole.Task ??= Task.Run(() => TileBake.Bake(input, 16, 0, 0, w.W, w.H));
-            }
-        }
-        var wholeChunk = _levels[0].Chunks[(0, 0)];
-        if (wholeChunk.Task is { IsCompleted: true } done)
-        {
-            if (done.IsCompletedSuccessfully) Finish(_levels[0], wholeChunk, done.Result, wholeChunk.Pending);
-            wholeChunk.Task = null;
+            _inputDay = day;
+            _input = Settlements.BakeInput(sim);
+            RefreshKinds();
+            foreach (var level in _levels)
+                foreach (var chunk in level.Chunks.Values)
+                    if (chunk.Baked && !chunk.Stale && ChunkSignature(chunk, _input) != chunk.Signature) chunk.Stale = true;
         }
 
         var territory = overlay == Overlay.Cultures ? WorldView.Territory(sim) : null;
@@ -349,14 +346,23 @@ public partial class TileView : Node2D
         for (int i = 0; i < w.Count; i++) _kind[i] = (byte)(Array.IndexOf(Animated, TileBake.Material(_input!, i)) + 1);
     }
 
-    /// <summary>What forces a rebake: volcanoes, ash and burns, and farmed fields.</summary>
-    long Signature()
+    /// <summary>
+    /// A chunk's patch of world as the art sees it (with a margin: trees reach in from the cells
+    /// around): ash and burns, timber and stone left (coarsely), what is built, and each field's crop stage.
+    /// </summary>
+    static long ChunkSignature(Chunk chunk, TileBake.Input input)
     {
-        var w = _world!;
-        long s = 0;
-        for (int i = 0; i < w.Count; i++)
-            if (w.Volcano[i] || (w.IsLand(i) && w.Ash[i] > 0.25f)) s = s * 31 + i + (w.Ash[i] > 0.3f ? 7 : 0);
-        foreach (var (cell, crop) in _input!.Fields.OrderBy(f => f.Key)) s = s * 37 + cell * 5 + crop.Length;
+        var w = input.World;
+        long s = 17;
+        for (int y = Math.Max(0, chunk.Cy - 1); y < Math.Min(w.H, chunk.Cy + chunk.Ch + 3); y++)
+            for (int x = chunk.Cx - 2; x < chunk.Cx + chunk.Cw + 2; x++)
+            {
+                int i = w.Index(x, y);
+                long v = (long)(input.Trees[i] >> 5) + ((long)(input.Rocks[i] >> 5) << 3) + (w.Ash[i] > 0.25f ? 1L << 6 : 0L) + (w.Ash[i] > 0.3f ? 1L << 7 : 0L)
+                         + (input.Occupied.Contains(i) ? 1L << 8 : 0L);
+                if (input.Fields.TryGetValue(i, out var f)) v += ((long)(f.growth <= 0.01f ? 1 : f.growth < 0.3f ? 2 : f.growth < 0.8f ? 3 : 4) << 9) + ((long)f.crop.Length << 12);
+                s = s * 1000003 + v;
+            }
         return s;
     }
 

@@ -66,13 +66,27 @@ Console.WriteLine("Time by phase: " + string.Join(", ", sim.Profile.OrderByDesce
 var settled = sim.Bands.Values.Select(b => sim.World.Landmass[b.Cell]).Distinct().Count();
 Console.WriteLine($"Settled landmasses: {settled}; voyages: {sim.Stats.History.Sum(r => r.Voyages)} " +
                   $"({sim.Stats.History.Sum(r => r.LostAtSea)} lost at sea); shores sighted: {sim.Stats.History.Sum(r => r.ShoresSighted)}.");
-Console.WriteLine($"Done: {sim.Year} years in {sw.Elapsed.TotalSeconds:0.0}s. Population {sim.Living.Count}, ever lived {sim.Living.Count + sim.Dead.Count}.");
+Console.WriteLine($"Done: {sim.Year} years in {sw.Elapsed.TotalSeconds:0.0}s. Population {sim.Living.Count}, ever lived {sim.EverLived}. " +
+                  $"Peak memory {System.Diagnostics.Process.GetCurrentProcess().PeakWorkingSet64 / 1_000_000} MB.");
+// The built world and the economy at the end.
+Console.WriteLine("Structures: " + string.Join(", ", sim.Structures.Values.GroupBy(s => $"{s.Kind.Id}/{s.State}").OrderByDescending(g => g.Count()).Take(30).Select(g => $"{g.Key} {g.Count()}")));
+var stores = new Evolysia.Sim.Economy.Inventory();
+foreach (var b in sim.Bands.Values) foreach (var (g, q) in b.Stores.Held()) stores.Add(g.Index, q);
+Console.WriteLine("Stores: " + string.Join(", ", stores.Held().OrderByDescending(h => h.qty).Take(25).Select(h => $"{h.good.Id} {h.qty:0}")));
+Console.WriteLine("Gear: " + string.Join(", ", sim.Living.Values.SelectMany(a => a.Gear).GroupBy(i => i.Kind.Id).OrderByDescending(g => g.Count()).Take(25).Select(g => $"{g.Key} {g.Count()}")));
+foreach (var b in sim.Bands.Values.OrderByDescending(b => b.Members.Count).Take(3))
+{
+    var built = b.Structures.Select(id => sim.Structures[id]).GroupBy(s => $"{s.Kind.Id}/{s.State}").Select(g => $"{g.Key} {g.Count()}");
+    var known = default(TechSet); foreach (int id in b.Members) if (sim.Living.TryGetValue(id, out var m)) known |= m.Knows;
+    Console.WriteLine($"Band {b.Name}: {b.Members.Count} people, {(b.Sedentary ? "village" : "wandering")}, food {b.FoodPool:0}, shelter {b.Shelter:0.00}, " +
+                      $"{known.Count} techniques; built: {string.Join(", ", built)}");
+}
+Console.WriteLine("Herds: " + string.Join(", ", sim.Bands.Values.SelectMany(b => b.Herds).GroupBy(h => h.Key).Select(g => $"{g.Key} {g.Sum(h => h.Value):0}")));
 
 WriteStats(sim, Path.Combine(outDir, "stats_yearly.csv"));
 WriteAgents(sim, Path.Combine(outDir, "agents_end.csv"));
 File.WriteAllLines(Path.Combine(outDir, "deaths.csv"), new[] { "id,year,age,cause,sex,generation" }.Concat(
-    sim.Dead.Values.OrderBy(a => a.DeathDay).Select(a =>
-        $"{a.Id},{a.DeathDay / SimConfig.DaysPerYear},{(a.DeathDay - a.BirthDay) / (float)SimConfig.DaysPerYear:0.0},{Ids.Snake(a.DeathCause)},{a.Sex},{a.Generation}")));
+    sim.DeathLog.Select(d => $"{d.Id},{d.Day / SimConfig.DaysPerYear},{d.Age:0.0},{Ids.Snake(d.Cause)},{d.Sex},{d.Generation}")));
 WriteChronicle(sim, Path.Combine(outDir, "chronicle.md"), startTraits);
 WriteMoments(sim, Path.Combine(outDir, "llm_moments.jsonl"));
 WriteMaps(sim, Path.Combine(outDir, "end"));
@@ -281,7 +295,7 @@ static void WriteChronicle(Simulation sim, string path, float[][] startTraits)
         var last = h[^1];
         int peak = h.Max(r => r.Population);
         sb.AppendLine($"{h.Count} years. Population {h[0].Population} -> {last.Population} (peak {peak}). " +
-                      $"{sim.Living.Count + sim.Dead.Count} people lived. Bands: {last.Bands}, cultures alive: {last.Cultures}, " +
+                      $"{sim.EverLived} people lived. Bands: {last.Bands}, cultures alive: {last.Cultures}, " +
                       $"cultures ever: {sim.Cultures.Count}, memes: {sim.Memes.Count}, techniques known: {last.TechsKnownWorld}/{Techs.Count}.").AppendLine();
         sb.AppendLine("## Population").AppendLine().AppendLine("```").AppendLine(Spark(h.Select(r => (float)r.Population).ToArray())).AppendLine("```").AppendLine();
 

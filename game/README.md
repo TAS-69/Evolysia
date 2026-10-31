@@ -1,9 +1,11 @@
 # Evolysia game client (step 3)
 
 A Godot 4.7 **.NET** project that hosts the simulation from `../sim` and lets you watch and inspect the
-world. Zoomed in, it draws the Codex 16 px art from `../assets` (terrain, rivers, flora, structures, people);
-zoomed out, and for the data overlays, it shows a smooth procedural map. The 32 and 64 px art densities Codex is
-still working on are not used yet.
+world (800 x 400 cells). Zoomed in, it draws Codex's art from `../assets` at the density the zoom calls for:
+16 px per cell, then 32 and 64 px as you close in (civilisation `render_contract.json`: up to 24 screen px per cell,
+up to 48, beyond). Everything shown comes from the simulation: the woods people have felled, the boulders they've
+broken, their fields and crops, every structure they've built, their animals, and each person's own clothes and
+tools. Zoomed out, and for the data overlays, it shows a smooth procedural map.
 
 ## Run it
 The .NET build of Godot is in the repo root (`Godot_v4.7.2-stable_mono_win64`). The standard build next to it can't run C#.
@@ -22,7 +24,8 @@ Options after `--`:
 | `--days N` | fast-forward N days before showing (e.g. `54000` = 150 years) |
 | `--overlay Biome\|Elevation\|Temperature\|Rainfall\|Food\|Cultures` | starting map overlay |
 | `--select band\|agent` | open the inspector on the largest band, or on its most eventful adult |
-| `--zoom Z` | camera zoom (0.7-10; the tile art fades in from 1.1 to 1.6, camps appear from 1.8) |
+| `--zoom Z` | camera zoom (0.2-16; tile art fades in from 1.1, camps appear from 1.8, 32 px art from 3, 64 px from 6) |
+| `--demo village` | (screenshots) the selected band settles with iron-age know-how and two years to build |
 | `--focus x,y` | centre the camera on a cell |
 | `--screenshot path.png` | capture after start-up, then quit (used for automated checks) |
 
@@ -34,15 +37,15 @@ Links in the chronicle and inspector jump to that band or person.
 ## What's on screen
 The planet **wraps east-west**, as the simulation does: pan forever in either direction and the far coasts and sea routes continue seamlessly. Terrain, markers, routes and effects are drawn on three copies, and the camera folds back into one planet-width, so the jump is invisible.
 
-- **Planet, zoomed in:** Codex's 16 px tiles. Each cell's biome picks a terrain material, blended with its neighbours on a dual grid (art guide section 3.1). Rivers use the connection sets, sized by flow, and plants are scattered by biome. Colours come from the nature LUT for each cell's biome and season, easing into the next season. Deciduous trees go bare in winter, acacias in the dry season, and conifers in cold places carry snow. Snow and sea ice follow real temperature; ash and burned trees follow eruptions.
+- **Planet, zoomed in:** Codex's landscape tiles at 16, 32 or 64 px, baked in 512 px chunks in the background around the view (a chunk rebakes when its patch of world changes). Each cell's biome, soil patch and shore pick one of 56 materials, blended on a dual grid. Water and lava animate. Rivers use the connection sets, sized by flow. Plants are scattered by biome (flora family at 16 px, civilisation detail art above) and coloured from the cell they stand on, through the nature LUT for its biome and season. Felled trees, quarried boulders and built-on cells show as gaps; fields show their crop and growth. Plants rooted in front of a person, animal or building are drawn over it.
 - **Planet, zoomed out:** colour comes from biome, today's plant growth and the season, plus hillshading, rivers and ash. Coastlines are smoothed from interpolated elevation.
-- **Bands, zoomed in:** each band's camp. Shelters follow what the band knows (windbreak, lean-to, hide tent, or pit houses for villages), plus a lit fire pit and a storage pit or granary. A few of its actual people stand round the fire. Their skin and hair come from their genes, elders are grey, and hair styles lean by culture. Clothing comes from know-how (hide, furs where it's cold, woven and dyed in culture colours).
+- **Bands, zoomed in:** every structure the simulation has sited, drawn by kind and state: dwellings composited from regional wall, floor and roof pieces (with scaffolding while they go up, damage, ruins and burns after); hearths that burn while there is firewood; stores showing what the band holds; workshops, shrines, pens, palisades that join up, boats and carts. The selected village, at 64 px, shows its houses roofless. Every member walks between home and the tile they work today, in the wardrobe pieces they own, holding the tool they use, animated by what they are doing. Herds graze round their pens; wild animals keep their distance.
 - **Bands, zoomed out:** circles are wandering bands, squares are farming villages. Colour is culture, size is population, and sick bands turn yellow-green.
 - **Both:** notable events flash as rings. Names are drawn crisply in screen space without overlapping.
 - **Sea routes:** dashed arcs. Recent voyages are bright and older ones fade into a map of where people went. Lost voyages are red and end at sea with an ×, and first landings are ringed in gold. Select a band to see the shores its scouts have sighted across the water.
 - **Chronicle:** the simulation's notable events, newest first, colour-coded by category (the same 8 categories as the art guide's icons).
 - **Inspector:**
-  - *Bands:* culture, leader, food and shelter, know-how, beliefs and how widely they're held, neighbours, members.
+  - *Bands:* culture, leader, food and shelter, what they've built (and what's going up), their stores and animals, know-how, beliefs and how widely they're held, neighbours, members.
   - *People:* temperament and character now, with how far life has moved each trait from birth; feelings, needs, fears, and fears they've faced down; confidence, and domains they gave up after being shamed; beliefs, relationships and grudges, family links, life memories.
   - *Land:* climate, water, food stocks, hazards.
 
@@ -88,9 +91,13 @@ A local model voices notable moments: pivots after rejection, myths, inventions,
 | `SimHost.cs` | owns `Simulation`; steps days on the main thread within a 20 ms/frame budget |
 | `WorldView.cs` | procedural planet texture and overlays (zoomed out) |
 | `Art.cs` | reads `../assets`: sidecar JSON, reference PNGs, slot-index maps, LUTs |
-| `TileBake.cs`, `TileView.cs`, `shaders/tiles.gdshader` | the planet in tile art: baked once to palette-slot indices, coloured per cell (season, snow, shade, culture tint) by the shader |
-| `Figures.cs` | composites layered people sprites, recoloured by skin, hair, dye and culture LUTs |
-| `BandLayer.cs`, `BandLabels.cs` | camps or markers, sea routes and event pings; screen-space labels |
+| `TileBake.cs`, `TileView.cs`, `shaders/tiles.gdshader` | the planet in tile art at 16/32/64 px: chunks baked in the background to palette-slot indices (and plant roots), coloured per cell (season, snow, shade, culture tint, animated water) by the shader |
+| `Settlements.cs` | snapshots the sim for the bake (fields, built-on cells, timber and stone left); regional building styles |
+| `Camps.cs` | structures and people from the sim: building composites, stores with contents, people between home and work |
+| `People.cs` | wardrobe compositor: 12 layers with per-piece dyes, any of 20 animations, at 16/32/64 px |
+| `Wildlife.cs` | wild herds, predators and fish from the ecology; each band's own herds |
+| `Sprites.cs` | world sprites, enlarged and LUT-recoloured textures |
+| `BandLayer.cs`, `BandLabels.cs` | y-sorted camps (with plants in front), or markers; sea routes and event pings; screen-space labels |
 | `CameraRig.cs` | pan and zoom, clamped to the planet |
 | `Hud.cs`, `Describe.cs` | UI theme (art guide section 11.1 colours), chronicle and inspector BBCode |
 | `Palette.cs` | zoomed-out biome colours, final UI colours, culture hues |
@@ -99,7 +106,7 @@ A local model voices notable moments: pivots after rejection, myths, inventions,
 | `NarrationHost.cs` | feeds moments to the narrator with focus priorities, delivers voices, can start the lab servers |
 
 ## Next
-- More of the 16 px art: fauna herds, animated water and fire on the map, cliff sets, territory borders, roads, crops for farming bands, and people animated by what they are doing.
-- The 32 and 64 px art densities once Codex finishes them.
+- Art still missing at some densities is enlarged from 16 px (rivers, early structures such as totems and storage pits, crops other than grain); cliffs, territory borders and roads aren't drawn yet.
+- Spatially index structures for drawing when worlds hold tens of thousands of them.
 - Optionally step the simulation on a worker thread. Each day already runs across cores (`SimConfig.Threads`, cores minus 2 in the game), so the UI stays responsive without it.
 - Swap power-bar text for the Codex icon set (art guide section 11.3), and add Raise/Lower land, Possess and Follow.

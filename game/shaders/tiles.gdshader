@@ -8,6 +8,7 @@
 shader_type canvas_item;
 
 uniform sampler2D world : filter_nearest;     // R ground, G flora in season, B flora off-season, A flora bits
+uniform sampler2D roots : filter_nearest;     // where the plant at each pixel stands: R in season, G off season (TileBake.Baked)
 uniform sampler2D lut : filter_nearest;       // lut_nature: 256 slots x (biome x season) rows
 uniform sampler2D cell_a : filter_nearest;    // per cell: LUT row A, row B, blend A->B, snow cover
 uniform sampler2D cell_b : filter_nearest;    // per cell: culture tint rgb x strength, strength
@@ -38,6 +39,14 @@ float value_noise(vec2 p)
 	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
 }
 
+// The cell a plant stands on, from its root code (1 + (dx + 2) + 5 dy; 0 is the pixel's own cell).
+ivec2 root_cell(ivec2 cell, int code)
+{
+	if (code <= 0) return cell;
+	code -= 1;
+	return cell_of(cell + ivec2(code % 5 - 2, code / 5));
+}
+
 // A per-cell value interpolated between cell centres, so snow drifts, hillshade and territory
 // have soft edges instead of following the cell grid. g is a global pixel.
 vec4 between_cells(sampler2D tex, ivec2 g)
@@ -61,11 +70,15 @@ vec3 texel(ivec2 p)
 	ivec2 cell = cell_of(g / tile);
 	ivec2 in_cell = g - (g / tile) * tile;
 	vec4 w = texelFetch(world, p, 0);
-	vec4 a = texelFetch(cell_a, cell, 0);
 	vec4 c = texelFetch(cell_c, cell, 0);
 	int flags = byte_of(c.g);
-	bool off = (flags & 1) != 0;
-	bool flora = (byte_of(w.a) & (off ? 2 : 1)) != 0;
+	// A plant keeps the season and colours of the cell it stands on, all the way up.
+	int bits = byte_of(w.a);
+	vec4 r = texelFetch(roots, p, 0);
+	ivec2 in_season = root_cell(cell, byte_of(r.r)), off_season = root_cell(cell, byte_of(r.g));
+	bool off = (byte_of(texelFetch(cell_c, (bits & 1) != 0 ? in_season : (bits & 2) != 0 ? off_season : cell, 0).g) & 1) != 0;
+	bool flora = (bits & (off ? 2 : 1)) != 0;
+	vec4 a = texelFetch(cell_a, flora ? (off ? off_season : in_season) : cell, 0);
 	int slot;
 	if (flora)
 		slot = byte_of(off ? w.b : w.g);

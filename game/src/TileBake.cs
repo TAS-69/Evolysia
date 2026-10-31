@@ -17,8 +17,14 @@ public static class TileBake
 {
     public const int Px = 16;   // logical units per cell
 
-    /// <summary>What the bake needs besides the world: farmed cells and their crop.</summary>
-    public sealed record Input(WorldMap World, IReadOnlyDictionary<int, string> Fields);
+    /// <summary>
+    /// What the bake needs besides the world, snapshotted from the simulation (bakes run on other
+    /// threads while it steps): each field's crop and growth, the cells structures stand on, and how
+    /// much of each cell's timber and stone is left (0..255) - felled woods and quarried boulders
+    /// show as gaps.
+    /// </summary>
+    public sealed record Input(WorldMap World, IReadOnlyDictionary<int, (string crop, float growth, bool orchard)> Fields,
+                               IReadOnlySet<int> Occupied, byte[] Trees, byte[] Rocks);
 
     /// <summary>The surface a cell is made of (landscape family material ids).</summary>
     public static string Material(Input input, int i)
@@ -26,7 +32,7 @@ public static class TileBake
         var w = input.World;
         if (w.Volcano[i]) return "lava";
         if (w.IsLand(i) && w.Ash[i] > 0.3f) return "ash";
-        if (input.Fields.ContainsKey(i)) return "tilled_soil";
+        if (input.Fields.TryGetValue(i, out var f) && !f.orchard) return "tilled_soil";
         float n = Patch(w, i);
         float t = w.TempMean[i], rain = w.Precip[i];
         if (Beach(w, i))
@@ -90,28 +96,41 @@ public static class TileBake
     /// <summary>
     /// Bakes cells [cx0, cx0+cw) x [cy0, cy0+ch) (x wraps) at <paramref name="density"/> px per cell.
     /// </summary>
-    public static byte[] Bake(Input input, int density, int cx0, int cy0, int cw, int ch)
+    public static Baked Bake(Input input, int density, int cx0, int cy0, int cw, int ch)
     {
-        var t = new Target(new byte[cw * density * ch * density * 4], cx0 * density, cy0 * density, cw * density, ch * density,
+        int pixels = cw * density * ch * density;
+        var t = new Target(new byte[pixels * 4], new byte[pixels * 2], cx0 * density, cy0 * density, cw * density, ch * density,
                            input.World.W * density, input.World.H * density, density);
         Ground(input, t, cx0, cy0, cw, ch);
         Rivers(input.World, t, cx0, cy0, cw, ch);
         Flora(input, t, cx0, cy0, cw, ch);
-        return t.Px;
+        return new Baked(t.Px, t.Anchor);
     }
 
+    /// <summary>
+    /// A bake: slot indices (RGBA8, see the class summary) and, per pixel, where the plant drawn
+    /// there in season (R) and off season (G) is rooted, as 1 + (dx + 2) + 5 dy cells from the
+    /// pixel's own cell (0: its own cell). Plants take their colours from the cell they stand on.
+    /// </summary>
+    public sealed record Baked(byte[] Px, byte[] Anchor);
+
     /// <summary>The region being baked, in the world's pixel space at this density.</summary>
-    readonly record struct Target(byte[] Px, int X0, int Y0, int W, int H, int WorldW, int WorldH, int D)
+    readonly record struct Target(byte[] Px, byte[] Anchor, int X0, int Y0, int W, int H, int WorldW, int WorldH, int D)
     {
-        public void Put(int gx, int gy, byte slot, int layer)
+        /// <summary>Writes a slot; flora layers also record the cell (ax, ay; x unwrapped) the plant is rooted in.</summary>
+        public void Put(int gx, int gy, byte slot, int layer, int ax = 0, int ay = 0)
         {
             int ry = gy - Y0;
             if (ry < 0 || ry >= H) return;
             int rx = (((gx - X0) % WorldW) + WorldW) % WorldW;
             if (rx >= W) return;
             int o = (ry * W + rx) * 4;
-            if (layer == 0) Px[o] = slot;
-            else { Px[o + layer] = slot; Px[o + 3] |= (byte)layer; }
+            if (layer == 0) { Px[o] = slot; return; }
+            Px[o + layer] = slot;
+            Px[o + 3] |= (byte)layer;
+            int dx = (int)MathF.Floor(gx / (float)D) - ax, dy = ay - gy / D;   // from the pixel's cell to the root
+            dx = -dx;
+            Anchor[(ry * W + rx) * 2 + layer - 1] = dx is >= -2 and <= 2 && dy is >= 0 and <= 4 ? (byte)(1 + dx + 2 + 5 * dy) : (byte)0;
         }
     }
 
@@ -290,20 +309,28 @@ public static class TileBake
         ["clay_deposit"] = new(null, "nature_clay_deposit"),
     };
 
-    /// <summary>What grows in a biome, with relative weights, and how many plants a cell holds.</summary>
+    /// <summary>Boulders, outcrops and scree: what quarrying breaks up.</summary>
+    static bool IsRock(string kind) => kind is "boulder" or "scree" or "granite_outcrop" or "sandstone_outcrop" or "basalt_outcrop" or "ore_outcrop";
+
+    /// <summary>Trees and tall woody plants: what people fell.</summary>
+    static bool IsTree(string kind) =>
+        Kinds.TryGetValue(kind, out var k) ? k.Detail?.StartsWith("tree_") == true || k.Flora?.Contains("_mature") == true || k.Flora?.Contains("_old") == true
+                                           : kind.Contains("_burned") || kind == "conifer_dead";
+
+    /// <summary>What grows in a biome, with relative weights, and how many plants a cell holds (one cell is one tile).</summary>
     static ((string id, float weight)[] kinds, int count) FloraOf(Biome b) => b switch
     {
-        Biome.BorealForest => (new[] { ("conifer_mature", 4f), ("conifer_old", 2f), ("conifer_young", 2f), ("pine", 1f), ("birch", 0.6f), ("conifer_sapling", 0.6f), ("shrub", 0.5f), ("moss", 0.4f), ("fallen_log", 0.2f) }, 6),
-        Biome.TemperateForest => (new[] { ("broadleaf_mature", 4f), ("broadleaf_old", 1.2f), ("broadleaf_young", 2f), ("birch", 0.6f), ("conifer_mature", 0.8f), ("shrub", 1f), ("fern", 0.6f), ("berry_bush_fruiting", 0.4f), ("mushrooms", 0.3f), ("fallen_log", 0.3f) }, 6),
-        Biome.TemperateRainforest => (new[] { ("conifer_old", 3f), ("cedar", 1.5f), ("conifer_mature", 3f), ("broadleaf_old", 1f), ("fern", 1.2f), ("moss", 0.6f), ("fallen_log", 0.5f), ("mushrooms", 0.5f) }, 7),
-        Biome.TemperateGrassland => (new[] { ("tall_grass", 4f), ("flowers", 1.5f), ("clover", 0.8f), ("shrub", 0.8f), ("broadleaf_young", 0.3f), ("wild_grain_ripe", 0.5f), ("boulder", 0.1f) }, 4),
-        Biome.Shrubland => (new[] { ("shrub", 3f), ("shrub_dry", 2f), ("heath", 1.2f), ("juniper", 0.5f), ("berry_bush_flowering", 0.6f), ("dry_grass", 1f), ("boulder", 0.2f) }, 4),
+        Biome.BorealForest => (new[] { ("conifer_mature", 4f), ("conifer_old", 2f), ("conifer_young", 2f), ("pine", 1f), ("birch", 0.6f), ("conifer_sapling", 0.6f), ("shrub", 0.5f), ("moss", 0.4f), ("fallen_log", 0.2f) }, 2),
+        Biome.TemperateForest => (new[] { ("broadleaf_mature", 4f), ("broadleaf_old", 1.2f), ("broadleaf_young", 2f), ("birch", 0.6f), ("conifer_mature", 0.8f), ("shrub", 1f), ("fern", 0.6f), ("berry_bush_fruiting", 0.4f), ("mushrooms", 0.3f), ("fallen_log", 0.3f) }, 2),
+        Biome.TemperateRainforest => (new[] { ("conifer_old", 3f), ("cedar", 1.5f), ("conifer_mature", 3f), ("broadleaf_old", 1f), ("fern", 1.2f), ("moss", 0.6f), ("fallen_log", 0.5f), ("mushrooms", 0.5f) }, 3),
+        Biome.TemperateGrassland => (new[] { ("tall_grass", 4f), ("flowers", 1.5f), ("clover", 0.8f), ("shrub", 0.8f), ("broadleaf_young", 0.3f), ("wild_grain_ripe", 0.5f), ("boulder", 0.1f) }, 2),
+        Biome.Shrubland => (new[] { ("shrub", 3f), ("shrub_dry", 2f), ("heath", 1.2f), ("juniper", 0.5f), ("berry_bush_flowering", 0.6f), ("dry_grass", 1f), ("boulder", 0.2f) }, 2),
         Biome.HotDesert => (new[] { ("cactus", 2f), ("cactus_tall", 1f), ("cactus_flowering", 0.4f), ("succulent", 0.8f), ("shrub_dry", 1f), ("sandstone_outcrop", 0.3f) }, 1),
         Biome.ColdDesert => (new[] { ("shrub_dry", 3f), ("dry_grass", 0.5f), ("scree", 0.8f), ("juniper", 0.3f), ("boulder", 0.4f) }, 1),
-        Biome.Savanna => (new[] { ("dry_grass", 4f), ("acacia_mature", 1.2f), ("acacia_young", 0.6f), ("baobab", 0.2f), ("thorn_shrub", 0.8f), ("shrub_dry", 0.6f) }, 4),
-        Biome.TropicalSeasonalForest => (new[] { ("jungle_tree_mature", 3f), ("broadleaf_mature", 2f), ("palm_mature", 1f), ("shrub", 1f), ("fern", 0.6f) }, 6),
-        Biome.TropicalRainforest => (new[] { ("rainforest_giant_mature", 1.5f), ("jungle_tree_mature", 3f), ("jungle_tree_young", 1f), ("palm_mature", 1f), ("fern", 1f) }, 6),
-        Biome.Wetland => (new[] { ("reeds", 4f), ("sedge", 2f), ("tall_grass", 1f), ("willow", 0.5f), ("broadleaf_young", 0.3f) }, 4),
+        Biome.Savanna => (new[] { ("dry_grass", 4f), ("acacia_mature", 1.2f), ("acacia_young", 0.6f), ("baobab", 0.2f), ("thorn_shrub", 0.8f), ("shrub_dry", 0.6f) }, 2),
+        Biome.TropicalSeasonalForest => (new[] { ("jungle_tree_mature", 3f), ("broadleaf_mature", 2f), ("palm_mature", 1f), ("shrub", 1f), ("fern", 0.6f) }, 2),
+        Biome.TropicalRainforest => (new[] { ("rainforest_giant_mature", 1.5f), ("jungle_tree_mature", 3f), ("jungle_tree_young", 1f), ("palm_mature", 1f), ("fern", 1f) }, 3),
+        Biome.Wetland => (new[] { ("reeds", 4f), ("sedge", 2f), ("tall_grass", 1f), ("willow", 0.5f), ("broadleaf_young", 0.3f) }, 2),
         Biome.Tundra => (new[] { ("shrub_dry", 1f), ("sedge", 0.8f), ("moss", 0.8f), ("tall_grass", 0.4f), ("mushrooms", 0.2f), ("boulder", 0.4f) }, 1),
         Biome.Alpine => (new[] { ("conifer_young", 1f), ("juniper", 0.4f), ("shrub_dry", 1f), ("scree", 0.8f), ("granite_outcrop", 0.5f), ("ore_outcrop", 0.15f) }, 1),
         Biome.Volcanic => (new[] { ("conifer_dead", 1f), ("stump", 1f), ("basalt_outcrop", 1f) }, 1),
@@ -319,8 +346,106 @@ public static class TileBake
         return null;
     }
 
-    /// <summary>A plant at a logical position (16 units per cell), with what it is in and out of season.</summary>
-    record struct Plant(int X, int Y, string Kind, int Variant, bool Snowy);
+    /// <summary>A plant rooted at a logical position (16 units per cell; x may run past the planet's edge).</summary>
+    public readonly record struct Plant(int X, int Y, string Kind, int Variant, bool Snowy)
+    {
+        /// <summary>The cell its base stands on (unwrapped x): its colours come from there.</summary>
+        public (int x, int y) Cell => ((int)MathF.Floor(X / (float)Px), Y / Px);
+    }
+
+    /// <summary>A field's look by growth: seedlings, growing, ripe; nothing when bare between seasons.</summary>
+    static string? CropStage(float growth) => growth <= 0.01f ? null : growth < 0.3f ? "seedling" : growth < 0.8f ? "growing" : "ripe";
+
+    /// <summary>Which crop art draws a crop good: grains, roots and tubers, gourds and vines, fibre plants.</summary>
+    public static string CropArt(string crop) => crop switch
+    {
+        "wheat" or "barley" or "oats" or "rye" or "rice" or "millet" or "maize" or "grain" => "grain",
+        "potato" or "beet" or "carrot" or "onion" or "roots" or "cabbage" or "lettuce" => "tuber",
+        "pumpkin" or "squash" or "melon" or "beans" or "peas" or "lentils" or "tomato" or "pepper" => "gourd",
+        _ => "fiber",
+    };
+
+    /// <summary>How a plant is drawn at a density: in season, off season (null: gone), a snow cap, and the pixel scale.</summary>
+    public sealed record PlantArt(Sheet Summer, Sheet? Off, Sheet? Cap, int Scale, int Row);
+
+    static readonly Dictionary<(string, int, bool), (Sheet, Sheet?, Sheet?, int)?> ArtCache = new();
+
+    /// <summary>
+    /// The art for a plant at a density. At 16 px the flora family (bare, dry and snow-capped
+    /// states); finer densities use the civilisation detail art, whose colours still follow the
+    /// season through the nature LUT; anything without detail art is enlarged.
+    /// </summary>
+    public static PlantArt? ArtOf(Plant p, int d)
+    {
+        (Sheet, Sheet?, Sheet?, int)? art;
+        lock (ArtCache)
+            if (!ArtCache.TryGetValue((p.Kind, d, p.Snowy), out art)) ArtCache[(p.Kind, d, p.Snowy)] = art = Resolve(p.Kind, d, p.Snowy);
+        if (art is not var (summer, off, cap, scale)) return null;
+        return new PlantArt(summer, off, cap, scale, p.Variant % summer.Rows);
+    }
+
+    static (Sheet, Sheet?, Sheet?, int)? Resolve(string kindId, int d, bool snowy)
+    {
+        int scale = d / Px;
+        if (kindId.StartsWith("crop:"))
+        {
+            // Crops show their growth stage; the field is the same in and out of season (it is sown or bare).
+            string art = kindId[5..];
+            if (art.StartsWith("grain_") && !art.EndsWith("seedling") && d > Px && Art.Lod("civilisation.crop_grain_detail", d) is { } detail) return (detail, detail, null, 1);
+            if (Art.Get($"flora.crop_{art}") is not { } crop) return null;
+            return (crop, crop, null, scale);
+        }
+        var kind = Kinds.GetValueOrDefault(kindId, new Kind(kindId, null));
+        if ((d == Px || kind.Detail == null) && kind.Flora != null && Art.Get("flora." + kind.Flora) is { } f)
+        {
+            Sheet off = f;
+            if (f.Meta.TryGetProperty("seasonal_states", out var states))
+                foreach (var st in states.EnumerateObject()) off = Art.Get(st.Value.GetString()!) ?? f;
+            Sheet? cap = snowy && d == Px && kind.Flora.StartsWith("conifer_") && kind.Flora is not ("conifer_sapling" or "conifer_dead" or "conifer_burned")
+                ? Art.Get("flora.conifer_snow_capped") : null;
+            return (f, off, cap, scale);
+        }
+        if (kind.Detail != null && Art.Lod("civilisation." + kind.Detail, d) is { } detailArt) return (detailArt, detailArt, null, 1);
+        return null;
+    }
+
+    /// <summary>The plants rooted in a cell (x unwrapped), in a fixed order. Pure: the same every call.</summary>
+    public static void PlantsOf(Input input, int x, int y, List<Plant> into)
+    {
+        var w = input.World;
+        if (y < 0 || y >= w.H) return;
+        int i = w.Index(x, y);
+        if (input.Fields.TryGetValue(i, out var field))
+        {
+            if (field.orchard) into.Add(new Plant(x * Px + 8, y * Px + 14, "fruit_tree", 0, false));
+            else if (CropStage(field.growth) is { } stage) into.Add(new Plant(x * Px + 8, y * Px + 15, $"crop:{CropArt(field.crop)}_{stage}", 0, false));
+            return;
+        }
+        if (input.Occupied.Contains(i)) return;   // built on: cleared
+        if (!w.IsLand(i) || w.Volcano[i] || w.Biome[i] == Biome.Lake || Beach(w, i)) return;
+        var (kinds, count) = FloraOf(w.Biome[i]);
+        if (count == 0) return;
+        bool burned = w.Ash[i] > 0.25f;
+        bool snowy = w.TempMean[i] - w.TempAmp[i] < -3f;
+        float total = 0f;
+        foreach (var k in kinds) total += k.weight;
+        for (int n = 0; n < count; n++)
+        {
+            uint h = Hash(i, n * 7 + 3);
+            if ((h & 0xFF) < 40) continue;   // gaps, so cells don't read as a grid
+            float pick = (h >> 8 & 0xFFFF) / 65536f * total;
+            string id = kinds[^1].id;
+            foreach (var (kid, weight) in kinds) { if (pick < weight) { id = kid; break; } pick -= weight; }
+            if (n == 0 && Special(w, i, h >> 24) is { } special) id = special;
+            if (burned) id = BurnedOf(id);
+            // Felled and quarried: the share of trees and boulders still standing (stable per plant).
+            if (IsTree(id) && (Hash(i, n * 3 + 101) & 0xFF) >= input.Trees[i]) continue;
+            if (IsRock(id) && (Hash(i, n * 3 + 103) & 0xFF) >= input.Rocks[i]) continue;
+            int px = x * Px + 2 + (int)(Hash(i, n * 2 + 11) % 12u);
+            int py = y * Px + 3 + (int)(Hash(i, n * 5 + 17) % 13u);
+            into.Add(new Plant(px, py, id, (int)(Hash(n, i * 13 + 1) & 0xFFFF), snowy));
+        }
+    }
 
     static void Flora(Input input, Target t, int cx0, int cy0, int cw, int ch)
     {
@@ -328,77 +453,18 @@ public static class TileBake
         var plants = new List<Plant>();
         // Plants rooted just outside the region can reach into it (trees are two cells tall).
         for (int y = Math.Max(cy0 - 1, 0); y < Math.Min(cy0 + ch + 3, w.H); y++)
-            for (int x = cx0 - 2; x < cx0 + cw + 2; x++)
-            {
-                int i = w.Index(x, y);
-                if (input.Fields.TryGetValue(i, out var crop))
-                {
-                    plants.Add(new Plant(x * Px + 8, y * Px + 15, "crop:" + crop, 0, false));
-                    continue;
-                }
-                if (!w.IsLand(i) || w.Volcano[i] || w.Biome[i] == Biome.Lake || Beach(w, i)) continue;
-                var (kinds, count) = FloraOf(w.Biome[i]);
-                if (count == 0) continue;
-                bool burned = w.Ash[i] > 0.25f;
-                bool snowy = w.TempMean[i] - w.TempAmp[i] < -3f;
-                float total = kinds.Sum(k => k.weight);
-                for (int n = 0; n < count; n++)
-                {
-                    uint h = Hash(i, n * 7 + 3);
-                    if ((h & 0xFF) < 40) continue;   // gaps, so cells don't read as a grid
-                    float pick = (h >> 8 & 0xFFFF) / 65536f * total;
-                    string id = kinds[^1].id;
-                    foreach (var (kid, weight) in kinds) { if (pick < weight) { id = kid; break; } pick -= weight; }
-                    if (n == 0 && Special(w, i, h >> 24) is { } special) id = special;
-                    if (burned) id = BurnedOf(id);
-                    int px = x * Px + 2 + (int)(Hash(i, n * 2 + 11) % 12u);
-                    int py = y * Px + 3 + (int)(Hash(i, n * 5 + 17) % 13u);
-                    plants.Add(new Plant(px, py, id, (int)(Hash(n, i * 13 + 1) & 0xFFFF), snowy));
-                }
-            }
+            for (int x = cx0 - 2; x < cx0 + cw + 2; x++) PlantsOf(input, x, y, plants);
         plants.Sort((a, b) => a.Y != b.Y ? a.Y.CompareTo(b.Y) : a.X.CompareTo(b.X));   // y-sort: nearer plants overlap
         int d = t.D, scale = d / Px;
         foreach (var p in plants)
         {
+            if (ArtOf(p, d) is not { } art) continue;
             int gx = p.X * scale, gy = p.Y * scale;
-            if (p.Kind.StartsWith("crop:")) { Crop(t, p.Kind[5..], gx, gy); continue; }
-            var kind = Kinds.GetValueOrDefault(p.Kind, new Kind(p.Kind, null));
-            // At 16 px prefer the flora family (it has bare, dry and snow-capped states); finer
-            // densities use the civilisation detail art, whose colours still follow the season.
-            Sheet? summer = null, off = null, cap = null;
-            int sScale = 1;
-            if (d == Px || kind.Detail == null)
-            {
-                if (kind.Flora != null && Art.Get("flora." + kind.Flora) is { } f)
-                {
-                    summer = f; sScale = scale; off = f;
-                    if (f.Meta.TryGetProperty("seasonal_states", out var states))
-                        foreach (var s in states.EnumerateObject()) off = Art.Get(s.Value.GetString()!) ?? f;
-                    if (p.Snowy && kind.Flora.StartsWith("conifer_") && kind.Flora is not ("conifer_sapling" or "conifer_dead" or "conifer_burned"))
-                        cap = Art.Get("flora.conifer_snow_capped");
-                }
-            }
-            if (summer == null && kind.Detail != null && Art.Lod("civilisation." + kind.Detail, d) is { } detail) { summer = off = detail; sScale = 1; }
-            if (summer == null) continue;
-            Blit(t, summer, 0, p.Variant % summer.Rows, gx - summer.PivotX * sScale, gy - summer.PivotY * sScale, sScale, 1);
-            var o = off ?? summer;
-            Blit(t, o, 0, p.Variant % o.Rows, gx - o.PivotX * sScale, gy - o.PivotY * sScale, sScale, 2);
-            if (cap != null) Blit(t, cap, 0, p.Variant % cap.Rows, gx - cap.PivotX * sScale, gy - cap.PivotY * sScale, sScale, 2);
+            var (ax, ay) = p.Cell;
+            Blit(t, art.Summer, 0, art.Row, gx - art.Summer.PivotX * art.Scale, gy - art.Summer.PivotY * art.Scale, art.Scale, 1, ax, ay);
+            if (art.Off is { } off) Blit(t, off, 0, p.Variant % off.Rows, gx - off.PivotX * art.Scale, gy - off.PivotY * art.Scale, art.Scale, 2, ax, ay);
+            if (art.Cap is { } cap) Blit(t, cap, 0, p.Variant % cap.Rows, gx - cap.PivotX * art.Scale, gy - cap.PivotY * art.Scale, art.Scale, 2, ax, ay);
         }
-    }
-
-    /// <summary>A field cell: ripe in season, stubble (16 px) or bare tilled soil off-season.</summary>
-    static void Crop(Target t, string crop, int gx, int gy)
-    {
-        int d = t.D;
-        if (crop == "grain" && d > Px && Art.Lod("civilisation.crop_grain_detail", d) is { } detail)
-        {
-            Blit(t, detail, 0, 0, gx - detail.PivotX, gy - detail.PivotY, 1, 1);
-            return;
-        }
-        int scale = d / Px;
-        if (Art.Get($"flora.crop_{crop}_ripe") is { } ripe) Blit(t, ripe, 0, 0, gx - ripe.PivotX * scale, gy - ripe.PivotY * scale, scale, 1);
-        if (d == Px && Art.Get($"flora.crop_{crop}_harvested") is { } stubble) Blit(t, stubble, 0, 0, gx - stubble.PivotX, gy - stubble.PivotY, 1, 2);
     }
 
     static string BurnedOf(string id)
@@ -415,7 +481,7 @@ public static class TileBake
     /// <paramref name="scale"/> x <paramref name="scale"/>. Layer 0 writes the ground channel (R);
     /// layer 1 / 2 write in-season (G) / off-season (B) flora and mark A.
     /// </summary>
-    static void Blit(Target t, Sheet sheet, int frame, int row, int ox, int oy, int scale, int layer)
+    static void Blit(Target t, Sheet sheet, int frame, int row, int ox, int oy, int scale, int layer, int ax = 0, int ay = 0)
     {
         if (row >= sheet.Rows || frame >= sheet.Frames) return;
         int fw = sheet.FrameW, fh = sheet.FrameH;
@@ -428,7 +494,7 @@ public static class TileBake
                 if (slot == Art.Empty) continue;
                 for (int sy = 0; sy < scale; sy++)
                     for (int sx = 0; sx < scale; sx++)
-                        t.Put(ox + x * scale + sx, oy + y * scale + sy, slot, layer);
+                        t.Put(ox + x * scale + sx, oy + y * scale + sy, slot, layer, ax, ay);
             }
     }
 

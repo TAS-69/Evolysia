@@ -47,14 +47,21 @@ public sealed class Agent
     public float Health = 1f;
     public bool Sick;
     public int SickUntil;
-    public float Food;               // carried food, person-days
+    Economy.Inventory? _pack;
+    /// <summary>What this person carries: today's gathering, food for the road, materials.</summary>
+    public Economy.Inventory Pack => _pack ??= new Economy.Inventory();
+    /// <summary>Person-days of food carried.</summary>
+    public float Food => _pack?.FoodValue ?? 0f;
+    internal void DropPack() => _pack = null;
+    /// <summary>Tools and clothes this person owns (worn or carried).</summary>
+    public readonly List<Economy.Item> Gear = new();
     public bool Pregnant;
     public int DueDay, PregnancyFatherId = -1, LastBirthDay = -100000;
 
     // Society
     public int BandId = -1;
     public int CultureId = -1;
-    public ulong Knows;              // tech bitmask
+    public TechSet Knows;            // techniques this person knows
     public readonly Dictionary<int, float> Memes = new();   // meme id -> conviction 0..1
     public readonly float[] HeldKind = new float[8];         // cache: strongest conviction per MemeKind
     public readonly float[] TabooOf = new float[Ids.CategoryCount];   // cache: taboo strength per category
@@ -62,6 +69,7 @@ public sealed class Agent
     public readonly List<LifeEvent> Memory = new();
     public readonly int[] ActivityCounts = new int[Enum.GetValues<Activity>().Length];
     public Activity Today;
+    public int Site = -1;            // the tile worked today (camp for most activities)
 
     public bool Alive = true;
     public DeathCause DeathCause;

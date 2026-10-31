@@ -39,7 +39,10 @@ and `--trace N`, which prints one band's monthly food economy for N years (usefu
 latitude, altitude and continentality; seasons from axial tilt; rain from prevailing-wind bands with rain shadows;
 rivers by priority-flood plus flow accumulation; lakes; Whittaker biomes (IDs shared with `docs/art`); volcanoes on
 faults. Ecology runs as logistic stocks (plants, game, fish) per cell with seasonal growth and yearly regional rain
-anomalies (droughts). Each cell is a region a band lives in; the renderer will generate detailed tiles from it.
+anomalies (droughts). The planet is 800 x 400 cells; each cell is one art tile (a person is about a tile tall).
+Rules written for the original 160 x 80 grid scale through `WorldMap.Scale` (5) and `CellArea`. Every land cell also
+holds standing timber, loose stone and boulders, and sometimes an ore deposit (copper, tin, iron, gold, silver, coal,
+sulfur) that people fell, quarry and dig out; trees grow back over decades, stone and ore don't.
 
 **People** (`Agents/`, `Psych/`).
 - **Genome:** 4 temperament genes (novelty seeking, harm avoidance, reward dependence, persistence), starting tilts for 3 character traits, 8 aptitudes, pigment and hair genes, and quirks. A child blends both parents (Beta(2,2) per gene), plus polygenic segregation noise (keeps population variety), plus **1-3 divergent genes or a new quirk**.
@@ -49,10 +52,17 @@ anomalies (droughts). Each cell is a region a band lives in; the renderer will g
 - **Pivots:** an invention, a myth, a creation (song, carving, trick) or a courtship gift that the circle scorns. The person conforms (abandons it and suppresses that whole domain; a technique can be lost this way), doubles down, withdraws, resents, or leaves and founds a new band, sometimes a new people. The choice is a softmax over trait loadings that match the LLM lab's scenarios, adjusted by allies, belonging, shame and anger.
 
 **Society** (`Society/`, `Simulation.*.cs`).
-- **Daily life:** utility-AI activities (forage, hunt as a party, fish, farm, herd, build, craft, experiment, ritual, explore, teach, care for children, court, mourn, play). Food is shared or hoarded according to cooperativeness and norms; parents feed children first; infants nurse.
+- **Daily life:** utility-AI activities (forage, hunt as a party, fish, farm, herd, build, craft, fell trees, quarry, mine, gather materials, experiment, ritual, explore, teach, care for children, court, mourn, play). Each person works a real tile in the band's home range (`Agent.Site`). Food is shared or hoarded according to cooperativeness and norms; parents feed children first; infants nurse.
 - **Bodies:** hunger, thirst, cold, disease and plague, forager-like mortality with crowding effects, pregnancy and childbirth.
 - **Bands:** they migrate, bud off pioneers to new land when hungry, split along grudges, merge when tiny, marry across bands, meet neighbours for feasts (trading techniques and memes) or raids, and settle into villages with agriculture.
-- **Techniques:** 18 of them, known by individuals. They're invented (driven by need and environment), judged by the band, taught, spread on contact, and can be lost.
+- **Techniques:** 101 of them, from stone tools to interplanetary travel (`Agents/Tech.cs`), known by individuals. They're invented (driven by need and by surroundings: forest, rock, ore, clay, sand, water, climate, a settled or large community, herds, faith), judged by the band, taught (only to those who know what they build on), spread on contact, and can be lost.
+
+**Economy** (`Economy/`, `Simulation.Economy.cs`, `Simulation.Building.cs`). See `docs/OVERHAUL.md`.
+- **Goods:** 107 kinds (foods, materials, fuels, metals, manufactured goods), each with its food value, spoil rate and bulk. Bands keep stores; people carry packs. Food is eaten most-perishable first; heat speeds spoiling, storage and pottery slow it.
+- **Gear:** 140 tools and clothing pieces (the wardrobe art's parts), owned by people and worn out by use. Clothes keep out the cold, armour turns blows, weapons win fights and hunts, tools speed their job, finery lends standing. Crafters make what members lack from the stores, at the right workstation.
+- **Recipes:** 41 (cooking, drying, grinding, baking, dairy, brewing, rope, cloth, leather, charcoal, pottery, bricks, dressed stone, smelting copper, bronze, iron and steel, glass, concrete, machine parts, electronics, batteries, alloys).
+- **Structures:** 92 kinds (dwellings from windbreaks to housing blocks, stores, workstations, fields and orchards, pens, wells, shrines, defences, boats and vehicles). Bands plan them in priority order, site them on open land near camp, clear the site (felling and quarrying for logs and stone), and build them with materials and labour. They age and are repaired; tents move with the band; the rest is abandoned and later adopted or reclaimed by the wild.
+- **Farming and herding:** fields are sown, tended and harvested into the stores by crop and climate; herds breed up to their pens, give milk, eggs and wool, and their surplus is slaughtered. Villages grow, lay out more fields beyond their core, and bud off new villages on open land.
 - **Memes:** myths (an unexplained disaster plus a spiritual person produces a god and a ritual), taboos (born from shared fear), and norms (from leaders' temperaments). They spread with conformity and prestige bias. Bands whose beliefs drift become new cultures with related-sounding languages.
 
 **The sea** (`Simulation.Sea.cs`). World generation labels landmasses. Rafts hop narrow straits through ordinary migration.
@@ -77,14 +87,14 @@ anomalies (droughts). Each cell is a region a band lives in; the renderer will g
 - `SimConfig`: world size, land fraction, axial tilt, starting bands, invention/disaster/predator multipliers, soft agent cap.
 - Main rates are commented in place: foraging yield (`Simulation.Day.cs`), fertility and mortality (`Body`/`Reproduce`), drift (`Psychology.DailyUpdate`), contact (`Contacts`).
 
-Typical outcome: about 100 founders reach thousands in 300-500 years, with an agricultural boom when farming
-appears.
+Typical outcome on the 800 x 400 world: about 200 founders reach 4-5 thousand in 250 years, with villages from
+roughly year 75; growth then levels off (see `docs/OVERHAUL.md`, phase 7).
 
 **Performance.** Band days run in parallel: bands sharing a cell run together, different cells run concurrently, and the heaviest groups go first.
 - **Determinism:** each band uses its own random stream (seed, band, day). Global effects (births, death bookkeeping, chronicle entries, courtship across bands, inventions and schisms) are deferred and committed in a fixed order, so **any thread count gives the identical history**. `ParallelTests` checks 1, 4 and 16 threads.
 - **Also parallel:** ecology runs in parallel by row.
-- **Memory:** server GC is on, and memes nobody remembers are pruned monthly.
-- **Timing:** seed 42, 500 years, about 12,000 people at the end: **77 s on 16 threads** (it was 497 s single-threaded before these changes).
+- **Memory:** server GC is on, memes nobody remembers are pruned monthly, and the ordinary dead are forgotten 25 years on (`DeathLog` keeps every death compactly). Seed 42 peaks at about 0.6 GB.
+- **Timing:** seed 42 on the 800 x 400 world: 300 years in about 100 s on 16 threads.
 - **Settings:** `SimConfig.Threads` (default: all cores) and runner `--threads N`.
 
 ## Next steps

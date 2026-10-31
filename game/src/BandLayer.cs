@@ -22,9 +22,10 @@ public partial class BandLayer : Node2D
     public const float CampZoom = 1.8f;
     /// <summary>The camera's view in world units (centre copy), for culling.</summary>
     public Rect2 View;
+    /// <summary>The terrain, whose plants stand in front of anything rooted behind them.</summary>
+    public TileView? Tiles;
 
     readonly List<(Vector2 pos, Color color, double born)> _pings = new();
-    readonly Dictionary<int, ulong> _bandKnows = new();
     readonly List<WorldSprite> _sprites = new();
     readonly Dictionary<int, Vector2> _spread = new();
     int _knowsDay = int.MinValue, _spreadDay = int.MinValue, _spreadCount;
@@ -98,7 +99,6 @@ public partial class BandLayer : Node2D
         float outline = 1f / MathF.Max(CameraZoom, 0.5f);
         double now = Time.GetTicksMsec() / 1000.0;
         _pings.RemoveAll(p => now - p.born > 2.5);
-        if (ShowCamps && Sim.Day != _knowsDay) RefreshKnows();
         if (ShowCamps) DrawCamps(outline, now);   // placed at the copy nearest the view already
         foreach (float offset in new[] { -WrapWidth, 0f, WrapWidth })
         {
@@ -147,16 +147,6 @@ public partial class BandLayer : Node2D
 
     // ---- camps ----------------------------------------------------------------------------------
 
-    void RefreshKnows()
-    {
-        _knowsDay = Sim!.Day;
-        _bandKnows.Clear();
-        foreach (var band in Sim.Bands.Values) _bandKnows[band.Id] = Settlements.Knows(Sim, band);
-    }
-
-    /// <summary>What each band knows, refreshed daily while camps are shown.</summary>
-    public IReadOnlyDictionary<int, ulong> BandKnows => _bandKnows;
-
     void DrawCamps(float outline, double now)
     {
         _sprites.Clear();
@@ -167,12 +157,14 @@ public partial class BandLayer : Node2D
         {
             var pos = NearestCopy(BandPosition(band), centre);
             if (!view.HasPoint(pos)) continue;
-            Camps.Add(new Camps.Context(Sim, band, pos, _bandKnows.GetValueOrDefault(band.Id), density, now, band.Id == SelectedBandId), _sprites);
+            Camps.AddPeople(Sim, band, pos, density, now, _sprites);
         }
-        Wildlife.Add(Sim, _bandKnows, View, density, now, _sprites);
-        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));   // y-sort: nearer things overlap farther ones
+        Camps.AddStructures(Sim, View, density, now, SelectedBandId, _sprites);
+        Wildlife.Add(Sim, View, density, now, _sprites);
+        AddOccluders(density);
+        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));   // y-sort by base: nearer things overlap farther ones
         foreach (var s in _sprites)
-            if (s.Shadow > 0f) DrawEllipse(s.Foot, s.Shadow, s.Shadow * 0.35f, new Color(0f, 0f, 0f, 0.16f));
+            if (s.Shadow > 0f) DrawTextureRect(ShadowTexture, new Rect2(s.Foot - new Vector2(s.Shadow, s.Shadow * 0.35f), new Vector2(s.Shadow * 2f, s.Shadow * 0.7f)), false, new Color(0f, 0f, 0f, 0.16f));
         foreach (var s in _sprites)
         {
             var size = s.Source.Size * s.PixelSize;
@@ -183,6 +175,84 @@ public partial class BandLayer : Node2D
         }
         if (SelectedBandId >= 0 && Sim.Bands.TryGetValue(SelectedBandId, out var selected))
             DrawArc(NearestCopy(BandPosition(selected), centre), selected.Sedentary ? 24f : 10f, 0, Mathf.Tau, 48, Palette.Bone, outline * 1.5f);
+    }
+
+    readonly Dictionary<(int, int), List<TileBake.Plant>> _plantsByCell = new();
+    readonly HashSet<(int, int)> _occluding = new();
+
+    /// <summary>
+    /// Plants are baked into the terrain, under every sprite. Those rooted further south than a
+    /// person, animal or object and overlapping it are added again as sprites, so the y-sort puts
+    /// them in front, coloured exactly as the terrain draws them (from the cell they stand on).
+    /// </summary>
+    void AddOccluders(int density)
+    {
+        if (Tiles?.Input is not { } input) return;
+        _plantsByCell.Clear();
+        _occluding.Clear();
+        float cell = Main.CellPx, unit = cell / TileBake.Px, px = Sprites.PixelSize(density);
+        var w = Sim!.World;
+        int count = _sprites.Count;
+        for (int k = 0; k < count; k++)
+        {
+            var s = _sprites[k];
+            var size = s.Source.Size * s.PixelSize;
+            var rect = new Rect2(s.Foot - s.Pivot * s.PixelSize, size);
+            int x0 = (int)MathF.Floor(rect.Position.X / cell) - 1, x1 = (int)MathF.Floor(rect.End.X / cell) + 1;
+            int y0 = (int)MathF.Floor(s.Foot.Y / cell), y1 = y0 + 2;
+            for (int y = y0; y <= y1; y++)
+                for (int x = x0; x <= x1; x++)
+                {
+                    if (!_plantsByCell.TryGetValue((x, y), out var plants))
+                    {
+                        plants = new List<TileBake.Plant>();
+                        TileBake.PlantsOf(input, x, y, plants);
+                        _plantsByCell[(x, y)] = plants;
+                    }
+                    foreach (var p in plants)
+                    {
+                        var foot = new Vector2(p.X, p.Y) * unit;
+                        if (foot.Y <= s.Foot.Y || _occluding.Contains((p.X, p.Y))) continue;
+                        if (TileBake.ArtOf(p, density) is not { } art) continue;
+                        var (cx, cy) = p.Cell;
+                        var (rowA, rowB, blend, off) = Tiles.SeasonOf(w.Index(cx, cy));
+                        var sheet = off ? art.Off : art.Summer;
+                        if (sheet == null) continue;
+                        int row = (off ? p.Variant : art.Row) % sheet.Rows;
+                        var pivot = new Vector2(sheet.PivotX, sheet.PivotY) * art.Scale;
+                        var plantRect = new Rect2(foot - pivot * px, new Vector2(sheet.FrameW, sheet.FrameH) * art.Scale * px);
+                        if (!plantRect.Intersects(rect)) continue;
+                        _occluding.Add((p.X, p.Y));
+                        var source = new Rect2(0, row * sheet.FrameH * art.Scale, sheet.FrameW * art.Scale, sheet.FrameH * art.Scale);
+                        _sprites.Add(new WorldSprite(foot, Sprites.Nature(sheet, art.Scale, rowA, rowB, blend), source, pivot, px, Colors.White));
+                        if (off && art.Cap is { } cap)
+                            _sprites.Add(new WorldSprite(foot + new Vector2(0, 0.001f), Sprites.Nature(cap, art.Scale, rowA, rowB, blend),
+                                                         new Rect2(0, p.Variant % cap.Rows * cap.FrameH * art.Scale, cap.FrameW * art.Scale, cap.FrameH * art.Scale),
+                                                         new Vector2(cap.PivotX, cap.PivotY) * art.Scale, px, Colors.White));
+                    }
+                }
+        }
+    }
+
+    static ImageTexture? _shadow;
+
+    /// <summary>A soft-edged white ellipse, tinted and stretched under everything that stands on the ground.</summary>
+    static ImageTexture ShadowTexture
+    {
+        get
+        {
+            if (_shadow != null) return _shadow;
+            const int w = 32, h = 12;
+            var image = Image.CreateEmpty(w, h, false, Image.Format.Rgba8);
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    float dx = (x + 0.5f) / w * 2f - 1f, dy = (y + 0.5f) / h * 2f - 1f;
+                    float r = MathF.Sqrt(dx * dx + dy * dy);
+                    image.SetPixel(x, y, new Color(1f, 1f, 1f, Math.Clamp((1f - r) * 3f, 0f, 1f)));
+                }
+            return _shadow = ImageTexture.CreateFromImage(image);
+        }
     }
 
     void DrawEllipse(Vector2 centre, float rx, float ry, Color color)

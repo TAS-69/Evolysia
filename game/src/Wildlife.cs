@@ -1,6 +1,7 @@
 using Evolysia.Sim;
 using Evolysia.Sim.Agents;
 using Evolysia.Sim.Core;
+using Evolysia.Sim.Society;
 using Evolysia.Sim.World;
 using Godot;
 
@@ -46,18 +47,21 @@ public static class Wildlife
         _ => null,
     };
 
-    public static void Add(Simulation sim, IReadOnlyDictionary<int, ulong> knows, Rect2 view, int density, double now, List<WorldSprite> into)
+    public static void Add(Simulation sim, Rect2 view, int density, double now, List<WorldSprite> into)
     {
         var w = sim.World;
         if (density == 16 && view.Size.X > 120 * Main.CellPx) return;   // too far out to see animals
         int x0 = (int)MathF.Floor(view.Position.X / Main.CellPx) - 1, x1 = (int)MathF.Ceiling(view.End.X / Main.CellPx) + 1;
         int y0 = Math.Max(0, (int)MathF.Floor(view.Position.Y / Main.CellPx) - 1), y1 = Math.Min(w.H - 1, (int)MathF.Ceiling(view.End.Y / Main.CellPx) + 1);
-        // Wild animals keep away from people: no herds within a cell of a camp.
+        // Wild animals keep away from people: none within a camp's reach (a village's further).
         var peopled = new HashSet<int>();
         foreach (var band in sim.Bands.Values)
-            for (int dy = -1; dy <= 1; dy++)
-                for (int dx = -1; dx <= 1; dx++)
+        {
+            int r = band.Sedentary ? 7 : 3;
+            for (int dy = -r; dy <= r; dy++)
+                for (int dx = -r; dx <= r; dx++)
                     if (w.Y(band.Cell) + dy is var ny && ny >= 0 && ny < w.H) peopled.Add(w.Index(w.X(band.Cell) + dx, ny));
+        }
         for (int y = y0; y <= y1; y++)
             for (int x = x0; x <= x1; x++)
             {
@@ -77,31 +81,61 @@ public static class Wildlife
             }
         foreach (var band in sim.Bands.Values)
         {
-            ulong k = knows.GetValueOrDefault(band.Id);
-            if ((k & Techs.Bit(TechId.Domestication)) == 0) continue;
-            var pos = new Vector2(w.X(band.Cell) + 0.5f, w.Y(band.Cell) + 0.5f) * Main.CellPx;
+            if (band.Herds.Count == 0) continue;
+            // Round the band's pen if it has one, else beside camp.
+            int penCell = band.Cell;
+            foreach (int sid in band.Structures)
+                if (sim.Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Role == Evolysia.Sim.Economy.StructureRole.Pen) { penCell = s.Cell; break; }
+            var pos = new Vector2(w.X(penCell) + 1f, w.Y(penCell) + 1f) * Main.CellPx;
             pos.X += MathF.Round((view.GetCenter().X - pos.X) / (w.W * Main.CellPx)) * w.W * Main.CellPx;
-            if (!view.Grow(Main.CellPx * 4).HasPoint(pos)) continue;
-            Domestic(band.Id, band.Members.Count, w.Biome[band.Cell], pos + new Vector2(22f, 4f) * Unit * (band.Sedentary ? 2f : 1f), density, now, into);
+            if (!view.Grow(Main.CellPx * 6).HasPoint(pos)) continue;
+            Domestic(band, penCell == band.Cell ? pos + new Vector2(24f, 6f) * Unit : pos, density, now, into);
         }
     }
 
+    /// <summary>Where a wandering animal is: stopped at a spot, or walking on to the next.</summary>
+    readonly record struct Step(Vector2 At, bool Moving, bool Left);
+
     /// <summary>
-    /// A small herd wandering in its cell: the group drifts slowly round a loop, each animal
-    /// grazing or walking after it.
+    /// Wandering as animals do: stand (graze, rest) at a spot for a while, then walk at a steady pace,
+    /// easing in and out, to the next spot - a new random point within <paramref name="radius"/>
+    /// (world units) of <paramref name="home"/> each leg. Pure in the clock, so it is smooth frame to frame.
+    /// </summary>
+    static Step Wander(uint seed, Vector2 home, float radius, double now, double period, double walkShare)
+    {
+        double t = now / period + (seed & 0xFFFF) / 65536.0;
+        long leg = (long)Math.Floor(t);
+        double f = t - leg;
+        Vector2 Spot(long n)
+        {
+            uint h = TileBake.Hash((int)seed, (int)n);
+            float a = (h & 0xFFFF) / 65535f * Mathf.Tau, r = MathF.Sqrt((h >> 16) / 65535f) * radius;
+            return home + new Vector2(MathF.Cos(a) * r, MathF.Sin(a) * r * 0.7f);
+        }
+        var from = Spot(leg);
+        var to = Spot(leg + 1);
+        double still = 1.0 - walkShare;
+        if (f < still) return new Step(from, false, from.X < Spot(leg - 1).X);   // facing the way it came
+        float u = (float)((f - still) / walkShare);
+        u = u * u * (3f - 2f * u);
+        return new Step(from.Lerp(to, u), true, to.X < from.X);
+    }
+
+    /// <summary>
+    /// A small herd: the group wanders its cell together (each animal keeps its place in the group,
+    /// with a little wander of its own), mostly grazing; predators spend longer on the move.
     /// </summary>
     static void Herd(Species s, Vector2 centre, int seed, int count, int density, double now, List<WorldSprite> into)
     {
         uint h = TileBake.Hash(seed, 3);
-        double t = now * 0.05 + (h & 0xFFF) / 300.0;
-        var drift = new Vector2(MathF.Cos((float)t), MathF.Sin((float)(t * 1.3))) * 4.5f * Unit;
-        var velocity = new Vector2(-MathF.Sin((float)t), 1.3f * MathF.Cos((float)(t * 1.3)));
-        bool moving = MathF.Sin((float)(t * 2.1)) > (s.Grazes ? 0.35f : -0.2f);   // herds mostly graze; predators prowl
+        var group = Wander(h, centre, 5f * Unit, now, s.Grazes ? 11.0 : 7.0, s.Grazes ? 0.3 : 0.55);
         for (int k = 0; k < count; k++)
         {
             uint a = TileBake.Hash(seed, k * 5 + 1);
-            var at = centre + drift + new Vector2((a & 0xF) - 7.5f, (a >> 4 & 0xF) - 7.5f) * 0.7f * Unit;
-            Animal(s, at, moving, velocity.X < 0, density, now + (a & 0xFF) / 37.0, into, -1);
+            var place = new Vector2((a & 0xF) - 7.5f, (a >> 4 & 0xF) - 7.5f) * 0.6f * Unit;
+            var own = Wander(a, Vector2.Zero, 1.5f * Unit, now, 6.0 + (a >> 8) % 4, 0.25);
+            bool moving = group.Moving || own.Moving;
+            Animal(s, group.At + place + own.At, moving, group.Moving ? group.Left : own.Left, density, now + (a & 0xFF) / 37.0, into, -1);
         }
     }
 
@@ -120,27 +154,39 @@ public static class Wildlife
     }
 
     /// <summary>A band's animals near home: dogs with every band that tames animals, then sheep, goats, cattle or horses and fowl.</summary>
-    static void Domestic(int bandId, int people, Biome biome, Vector2 pen, int density, double now, List<WorldSprite> into)
+    /// <summary>The fauna form and detail art of a domestic species (Band.Herds keys).</summary>
+    static Species? Tame(string species) => species switch
     {
-        var herd = biome switch
+        "sheep" => new Species("sheep_domestic", "animal_sheep"),
+        "goat" => new Species("goat_domestic", "animal_goat"),
+        "cattle" => new Species("cattle", "animal_cattle"),
+        "horse" => new Species("horse_domestic", "animal_horse"),
+        "camel" => new Species("camel", "animal_camel"),
+        "pig" => new Species("boar", "animal_pig"),
+        "fowl" => new Species("fowl_domestic", "animal_fowl"),
+        "dog" => new Species("dog", "animal_dog", false),
+        _ => null,
+    };
+
+    /// <summary>A band's own animals, as many as it keeps (up to a dozen of each kind drawn), grazing round its pens or camp.</summary>
+    static void Domestic(Band band, Vector2 pen, int density, double now, List<WorldSprite> into)
+    {
+        int coat = (int)(TileBake.Hash(band.Id, 2) % 8);
+        int kind = 0;
+        foreach (var (species, head) in band.Herds)
         {
-            Biome.Alpine or Biome.Shrubland => new Species("goat_domestic", "animal_goat"),
-            Biome.TemperateGrassland or Biome.Savanna => new Species("cattle", "animal_cattle"),
-            Biome.HotDesert or Biome.ColdDesert => new Species("camel", "animal_camel"),
-            Biome.Tundra or Biome.BorealForest => new Species("horse_domestic", "animal_horse"),
-            _ => new Species("sheep_domestic", "animal_sheep"),
-        };
-        int coat = (int)(TileBake.Hash(bandId, 2) % 8);
-        int count = Math.Clamp(people / 6, 2, 6);
-        for (int k = 0; k < count; k++)
-        {
-            uint a = TileBake.Hash(bandId, k * 11 + 4);
-            float t = (float)(now * 0.12 + (a & 0xFF) / 30.0);
-            var at = pen + new Vector2(MathF.Cos(t) * 5f + (a & 7) - 3.5f, MathF.Sin(t * 0.7f) * 3f + (a >> 3 & 7) - 3.5f) * Unit;
-            Animal(herd, at, MathF.Sin(t * 1.7f) > 0.5f, MathF.Sin(t) > 0, density, now + k * 0.31, into, coat);
+            if (Tame(species) is not { } s) continue;
+            int count = Math.Min(12, (int)MathF.Round(head));
+            float roam = species == "dog" ? 12f : species == "fowl" ? 4f : 8f;
+            var centre = pen + new Vector2(kind * 9f - 9f, kind % 2 * 6f) * Unit;
+            for (int k = 0; k < count; k++)
+            {
+                uint a = TileBake.Hash(band.Id * 31 + kind, k * 11 + 4);
+                var step = Wander(a, centre, roam * Unit, now, species == "dog" ? 5.0 : 9.0 + a % 5, species == "dog" ? 0.5 : 0.3);
+                Animal(s, step.At, step.Moving, step.Left, density, now + k * 0.31, into, (coat + kind) % 8);
+            }
+            kind++;
         }
-        Animal(new Species("dog", "animal_dog", false), pen + new Vector2(-14f, 6f) * Unit, false, false, density, now, into, (coat + 3) % 8);
-        Animal(new Species("fowl_domestic", "animal_fowl"), pen + new Vector2(-10f, -6f) * Unit, false, true, density, now, into, coat);
     }
 
     /// <summary>One animal: animated at 16 px (walk / eat / idle), the static detail art at 32 / 64 px.</summary>
@@ -148,8 +194,8 @@ public static class Wildlife
     {
         if (density > 16 && Art.Lod("civilisation." + s.Detail, density) != null)
         {
-            // Detail animals have one pose: a small step up and down while walking.
-            float bob = moving && (int)(now * 6) % 2 == 0 ? -1f * Sprites.PixelSize(density) * density / 32f : 0f;
+            // Detail animals have one pose: a gentle rise and fall with each stride while walking.
+            float bob = moving ? -MathF.Abs(MathF.Sin((float)now * 9f)) * 0.35f * Unit : 0f;
             if (Sprites.Make("civilisation." + s.Detail, null, density, at + new Vector2(0, bob), Colors.White, flip: left) is { } d) into.Add(d);
             return;
         }

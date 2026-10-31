@@ -19,23 +19,29 @@ public sealed partial class Simulation
 {
     public readonly List<Voyage> Voyages = new();
 
-    static int SeaRange(ulong tech) =>
-        !Techs.Has(tech, TechId.Boats) ? 0 : Techs.Has(tech, TechId.Weaving) ? 10 : 6;
+    int SeaRange(TechSet tech) =>
+        !Techs.Has(tech, TechId.Boats) ? 0 : World.Cells(Techs.Has(tech, TechId.Weaving) ? 10 : 6);
 
     public int SeaRange(Band band)
     {
-        ulong known = 0;
+        TechSet known = default;
         foreach (int id in band.Members) if (Living.TryGetValue(id, out var a)) known |= a.Knows;
         return SeaRange(known);
     }
 
     bool IsSea(int i) => !World.IsLand(i);
 
+    /// <summary>The sea is within a short walk (an original cell's neighbour; a few cells on a fine grid).</summary>
     internal bool IsCoastal(int cell)
     {
-        Span<int> nb = stackalloc int[8];
-        int k = World.Neighbors(cell, nb);
-        for (int j = 0; j < k; j++) if (IsSea(nb[j])) return true;
+        int r = World.Cells(0.6f), x = World.X(cell), y = World.Y(cell);
+        for (int dy = -r; dy <= r; dy++)
+        {
+            int ny = y + dy;
+            if (ny < 0 || ny >= World.H) continue;
+            for (int dx = -r; dx <= r; dx++)
+                if ((dx != 0 || dy != 0) && IsSea(World.Index(x + dx, ny))) return true;
+        }
         return false;
     }
 
@@ -47,8 +53,17 @@ public sealed partial class Simulation
         var queue = new Queue<int>();
         if (range <= 0) return shores;
         Span<int> nb = stackalloc int[8];
-        int k = World.Neighbors(origin, nb);
-        for (int j = 0; j < k; j++) if (IsSea(nb[j])) { dist[nb[j]] = 1; queue.Enqueue(nb[j]); }
+        // Launch from any sea within a short walk of the camp.
+        int r = World.Cells(0.6f), ox = World.X(origin), oy = World.Y(origin);
+        for (int dy = -r; dy <= r; dy++)
+            for (int dx = -r; dx <= r; dx++)
+            {
+                int y = oy + dy;
+                if (y < 0 || y >= World.H) continue;
+                int s = World.Index(ox + dx, y);
+                if (IsSea(s) && dist.TryAdd(s, 1)) queue.Enqueue(s);
+            }
+        int k;
         while (queue.Count > 0)
         {
             int c = queue.Dequeue(), d = dist[c];
@@ -102,7 +117,7 @@ public sealed partial class Simulation
         float ns = judge?.T(Trait.NoveltySeeking) ?? 0.5f;
         foreach (var (cell, distance) in band.KnownShores.OrderBy(kv => kv.Key))
         {
-            float s = CellScore(band, cell, judge) + (PeopleAt(cell) == 0 ? 0.15f : 0f) - 0.02f * distance + Rng.Normal(0f, 0.05f) * ns;
+            float s = CellScore(band, cell, judge) + (PeopleNear(cell) == 0 ? 0.15f : 0f) - 0.02f * distance / World.Scale + Rng.Normal(0f, 0.05f) * ns;
             if (best == null || s > best.Value.score) best = (cell, s);
         }
         return best;
@@ -120,10 +135,11 @@ public sealed partial class Simulation
         if (followers == null)
         {
             band = from;
+            LeaveCamp(band, target);
             band.Cell = target;
             band.Sedentary = false;
             band.LastMoveDay = Day;
-            band.Shelter = 0.05f;
+            band.Shelter = 0f;
             Array.Clear(band.PlaceDread);
             BandsChanged();
         }

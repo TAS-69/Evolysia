@@ -53,7 +53,11 @@ public sealed partial class Simulation
         else Stats.Year.InstinctChoices++;
 
         if (d.Kind == DecisionKind.Pivot && d.Pivot != null)
-            FinishPivot(d.Pivot, Enum.GetValues<PivotChoice>().First(c => Ids.Snake(c) == choice));
+        {
+            // The person may have died while brooding: then nothing comes of it.
+            if (Living.ContainsKey(d.AgentId) && Enum.GetValues<PivotChoice>().Where(c => Ids.Snake(c) == choice).ToArray() is [var picked])
+                FinishPivot(d.Pivot, picked);
+        }
         else if (d.Kind == DecisionKind.Meeting && Bands.TryGetValue(d.BandId, out var a) && Bands.TryGetValue(d.OtherBandId, out var b))
             CarryOutMeeting(a, b, choice);
     }

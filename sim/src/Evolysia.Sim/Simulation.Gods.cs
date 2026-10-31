@@ -52,7 +52,7 @@ public sealed partial class Simulation
     void Apply(GodAction a)
     {
         var w = World;
-        int r = a.Radius >= 0 ? a.Radius : Powers.DefaultRadius(a.Power);
+        int r = a.Radius >= 0 ? a.Radius : Powers.DefaultRadius(a.Power, World.Scale);
         var bands = BandsNear(a.Cell, Math.Max(r, a.Power is Power.Lightning or Power.Plague ? 1 : r));
         if (a.Power is Power.Lightning or Power.Plague && bands.Count > 1)   // single-target powers hit the nearest band
             bands = bands.OrderBy(b => w.Distance(b.Cell, a.Cell)).Take(1).ToList();
@@ -79,7 +79,7 @@ public sealed partial class Simulation
                 break;
             case Power.Bless:
                 foreach (int c in CellsNear(a.Cell, r)) { w.PlantStock[c] = w.PlantK[c]; w.PreyStock[c] = w.PreyK[c]; }
-                foreach (var b in bands) { b.FoodPool += b.Members.Count * 10f; Witness(b, a.Power, true, 0.7f, "the land overflowing with food"); }
+                foreach (var b in bands) { b.Stores.Add("food", b.Members.Count * 10f); Witness(b, a.Power, true, 0.7f, "the land overflowing with food"); }
                 break;
             case Power.Fertility:
                 foreach (var b in bands) { b.FertileBlessingUntil = Day + SimConfig.DaysPerYear; Witness(b, a.Power, true, 0.4f, "a season of plenty in the wombs"); }
@@ -104,13 +104,16 @@ public sealed partial class Simulation
                 break;
             case Power.Wildfire:
                 foreach (int c in CellsNear(a.Cell, r)) { w.PlantStock[c] *= 0.2f; w.PreyStock[c] *= 0.6f; w.Ash[c] = MathF.Min(1f, w.Ash[c] + 0.3f); }
-                foreach (var b in bands) { b.Shelter *= 0.5f; b.FoodPool *= 0.6f; Strike(b, "wildfire", Stimulus.Wildfire, 0.8f, 0.02f, DeathCause.Disaster); Witness(b, a.Power, false, 0.7f, "fire springing from nothing"); }
+                DamageStructures(a.Cell, r, 0.7f, fire: true);
+                foreach (var b in bands) { b.Stores.Scale(0.6f); Strike(b, "wildfire", Stimulus.Wildfire, 0.8f, 0.02f, DeathCause.Disaster); Witness(b, a.Power, false, 0.7f, "fire springing from nothing"); }
                 break;
             case Power.Flood:
-                foreach (var b in bands) { b.FoodPool *= 0.4f; b.Shelter *= 0.3f; Strike(b, "flood", Stimulus.Flood, 0.8f, 0.02f, DeathCause.Accident); Witness(b, a.Power, false, 0.7f, "water rising out of season"); }
+                DamageStructures(a.Cell, r, 0.6f, fire: false);
+                foreach (var b in bands) { b.Stores.Scale(0.4f); Strike(b, "flood", Stimulus.Flood, 0.8f, 0.02f, DeathCause.Accident); Witness(b, a.Power, false, 0.7f, "water rising out of season"); }
                 break;
             case Power.Earthquake:
-                foreach (var b in bands) { b.Shelter *= 0.2f; Strike(b, "earthquake", Stimulus.Earthquake, 0.95f, 0.03f, DeathCause.Disaster); Witness(b, a.Power, false, 1f, "the ground tearing open"); }
+                DamageStructures(a.Cell, r, 0.8f, fire: false);
+                foreach (var b in bands) { Strike(b, "earthquake", Stimulus.Earthquake, 0.95f, 0.03f, DeathCause.Disaster); Witness(b, a.Power, false, 1f, "the ground tearing open"); }
                 break;
             case Power.Blizzard:
                 foreach (var b in bands)
@@ -318,12 +321,14 @@ public sealed partial class Simulation
 
     void ForceMigrate(Band band, int radius)
     {
-        band.Cell = BestCellNear(band, radius, Living.GetValueOrDefault(band.LeaderId));
+        int target = BestCellNear(band, radius, Living.GetValueOrDefault(band.LeaderId));
+        LeaveCamp(band, target);
+        band.Cell = target;
         BandsChanged();
         ArrivedAt(band);
         band.LastMoveDay = Day;
         band.Sedentary = false;
-        band.Shelter *= 0.3f;
+        band.Shelter = 0f;
         Array.Clear(band.PlaceDread);
         Stats.Year.Migrations++;
     }

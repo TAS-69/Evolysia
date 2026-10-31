@@ -15,10 +15,10 @@ public sealed partial class Simulation
         foreach (var band in Bands.Values.ToArray())
         {
             if (band.Disbanded || band.Members.Count == 0) continue;
-            band.Shelter = MathF.Max(0f, band.Shelter - (band.Sedentary ? 0.002f : 0.006f));
+            EconomyUpkeep(band);
             for (int c = 0; c < Ids.CategoryCount; c++) band.PlaceDread[c] *= 0.97f;
 
-            if (!band.Sedentary && BandShare(band, TechId.Agriculture) >= 0.3f && World.Growth(band.Cell, Day) > 0f
+            if (!band.Sedentary && BandShare(band, TechId.Agriculture) >= 0.3f && World.Growth(band.Cell, Day) > 0f && OpenLand(band.Cell, band.Id)
                 && World.Biome[band.Cell] is Biome.TemperateGrassland or Biome.TemperateForest or Biome.Savanna
                     or Biome.TropicalSeasonalForest or Biome.Shrubland or Biome.Wetland)
             {
@@ -34,20 +34,83 @@ public sealed partial class Simulation
         }
     }
 
-    // People per cell, cached while no band moves, splits or merges (CellScore asks ~25 times per band).
+    // People per block of cells (a block is a home range wide), cached while no band moves, splits
+    // or merges (CellScore asks a few dozen times per band).
     Dictionary<int, int>? _cellPeople;
     bool _cellPeopleValid;
 
-    int PeopleAt(int cell)
+    int BlockSize => Math.Max(1, (int)(World.Scale * 0.8f));
+    int BlockOf(int cell) => World.Y(cell) / BlockSize * (World.W / BlockSize + 1) + World.X(cell) / BlockSize;
+
+    /// <summary>People living close enough to share <paramref name="cell"/>'s home range.</summary>
+    int PeopleNear(int cell)
     {
         if (!_cellPeopleValid || _cellPeople == null)
         {
             _cellPeople ??= new Dictionary<int, int>();
             _cellPeople.Clear();
-            foreach (var b in Bands.Values) _cellPeople[b.Cell] = _cellPeople.GetValueOrDefault(b.Cell) + b.Members.Count;
+            foreach (var b in Bands.Values) _cellPeople[BlockOf(b.Cell)] = _cellPeople.GetValueOrDefault(BlockOf(b.Cell)) + b.Members.Count;
             _cellPeopleValid = true;
         }
-        return _cellPeople.GetValueOrDefault(cell);
+        int bs = BlockSize, reach = bs == 1 ? 0 : 1, sum = 0;
+        int bx = World.X(cell) / bs, by = World.Y(cell) / bs, blocksX = World.W / bs + 1;
+        for (int dy = -reach; dy <= reach; dy++)
+            for (int dx = -reach; dx <= reach; dx++)
+            {
+                int x = ((bx + dx) % blocksX + blocksX) % blocksX, y = by + dy;
+                if (y < 0) continue;
+                sum += _cellPeople.GetValueOrDefault(y * blocksX + x);
+            }
+        return sum;
+    }
+
+    /// <summary>
+    /// Food around a cell, per original-cell area: the home range sampled at its centre and eight
+    /// points round it (the cell alone when ranges are a single cell).
+    /// </summary>
+    float RangeFood(int cell, bool fishing)
+    {
+        var w = World;
+        int r = Math.Max(1, (int)(w.Scale * 0.8f));
+        if (w.Scale < 1.5f) return CellFood(cell, fishing);
+        float sum = 0f; int n = 0;
+        for (int dy = -1; dy <= 1; dy++)
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                int y = Math.Clamp(w.Y(cell) + dy * r, 0, w.H - 1);
+                sum += CellFood(w.Index(w.X(cell) + dx * r, y), fishing);
+                n++;
+            }
+        return sum / n / w.CellArea;
+    }
+
+    float CellFood(int c, bool fishing)
+    {
+        var w = World;
+        return w.PlantStock[c] * 0.6f + w.PlantK[c] * 0.4f * MathF.Max(w.Growth(c, Day + 30), 0.2f)
+               + w.PreyStock[c] * 0.6f + w.FishStock[c] * (fishing ? 0.8f : 0.2f);
+    }
+
+    /// <summary>Candidate cells within <paramref name="radius"/>: all of them when few, else a fixed-size sample.</summary>
+    IEnumerable<int> Candidates(int cell, int radius, int samples)
+    {
+        int x0 = World.X(cell), y0 = World.Y(cell);
+        if ((2 * radius + 1) * (2 * radius + 1) <= samples + 1)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                int y = y0 + dy;
+                if (y < 0 || y >= World.H) continue;
+                for (int dx = -radius; dx <= radius; dx++) yield return World.Index(x0 + dx, y);
+            }
+            yield break;
+        }
+        for (int k = 0; k < samples; k++)
+        {
+            int y = y0 + Rng.Range(-radius, radius + 1);
+            if (y < 0 || y >= World.H) continue;
+            yield return World.Index(x0 + Rng.Range(-radius, radius + 1), y);
+        }
     }
 
     internal void BandsChanged() => _cellPeopleValid = false;
@@ -57,9 +120,9 @@ public sealed partial class Simulation
         var w = World;
         if (!w.IsLand(cell) || w.Biome[cell] == Biome.Lake) return float.NegativeInfinity;
         bool fishing = BandKnows(band, TechId.Fishing);
-        float food = w.PlantStock[cell] * 0.6f + w.PlantK[cell] * 0.4f * MathF.Max(w.Growth(cell, Day + 30), 0.2f)
-                     + w.PreyStock[cell] * 0.6f + w.FishStock[cell] * (fishing ? 0.8f : 0.2f);
-        int crowd = band.Members.Count + PeopleAt(cell) - (cell == band.Cell ? band.Members.Count : 0);
+        float food = RangeFood(cell, fishing);
+        bool home = BlockOf(cell) == BlockOf(band.Cell) || w.Distance(cell, band.Cell) <= BlockSize;
+        int crowd = band.Members.Count + PeopleNear(cell) - (home ? band.Members.Count : 0);
         float perCapita = food / MathF.Max(1f, crowd * 40f);
         float ha = leader?.T(Trait.HarmAvoidance) ?? 0.5f;
         float cold = MathF.Max(0f, 5f - (w.TempMean[cell] - w.TempAmp[cell])) / 20f;
@@ -82,20 +145,13 @@ public sealed partial class Simulation
         foreach (int id in band.Members) if (Living.TryGetValue(id, out var m)) thirst = MathF.Max(thirst, m.NeedOf(Need.Thirst));
         float ns = leader?.T(Trait.NoveltySeeking) ?? 0.5f, ha = leader?.T(Trait.HarmAvoidance) ?? 0.5f;
 
-        int radius = 2, best = band.Cell;
+        int radius = World.Cells(2), best = band.Cell;
         float bestScore = here;
-        int x0 = World.X(band.Cell), y0 = World.Y(band.Cell);
-        for (int dy = -radius; dy <= radius; dy++)
+        foreach (int c in Candidates(band.Cell, radius, 40))
         {
-            int y = y0 + dy;
-            if (y < 0 || y >= World.H) continue;
-            for (int dx = -radius; dx <= radius; dx++)
-            {
-                int c = World.Index(x0 + dx, y);
-                if (c == band.Cell) continue;
-                float s = CellScore(band, c, leader) - 0.05f * World.Distance(band.Cell, c) + Rng.Normal(0f, 0.05f) * ns;
-                if (s > bestScore) { bestScore = s; best = c; }
-            }
+            if (c == band.Cell) continue;
+            float s = CellScore(band, c, leader) - 0.05f * World.Distance(band.Cell, c) / World.Scale + Rng.Normal(0f, 0.05f) * ns;
+            if (s > bestScore) { bestScore = s; best = c; }
         }
         float threshold = 1.12f + 0.3f * ha - 0.25f * ns;
         bool desperate = hunger > 0.5f || thirst > 0.5f;
@@ -108,11 +164,12 @@ public sealed partial class Simulation
         if (!desperate && bestScore < here * threshold + 0.05f) return;
         if (Day - band.LastMoveDay < 45 && !desperate) return;
 
+        LeaveCamp(band, best);
         band.Cell = best;
         BandsChanged();
         band.LastMoveDay = Day;
         Array.Clear(band.PlaceDread);
-        band.Shelter *= 0.3f;
+        band.Shelter = 0f;
         Stats.Year.Migrations++;
         ArrivedAt(band);
         if (Chronicle.First($"biome:{World.Biome[best]}"))
@@ -136,7 +193,11 @@ public sealed partial class Simulation
     /// </summary>
     bool MaybeBud(Band band)
     {
-        if (band.Sedentary || band.Stress < 0.1f || band.Members.Count < 22 || Day - band.FoundedDay < 360) return false;
+        // Wanderers bud when hungry. Villages bud when they outgrow their land: a crowded or hungry
+        // village sends a party off to found a new village on good land nearby - how farming spreads.
+        bool village = band.Sedentary;
+        if (village ? band.Members.Count < 55 || (band.Stress < 0.05f && band.Members.Count < 75) || Day - band.FoundedDay < 3 * SimConfig.DaysPerYear
+                    : band.Stress < 0.1f || band.Members.Count < 22 || Day - band.FoundedDay < 360) return false;
         Agent? pioneer = null;
         foreach (int id in band.Members)
             if (Living.TryGetValue(id, out var m) && m.IsAdult(Day) && m.Id != band.LeaderId && m.Age(Day) is > 18f and < 45f
@@ -144,18 +205,14 @@ public sealed partial class Simulation
         if (pioneer == null || !Rng.Chance(0.25f + Pioneering(pioneer) * 0.5f)) return false;
 
         int target = -1; float bestScore = float.MinValue;
-        int x0 = World.X(band.Cell), y0 = World.Y(band.Cell);
-        for (int dy = -3; dy <= 3; dy++)
-            for (int dx = -3; dx <= 3; dx++)
-            {
-                int y = y0 + dy;
-                if (y < 0 || y >= World.H) continue;
-                int c = World.Index(x0 + dx, y);
-                if (c == band.Cell) continue;
-                float s = CellScore(band, c, pioneer) + Rng.Normal(0f, 0.05f);
-                if (s > bestScore) { bestScore = s; target = c; }
-            }
-        var sea = BestShore(band, pioneer);
+        foreach (int c in Candidates(band.Cell, World.Cells(village ? 4 : 3), 48))
+        {
+            if (World.Distance(c, band.Cell) < World.Cells(village ? 2 : 1)) continue;   // far enough to be new land (clear of the village's fields)
+            if (village && (!FarmLand(c) || !OpenLand(c))) continue;
+            float s = CellScore(band, c, pioneer) + Rng.Normal(0f, 0.05f);
+            if (s > bestScore) { bestScore = s; target = c; }
+        }
+        var sea = village ? null : BestShore(band, pioneer);
         if ((target < 0 || float.IsNegativeInfinity(bestScore)) && sea == null) return false;
 
         var followers = new List<Agent>();
@@ -174,10 +231,22 @@ public sealed partial class Simulation
         if (target < 0) return false;
         var nb = Split(band, pioneer, followers, band.CultureId, target);
         Stats.Year.Splits++;
-        Chronicle.Add(new WorldEvent(Day, EventCategory.Discovery, "budding",
-            $"Hungry times: {pioneer.Name} leads {nb.Members.Count} of the {band.Name} to new land, and they become the {nb.Name}.", 0.35f, pioneer.Id, nb.Id));
+        if (village)
+        {
+            nb.Sedentary = true;   // they take seed, tools and know-how: a new village
+            Chronicle.Add(new WorldEvent(Day, EventCategory.Discovery, "new_village",
+                $"{pioneer.Name} leads {nb.Members.Count} of the {band.Name} to found a new village, the {nb.Name}.", 0.3f, pioneer.Id, nb.Id));
+        }
+        else
+            Chronicle.Add(new WorldEvent(Day, EventCategory.Discovery, "budding",
+                $"Hungry times: {pioneer.Name} leads {nb.Members.Count} of the {band.Name} to new land, and they become the {nb.Name}.", 0.35f, pioneer.Id, nb.Id));
         return true;
     }
+
+    /// <summary>Land farmers would settle: the biomes agriculture takes to, dry, with water near.</summary>
+    bool FarmLand(int c) =>
+        World.IsDryLand(c) && World.WaterAccess[c] > 0.4f && World.Biome[c] is Biome.TemperateGrassland or Biome.TemperateForest or Biome.Savanna
+            or Biome.TropicalSeasonalForest or Biome.Shrubland or Biome.Wetland or Biome.TemperateRainforest or Biome.BorealForest;
 
     static float Pioneering(Agent a) => a.T(Trait.NoveltySeeking) * (1.2f - a.T(Trait.HarmAvoidance)) + 0.2f * a.T(Trait.SelfDirectedness);
 
@@ -226,7 +295,7 @@ public sealed partial class Simulation
     Band Split(Band from, Agent founder, List<Agent> followers, int cultureId, int cell = -1, bool announce = true)
     {
         BandsChanged();
-        if (cell < 0) cell = NearbyLand(from.Cell, 1, 2);
+        if (cell < 0) cell = NearbyLand(from.Cell, World.Cells(1), World.Cells(2));
         var nb = NewBand(cell, cultureId, from.Id);
         var moving = new HashSet<int> { founder.Id };
         foreach (var f in followers) moving.Add(f.Id);
@@ -240,12 +309,12 @@ public sealed partial class Simulation
         {
             if (!Living.TryGetValue(id, out var m) || m.BandId != from.Id) continue;
             from.Members.Remove(id);
-            nb.Members.Add(id);
+            AddMember(nb, id);
             m.BandId = nb.Id;
             m.CultureId = cultureId;
-            float share = from.FoodPool / MathF.Max(1, from.Members.Count + 1);
-            nb.FoodPool += share; from.FoodPool -= share;
         }
+        // The leavers take their share of the stores.
+        from.Stores.MoveFraction(nb.Stores, nb.Members.Count / (float)Math.Max(1, nb.Members.Count + from.Members.Count));
         nb.LeaderId = founder.Id;
         nb.Shelter = 0.05f;
         from.Relations[nb.Id] = -0.2f; nb.Relations[from.Id] = -0.2f;
@@ -286,12 +355,13 @@ public sealed partial class Simulation
         // Each band meets at most one neighbour a month, so contact scales with bands, not pairs.
         var bands = Bands.Values.Where(b => !b.Disbanded && b.Members.Count > 0).ToArray();
         var near = new List<Band>();
+        int contact = World.Cells(2);
         foreach (var a in bands)
         {
             if (a.Disbanded || !Rng.Chance(0.3f)) continue;
             near.Clear();
             foreach (var b in bands)
-                if (b != a && !b.Disbanded && World.Distance(a.Cell, b.Cell) <= 2) near.Add(b);
+                if (b != a && !b.Disbanded && World.Distance(a.Cell, b.Cell) <= contact) near.Add(b);
             if (near.Count > 0) Meet(a, near[Rng.Next(near.Count)]);
         }
     }
@@ -351,12 +421,27 @@ public sealed partial class Simulation
             }
     }
 
+    /// <summary>
+    /// Friends in plenty help friends in want: at a feast the better-fed band gives a share of its
+    /// surplus food (more freely for those who know trade and count it as fair exchange).
+    /// </summary>
+    void ShareFood(Band a, Band b)
+    {
+        float perA = a.FoodPool / Math.Max(1, a.Members.Count), perB = b.FoodPool / Math.Max(1, b.Members.Count);
+        var (rich, poor, perRich, perPoor) = perA >= perB ? (a, b, perA, perB) : (b, a, perB, perA);
+        if (perRich < 30f || perRich < perPoor * 2f + 5f || rich.RelationTo(poor.Id) < 0f) return;
+        float generosity = (BandKnows(rich, TechId.Trade) ? 0.3f : 0.15f) * (0.5f + rich.RelationTo(poor.Id));
+        float give = MathF.Min((perRich - 20f) * rich.Members.Count, (40f - perPoor) * poor.Members.Count) * generosity;
+        if (give > 1f) rich.Stores.GiveFood(poor.Stores, give);
+    }
+
     void Feast(Band a, Band b, bool first)
     {
         Stats.Year.Trades++;
         a.Relations[b.Id] = MathF.Min(1f, a.RelationTo(b.Id) + 0.15f);
         b.Relations[a.Id] = MathF.Min(1f, b.RelationTo(a.Id) + 0.15f);
         ExchangeIdeas(a, b); ExchangeIdeas(b, a);
+        ShareFood(a, b);
         foreach (var band in new[] { a, b })
             foreach (int id in band.Members)
                 if (Living.TryGetValue(id, out var m)) { Fear.SafeExposure(m, Stimulus.Strangers); m.Feel(Emotion.Joy, 0.1f); }
@@ -368,7 +453,7 @@ public sealed partial class Simulation
             Bond(single, other, Day);
             var mover = Rng.Chance(0.5f) ? single : other;
             var to = mover == single ? b : a; var fromBand = mover == single ? a : b;
-            fromBand.Members.Remove(mover.Id); to.Members.Add(mover.Id); mover.BandId = to.Id;
+            fromBand.Members.Remove(mover.Id); AddMember(to, mover.Id); mover.BandId = to.Id;
             Stats.Year.Pairings++;
         }
         if (first)
@@ -388,18 +473,19 @@ public sealed partial class Simulation
 
     void ExchangeIdeas(Band from, Band to)
     {
-        ulong known = 0UL;
+        TechSet known = default, theirs = default;
         foreach (int id in from.Members) if (Living.TryGetValue(id, out var m)) known |= m.Knows;
+        foreach (int id in to.Members) if (Living.TryGetValue(id, out var m)) theirs |= m.Knows;
         var learners = to.Members.Select(id => Living.GetValueOrDefault(id)).Where(m => m != null && m.IsAdult(Day)).ToList();
         if (learners.Count == 0) return;
-        for (int t = 0; t < Techs.Count; t++)
+        foreach (var t in (known & ~theirs).Ids())
         {
-            if ((known & (1UL << t)) == 0 || BandShare(to, (TechId)t) > 0f) continue;
-            if (BandShare(from, (TechId)t) < 0.3f || !Rng.Chance(0.35f)) continue;
+            if (BandShare(from, t) < 0.3f || !Rng.Chance(0.35f)) continue;
             var learner = learners[Rng.Next(learners.Count)]!;
-            learner.Knows |= 1UL << t;
+            if (!Techs.CanLearn(learner.Knows, t)) continue;   // it builds on things they don't know yet
+            learner.Knows |= Techs.Bit(t);
             Chronicle.Add(new WorldEvent(Day, EventCategory.Trade, "tech_spread",
-                $"The {to.Name} learn {Techs.Name((TechId)t).Replace('_', ' ')} from the {from.Name}.", 0.3f, learner.Id, to.Id));
+                $"The {to.Name} learn {Techs.Name(t).Replace('_', ' ')} from the {from.Name}.", 0.3f, learner.Id, to.Id));
         }
         foreach (var meme in Memes.Values)
             if (Prevalence(from, meme.Id) > 0.5f && Rng.Chance(0.3f))
@@ -414,12 +500,12 @@ public sealed partial class Simulation
         BandsChanged();
         if (!Bands.TryGetValue(a.BandId, out var from) || !Bands.TryGetValue(bandId, out var to) || from == to) return;
         from.Members.Remove(a.Id);
-        to.Members.Add(a.Id);
+        AddMember(to, a.Id);
         a.BandId = to.Id;
         foreach (int c in a.Children)
             if (Living.TryGetValue(c, out var child) && child.Age(Day) < 6f && child.BandId == from.Id)
             {
-                from.Members.Remove(c); to.Members.Add(c); child.BandId = to.Id;
+                from.Members.Remove(c); AddMember(to, c); child.BandId = to.Id;
             }
         if (from.LeaderId == a.Id) ElectLeader(from);
         if (from.Members.Count == 0) Disband(from);
@@ -431,7 +517,7 @@ public sealed partial class Simulation
         if (band.Members.Count >= 8) return;
         Band? best = null;
         foreach (var other in Bands.Values)
-            if (other.Id != band.Id && !other.Disbanded && World.Distance(other.Cell, band.Cell) <= 3 && band.RelationTo(other.Id) > -0.2f
+            if (other.Id != band.Id && !other.Disbanded && World.Distance(other.Cell, band.Cell) <= World.Cells(3) && band.RelationTo(other.Id) > -0.2f
                 && (best == null || band.RelationTo(other.Id) + (other.CultureId == band.CultureId ? 0.3f : 0f)
                                     > band.RelationTo(best.Id) + (best.CultureId == band.CultureId ? 0.3f : 0f)))
                 best = other;
@@ -442,8 +528,12 @@ public sealed partial class Simulation
     {
         BandsChanged();
         foreach (int id in small.Members.ToArray())
-            if (Living.TryGetValue(id, out var m)) { into.Members.Add(id); m.BandId = into.Id; }
-        into.FoodPool += small.FoodPool;
+            if (Living.TryGetValue(id, out var m)) { AddMember(into, id); m.BandId = into.Id; }
+        small.Stores.MoveAllTo(into.Stores);
+        foreach (var (species, head) in small.Herds) into.Herds[species] = into.Herds.GetValueOrDefault(species) + head;
+        foreach (int sid in small.Structures)
+            if (Structures.TryGetValue(sid, out var s)) { s.BandId = World.Distance(s.Cell, into.Cell) <= 8 ? into.Id : -1; if (s.BandId == into.Id) into.Structures.Add(sid); }
+        small.Structures.Clear();
         small.Members.Clear();
         Chronicle.Add(new WorldEvent(Day, EventCategory.Social, "merge", $"The last of the {small.Name} join the {into.Name}.", 0.3f, -1, into.Id));
         Disband(small);
@@ -464,7 +554,11 @@ public sealed partial class Simulation
                     m.Scars++;
                     if (m.Health <= 0f) { Kill(m, DeathCause.Violence, Stimulus.Strangers, $", in a raid by the {attacker.Name}"); if (band == victim) casualtiesV++; else casualtiesA++; }
                 }
-        if (won) { float stolen = victim.FoodPool * 0.6f; victim.FoodPool -= stolen; attacker.FoodPool += stolen; }
+        if (won)
+        {
+            victim.Stores.GiveFood(attacker.Stores, victim.FoodPool * 0.6f);
+            DamageStructures(victim.Cell, 2, 0.3f, fire: Rng.Chance(0.4f));
+        }
         victim.LastRaidedDay = Day;
 
         attacker.Relations[victim.Id] = MathF.Max(-1f, attacker.RelationTo(victim.Id) - 0.3f);
