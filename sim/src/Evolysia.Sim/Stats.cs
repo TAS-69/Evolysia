@@ -4,7 +4,6 @@ using Evolysia.Sim.Psych;
 
 namespace Evolysia.Sim;
 
-/// <summary>Counters for the current year plus a snapshot of the population at year end.</summary>
 public sealed class YearRecord
 {
     public int Year;

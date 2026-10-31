@@ -1,4 +1,4 @@
-"""Composable outfits with independent per-piece dye lookups."""
+
 import json
 import math
 from collections import OrderedDict

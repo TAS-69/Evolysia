@@ -1,4 +1,4 @@
-"""Terrain sheets with frame sequences, seasonal rows and random dual-grid mosaics."""
+
 import json
 import numpy as np
 from PIL import Image, ImageDraw

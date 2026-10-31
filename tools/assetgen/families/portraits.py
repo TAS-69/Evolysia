@@ -1,4 +1,4 @@
-"""Palette-indexed three-quarter portraits and modular expression parts."""
+
 import json
 from pathlib import Path
 import numpy as np

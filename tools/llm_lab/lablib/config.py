@@ -1,11 +1,10 @@
-"""Resolve profile + local.toml + CLI overrides into one concrete server plan."""
+
 
 import os
 import tomllib
 from dataclasses import dataclass, field
 
 from . import CONFIG_DIR, LOCAL_CONFIG, ROLES
-
 
 @dataclass
 class ServerPlan:
@@ -24,9 +23,8 @@ class ServerPlan:
 
     @property
     def est_gb(self) -> float:
-        # weights + KV + ~0.4 GB compute buffers
-        return round(self.size_gb + self.kv_gb + 0.4, 1)
 
+        return round(self.size_gb + self.kv_gb + 0.4, 1)
 
 @dataclass
 class Plan:
@@ -39,7 +37,7 @@ class Plan:
     servers: dict[str, ServerPlan]
 
     def endpoint_for(self, role: str) -> ServerPlan | None:
-        """Helper tasks fall back to main when no helper is configured."""
+
         if role in self.servers:
             return self.servers[role]
         if role == "helper":
@@ -52,32 +50,25 @@ class Plan:
             out[s.device] += s.est_gb
         return {k: round(v, 1) for k, v in out.items()}
 
-
 def _load(path):
     with open(path, "rb") as f:
         return tomllib.load(f)
 
-
 def load_models() -> dict:
     return _load(CONFIG_DIR / "models.toml")["models"]
-
 
 def load_profiles() -> dict:
     return _load(CONFIG_DIR / "profiles.toml")
 
-
 def load_local() -> dict:
     return _load(LOCAL_CONFIG) if LOCAL_CONFIG.exists() else {}
 
-
 def default_threads() -> int:
-    # os.cpu_count() counts logical cores; assume SMT and leave half for the game.
+
     return max(2, (os.cpu_count() or 4) // 4)
 
-
 def resolve(cli: dict | None = None) -> Plan:
-    """cli keys: profile, main_model, main_device, helper, helper_device,
-    helper_threads, embed, embed_device, embed_threads (any may be None)."""
+
     cli = {k: v for k, v in (cli or {}).items() if v is not None}
     models = load_models()
     pf = load_profiles()
@@ -96,7 +87,7 @@ def resolve(cli: dict | None = None) -> Plan:
         spec.update(local.get(role, {}))
         if f"{role}_model" in cli:
             spec["model"] = cli[f"{role}_model"]
-        if role in cli:  # --helper / --embed shorthand
+        if role in cli:
             spec["model"] = cli[role]
         for key in ("device", "threads"):
             if f"{role}_{key}" in cli:
@@ -144,7 +135,6 @@ def resolve(cli: dict | None = None) -> Plan:
         servers=servers,
     )
 
-
 def describe(plan: Plan) -> str:
     lines = [f"Profile: {plan.profile} - {plan.description}", ""]
     lines.append(f"  {'role':<7} {'model':<18} {'device':<6} {'ctx':>6} {'slots':>5} {'threads':>7} {'~GB':>5}")
@@ -160,9 +150,8 @@ def describe(plan: Plan) -> str:
               "  (rough; run `lab.py status` after `serve` for real buffer sizes)"]
     return "\n".join(lines)
 
-
 def write_local(values: dict) -> None:
-    """Tiny TOML writer for the flat structure `configure` produces."""
+
     out = []
     if "profile" in values:
         out.append(f'profile = "{values["profile"]}"\n')

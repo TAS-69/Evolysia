@@ -4,18 +4,13 @@ namespace Evolysia.Sim.Agents;
 
 public sealed class Relationship
 {
-    public float Affinity;      // -1..1 like/dislike
-    public float Trust;         // 0..1
-    public bool Grudge;         // set by resentment; colours future interactions
+    public float Affinity;
+    public float Trust;
+    public bool Grudge;
 }
 
 public sealed record LifeEvent(int Day, EventCategory Category, string Kind, float Importance, int OtherId = -1, string Detail = "");
 
-/// <summary>
-/// One person. Personality = inherited temperament (genome) + experience offsets, so it can
-/// shift with age, trauma, success and social pressure. Everything here is numeric; the LLM
-/// later reads this state to give it a voice.
-/// </summary>
 public sealed class Agent
 {
     public int Id;
@@ -27,49 +22,46 @@ public sealed class Agent
     public Genome Genome = null!;
     public int Generation;
 
-    // Personality
-    public readonly float[] TraitOffset = new float[Ids.TraitCount];   // experience-driven shifts, clamped +/-0.5
-    public readonly float[] Emotions = new float[Ids.EmotionCount];    // 0..1, decay daily
-    public readonly float[] Efficacy = new float[Ids.DomainCount];     // 0..1 confidence per domain
-    public readonly float[] Fear = new float[Ids.StimulusCount];       // learned fear per stimulus
+    public readonly float[] TraitOffset = new float[Ids.TraitCount];
+    public readonly float[] Emotions = new float[Ids.EmotionCount];
+    public readonly float[] Efficacy = new float[Ids.DomainCount];
+    public readonly float[] Fear = new float[Ids.StimulusCount];
     public readonly float[] CategoryFear = new float[Ids.CategoryCount];
-    public readonly float[] Mastered = new float[Ids.StimulusCount];   // inoculation after overcoming a fear
-    public uint SuppressedDomains;   // bit per Domain: gave in to social pressure, won't try again
+    public readonly float[] Mastered = new float[Ids.StimulusCount];
+    public uint SuppressedDomains;
     public float SelfEsteem = 0.5f;
     public float Belonging = 0.6f;
     public float Prestige;
-    public int WithdrawnUntil;       // day; withdrawn agents avoid socialising
+    public int WithdrawnUntil;
     public int Scars;
-    public int InspiredUntil = -1;   // a dream of seeking: restless creativity
+    public int InspiredUntil = -1;
 
-    // Body and needs
-    public readonly float[] Needs = new float[Ids.NeedCount];   // 0 satisfied .. 1 desperate
+    public readonly float[] Needs = new float[Ids.NeedCount];
     public float Health = 1f;
     public bool Sick;
     public int SickUntil;
     Economy.Inventory? _pack;
-    /// <summary>What this person carries: today's gathering, food for the road, materials.</summary>
+
     public Economy.Inventory Pack => _pack ??= new Economy.Inventory();
-    /// <summary>Person-days of food carried.</summary>
+
     public float Food => _pack?.FoodValue ?? 0f;
     internal void DropPack() => _pack = null;
-    /// <summary>Tools and clothes this person owns (worn or carried).</summary>
+
     public readonly List<Economy.Item> Gear = new();
     public bool Pregnant;
     public int DueDay, PregnancyFatherId = -1, LastBirthDay = -100000;
 
-    // Society
     public int BandId = -1;
     public int CultureId = -1;
-    public TechSet Knows;            // techniques this person knows
-    public readonly Dictionary<int, float> Memes = new();   // meme id -> conviction 0..1
-    public readonly float[] HeldKind = new float[8];         // cache: strongest conviction per MemeKind
-    public readonly float[] TabooOf = new float[Ids.CategoryCount];   // cache: taboo strength per category
+    public TechSet Knows;
+    public readonly Dictionary<int, float> Memes = new();
+    public readonly float[] HeldKind = new float[8];
+    public readonly float[] TabooOf = new float[Ids.CategoryCount];
     public readonly Dictionary<int, Relationship> Relations = new();
     public readonly List<LifeEvent> Memory = new();
     public readonly int[] ActivityCounts = new int[Enum.GetValues<Activity>().Length];
     public Activity Today;
-    public int Site = -1;            // the tile worked today (camp for most activities)
+    public int Site = -1;
 
     public bool Alive = true;
     public DeathCause DeathCause;
@@ -80,13 +72,11 @@ public sealed class Agent
     public bool IsChild(int day) => Age(day) < 14f;
     public bool IsAdult(int day) => Age(day) >= 14f;
 
-    /// <summary>Effective trait = genome baseline + lived experience.</summary>
     public float T(Trait t) => Math.Clamp(Genome.Genes[(int)t] + TraitOffset[(int)t], 0f, 1f);
     public float Gene(Gene g) => Genome.Genes[(int)g];
     public float Emo(Emotion e) => Emotions[(int)e];
     public float NeedOf(Need n) => Needs[(int)n];
 
-    /// <summary>How much experience can still reshape personality: high in childhood, low in old age.</summary>
     public float Plasticity(int day)
     {
         float age = Age(day);
@@ -126,7 +116,6 @@ public sealed class Agent
         }
     }
 
-    /// <summary>Emergent profession: the activity this person has spent most adult days on.</summary>
     public Activity MainActivity()
     {
         int best = (int)Activity.Forage;

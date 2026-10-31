@@ -1,4 +1,4 @@
-"""Flora variant galleries, native silhouettes and seasonal lookup rows."""
+
 import json
 import math
 import numpy as np

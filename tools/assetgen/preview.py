@@ -1,4 +1,4 @@
-"""Labelled nearest-neighbour palette and lookup inspection sheets."""
+
 import json
 from PIL import Image, ImageDraw
 

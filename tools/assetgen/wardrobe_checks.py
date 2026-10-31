@@ -1,4 +1,4 @@
-"""Outfit inventory, rig addressing, independent dye and silhouette checks."""
+
 import json
 import numpy as np
 from PIL import Image

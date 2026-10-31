@@ -1,27 +1,20 @@
-// Colours the baked world (TileBake): each texel holds palette-slot indices, and the colour of a
-// slot comes from lut_nature for the texel's cell (biome x season, blended at season changes).
-// Snow, sea ice, hillshade and culture tints are applied per cell, so nothing is rebaked as the
-// year turns. Water and lava pixels are swapped for the matching pixel of their animated tile.
-// The same shader draws the whole-world 16 px layer and the 32 / 64 px detail chunks: `tile` is
-// the art density and `origin` the cell at the texture's top-left. Pixels stay crisp at any zoom:
-// neighbouring texels blend only across the one screen pixel where they meet.
 shader_type canvas_item;
 
-uniform sampler2D world : filter_nearest;     // R ground, G flora in season, B flora off-season, A flora bits
-uniform sampler2D roots : filter_nearest;     // where the plant at each pixel stands: R in season, G off season (TileBake.Baked)
-uniform sampler2D lut : filter_nearest;       // lut_nature: 256 slots x (biome x season) rows
-uniform sampler2D cell_a : filter_nearest;    // per cell: LUT row A, row B, blend A->B, snow cover
-uniform sampler2D cell_b : filter_nearest;    // per cell: culture tint rgb x strength, strength
-uniform sampler2D cell_c : filter_nearest;    // per cell: hillshade (x128), flags (1 off-season, 2 water), animated kind
-uniform sampler2D snow_tile : filter_nearest; // slot indices of a snow tile (tile x tile)
-uniform sampler2D ice_tile : filter_nearest;  // slot indices of an ice tile
-uniform sampler2D anim : filter_nearest;      // animated plains: frames across, (kind x variant) down, tile px each
-uniform sampler2D anim_slots : filter_nearest;// 256 x 1: bit k set where slot belongs to animated kind k + 1
+uniform sampler2D world : filter_nearest;
+uniform sampler2D roots : filter_nearest;
+uniform sampler2D lut : filter_nearest;
+uniform sampler2D cell_a : filter_nearest;
+uniform sampler2D cell_b : filter_nearest;
+uniform sampler2D cell_c : filter_nearest;
+uniform sampler2D snow_tile : filter_nearest;
+uniform sampler2D ice_tile : filter_nearest;
+uniform sampler2D anim : filter_nearest;
+uniform sampler2D anim_slots : filter_nearest;
 uniform int tile = 16;
 uniform ivec2 origin = ivec2(0);
 uniform ivec2 cells = ivec2(1);
-uniform bool wrap = false;                    // the texture is the whole planet: wrap east-west
-uniform bool desaturate = false;              // culture view: grey land, tinted territory
+uniform bool wrap = false;
+uniform bool desaturate = false;
 uniform float fade = 1.0;
 
 int byte_of(float v) { return int(v * 255.0 + 0.5); }
@@ -39,7 +32,6 @@ float value_noise(vec2 p)
 	return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
 }
 
-// The cell a plant stands on, from its root code (1 + (dx + 2) + 5 dy; 0 is the pixel's own cell).
 ivec2 root_cell(ivec2 cell, int code)
 {
 	if (code <= 0) return cell;
@@ -47,8 +39,6 @@ ivec2 root_cell(ivec2 cell, int code)
 	return cell_of(cell + ivec2(code % 5 - 2, code / 5));
 }
 
-// A per-cell value interpolated between cell centres, so snow drifts, hillshade and territory
-// have soft edges instead of following the cell grid. g is a global pixel.
 vec4 between_cells(sampler2D tex, ivec2 g)
 {
 	vec2 f = (vec2(g) + 0.5) / float(tile) - 0.5;
@@ -66,13 +56,13 @@ vec3 texel(ivec2 p)
 {
 	ivec2 size = textureSize(world, 0);
 	p = ivec2(wrap ? wrap_x(p.x, size.x) : clamp(p.x, 0, size.x - 1), clamp(p.y, 0, size.y - 1));
-	ivec2 g = p + origin * tile;            // global pixel
+	ivec2 g = p + origin * tile;
 	ivec2 cell = cell_of(g / tile);
 	ivec2 in_cell = g - (g / tile) * tile;
 	vec4 w = texelFetch(world, p, 0);
 	vec4 c = texelFetch(cell_c, cell, 0);
 	int flags = byte_of(c.g);
-	// A plant keeps the season and colours of the cell it stands on, all the way up.
+
 	int bits = byte_of(w.a);
 	vec4 r = texelFetch(roots, p, 0);
 	ivec2 in_season = root_cell(cell, byte_of(r.r)), off_season = root_cell(cell, byte_of(r.g));
@@ -101,7 +91,7 @@ vec3 texel(ivec2 p)
 	if (desaturate)
 	{
 		col = mix(col, vec3(dot(col, vec3(0.299, 0.587, 0.114))), 0.55);
-		vec4 tint = between_cells(cell_b, g);   // rgb premultiplied by strength
+		vec4 tint = between_cells(cell_b, g);
 		if (tint.a > 0.0) col = mix(col, tint.rgb / tint.a, tint.a * 0.45);
 	}
 	return col;

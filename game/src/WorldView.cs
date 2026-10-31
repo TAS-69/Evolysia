@@ -7,15 +7,9 @@ namespace Evolysia.Game;
 
 public enum Overlay { Biome, Elevation, Temperature, Rainfall, Food, Cultures }
 
-/// <summary>
-/// Paints the planet procedurally from simulation data: biome colour shifted by season and
-/// today's growth, hillshading, snow and sea ice from today's temperature, rivers along the flow
-/// network, ash after eruptions. Shown zoomed out and for the data overlays; zoomed in,
-/// <see cref="TileView"/> draws Codex's tile art over it.
-/// </summary>
 public partial class WorldView : Sprite2D
 {
-    public const int SubPx = 6;   // texture pixels per cell
+    public const int SubPx = 6;
     public Overlay Overlay { get; set; } = Overlay.Biome;
 
     Image? _image;
@@ -36,9 +30,9 @@ public partial class WorldView : Sprite2D
         Texture = _texture;
         Centered = false;
         Scale = Vector2.One * (Main.CellPx / (float)SubPx);
-        TextureFilter = TextureFilterEnum.Linear;   // soft, map-like; pixel tiles replace this later
-        TextureRepeat = TextureRepeatEnum.Enabled;  // filtering wraps at the edges: no seam at the date line
-        // The planet wraps east-west: show a copy on each side (children share the texture and its updates).
+        TextureFilter = TextureFilterEnum.Linear;
+        TextureRepeat = TextureRepeatEnum.Enabled;
+
         foreach (var child in GetChildren()) child.QueueFree();
         foreach (int side in new[] { -1, 1 })
             AddChild(new Sprite2D
@@ -57,7 +51,7 @@ public partial class WorldView : Sprite2D
         {
             _downstream[i] = -1;
             if (!w.IsLand(i) || w.Flow[i] < WorldGen.RiverFlow * 2f) continue;
-            // Downstream = the land neighbour carrying more water; failing that, the sea or a lake.
+
             int k = w.Neighbors(i, nb);
             float best = w.Flow[i];
             for (int j = 0; j < k; j++)
@@ -76,7 +70,6 @@ public partial class WorldView : Sprite2D
         int texW = w.W * SubPx;
         Dictionary<int, Color>? territory = Overlay == Overlay.Cultures ? Territory(sim) : null;
 
-        // Per-cell colour, shade and a land/water height (lakes count as water).
         if (_cellColor.Length != w.Count) { _cellColor = new Color[w.Count]; _height = new float[w.Count]; }
         for (int i = 0; i < w.Count; i++)
         {
@@ -84,8 +77,6 @@ public partial class WorldView : Sprite2D
             _height[i] = w.Biome[i] == Biome.Lake ? -60f : w.Elevation[i];
         }
 
-        // Each texture pixel blends the four nearest cell centres, using only cells on the same side
-        // of the (interpolated) coastline, so shores are smooth curves rather than steps.
         int texH = w.H * SubPx;
         for (int py = 0; py < texH; py++)
         {
@@ -101,7 +92,7 @@ public partial class WorldView : Sprite2D
                 int c00 = w.Index(x0, ya), c10 = w.Index(x0 + 1, ya), c01 = w.Index(x0, yb), c11 = w.Index(x0 + 1, yb);
                 float w00 = (1 - tx) * (1 - ty), w10 = tx * (1 - ty), w01 = (1 - tx) * ty, w11 = tx * ty;
                 float h = _height[c00] * w00 + _height[c10] * w10 + _height[c01] * w01 + _height[c11] * w11
-                          + (Hash(px * 3, py * 7) - 0.5f) * 120f;   // ragged coastlines
+                          + (Hash(px * 3, py * 7) - 0.5f) * 120f;
                 bool land = h >= 0f;
                 Color sum = new(0, 0, 0, 0);
                 float total = 0f;
@@ -147,7 +138,7 @@ public partial class WorldView : Sprite2D
         Color c = Palette.Biome(w.Biome[i]);
         if (!w.IsLand(i))
         {
-            if (t < -6f && w.Biome[i] != Biome.DeepOcean) c = c.Lerp(new Color("dfe8ee"), Math.Clamp((-6f - t) / 8f, 0f, 0.9f));   // sea ice
+            if (t < -6f && w.Biome[i] != Biome.DeepOcean) c = c.Lerp(new Color("dfe8ee"), Math.Clamp((-6f - t) / 8f, 0f, 0.9f));
         }
         else
         {
@@ -158,12 +149,12 @@ public partial class WorldView : Sprite2D
                 var season = w.SeasonOf(i, day);
                 if (season == Season.Autumn && w.Biome[i] is Biome.TemperateForest or Biome.TemperateGrassland or Biome.Shrubland)
                     c = c.Lerp(new Color("b5793a"), 0.35f);
-                else if (growth < 0.5f) c = c.Lerp(t > 5f ? new Color("c2ad6e") : new Color("7d7464"), (0.5f - growth) * 0.9f);   // dry season / dormancy
+                else if (growth < 0.5f) c = c.Lerp(t > 5f ? new Color("c2ad6e") : new Color("7d7464"), (0.5f - growth) * 0.9f);
                 else c = c.Lerp(new Color("6fae4a"), (growth - 0.5f) * 0.25f);
             }
-            if (t < -1f) c = c.Lerp(new Color("f3f5f7"), Math.Clamp((-1f - t) / 7f, 0f, 0.92f));   // snow
+            if (t < -1f) c = c.Lerp(new Color("f3f5f7"), Math.Clamp((-1f - t) / 7f, 0f, 0.92f));
             if (w.Ash[i] > 0.05f) c = c.Lerp(new Color("4a4440"), Math.Clamp(w.Ash[i], 0f, 0.8f));
-            if (w.Volcano[i]) c = VolcanoPeak(w, i) ? new Color("e0552d") : c.Lerp(new Color("3b3230"), 0.7f);   // basalt cone, lava at the crater
+            if (w.Volcano[i]) c = VolcanoPeak(w, i) ? new Color("e0552d") : c.Lerp(new Color("3b3230"), 0.7f);
         }
         if (territory != null)
         {
@@ -173,7 +164,6 @@ public partial class WorldView : Sprite2D
         return c;
     }
 
-    /// <summary>The highest cell of a volcano (none of its neighbours stands higher).</summary>
     static bool VolcanoPeak(WorldMap w, int i)
     {
         int x = w.X(i), y = w.Y(i);
@@ -183,7 +173,6 @@ public partial class WorldView : Sprite2D
         return true;
     }
 
-    /// <summary>Land within a cell of each band, tinted by its culture.</summary>
     internal static Dictionary<int, Color> Territory(Simulation sim)
     {
         var map = new Dictionary<int, Color>();
@@ -203,13 +192,12 @@ public partial class WorldView : Sprite2D
         return map;
     }
 
-    /// <summary>Hillshade multiplier, lit from the north-west.</summary>
     internal static float Shade(WorldMap w, int i)
     {
         if (!w.IsLand(i)) return 1f;
         int x = w.X(i), y = w.Y(i);
         int nw = w.Index(x - 1, Math.Max(0, y - 1));
-        float slope = (w.Elevation[i] - MathF.Max(0f, w.Elevation[nw])) / 1200f;   // light from the north-west
+        float slope = (w.Elevation[i] - MathF.Max(0f, w.Elevation[nw])) / 1200f;
         return Math.Clamp(1f + slope * 0.6f, 0.7f, 1.25f);
     }
 
@@ -222,7 +210,7 @@ public partial class WorldView : Sprite2D
             if (d < 0) continue;
             int x0 = w.X(i) * SubPx + SubPx / 2, y0 = w.Y(i) * SubPx + SubPx / 2;
             int dx = w.X(d) - w.X(i);
-            if (dx > 1) dx -= w.W; else if (dx < -1) dx += w.W;   // wrap
+            if (dx > 1) dx -= w.W; else if (dx < -1) dx += w.W;
             int x1 = x0 + dx * SubPx, y1 = y0 + (w.Y(d) - w.Y(i)) * SubPx;
             bool big = w.Flow[i] > WorldGen.RiverFlow * 8f;
             for (int s = 0; s <= SubPx; s++)
@@ -272,7 +260,7 @@ public partial class WorldView : Sprite2D
             if (w.Volcano[i]) s += "[color=#b5553c]Volcano[/color]\n";
             if (w.Fault[i] > 0.6f) s += "Fault line: earthquakes possible\n";
         }
-        // Your words, if any were left here (or carved in a stone nearby).
+
         foreach (var ins in sim.Inscriptions)
         {
             if (ins.Medium == MessageMedium.Vision || w.Distance(ins.Cell, i) > 2) continue;

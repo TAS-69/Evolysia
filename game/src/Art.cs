@@ -3,17 +3,12 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// One sprite sheet from assets/ (docs/art/ART_DIRECTION.md section 2): frames run across, rows
-/// (variants, masks, directions) run down. <see cref="Slots"/> is the index map: the palette slot of
-/// every pixel, <see cref="Art.Empty"/> where transparent.
-/// </summary>
 public sealed class Sheet
 {
     public required string Id;
     public required JsonElement Meta;
     public int FrameW, FrameH, Width, Height, PivotX, PivotY;
-    /// <summary>Art pixels per logical 16-unit cell: 16 for the base families, 16/32/64 for civilisation, wardrobe, landscape.</summary>
+
     public int Density = 16;
     public byte[] Slots = Array.Empty<byte>();
     public Image Reference = null!;
@@ -21,7 +16,7 @@ public sealed class Sheet
 
     public int Frames => Width / FrameW;
     public int Rows => Height / FrameH;
-    /// <summary>The reference colouring, for art whose colours are all fixed (structures).</summary>
+
     public ImageTexture Texture => _texture ??= ImageTexture.CreateFromImage(Reference);
     public byte Slot(int frame, int row, int x, int y) => Slots[(row * FrameH + y) * Width + frame * FrameW + x];
     public Rect2 Region(int frame, int row) => new(frame * FrameW, row * FrameH, FrameW, FrameH);
@@ -31,7 +26,6 @@ public sealed class Sheet
     public string? Str(string key) => Meta.TryGetProperty(key, out var v) && v.ValueKind == JsonValueKind.String ? v.GetString() : null;
 }
 
-/// <summary>A lookup texture: one row per biome x season (nature), skin tone, hair colour, dye or culture.</summary>
 public sealed class Lut
 {
     public required string[] Rows;
@@ -44,57 +38,46 @@ public sealed class Lut
 
 public readonly record struct Color32(byte R, byte G, byte B, byte A);
 
-/// <summary>
-/// The Codex-generated art in ../assets, read straight from disk (sidecar JSON + PNG). The base
-/// families are drawn at 16 px per cell; civilisation, wardrobe and landscape also come at 32 and
-/// 64 px for closer zooms (assets/civilisation/render_contract.json). When assets/ is missing the
-/// game falls back to the procedural map. Safe to call from bake threads.
-/// </summary>
 public static class Art
 {
     public const byte Empty = 255;
     public static readonly int[] Densities = { 16, 32, 64 };
-    public static readonly string Root = Path.GetFullPath(Path.Combine(ProjectSettings.GlobalizePath("res://"), "..", "assets"));
+    public static readonly string Root = FindRoot();
     public static readonly bool Available = File.Exists(Path.Combine(Root, "manifest.json"));
+
+    static string FindRoot()
+    {
+        string besideGame = Path.Combine(Path.GetDirectoryName(OS.GetExecutablePath())!, "assets");
+        string besideProject = Path.GetFullPath(Path.Combine(ProjectSettings.GlobalizePath("res://"), "..", "assets"));
+        return File.Exists(Path.Combine(besideGame, "manifest.json")) ? besideGame : besideProject;
+    }
 
     static readonly Dictionary<string, Sheet?> Sheets = new();
     static string[]? _slotNames;
     static Lut? _nature, _skin, _hair, _cloth, _culture;
 
-    /// <summary>Palette slot names by index (fixed_soil_0, grass_2, skin_1, ...).</summary>
     public static string[] SlotNames => _slotNames ??= LoadSlotNames();
     public static Lut Nature => _nature ??= LoadLut("lut_nature");
-    /// <summary>The nature row whose colours are the art's reference colouring.</summary>
+
     public static int ReferenceRow => Math.Max(0, Nature.Row("temperate_forest.summer"));
     public static Lut Skin => _skin ??= LoadLut("lut_skin");
     public static Lut Hair => _hair ??= LoadLut("lut_hair");
     public static Lut Cloth => _cloth ??= LoadLut("lut_cloth");
     public static Lut Culture => _culture ??= LoadLut("lut_culture");
 
-    /// <summary>A sheet by manifest id ("terrain.grass_plain"), or null if Codex hasn't made it.</summary>
     public static Sheet? Get(string id)
     {
         lock (Sheets) return GetLocked(id);
     }
 
-    /// <summary>A density level of a multi-density asset: Lod("civilisation.hearth", 32) is civilisation.hearth_lod32.</summary>
     public static Sheet? Lod(string id, int density) => Get($"{id}_lod{density}");
 
-    /// <summary>
-    /// The art density for a camera zoom, by how wide a cell is on screen (render_contract.json
-    /// density_selection: up to 24 px -> 16, up to 48 px -> 32, beyond -> 64).
-    /// </summary>
     public static int DensityFor(float zoom)
     {
         float tile = Main.CellPx * zoom;
         return tile <= 24f ? 16 : tile <= 48f ? 32 : 64;
     }
 
-    /// <summary>
-    /// The best art for <paramref name="density"/>: the multi-density asset at that level if it
-    /// exists, else the 16 px base sheet enlarged by a whole factor (art Codex hasn't drawn finer yet).
-    /// Returns the sheet and its pixel scale.
-    /// </summary>
     public static (Sheet sheet, int scale)? Resolve(string? lodId, string? baseId, int density)
     {
         if (lodId != null)
@@ -137,7 +120,6 @@ public static class Art
 
     public static Sheet Need(string id) => Get(id) ?? throw new FileNotFoundException($"asset {id} not found under {Root}");
 
-    /// <summary>A JSON file under assets/ (customisation.json, blueprints.json...), or null.</summary>
     public static JsonElement? Json(string relative)
     {
         var path = Path.Combine(Root, relative);

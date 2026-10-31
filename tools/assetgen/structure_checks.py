@@ -1,4 +1,4 @@
-"""Early structure inventory, condition and animation contracts."""
+
 import json
 import numpy as np
 from PIL import Image

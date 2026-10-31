@@ -6,23 +6,12 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim;
 
-/// <summary>A crossing of open water, for the chronicle and the map.</summary>
 public sealed record Voyage(int Day, int FromBandId, int BandId, int FromCell, int ToCell, int Distance, int Sailed, int Lost, bool FirstLanding);
 
-/// <summary>
-/// The sea. Rafts already hop narrow straits (ordinary migration reaches 2-3 cells). With boats,
-/// coastal scouts sight land across open water and the band remembers those shores; pioneers (or a
-/// desperate band) can sail for them. Range grows with boats (6 cells of sea) and sails from
-/// weaving (10). Crossings cost lives, more in winter and on long voyages; rarely a whole voyage is lost.
-/// </summary>
 public sealed partial class Simulation
 {
     public readonly List<Voyage> Voyages = new();
 
-    /// <summary>
-    /// How far a band can sail, in cells of open sea: boats hug the coast, sails (weaving) reach
-    /// further, sailing ships cross open seas, and shipbuilders cross oceans.
-    /// </summary>
     int SeaRange(TechSet tech) =>
         !Techs.Has(tech, TechId.Boats) ? 0
         : World.Cells(Techs.Has(tech, TechId.Shipbuilding) ? 60 : Techs.Has(tech, TechId.Sailing) ? 25 : Techs.Has(tech, TechId.Weaving) ? 10 : 6);
@@ -36,7 +25,6 @@ public sealed partial class Simulation
 
     bool IsSea(int i) => !World.IsLand(i);
 
-    /// <summary>The sea is within a short walk (an original cell's neighbour; a few cells on a fine grid).</summary>
     internal bool IsCoastal(int cell)
     {
         int r = World.Cells(0.6f), x = World.X(cell), y = World.Y(cell);
@@ -50,7 +38,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    /// <summary>Land reachable by sea from <paramref name="origin"/> within <paramref name="range"/> sea cells: land cell -> distance.</summary>
     internal Dictionary<int, int> ShoresWithin(int origin, int range)
     {
         var dist = new Dictionary<int, int>();
@@ -58,7 +45,7 @@ public sealed partial class Simulation
         var queue = new Queue<int>();
         if (range <= 0) return shores;
         Span<int> nb = stackalloc int[8];
-        // Launch from any sea within a short walk of the camp.
+
         int r = World.Cells(0.6f), ox = World.X(origin), oy = World.Y(origin);
         for (int dy = -r; dy <= r; dy++)
             for (int dx = -r; dx <= r; dx++)
@@ -86,10 +73,9 @@ public sealed partial class Simulation
         return shores;
     }
 
-    /// <summary>A scout from a seafaring coastal band sights land across the water.</summary>
     void SightShore(Agent scout, Band band, int range)
     {
-        if (range <= 0 || band.KnownShores.Count >= 12 || !IsCoastal(band.Cell)) return;   // a band remembers a handful of shores
+        if (range <= 0 || band.KnownShores.Count >= 12 || !IsCoastal(band.Cell)) return;
         int home = World.Landmass[band.Cell];
         var candidates = ShoresWithin(band.Cell, range)
             .Where(kv => World.Landmass[kv.Key] != home && World.PlantK[kv.Key] > 0f && !band.KnownShores.ContainsKey(kv.Key))
@@ -104,7 +90,7 @@ public sealed partial class Simulation
             bool firstSight = Chronicle.First($"sighted:{World.Landmass[cell]}");
             Chronicle.Add(new WorldEvent(Day, EventCategory.Discovery, "shore_sighted",
                 $"{scout.Name} of the {band.Name} sights {LandName(World.Landmass[cell])} across the sea, {distance} days' paddle away.",
-                firstSight ? 0.5f : 0.15f, scout.Id, band.Id));   // only the first sighting of a land is history
+                firstSight ? 0.5f : 0.15f, scout.Id, band.Id));
         });
     }
 
@@ -114,7 +100,6 @@ public sealed partial class Simulation
         return size < 40 ? "an island" : size < 300 ? "a strange land" : "a vast land";
     }
 
-    /// <summary>Best remembered shore for this band to sail to, and its appeal (or null).</summary>
     (int cell, float score)? BestShore(Band band, Agent? judge)
     {
         if (band.KnownShores.Count == 0 || !IsCoastal(band.Cell) || SeaRange(band) == 0) return null;
@@ -128,10 +113,6 @@ public sealed partial class Simulation
         return best;
     }
 
-    /// <summary>
-    /// Sail. Either the pioneers split off and go, or (desperate) the whole band goes. Returns the
-    /// band now at sea's end (null if lost).
-    /// </summary>
     internal Band? Sail(Band from, Agent leader, List<Agent>? followers, int target)
     {
         int distance = from.KnownShores.TryGetValue(target, out var d) ? d : 3;
@@ -193,7 +174,6 @@ public sealed partial class Simulation
         return vanished ? null : band;
     }
 
-    /// <summary>A band has reached a cell; if it's a landmass no one has reached before, that's history.</summary>
     internal bool ArrivedAt(Band band, bool announce = true)
     {
         int landmass = World.Landmass[band.Cell];

@@ -6,20 +6,12 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim;
 
-/// <summary>
-/// The player as a god. Acts are inputs applied between days (before the next day's step) and
-/// logged with that day, so seed + log replays a history exactly. People witness what you do: wonder (awe)
-/// builds until a seer names you, each people in their own way: a Watcher if you have been kind,
-/// a Hand in the Sky if you have been cruel. Believers pray in hard times; answering deepens faith,
-/// silence breeds doubt, and like any belief, faith in you fades if nothing renews it.
-/// </summary>
 public sealed partial class Simulation
 {
     public readonly List<(int Day, GodAction Action)> ActionLog = new();
     public readonly List<Prayer> Prayers = new();
     int _nextPrayer = 1;
 
-    /// <summary>Apply an act now (between days; works while paused) and log it for replay.</summary>
     public void Act(GodAction action)
     {
         ActionLog.Add((Day, action));
@@ -29,7 +21,6 @@ public sealed partial class Simulation
 
     public IEnumerable<Prayer> OpenPrayers => Prayers.Where(p => p.Open);
 
-    /// <summary>The player-god meme of this culture, if they have named you.</summary>
     public Meme? PlayerGodOf(int cultureId) =>
         Memes.Values.FirstOrDefault(m => m.IsPlayerGod && m.CultureId == cultureId && m.Kind == MemeKind.SpiritBelief);
 
@@ -54,7 +45,7 @@ public sealed partial class Simulation
         var w = World;
         int r = a.Radius >= 0 ? a.Radius : Powers.DefaultRadius(a.Power, World.Scale);
         var bands = BandsNear(a.Cell, Math.Max(r, a.Power is Power.Lightning or Power.Plague ? 1 : r));
-        if (a.Power is Power.Lightning or Power.Plague && bands.Count > 1)   // single-target powers hit the nearest band
+        if (a.Power is Power.Lightning or Power.Plague && bands.Count > 1)
             bands = bands.OrderBy(b => w.Distance(b.Cell, a.Cell)).Take(1).ToList();
         Stats.Year.GodActs++;
 
@@ -165,9 +156,6 @@ public sealed partial class Simulation
             (bands.Count > 0 ? $", over the {string.Join(", ", bands.Take(3).Select(b => b.Name))}." : "."), 0.45f, -1, bands.FirstOrDefault()?.Id ?? -1));
     }
 
-    // ------------------------------------------------------------------ perception and faith
-
-    /// <summary>A band sees something no one can explain. Wonder builds until a seer names its cause.</summary>
     void Witness(Band band, Power power, bool kind, float intensity, string what)
     {
         foreach (int id in band.Members)
@@ -180,7 +168,7 @@ public sealed partial class Simulation
         var god = PlayerGodOf(band.CultureId);
         if (god != null && Prevalence(band, god.Id) > 0.1f)
         {
-            // Believers read every act as yours: kindness deepens love, wrath deepens fearful devotion.
+
             foreach (int id in band.Members)
                 if (Living.TryGetValue(id, out var m) && m.Memes.TryGetValue(god.Id, out var conv))
                 {
@@ -192,7 +180,6 @@ public sealed partial class Simulation
         if (band.Awe >= 1.5f) Revelation(band, null, what);
     }
 
-    /// <summary>A seer (or a dreamer) names the unseen power behind the wonders.</summary>
     void Revelation(Band band, Agent? prophet, string what)
     {
         prophet ??= band.Members.Select(id => Living.GetValueOrDefault(id)).Where(a => a != null && a.IsAdult(Day))
@@ -304,7 +291,7 @@ public sealed partial class Simulation
         Psychology.Appraise(a, new Appraisal(EventCategory.Spiritual, "cursed", -1f, 0.9f, Agency.Unknown, Threat: true, Detail: "a curse from above"), Day);
         a.Feel(Emotion.Shame, 0.4f);
         if (band != null && PlayerGodOf(band.CultureId) is { } god && a.Memes.ContainsKey(god.Id))
-            a.Memes[god.Id] = MathF.Min(1f, a.Memes[god.Id] + 0.2f);   // "I have angered the one above"
+            a.Memes[god.Id] = MathF.Min(1f, a.Memes[god.Id] + 0.2f);
         Stats.Year.GodActs++;
         Chronicle.Add(new WorldEvent(Day, EventCategory.Spiritual, "curse", $"You curse {a.Name}{(band != null ? $" of the {band.Name}" : "")}.", 0.45f, a.Id, a.BandId));
         if (a.Health <= 0f) Kill(a, DeathCause.Disease, null, ", withered by a curse");
@@ -336,9 +323,6 @@ public sealed partial class Simulation
         Stats.Year.Migrations++;
     }
 
-    // ------------------------------------------------------------------ prayers
-
-    /// <summary>Monthly: believers in trouble pray to you; unanswered prayers expire into doubt.</summary>
     void PrayerUpkeep()
     {
         foreach (var p in Prayers.Where(p => p.Open && Day - p.Day > 120).ToList())
@@ -378,7 +362,6 @@ public sealed partial class Simulation
             Answered(p, band, $"{Powers.Verb(p.Need)} came");
     }
 
-    /// <summary>Striking a band's enemies answers its prayer for protection.</summary>
     void AnswerProtection(Band struck, Power power)
     {
         foreach (var p in Prayers.Where(p => p.Open && p.Need == PrayerNeed.Protection).ToList())

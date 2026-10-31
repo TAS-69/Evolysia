@@ -1,4 +1,4 @@
-"""Find or download a prebuilt llama.cpp (llama-server) from the official GitHub releases."""
+
 
 import json
 import platform
@@ -15,9 +15,8 @@ RELEASES_API = "https://api.github.com/repos/ggml-org/llama.cpp/releases"
 POINTER = BIN_DIR / "llama-server.json"
 EXE = "llama-server.exe" if platform.system() == "Windows" else "llama-server"
 
-
 def find_server() -> Path | None:
-    """Prefer the copy `install` downloaded, then anything on PATH."""
+
     if POINTER.exists():
         p = Path(json.loads(POINTER.read_text())["path"])
         if p.exists():
@@ -25,25 +24,21 @@ def find_server() -> Path | None:
     on_path = shutil.which("llama-server")
     return Path(on_path) if on_path else None
 
-
 def _asset_matcher(backend: str):
-    """Asset names look like llama-b12005-bin-win-vulkan-x64.zip, llama-b12005-bin-win-rocm-10.0-x64.zip,
-    llama-b12005-bin-ubuntu-x64.tar.gz (Linux CPU), llama-b12005-bin-macos-arm64.tar.gz."""
+
     system, machine = platform.system(), platform.machine().lower()
     arch = "arm64" if machine in ("arm64", "aarch64") else "x64"
     os_tag = {"Windows": "win", "Linux": "ubuntu", "Darwin": "macos"}.get(system)
     if not os_tag:
         raise SystemExit(f"Unsupported OS: {system}")
     if os_tag == "macos" or (os_tag == "ubuntu" and backend == "cpu"):
-        exact = re.compile(rf"^llama-b\d+-bin-{os_tag}-{arch}\.(zip|tar\.gz)$")  # macOS build uses Metal
+        exact = re.compile(rf"^llama-b\d+-bin-{os_tag}-{arch}\.(zip|tar\.gz)$")
         return lambda name: bool(exact.match(name))
     return lambda name: (name.startswith("llama-b") and f"-bin-{os_tag}-{backend}" in name
                          and re.search(rf"-{arch}\.(zip|tar\.gz)$", name) is not None)
 
-
 def install(backend: str = "vulkan", tag: str | None = None, dry_run: bool = False) -> Path:
-    """backend: vulkan (AMD/Intel/NVIDIA GPUs, and CPU via --device none), rocm (AMD) or cpu.
-    Builds are published as prereleases, so scan recent releases rather than /latest."""
+
     url = f"{RELEASES_API}/tags/{tag}" if tag else f"{RELEASES_API}?per_page=20"
     with urllib.request.urlopen(url, timeout=30) as r:
         releases = json.load(r)

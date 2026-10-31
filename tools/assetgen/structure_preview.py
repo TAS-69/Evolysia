@@ -1,4 +1,4 @@
-"""Landmark condition rows, contained-fire frames and culture recolours."""
+
 import json
 import math
 import numpy as np

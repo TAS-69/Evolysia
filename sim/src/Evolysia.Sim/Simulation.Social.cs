@@ -8,12 +8,7 @@ namespace Evolysia.Sim;
 
 public sealed partial class Simulation
 {
-    // ------------------------------------------------------------------ memes
 
-    // Beliefs change slowly, so what each person holds and how widespread each meme is in a band
-    // are cached and refreshed monthly (RefreshMemeCaches) rather than recounted on every chat.
-
-    /// <summary>Strongest conviction this agent holds in a meme of this kind (0 if none).</summary>
     internal float Held(Agent a, MemeKind kind) => a.HeldKind[(int)kind];
 
     internal float Taboo(Agent a, StimulusCategory target) => a.TabooOf[(int)target];
@@ -52,10 +47,6 @@ public sealed partial class Simulation
         PruneForgottenMemes();
     }
 
-    /// <summary>
-    /// A myth no living person remembers is gone. Faiths in the player are kept, so a people that
-    /// forgot you can rediscover the same name.
-    /// </summary>
     void PruneForgottenMemes()
     {
         var keep = new HashSet<int>(Memes.Values.Where(m => m.IsPlayerGod).SelectMany(m => new[] { m.Id, m.PairedMemeId }));
@@ -63,10 +54,6 @@ public sealed partial class Simulation
             if (!_heldMemes.Contains(id) && !keep.Contains(id)) Memes.Remove(id);
     }
 
-    /// <summary>
-    /// Monthly: beliefs fade unless renewed by ritual, retelling or events (~18% a year), so faiths
-    /// can rise and die out rather than accumulating forever.
-    /// </summary>
     void FadeBeliefs(Agent a)
     {
         if (a.Memes.Count == 0) return;
@@ -92,10 +79,6 @@ public sealed partial class Simulation
         if (stale != null) foreach (var id in stale) a.Memes.Remove(id);
     }
 
-    /// <summary>
-    /// Taboos and norms mean the same thing wherever they arise, so they are one shared idea that
-    /// spreads and fades. Myths stay unique: two peoples' storm gods are different gods.
-    /// </summary>
     internal Meme SharedMeme(MemeKind kind, StimulusCategory target, string name, Agent origin, Band band)
     {
         foreach (var m in Memes.Values)
@@ -115,7 +98,6 @@ public sealed partial class Simulation
         return m;
     }
 
-    /// <summary>How well a meme fits a listener's temperament.</summary>
     float Fit(Agent a, Meme m) => m.Kind switch
     {
         MemeKind.SpiritBelief or MemeKind.Ritual => a.T(Trait.SelfTranscendence),
@@ -125,8 +107,6 @@ public sealed partial class Simulation
         MemeKind.ElderRule or MemeKind.InnovationTaboo => 0.5f * a.T(Trait.RewardDependence) + 0.5f * (1f - a.T(Trait.NoveltySeeking)),
         _ => 0.5f,
     };
-
-    // ------------------------------------------------------------------ talking
 
     void Socialize(Agent a, Band band)
     {
@@ -145,7 +125,6 @@ public sealed partial class Simulation
         ra.Affinity = Math.Clamp(ra.Affinity + delta, -1f, 1f);
         rb.Affinity = Math.Clamp(rb.Affinity + delta, -1f, 1f);
 
-        // Quarrels: likelier between the uncooperative, the angry and the aggrieved.
         float quarrel = 0.035f * (1.2f - a.T(Trait.Cooperativeness)) * (1.2f - other.T(Trait.Cooperativeness))
                         * (1f + a.Emo(Emotion.Anger) + other.Emo(Emotion.Anger)) * (ra.Grudge || rb.Grudge ? 3f : 1f);
         if (Rng.Chance(quarrel))
@@ -159,7 +138,6 @@ public sealed partial class Simulation
             return;
         }
 
-        // Ideas spread: conformity bias (what most people around believe) and prestige bias.
         foreach (var (memeId, conv) in a.Memes)
         {
             if (conv < 0.4f || !Memes.TryGetValue(memeId, out var meme)) continue;
@@ -172,12 +150,10 @@ public sealed partial class Simulation
             }
         }
 
-        // Stories of danger travel too (observational fear at a distance).
         int topFear = -1; float topValue = 0.5f;
         for (int s = 0; s < Ids.StimulusCount; s++) if (a.Fear[s] > topValue) { topValue = a.Fear[s]; topFear = s; }
         if (topFear >= 0 && Rng.Chance(0.15f)) Fear.Observe(other, (Stimulus)topFear, topValue * 0.35f, Day);
 
-        // Techniques pass on by watching and talking.
         if (Rng.Chance(0.04f * a.T(Trait.Cooperativeness)))
         {
             var teachable = a.Knows & ~other.Knows;
@@ -203,7 +179,6 @@ public sealed partial class Simulation
         return best;
     }
 
-    /// <summary>Picks up one of <paramref name="options"/> - only one the learner has the grounding for.</summary>
     void LearnOne(Agent learner, TechSet options)
     {
         int count = 0;
@@ -213,7 +188,7 @@ public sealed partial class Simulation
         foreach (var t in options.Ids())
             if (Techs.CanLearn(learner.Knows, t) && pick-- == 0)
             {
-                // People who once gave in about a domain are reluctant to pick it up again.
+
                 if (learner.IsSuppressed(Techs.Get(t).Domain) && Rng.Chance(0.8f)) return;
                 learner.Knows |= Techs.Bit(t);
                 return;
@@ -237,8 +212,6 @@ public sealed partial class Simulation
         }
     }
 
-    // ------------------------------------------------------------------ love
-
     void Court(Agent a, Band band)
     {
         Agent? target = null;
@@ -255,7 +228,7 @@ public sealed partial class Simulation
             }
         }
         Consider(band, 6, 0f);
-        // Most foragers marry out: look to friendly neighbouring bands too, especially from a small band.
+
         if (target == null || band.Members.Count < 25)
             foreach (var other in Bands.Values)
                 if (other.Id != band.Id && World.Distance(other.Cell, band.Cell) <= World.Cells(2) && band.RelationTo(other.Id) > -0.3f)
@@ -275,7 +248,6 @@ public sealed partial class Simulation
             return;
         }
 
-        // Rejected. Small stakes most of the time; a public, hoped-for refusal can change someone.
         float stake = MathF.Max(0f, a.AffinityTo(target.Id)) + a.Emo(Emotion.Love) * 0.5f;
         a.Rel(target.Id).Affinity -= 0.05f;
         if (stake < 0.4f || !Rng.Chance(0.25f))
@@ -309,7 +281,7 @@ public sealed partial class Simulation
         child.Needs[(int)Need.Social] = MathF.Max(0f, child.NeedOf(Need.Social) - 0.4f);
         child.Rel(a.Id).Affinity = MathF.Min(1f, child.AffinityTo(a.Id) + 0.03f);
         a.Feel(Emotion.Love, 0.03f);
-        // Upbringing: character, beliefs and fears rub off.
+
         for (int t = (int)Trait.SelfDirectedness; t <= (int)Trait.SelfTranscendence; t++)
             child.Shift((Trait)t, (a.T((Trait)t) - child.T((Trait)t)) * 0.001f, Day);
         foreach (var (meme, conv) in a.Memes)
@@ -343,8 +315,6 @@ public sealed partial class Simulation
         }
     }
 
-    // ------------------------------------------------------------------ faith
-
     void Ritual(Agent a, Band band)
     {
         float conv = Held(a, MemeKind.Ritual);
@@ -352,21 +322,16 @@ public sealed partial class Simulation
         a.Emotions[(int)Emotion.Fear] *= 1f - 0.2f * (0.5f + conv);
         a.Emotions[(int)Emotion.Sadness] *= 0.9f;
         a.Belonging = MathF.Min(1f, a.Belonging + 0.02f * conv);
-        band.Stores.TakeFood(0.2f * conv);   // offerings
+        band.Stores.TakeFood(0.2f * conv);
         Psychology.Practice(a, Domain.Spiritual, true, 0.5f);
         a.Prestige += 0.01f * conv * a.T(Trait.SelfTranscendence);
-        a.Shift(Trait.SelfTranscendence, 0.0008f * conv, Day);   // practice deepens faith, slowly
+        a.Shift(Trait.SelfTranscendence, 0.0008f * conv, Day);
 
-        // Superstition: if the feared thing hasn't struck lately, the ritual "works".
         foreach (var (id, c) in a.Memes.ToArray())
             if (Memes.TryGetValue(id, out var m) && m.Kind is MemeKind.Ritual or MemeKind.SpiritBelief)
                 a.Memes[id] = MathF.Min(1f, c + 0.004f);
     }
 
-    /// <summary>
-    /// An unexplained blow (disaster, sudden death) moves a spiritual person to explain it.
-    /// The explanation becomes a god and a ritual, offered to the band, which may embrace or mock it.
-    /// </summary>
     internal void MaybeMyth(Band band, StimulusCategory cause, float intensity, string what)
     {
         Agent? seer = null;
@@ -378,7 +343,7 @@ public sealed partial class Simulation
         foreach (var (id, conv) in seer.Memes)
             if (conv > 0.4f && Memes.TryGetValue(id, out var existing) && existing.Kind == MemeKind.SpiritBelief && existing.Target == cause)
             {
-                seer.Memes[id] = MathF.Min(1f, conv + 0.15f);   // "as foretold": faith deepens
+                seer.Memes[id] = MathF.Min(1f, conv + 0.15f);
                 return;
             }
         if (!Rng.Chance(0.3f + 0.5f * intensity)) return;
@@ -407,18 +372,12 @@ public sealed partial class Simulation
         else if (f < 0.25f) SocialRejection(seer, band, Domain.Spiritual, approvers, "belief", god, belief.Id);
     }
 
-    // ------------------------------------------------------------------ invention
-
     static readonly (string kind, Domain domain)[] CreationKinds =
     {
         ("song", Domain.Social), ("carving", Domain.Crafting), ("dance", Domain.Spiritual), ("new tool shape", Domain.Crafting),
         ("hunting trick", Domain.Hunting), ("recipe", Domain.Foraging), ("story", Domain.Spiritual), ("way of weaving reeds", Domain.Crafting),
     };
 
-    /// <summary>
-    /// Everyday creativity: a song, a carving, a trick. Shown to the band (or to a sweetheart), it
-    /// earns praise or scorn. This is the commonest trigger for the conform/double-down/leave pivots.
-    /// </summary>
     void Create(Agent a, Band band)
     {
         var (kind, domain) = CreationKinds[Rng.Next(CreationKinds.Length)];
@@ -427,7 +386,6 @@ public sealed partial class Simulation
         float quality = Math.Clamp(0.3f * a.Gene(Gene.Intellect) + 0.3f * a.Efficacy[(int)domain] + 0.2f * a.T(Trait.NoveltySeeking)
                                    + Rng.Normal(0.2f, 0.2f), 0f, 1f);
 
-        // Sometimes it's made to impress someone in particular.
         Agent? crush = null;
         if (a.PartnerId < 0 && a.Age(Day) is >= 16f and < 45f && Rng.Chance(0.35f))
             foreach (int id in band.Members)
@@ -471,7 +429,7 @@ public sealed partial class Simulation
         int cell = band.Cell;
         foreach (var def in Techs.All)
         {
-            if (!Techs.CanDiscover(a.Knows, def.Id) || Techs.Has(c.Tech, def.Id)) continue;   // novel to the band
+            if (!Techs.CanDiscover(a.Knows, def.Id) || Techs.Has(c.Tech, def.Id)) continue;
             if (a.IsSuppressed(def.Domain)) continue;
             float need = def.Id switch
             {
@@ -480,7 +438,7 @@ public sealed partial class Simulation
                 TechId.FoodStorage or TechId.Agriculture or TechId.Domestication => 1f + 2f * c.Shortage,
                 TechId.Herbalism => band.PlagueUntil > Day ? 3f : 1f,
                 TechId.Fishing => w.FishK[cell] > 0f ? 1.5f : 0f,
-                // Any coast will do; islanders and the hungry look to the sea hardest.
+
                 TechId.Boats => !IsCoastal(cell) ? 0f
                     : (w.FishK[cell] > 300f ? 1.3f : 1f) * (w.LandmassSize[w.Landmass[cell]] < 300 ? 2f : 1f) * (1f + c.Shortage),
                 TechId.Pottery => w.Flow[cell] > WorldGen.RiverFlow || w.Biome[cell] is Biome.Wetland ? 1.3f : 0.5f,
@@ -500,10 +458,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>
-    /// How strongly a band's surroundings suggest a technique: materials at hand (forest, rock,
-    /// ore, clay, sand), climate, water, a settled or large community, herds, a spiritual life.
-    /// </summary>
     float Affords(Band band, Affordance need)
     {
         var w = World;
@@ -539,15 +493,13 @@ public sealed partial class Simulation
         Stats.Year.Inventions++;
         if (def.Id == TechId.Domestication && band.Herds.Count == 0)
         {
-            // The idea comes with the animals that gave it: a few young ones kept, and the dogs that hang about camp.
+
             band.Herds[HerdSpecies(band.Cell)] = 3f;
             band.Herds["dog"] = 2f;
         }
         bool worldFirst = Chronicle.First("tech:" + def.Id);
         string tech = Techs.Name(def.Id).Replace('_', ' ');
 
-        // The band judges it: the novelty-seeking and the young are open; the cautious, the
-        // approval-bound and the innovation-wary are not; friends of the inventor lean yes.
         float wary = BandHolds(band, MemeKind.InnovationTaboo, 0.3f) ? 0.35f : 0f;
         var (approvers, mockers) = Judge(band, a, j =>
             0.45f * j.T(Trait.NoveltySeeking) - 0.25f * j.T(Trait.HarmAvoidance) + 0.3f * j.AffinityTo(a.Id)
@@ -588,7 +540,7 @@ public sealed partial class Simulation
         {
             if (id == subject.Id || !Living.TryGetValue(id, out var j) || !j.IsAdult(Day)) continue;
             float s = score(j) + Rng.Normal(0f, 0.15f);
-            if (band.LeaderId == j.Id) s *= 1.5f;   // the leader's view carries
+            if (band.LeaderId == j.Id) s *= 1.5f;
             (s > 0f ? yes : no).Add(j);
         }
         return (yes, no);
@@ -601,10 +553,6 @@ public sealed partial class Simulation
         return n;
     }
 
-    /// <summary>
-    /// The circle shunned something this person made or believed. They conform (and may abandon
-    /// it, so it can be lost), double down, withdraw, resent, or leave and found their own band.
-    /// </summary>
     void SocialRejection(Agent a, Band band, Domain domain, List<Agent> allies, string kind, string what, int memeId = -1, TechId? tech = null)
     {
         float severity = Math.Clamp(1f - allies.Count / (float)Math.Max(1, AdultCount(band) - 1) * 2f, 0.2f, 1f);

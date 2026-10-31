@@ -1,4 +1,4 @@
-"""Modular people, shared pose anchors and synchronized part strips."""
+
 import json
 from pathlib import Path
 import numpy as np

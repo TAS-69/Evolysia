@@ -15,7 +15,6 @@ public class SeaTests
         Assert.Equal(Enumerable.Range(0, w.Count).Count(w.IsDryLand), w.LandmassSize.Sum());
     }
 
-    /// <summary>A coastal cell on one landmass with another landmass within <paramref name="range"/> sea cells.</summary>
     static (int from, int to, int distance) FindCrossing(Simulation sim, int range)
     {
         var w = sim.World;

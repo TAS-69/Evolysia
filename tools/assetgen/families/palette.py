@@ -1,4 +1,4 @@
-"""Master colour definitions and shader lookup tables."""
+
 import colorsys
 import json
 from pathlib import Path

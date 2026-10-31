@@ -2,17 +2,12 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// Band names drawn in screen space (crisp at any zoom), biggest bands first, skipping any label
-/// that would overlap one already placed.
-/// </summary>
 public partial class BandLabels : Control
 {
     public BandLayer Bands = null!;
     readonly List<Rect2> _placed = new();
     readonly List<(int bandId, string text, ulong until)> _quotes = new();
 
-    /// <summary>Float a line of speech above a band for a few seconds.</summary>
     public void Say(int bandId, string text)
     {
         if (text.Length == 0) return;
@@ -69,13 +64,13 @@ public partial class BandLabels : Control
             if (anchor.X < -50 || anchor.Y < 0 || anchor.X > size.X + 50 || anchor.Y > size.Y + 50) continue;
             var textSize = font.GetMultilineStringSize(text, HorizontalAlignment.Left, width, fs, 4);
             var box = new Rect2(anchor + new Vector2(-textSize.X * 0.5f - 8f, -textSize.Y - 26f), textSize + new Vector2(16f, 12f));
-            float fade = Math.Clamp((until - now) / 1000f, 0f, 1f);   // fade out over the last second
+            float fade = Math.Clamp((until - now) / 1000f, 0f, 1f);
             DrawRect(box, new Color(Palette.Panel, 0.93f * fade));
             DrawRect(box, new Color(Palette.Ochre, fade), false, 1f);
             DrawLine(anchor + new Vector2(0, -14f), new Vector2(anchor.X, box.End.Y), new Color(Palette.Ochre, fade), 1f);
             DrawMultilineString(font, box.Position + new Vector2(8f, 6f + fs), text, HorizontalAlignment.Left, width, fs, 4,
                 new Color(Palette.Bone, fade));
-            _placed.Add(box);   // keep band labels from drawing over speech
+            _placed.Add(box);
         }
     }
 }

@@ -1,4 +1,4 @@
-"""The eval suite: personality fidelity (main), helper tasks, embeddings, throughput."""
+
 
 import itertools
 import json
@@ -25,17 +25,12 @@ SYSTEM_MAIN = (
 SYSTEM_HELPER = "You are a fast utility module inside a world simulation. Reply only with the requested JSON."
 QUERY_PREFIX = "Instruct: Given a question a person asks themself, retrieve the most relevant memory\nQuery: "
 
-
 def load_json(name):
     return json.loads((DATA_DIR / name).read_text(encoding="utf-8"))
-
 
 def _pmap(fn, items, workers):
     with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
         return list(ex.map(fn, items))
-
-
-# ---- 1. personality fidelity --------------------------------------------------
 
 def decision_schema(option_ids):
     return {
@@ -51,7 +46,6 @@ def decision_schema(option_ids):
         "additionalProperties": False,
     }
 
-
 def decision_messages(p: Persona, sc: dict, options: list[dict]):
     fmt = lambda s: s.replace("{name}", p.name)
     mem = "\n".join(f"- {fmt(m)}" for m in sc.get("memories", [])) or "- (nothing relevant)"
@@ -62,13 +56,12 @@ def decision_messages(p: Persona, sc: dict, options: list[dict]):
             f"empty), emotion, intensity (1-10).")
     return [{"role": "system", "content": SYSTEM_MAIN}, {"role": "user", "content": user}]
 
-
 def run_fidelity(ep: Endpoint, personas, scenarios, samples, workers, fixed_temp=None, seed=1):
     jobs = []
     for (pi, p), sc, k in itertools.product(enumerate(personas), scenarios, range(samples)):
         rng = random.Random(f"{seed}-{pi}-{sc['id']}-{k}")
         opts = sc["options"][:]
-        rng.shuffle(opts)  # avoid position bias
+        rng.shuffle(opts)
         jobs.append((p, sc, k, opts, rng.randint(0, 2**31)))
 
     def one(job):
@@ -85,10 +78,8 @@ def run_fidelity(ep: Endpoint, personas, scenarios, samples, workers, fixed_temp
 
     return _pmap(one, jobs, workers)
 
-
 def _affinities(sc, traits):
     return {o["id"]: sum(w * traits[t] for t, w in o["load"].items()) for o in sc["options"]}
-
 
 def score_fidelity(records, scenarios):
     by_id = {s["id"]: s for s in scenarios}
@@ -104,7 +95,6 @@ def score_fidelity(records, scenarios):
         top1.append(a >= max(aff.values()) - 1e-9)
         by_kind.setdefault(r["kind"], []).append(p)
 
-    # Do different personas actually choose differently? (normalised entropy per scenario)
     ent = []
     for sid, sc in by_id.items():
         picks = [r["chosen"] for r in valid if r["scenario"] == sid]
@@ -113,7 +103,6 @@ def score_fidelity(records, scenarios):
             h = -sum(n / len(picks) * math.log(n / len(picks)) for n in c.values())
             ent.append(h / math.log(min(len(sc["options"]), len(picks))))
 
-    # "Too nice" check: do selfish personas pick antisocial options more than kind ones?
     anti = {sid: {o["id"] for o in sc["options"] if o["load"].get("CO", 0) <= -0.5} for sid, sc in by_id.items()}
     rate = lambda rs: round(sum(r["chosen"] in anti[r["scenario"]] for r in rs) / len(rs), 3) if rs else None
     pool = [r for r in valid if anti[r["scenario"]]]
@@ -127,21 +116,18 @@ def score_fidelity(records, scenarios):
         "json_valid_rate": round(sum(r["json_ok"] for r in records) / len(records), 3),
         "schema_valid_rate": round(len(valid) / len(records), 3),
         "errors": sum(1 for r in records if r["error"]),
-        "fidelity_percentile": mean(pct),          # 0.5 = random, 1.0 = always best-fitting option
+        "fidelity_percentile": mean(pct),
         "fidelity_ci95": round(1.96 * statistics.stdev(pct) / math.sqrt(len(pct)), 3) if len(pct) > 1 else None,
         "top_choice_rate": mean(top1),
         "top_choice_chance": round(1 / n_opts, 3),
         "fidelity_by_kind": {k: mean(v) for k, v in sorted(by_kind.items())},
-        "differentiation": mean(ent),             # 0 = everyone picks the same, 1 = maximally varied
+        "differentiation": mean(ent),
         "antisocial_rate_selfish": selfish,
         "antisocial_rate_kind": kind,
         "nice_bias_gap": round(selfish - kind, 3) if selfish is not None and kind is not None else None,
         "mean_latency_s": mean([r["latency_s"] for r in records]),
         "mean_completion_tokens": mean([r["completion_tokens"] for r in records]),
     }
-
-
-# ---- 2. voice distinctness (uses embeddings when available) --------------------
 
 def score_voices(records, embed_ep: Endpoint | None):
     groups = {}
@@ -162,9 +148,6 @@ def score_voices(records, embed_ep: Endpoint | None):
         return {"voice_distinctness": None}
     return {"voice_distinctness": round(1 - statistics.mean(sims), 3),
             "voice_metric": "1 - mean embedding cosine" if embed_ep else "1 - mean word Jaccard"}
-
-
-# ---- 3. helper sub-agent tasks ------------------------------------------------
 
 def run_helper(ep: Endpoint, tasks, workers):
     cats = tasks["categories"]
@@ -229,9 +212,6 @@ def run_helper(ep: Endpoint, tasks, workers):
         "items": [{k: r[k] for k in ("task", "input", "output")} for r in allr],
     }
 
-
-# ---- 4. embedding retrieval -----------------------------------------------------
-
 def run_retrieval(ep: Endpoint, tasks):
     mem = tasks["retrieval"]["memories"]
     qs = tasks["retrieval"]["queries"]
@@ -242,9 +222,6 @@ def run_retrieval(ep: Endpoint, tasks):
     hits = sum(max(range(len(mv)), key=lambda i: cosine(v, mv[i])) == q["gold"] for v, q in zip(qv, qs))
     return {"retrieval_top1": round(hits / len(qs), 3),
             "texts_per_s": round((len(mem) + len(qs)) / elapsed, 1)}
-
-
-# ---- 5. throughput ---------------------------------------------------------------
 
 def bench_chat(ep: Endpoint, levels, scenario):
     p = ARCHETYPES[1]
@@ -264,9 +241,6 @@ def bench_chat(ep: Endpoint, levels, scenario):
                     "p50_latency_s": round(lats[len(lats) // 2], 2),
                     "p95_latency_s": round(lats[min(len(lats) - 1, int(len(lats) * 0.95))], 2)})
     return out
-
-
-# ---- driver ------------------------------------------------------------------------
 
 def run_all(eps: dict, plan, quick=False, samples=1, n_random=4, fixed_temp=None, do_bench=True, log=print):
     scen = load_json("scenarios.json")["scenarios"]

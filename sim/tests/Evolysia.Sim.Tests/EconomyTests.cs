@@ -4,7 +4,6 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim.Tests;
 
-/// <summary>Goods, gear, building and the land people work (Simulation.Economy / Building).</summary>
 public class EconomyTests
 {
     static Simulation NewSim(ulong seed = 11) => new(new SimConfig { Seed = seed, Threads = 1 });
@@ -39,8 +38,8 @@ public class EconomyTests
     public void Inventories_feed_the_most_perishable_first_and_conserve_goods()
     {
         var inv = new Inventory();
-        inv.Add("meat_raw", 2f);   // 1.0 per unit, spoils fast
-        inv.Add("nuts", 2f);       // 1.2 per unit, keeps
+        inv.Add("meat_raw", 2f);
+        inv.Add("nuts", 2f);
         Assert.Equal(4.4f, inv.FoodValue, 3);
         float got = inv.TakeFood(1.5f);
         Assert.Equal(1.5f, got, 3);
@@ -78,7 +77,7 @@ public class EconomyTests
         foreach (var a in owners)
             foreach (var item in a.Gear)
                 Assert.InRange(item.Wear, 0f, 1f);
-        // Nobody hoards: at most three tools each, one piece per clothing slot.
+
         Assert.All(sim.Living.Values, a =>
         {
             Assert.True(a.Gear.Count(i => i.Kind.Slot == ItemSlot.Tool) <= 4);
@@ -97,7 +96,7 @@ public class EconomyTests
         band.Sedentary = true;
         band.Stores.Add("wood", 40f); band.Stores.Add("fiber", 40f); band.Stores.Add("hide", 20f);
         sim.RunYears(3);
-        if (!sim.Bands.ContainsKey(band.Id)) return;   // a band may die out; the economy test then says nothing
+        if (!sim.Bands.ContainsKey(band.Id)) return;
         var fields = band.Structures.Select(id => sim.Structures[id]).Where(s => s.Kind.Role == StructureRole.Field).ToList();
         Assert.NotEmpty(fields);
         float crops = band.Stores.Held().Where(h => h.good.Kind == GoodKind.Food && fields.Any(f => f.Crop == h.good.Id)).Sum(h => h.qty);

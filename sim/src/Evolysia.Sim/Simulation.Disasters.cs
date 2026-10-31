@@ -94,7 +94,7 @@ public sealed partial class Simulation
                 if (y < 0 || y >= w.H) continue;
                 int c = w.Index(w.X(volcano) + dx, y);
                 int d = w.Distance(volcano, c);
-                float od = d / w.Scale;   // distance in original cells
+                float od = d / w.Scale;
                 w.Ash[c] = MathF.Min(1f, w.Ash[c] + (big ? 0.9f : 0.6f) / (1 + od));
                 w.PlantStock[c] *= MathF.Min(1f, 0.3f + 0.1f * od);
             }
@@ -105,7 +105,7 @@ public sealed partial class Simulation
 
         foreach (var band in Bands.Values.ToArray())
         {
-            int d = (int)(w.Distance(volcano, band.Cell) / w.Scale);   // original cells
+            int d = (int)(w.Distance(volcano, band.Cell) / w.Scale);
             if (band.Disbanded || d > radius / w.Scale + 2) continue;
             if (d <= 1) Strike(band, "eruption", Stimulus.Eruption, 1f, d == 0 ? 0.35f : 0.1f, DeathCause.Disaster);
             else
@@ -119,7 +119,7 @@ public sealed partial class Simulation
     {
         if (band.PlagueUntil < Day)
         {
-            // One draw against the odds (Chance); what the band knows is only looked up when it could matter.
+
             float u = Rng.NextFloat();
             float p = 0.00002f * Config.DisasterRate * (band.Members.Count / 25f) * (band.Sedentary ? 1.5f : 1f);
             if (u >= p * 1.8f || (u >= p && !BandKnows(band, TechId.Domestication))) return;

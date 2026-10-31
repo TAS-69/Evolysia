@@ -1,11 +1,10 @@
-"""Save results and turn the numbers into a plain verdict."""
+
 
 import json
 import time
 
 from . import RESULTS_DIR
 
-# (metric path, good threshold, ok threshold, higher is better)
 CHECKS = [
     ("fidelity.schema_valid_rate", 0.98, 0.9, "Valid structured output"),
     ("fidelity.fidelity_percentile", 0.72, 0.62, "Acts in character (0.5 = random)"),
@@ -17,7 +16,6 @@ CHECKS = [
     ("embed.retrieval_top1", 0.8, 0.6, "Embeddings: memory retrieval"),
 ]
 
-
 def _get(res, path):
     cur = res
     for k in path.split("."):
@@ -25,7 +23,6 @@ def _get(res, path):
             return None
         cur = cur[k]
     return cur
-
 
 def verdicts(res):
     out = []
@@ -36,7 +33,6 @@ def verdicts(res):
         grade = "GOOD" if v >= good else ("OK" if v >= ok else "WEAK")
         out.append((grade, label, v, good))
     return out
-
 
 def summary_md(res) -> str:
     m = res["models"]
@@ -72,7 +68,6 @@ def summary_md(res) -> str:
                      f"*{ex['thought']}* \"{ex['says']}\"")
     return "\n".join(lines) + "\n"
 
-
 def save(res) -> tuple:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     stem = time.strftime("%Y%m%d-%H%M%S") + f"_{res['profile']}_{res['models']['main']}"
@@ -86,7 +81,6 @@ def save(res) -> tuple:
     jp.write_text(json.dumps(res, indent=2), encoding="utf-8")
     mp.write_text(summary_md(res), encoding="utf-8")
     return jp, mp
-
 
 def compare() -> str:
     rows = []

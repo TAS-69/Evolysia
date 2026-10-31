@@ -3,10 +3,6 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// Placeholder colours until the Codex asset pipeline delivers the master palette
-/// (docs/art/ART_DIRECTION.md section 2.1). UI colours are already the final ones from section 11.1.
-/// </summary>
 public static class Palette
 {
     public static readonly Color Bg = new("1e1813");
@@ -45,7 +41,6 @@ public static class Palette
         _ => new("ff00ff"),
     };
 
-    /// <summary>One of 12 culture hues (lut_culture rows in the art spec).</summary>
     public static Color Culture(int hue) => Color.FromHsv(hue / 12f, 0.62f, 0.95f);
 
     public static string Hex(Color c) => "#" + c.ToHtml(false);

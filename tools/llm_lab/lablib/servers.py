@@ -1,4 +1,4 @@
-"""Launch, health-check, inspect and stop one llama-server per role."""
+
 
 import json
 import os
@@ -14,7 +14,6 @@ from .install import find_server
 
 STATE = RUN_DIR / "servers.json"
 
-
 def build_cmd(exe, plan: Plan, s: ServerPlan) -> list[str]:
     cmd = [str(exe), "-hf", s.hf, "--host", plan.host, "--port", str(s.port),
            "-c", str(s.ctx), "-np", str(s.slots), "--alias", s.role, "--no-mmproj"]
@@ -23,7 +22,7 @@ def build_cmd(exe, plan: Plan, s: ServerPlan) -> list[str]:
         if plan.gpu_device:
             cmd += ["--device", plan.gpu_device]
     else:
-        # No GPU device at all, so not even prompt processing gets offloaded.
+
         cmd += ["--device", "none", "-ngl", "0", "-t", str(s.threads), "-tb", str(s.threads)]
     if s.kind == "embed":
         cmd += ["--embedding", "--pooling", "last", "-ub", "2048", "-b", "2048"]
@@ -33,10 +32,8 @@ def build_cmd(exe, plan: Plan, s: ServerPlan) -> list[str]:
                 "--slot-save-path", str(RUN_DIR / "slots" / s.role)]
     return cmd + s.extra_args
 
-
 def base_url(plan: Plan, s: ServerPlan) -> str:
     return f"http://{plan.host}:{s.port}"
-
 
 def healthy(url: str) -> bool:
     try:
@@ -45,10 +42,8 @@ def healthy(url: str) -> bool:
     except Exception:
         return False
 
-
 def _read_state() -> dict:
     return json.loads(STATE.read_text()) if STATE.exists() else {}
-
 
 def serve(plan: Plan, timeout_s: int = 3600) -> None:
     exe = find_server()
@@ -90,7 +85,6 @@ def serve(plan: Plan, timeout_s: int = 3600) -> None:
     if pending:
         raise SystemExit(f"Timed out waiting for: {', '.join(sorted(pending))}")
 
-
 def stop() -> None:
     state = _read_state()
     for role, info in state.items():
@@ -99,9 +93,7 @@ def stop() -> None:
             print(f"[{role}] stopped (pid {info['pid']})")
     STATE.unlink(missing_ok=True)
 
-
 BUF_RE = re.compile(r"(\S+)\s+(model|KV|compute) buffer size\s*=\s*([\d.]+) MiB")
-
 
 def status() -> None:
     state = _read_state()
@@ -122,9 +114,8 @@ def status() -> None:
         for dev, mib in totals.items():
             print(f"    {dev}: {mib / 1024:.2f} GB allocated (weights + KV + compute)")
 
-
 def _win_memory(pid: int) -> tuple[float, float]:
-    """Dedicated GPU memory (all adapters) and working set, via Windows performance counters."""
+
     ps = (f"$c=(Get-Counter '\\GPU Process Memory(pid_{pid}_*)\\Dedicated Usage' -EA SilentlyContinue)"
           f".CounterSamples|Measure-Object CookedValue -Sum;"
           f"\"$($c.Sum) $((Get-Process -Id {pid}).WorkingSet64)\"")
@@ -134,7 +125,6 @@ def _win_memory(pid: int) -> tuple[float, float]:
     except ValueError:
         return 0.0, 0.0
     return vram / 2**30, ram / 2**30
-
 
 def _alive(pid: int) -> bool:
     if os.name == "nt":
@@ -146,7 +136,6 @@ def _alive(pid: int) -> bool:
         return True
     except OSError:
         return False
-
 
 def _tail(path: str, n: int) -> str:
     try:

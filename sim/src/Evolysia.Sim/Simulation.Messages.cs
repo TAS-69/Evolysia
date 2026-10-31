@@ -6,43 +6,32 @@ using Evolysia.Sim.Society;
 
 namespace Evolysia.Sim;
 
-/// <summary>How the player's words are given: written on the ground, carved on a stone, or sent as a vision.</summary>
 public enum MessageMedium : byte { Ground, Stone, Vision }
 
-/// <summary>What a reader makes of the words.</summary>
 public enum MessageReading : byte
 {
-    Scripture,   // sacred words, kept and retold
-    Vision,      // a wonder, felt rather than followed
-    Command,     // an order, carried out as they understand it
-    Dismissed,   // a trick, a madman's scrawl, nothing
-    Dread,       // a curse: the place is to be feared
+    Scripture,
+    Vision,
+    Command,
+    Dismissed,
+    Dread,
 }
 
-/// <summary>The player's words, somewhere in the world, and who has read them and how.</summary>
 public sealed class Inscription
 {
     public int Id, Cell, Day, StructureId = -1;
     public string Text = "";
     public MessageMedium Medium;
-    public int FadesDay;                                   // ground writing weathers away
+    public int FadesDay;
     public readonly List<(int Day, int BandId, MessageReading Reading, bool Understood)> Readings = new();
     public bool Visible(int day) => Medium != MessageMedium.Vision && day < FadesDay;
 }
 
-/// <summary>
-/// The message power: the player's own words, written on the ground, carved into a standing stone or
-/// sent as a vision. People who come upon them read them each in their own way - as scripture, a
-/// vision, a command, nonsense or a curse - by temperament and faith, and a band acts on what its
-/// leader and most of its people make of them (the leader's reading can be left to a mind, the LLM,
-/// as a deferred decision). Peoples who cannot write see only marks. One message every 250 years;
-/// the first only after 250 years of history.
-/// </summary>
 public sealed partial class Simulation
 {
     public const int MessageCooldownDays = 250 * SimConfig.DaysPerYear;
     public readonly List<Inscription> Inscriptions = new();
-    /// <summary>The day the player may next leave a message.</summary>
+
     public int NextMessageDay => _nextMessageDay ?? Config.FirstMessageYear * SimConfig.DaysPerYear;
     int? _nextMessageDay;
     public bool CanMessage => Day >= NextMessageDay;
@@ -63,7 +52,7 @@ public sealed partial class Simulation
         Inscriptions.Add(ins);
         if (a.Medium == MessageMedium.Stone && Structures_Get("standing_stone") is { } stone && w.IsDryLand(a.Cell))
         {
-            // The words appear carved into a stone that wasn't there yesterday.
+
             if (w.StructureAt[a.Cell] != 0 && Structures.TryGetValue(w.StructureAt[a.Cell], out var old)) Remove(old);
             var s = new Structure { Id = _nextStructure++, Def = stone.Index, Cell = a.Cell, BandId = -1, State = StructureState.Complete, BuiltDay = Day, PlannedDay = Day };
             Structures[s.Id] = s;
@@ -79,13 +68,12 @@ public sealed partial class Simulation
 
     static StructureDef? Structures_Get(string id) => Economy.Structures.Get(id);
 
-    /// <summary>Monthly: bands that come upon written words read them (once).</summary>
     void MessageUpkeep()
     {
         foreach (var ins in Inscriptions)
         {
             if (!ins.Visible(Day)) continue;
-            if (ins.StructureId >= 0 && !Structures.ContainsKey(ins.StructureId)) { ins.FadesDay = Day; continue; }   // the stone is gone
+            if (ins.StructureId >= 0 && !Structures.ContainsKey(ins.StructureId)) { ins.FadesDay = Day; continue; }
             ReadersNearby(ins);
         }
     }
@@ -96,11 +84,6 @@ public sealed partial class Simulation
             if (!ins.Readings.Any(r => r.BandId == band.Id)) ReadMessage(band, ins, vision: false);
     }
 
-    /// <summary>
-    /// A band reads the words. Each adult takes them their own way; the band acts on its leader's
-    /// reading (and its people's, where the leader holds no sway). Without writing, carved and
-    /// written words are only marks - sacred, mocked or feared, but not understood.
-    /// </summary>
     void ReadMessage(Band band, Inscription ins, bool vision)
     {
         bool literate = vision || BandKnows(band, TechId.Writing);
@@ -135,13 +118,12 @@ public sealed partial class Simulation
                 ["trigger"] = "message", ["message"] = literate ? ins.Text : "", ["medium"] = Ids.Snake(ins.Medium),
                 ["readers"] = string.Join(",", Enum.GetValues<MessageReading>().Select(r => $"{Ids.Snake(r)}:{counts[(int)r]}")),
             })));
-            ins.Readings.Add((Day, band.Id, instinct, literate));   // provisional; the decision settles it
+            ins.Readings.Add((Day, band.Id, instinct, literate));
             return;
         }
         ActOnMessage(band, ins, instinct, literate);
     }
 
-    /// <summary>One person's reading, by temperament, faith and whether they can read the words at all.</summary>
     MessageReading Interpret(Agent a, Band band, bool literate)
     {
         float st = a.T(Trait.SelfTranscendence), rd = a.T(Trait.RewardDependence), ha = a.T(Trait.HarmAvoidance);
@@ -156,7 +138,6 @@ public sealed partial class Simulation
         return (MessageReading)Rng.Softmax(s, 0.25f);
     }
 
-    /// <summary>What a band does with the words, once it has made up its mind.</summary>
     internal void ActOnMessage(Band band, Inscription ins, MessageReading reading, bool literate)
     {
         var w = World;
@@ -190,7 +171,7 @@ public sealed partial class Simulation
                 break;
             case MessageReading.Dread:
                 band.PlaceDread[(int)StimulusCategory.Sky] += 1.5f;
-                if (w.Distance(band.Cell, ins.Cell) <= World.Cells(1)) band.LastMoveDay = Day - 1000;   // they would rather leave
+                if (w.Distance(band.Cell, ins.Cell) <= World.Cells(1)) band.LastMoveDay = Day - 1000;
                 break;
         }
         Chronicle.Add(new WorldEvent(Day, EventCategory.Spiritual, "message_read", what, 0.7f, band.LeaderId, band.Id));
@@ -203,11 +184,6 @@ public sealed partial class Simulation
 
     static string Short(string text) => text.Length <= 40 ? text : text[..40].TrimEnd() + "...";
 
-    /// <summary>
-    /// Carrying out words taken as a command, as far as they map onto something people can do:
-    /// go or stay, make peace or war, share, build, pray, sail, learn. Words that ask for nothing
-    /// they can do are kept as scripture.
-    /// </summary>
     string Obey(Band band, Inscription ins)
     {
         string t = ins.Text.ToLowerInvariant();
@@ -249,11 +225,6 @@ public sealed partial class Simulation
         return "Not knowing how to obey, they keep the words as holy.";
     }
 
-    /// <summary>
-    /// The words become a belief the band holds and retells. For a people who have not yet named
-    /// whoever acts on their world, the words are how they come to know you; for those who have,
-    /// they deepen that faith.
-    /// </summary>
     void Scripture(Band band, Agent leader, string name)
     {
         var god = PlayerGodOf(band.CultureId);

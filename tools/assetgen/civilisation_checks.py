@@ -1,4 +1,4 @@
-"""Detail-density, modular seams, storage composition and layout checks."""
+
 import json
 from collections import deque
 import numpy as np

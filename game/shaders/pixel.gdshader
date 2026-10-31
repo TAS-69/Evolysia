@@ -1,5 +1,3 @@
-// Crisp pixel art at any zoom: with a linear-filtered texture, sample at the texel centre except
-// across the one screen pixel where two texels meet, which is blended instead of jagged.
 shader_type canvas_item;
 
 void fragment()

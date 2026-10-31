@@ -7,19 +7,10 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// The simulation's built world and its people, in art. Structures stand where bands sited them
-/// (Simulation.Structures): dwellings composited from regional wall and roof pieces by building
-/// type, workstations, stores showing what the band holds, shrines, boats, pens and palisades,
-/// with scaffolding while they go up and damaged, ruined or burned looks after. Each person walks
-/// between home and the tile they actually work today, dressed in the clothes they own and
-/// holding the tool they work with.
-/// </summary>
 public static class Camps
 {
-    const float Unit = Main.CellPx / 16f;   // world units per logical unit
+    const float Unit = Main.CellPx / 16f;
 
-    /// <summary>World position of a cell's top-left corner, unwrapped to the copy nearest <paramref name="near"/>.</summary>
     static Vector2 CellPos(Simulation sim, int cell, Vector2 near)
     {
         var w = sim.World;
@@ -29,9 +20,6 @@ public static class Camps
         return p;
     }
 
-    // ---- structures -----------------------------------------------------------------------------
-
-    /// <summary>Every structure in (or near) the view.</summary>
     public static void AddStructures(Simulation sim, Rect2 view, int density, double now, int selectedBand, List<WorldSprite> into)
     {
         var grown = view.Grow(Main.CellPx * 4f);
@@ -39,7 +27,7 @@ public static class Camps
         foreach (var s in sim.Structures.Values)
         {
             var k = s.Kind;
-            if (k.Role == StructureRole.Field || s.State == StructureState.Planned) continue;   // fields are in the terrain
+            if (k.Role == StructureRole.Field || s.State == StructureState.Planned) continue;
             var corner = CellPos(sim, s.Cell, centre);
             var foot = corner + new Vector2(k.W * 0.5f, k.H) * Main.CellPx;
             if (!grown.HasPoint(foot)) continue;
@@ -66,7 +54,6 @@ public static class Camps
 
     static Look? From(WorldSprite? s) => s is { } x ? new Look(x.Texture, x.Source, x.Pivot, x.Shadow) : null;
 
-    /// <summary>How a structure looks at a density.</summary>
     static Look? Visual(Simulation sim, Structure s, Band? band, int d, double now, int selectedBand)
     {
         var k = s.Kind;
@@ -75,7 +62,7 @@ public static class Camps
         float shadow = k.W * Main.CellPx * 0.42f;
         var style = Settlements.StyleOf(w.Biome[s.Cell]);
         bool ruined = s.State is StructureState.Ruined or StructureState.Burned;
-        bool roofed = !ruined && !(selectedBand >= 0 && s.BandId == selectedBand && d >= 64);   // the selected village, close up: roofs off
+        bool roofed = !ruined && !(selectedBand >= 0 && s.BandId == selectedBand && d >= 64);
         Look? Building(Settlements.Style st, int cw, int ch) => House(st, cw, ch, d, roofed) is { } h ? Whole(h, shadow) : null;
         switch (k.Id)
         {
@@ -105,7 +92,7 @@ public static class Camps
                 return From(Sprites.Make(null, $"structures.totem_{EarlyState(s)}", d, Vector2.Zero, Colors.White,
                                          cultureRow: band != null ? sim.Cultures[band.CultureId].Hue % 12 : 0));
         }
-        // Early structures have their own condition art; everything else is civilisation detail art.
+
         if (Art.Get($"structures.{k.Id}_{EarlyState(s)}") != null)
             return From(Sprites.Make(null, $"structures.{k.Id}_{EarlyState(s)}", d, Vector2.Zero, Colors.White));
         return From(Sprites.Make("civilisation." + k.Id, null, d, Vector2.Zero, Colors.White, frame));
@@ -116,7 +103,6 @@ public static class Camps
         StructureState.Building => "building", StructureState.Damaged => "damaged", StructureState.Ruined => "ruined", StructureState.Burned => "burned", _ => "complete",
     };
 
-    /// <summary>The food the band has most of that has stored-item art (what its baskets and bins show).</summary>
     static string StoredGood(Band band)
     {
         string best = "food";
@@ -126,12 +112,6 @@ public static class Camps
         return best;
     }
 
-    // ---- people ---------------------------------------------------------------------------------
-
-    /// <summary>
-    /// A band's people: each between home (outside the dwelling they share, or by the fire) and the
-    /// tile they work today, walking out, working, walking back and resting, on their own clock.
-    /// </summary>
     public static void AddPeople(Simulation sim, Band band, Vector2 camp, int density, double now, List<WorldSprite> into)
     {
         var w = sim.World;
@@ -169,7 +149,7 @@ public static class Camps
             else if (phase < 0.87) { at = site.Lerp(home, (float)((phase - 0.75) / 0.12)); velocity = home - site; }
             else { at = home; working = false; }
             bool playing = child && activity == Activity.Play;
-            if (playing)   // children chase each other round camp
+            if (playing)
             {
                 float a = (float)(now * 0.9 + (h & 0xFF) / 40.0);
                 at = camp + new Vector2(MathF.Cos(a) * 14f, MathF.Sin(a) * 9f + 4f) * Unit;
@@ -194,18 +174,10 @@ public static class Camps
         }
     }
 
-    // ---- composites -----------------------------------------------------------------------------
-
     public sealed record Composite(ImageTexture Texture, Vector2 Pivot);
 
     static readonly Dictionary<string, Composite?> Composites = new();
 
-    /// <summary>
-    /// A rectangular building of <paramref name="cw"/> x <paramref name="ch"/> cells from civilisation
-    /// pieces: floor inside the wall line, a ring of connected walls (N=1 E=2 S=4 W=8), a door in
-    /// the south wall, and a roof over it all with a shaded eave - or, roofless, a cut-away with the
-    /// south wall removed (render_contract roof_occlusion) and its hearth, bed and pots showing.
-    /// </summary>
     public static Composite? House(Settlements.Style style, int cw, int ch, int d, bool roofed)
     {
         string key = $"house|{style}|{cw}x{ch}|{d}|{roofed}";
@@ -239,14 +211,14 @@ public static class Camps
                 {
                     bool side = x == 0 || x == cw - 1, end = y == 0 || y == ch - 1;
                     if (!side && !end) continue;
-                    if (!roofed && y == ch - 1) continue;   // cut away the south wall
+                    if (!roofed && y == ch - 1) continue;
                     int mask = (side && y > 0 ? 1 : 0) | (end && x < cw - 1 ? 2 : 0) | (side && y < ch - 1 ? 4 : 0) | (end && x > 0 ? 8 : 0);
                     if (Art.Lod($"civilisation.wall_{wall}_{mask:00}", d) is { } piece) Stamp(piece, x * d, y * d);
                 }
             if (roofed)
             {
                 if (Art.Lod("civilisation.door_wood_closed", d) is { } door) Stamp(door, cw / 2 * d, (ch - 1) * d);
-                // The roof covers the walls' tops down to the south wall line, its eave shaded.
+
                 int bottom = (ch - 1) * d + d / 2, eave = Math.Max(1, d / 16);
                 for (int y = 0; y < ch; y++)
                     for (int x = 0; x < cw; x++)
@@ -274,7 +246,6 @@ public static class Camps
         return result;
     }
 
-    /// <summary>A short straight screen of wall pieces (E-W): a windbreak or lean-to.</summary>
     public static Composite? Fence(string wall, int cells, int d)
     {
         string key = $"fence|{wall}|{cells}|{d}";
@@ -294,13 +265,12 @@ public static class Camps
         return result;
     }
 
-    /// <summary>An animal pen: a 2 x 2 ring of wattle fencing with a feed trough.</summary>
     static Composite? Pen(int d)
     {
         string key = $"pen|{d}";
         if (Composites.TryGetValue(key, out var cached)) return cached;
         var image = Image.CreateEmpty(2 * d, 2 * d, false, Image.Format.Rgba8);
-        int[] masks = { 6, 12, 3, 9 };   // TL, TR, BL, BR corners
+        int[] masks = { 6, 12, 3, 9 };
         for (int k = 0; k < 4; k++)
             if (Art.Lod($"civilisation.wall_wattle_{masks[k]:00}", d) is { } piece)
                 image.BlendRect(piece.Reference, new Rect2I(0, 0, piece.FrameW, piece.FrameH), new Vector2I(k % 2 * d, k / 2 * d));
@@ -311,7 +281,6 @@ public static class Camps
         return result;
     }
 
-    /// <summary>A palisade segment joined to its neighbours (N=1 E=2 S=4 W=8).</summary>
     static Composite? Palisade(Simulation sim, Structure s, int d)
     {
         var w = sim.World;
@@ -333,10 +302,6 @@ public static class Camps
         return result;
     }
 
-    /// <summary>
-    /// A storage container with what it holds (storage_profiles.json): back, the visible slots
-    /// filled back to front with the resource, then the front rim.
-    /// </summary>
     public static Composite? Stocked(string profile, string resource, int filled, int d)
     {
         string key = $"store|{profile}|{resource}|{filled}|{d}";

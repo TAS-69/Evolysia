@@ -4,18 +4,12 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// The interface's look (art guide section 11.1, refined dark earthy): rounded translucent panels with
-/// a soft shadow, slim buttons, letter-spaced section headings, and subtle colour tags that mark what
-/// a word is - a sex, a kind of work, a good, a structure, a people.
-/// </summary>
 public static class Ui
 {
     public static readonly Color Glass = new(Palette.Panel, 0.94f);
     public static readonly Color Line = new(Palette.Border, 0.75f);
     public static readonly Color Muted = new(Palette.Parchment, 0.62f);
 
-    // Tag colours: soft enough to sit in running text.
     public static readonly Color Female = new("e39bb6"), Male = new("8fbbe3"), Child = new("e7c36f"), Elder = new("b9b2a8");
     public static readonly Color FoodWork = new("9cc06c"), MakeWork = new("d9a656"), SpiritWork = new("b49be0"),
                                  SocialWork = new("e09a82"), MindWork = new("6fc4b8");
@@ -45,14 +39,11 @@ public static class Ui
         _ => MindWork,
     };
 
-    /// <summary>Coloured text for BBCode.</summary>
     public static string C(string text, Color c) => $"[color=#{c.ToHtml(false)}]{text}[/color]";
 
-    /// <summary>A small tinted tag (pill) for BBCode: the colour shows through faintly behind the word.</summary>
     public static string Tag(string text, Color c) =>
         $"[bgcolor=#{new Color(c, 0.18f).ToHtml(true)}][color=#{c.ToHtml(false)}] {text} [/color][/bgcolor]";
 
-    /// <summary>A section heading: small, spaced, ochre.</summary>
     public static Label Heading(string text)
     {
         var l = new Label { Text = Spaced(text.ToUpperInvariant()) };
@@ -73,7 +64,6 @@ public static class Ui
         return sb;
     }
 
-    /// <summary>A card: a raised panel inside a panel.</summary>
     public static StyleBoxFlat Card(Color? accent = null)
     {
         var sb = Box(new Color(Palette.Raised, 0.55f), new Color(accent ?? Palette.Border, accent == null ? 0.5f : 0.9f), 6, 10);

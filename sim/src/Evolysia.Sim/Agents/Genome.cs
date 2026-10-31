@@ -4,20 +4,16 @@ namespace Evolysia.Sim.Agents;
 
 public enum Gene : byte
 {
-    // Temperament (inherited part of personality)
+
     NoveltySeeking, HarmAvoidance, RewardDependence, Persistence,
-    // Starting tilt for character traits; experience and upbringing take over from here
+
     SelfDirectedness, Cooperativeness, SelfTranscendence,
-    // Aptitudes
+
     Strength, Dexterity, Intellect, Perception, Constitution, Fertility, Longevity, Charisma,
-    // Appearance (drives portrait/sprite recolours)
+
     Pigment, HairTone,
 }
 
-/// <summary>
-/// Heritable values 0..1. A child's genome blends both parents gene by gene, then 1-3 genes
-/// diverge noticeably (or a quirk appears), so siblings differ and lineages drift.
-/// </summary>
 public sealed class Genome
 {
     public const int Count = 17;
@@ -38,14 +34,8 @@ public sealed class Genome
         return g;
     }
 
-    /// <summary>
-    /// Many genes shape each trait, so siblings scatter around their parents' midpoint. Without this
-    /// noise, blending halves the population's variance each generation and everyone converges.
-    /// With the Beta(2,2) blend (keeps 60% of variance), sd 0.14 holds the population sd near 0.25.
-    /// </summary>
     public const float SegregationSd = 0.14f;
 
-    /// <summary>Divergent genes are recorded so the chronicle and tests can see them.</summary>
     public static Genome Inherit(Genome mother, Genome father, Rng rng, out List<string> divergences)
     {
         var g = new Genome();

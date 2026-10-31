@@ -2,11 +2,6 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.Society;
 
-/// <summary>
-/// Each culture gets its own small sound palette; names, bands and gods are built from it.
-/// Daughter cultures inherit the palette with a couple of sounds changed, so related peoples
-/// sound related.
-/// </summary>
 public static class Names
 {
     static readonly string[] Onsets = { "k", "t", "m", "n", "r", "s", "l", "v", "d", "g", "b", "h", "sh", "th", "z", "y", "w", "kh", "tz", "q", "p", "f" };
@@ -17,7 +12,7 @@ public static class Names
     {
         int n = 7 + rng.Next(4);
         var set = new HashSet<string>();
-        // A culture favours a subset of consonants, which gives it a recognisable "accent".
+
         var onsets = Enumerable.Range(0, 7).Select(_ => rng.Pick(Onsets)).Distinct().ToArray();
         while (set.Count < n) set.Add(rng.Pick(onsets) + rng.Pick(Vowels) + rng.Pick(Codas));
         return set.ToArray();

@@ -1,20 +1,10 @@
-"""Evolysia LLM lab: pick, serve and evaluate local models for agent minds.
 
-    python lab.py configure            # choose profile + helper size/device (writes local.toml)
-    python lab.py plan                 # show what would run and estimated VRAM/RAM
-    python lab.py install              # download llama.cpp (llama-server)
-    python lab.py serve                # start servers (downloads models on first run)
-    python lab.py eval                 # run the suite, write results/
-    python lab.py status | stop | compare
-    python lab.py eval --mock          # offline smoke test, no models needed
-"""
 
 import argparse
 import sys
 
 from lablib import config, evals, install, report, servers
 from lablib.client import Endpoint
-
 
 def add_overrides(p):
     g = p.add_argument_group("overrides (beat local.toml and the profile)")
@@ -28,16 +18,13 @@ def add_overrides(p):
     g.add_argument("--embed-device", choices=["gpu", "cpu"])
     g.add_argument("--embed-threads", type=int)
 
-
 def get_plan(a):
     keys = ["profile", "main_model", "main_device", "helper", "helper_device", "helper_threads",
             "embed", "embed_device", "embed_threads"]
     return config.resolve({k: getattr(a, k, None) for k in keys})
 
-
 def endpoints(plan, mock):
     return {r: Endpoint(r, servers.base_url(plan, s), mock=mock) for r, s in plan.servers.items()}
-
 
 def ask(prompt, options, default):
     shown = "/".join(o.upper() if o == default else o for o in options)
@@ -45,7 +32,6 @@ def ask(prompt, options, default):
         v = input(f"{prompt} [{shown}]: ").strip().lower() or default
         if v in options:
             return v
-
 
 def cmd_configure(a):
     pf = config.load_profiles()
@@ -85,7 +71,6 @@ def cmd_configure(a):
     print(f"\nSaved {config.LOCAL_CONFIG}\n")
     print(config.describe(config.resolve()))
 
-
 def cmd_plan(a):
     plan = get_plan(a)
     print(config.describe(plan))
@@ -95,16 +80,13 @@ def cmd_plan(a):
         for s in plan.servers.values():
             print("  " + " ".join(servers.build_cmd(exe, plan, s)))
 
-
 def cmd_install(a):
     install.install(a.backend, tag=a.tag, dry_run=a.dry_run)
-
 
 def cmd_serve(a):
     plan = get_plan(a)
     print(config.describe(plan) + "\n")
     servers.serve(plan)
-
 
 def cmd_eval(a):
     plan = get_plan(a)
@@ -125,7 +107,6 @@ def cmd_eval(a):
         print(f"  {role} throughput: {best['agg_tokens_per_s']} tok/s, {best['calls_per_min']} calls/min "
               f"at concurrency {best['concurrency']}")
     print(f"\nWrote {mp}\n      {jp}")
-
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -163,10 +144,9 @@ def main():
     sub.add_parser("stop", help="stop servers started by lab.py").set_defaults(fn=lambda a: servers.stop())
     sub.add_parser("compare", help="table of all saved runs").set_defaults(fn=lambda a: print(report.compare()))
 
-    sys.stdout.reconfigure(line_buffering=True)  # progress shows up even when piped/backgrounded
+    sys.stdout.reconfigure(line_buffering=True)
     a = ap.parse_args()
     a.fn(a)
-
 
 if __name__ == "__main__":
     main()

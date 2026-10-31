@@ -1,8 +1,5 @@
 namespace Evolysia.Sim.Core;
 
-// These IDs are shared with docs/art/ART_DIRECTION.md (asset names) and the LLM lab.
-// Renaming one is an art + code change.
-
 public enum Biome : byte
 {
     DeepOcean, Ocean, Coast, Lake,
@@ -13,11 +10,10 @@ public enum Biome : byte
 
 public enum Season : byte { Spring, Summer, Autumn, Winter, Wet, Dry }
 
-/// <summary>Temperament is inherited; character develops with experience. Values are 0..1.</summary>
 public enum Trait : byte
 {
-    NoveltySeeking, HarmAvoidance, RewardDependence, Persistence,   // temperament
-    SelfDirectedness, Cooperativeness, SelfTranscendence,           // character
+    NoveltySeeking, HarmAvoidance, RewardDependence, Persistence,
+    SelfDirectedness, Cooperativeness, SelfTranscendence,
 }
 
 public enum Emotion : byte { Joy, Fear, Anger, Sadness, Shame, Pride, Disgust, Surprise, Love, Calm, Envy }
@@ -26,10 +22,8 @@ public enum Need : byte { Hunger, Thirst, Energy, Warmth, Safety, Social }
 
 public enum EventCategory : byte { Danger, Social, Discovery, Loss, Spiritual, Conflict, Trade, Birth }
 
-/// <summary>Skill domains with their own self-efficacy (confidence).</summary>
 public enum Domain : byte { Foraging, Hunting, Fishing, Crafting, Building, Social, Healing, Spiritual, Farming }
 
-/// <summary>Specific things an agent can learn to fear. Each belongs to a broader category.</summary>
 public enum Stimulus : byte
 {
     Wolf, Bear, BigCat, Crocodile,
@@ -47,30 +41,29 @@ public enum DeathCause : byte { None, OldAge, Starvation, Thirst, Cold, Predator
 
 public enum Sex : byte { Female, Male }
 
-/// <summary>Daily activity. Names map to animation ids in the art guide (section 6.2).</summary>
 public enum Activity : byte
 {
     Rest, Forage, Hunt, Fish, Farm, Herd, Craft, Build, Socialize, Court, CareChild,
     Teach, Experiment, Ritual, Explore, Mourn, Play,
-    Chop, Quarry, Mine, Gather,   // fell trees, break stone, dig ore, collect clay / reeds / fibre / salt
+    Chop, Quarry, Mine, Gather,
 }
 
 [Flags]
 public enum Quirk : ushort
 {
     None = 0,
-    Hardy = 1 << 0,        // tolerates cold
-    Frail = 1 << 1,        // more vulnerable to disease
-    Glutton = 1 << 2,      // gets hungry faster
-    HotTempered = 1 << 3,  // anger flares stronger
-    Melancholic = 1 << 4,  // sadness lingers
-    Empath = 1 << 5,       // learns strongly from others' experiences
-    Dreamer = 1 << 6,      // more creative and spiritual
-    NightTerrors = 1 << 7, // fears fade slowly
-    Stutter = 1 << 8,      // social efficacy grows slowly
-    Lucky = 1 << 9,        // small edge in dangerous moments
-    KeenEyed = 1 << 10,    // spots prey and danger early
-    Charming = 1 << 11,    // attractive and persuasive
+    Hardy = 1 << 0,
+    Frail = 1 << 1,
+    Glutton = 1 << 2,
+    HotTempered = 1 << 3,
+    Melancholic = 1 << 4,
+    Empath = 1 << 5,
+    Dreamer = 1 << 6,
+    NightTerrors = 1 << 7,
+    Stutter = 1 << 8,
+    Lucky = 1 << 9,
+    KeenEyed = 1 << 10,
+    Charming = 1 << 11,
 }
 
 public static class Ids
@@ -89,7 +82,6 @@ public static class Ids
         _ => StimulusCategory.Sickness,
     };
 
-    /// <summary>snake_case id used by assets, logs and the LLM lab.</summary>
     public static string Snake<T>(T value) where T : Enum
     {
         var s = value.ToString();

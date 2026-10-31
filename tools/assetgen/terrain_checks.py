@@ -1,4 +1,4 @@
-"""Exhaustive compatible edge checks plus seeded random dual-grid seam tests."""
+
 import numpy as np
 from PIL import Image
 from families.terrain import MATERIALS, geometry

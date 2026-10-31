@@ -1,4 +1,4 @@
-"""Palette-safe room assembly and visible inventory review sheets."""
+
 import json
 import math
 import numpy as np

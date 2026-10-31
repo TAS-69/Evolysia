@@ -1,4 +1,4 @@
-"""All density levels retain complete corners, animation and exact seams."""
+
 import numpy as np
 from PIL import Image
 from families.landscape import MATERIALS, CLIFFS, ANIMATED, DENSITIES

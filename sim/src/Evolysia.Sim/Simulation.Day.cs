@@ -9,21 +9,21 @@ namespace Evolysia.Sim;
 
 public sealed partial class Simulation
 {
-    /// <summary>Band-level conditions shared by everyone in it today.</summary>
+
     struct DayContext
     {
         public float Temp, Growth, Wet, Shortage, PlantAvail, PreyAvail, FishAvail, Predators, Water;
-        public int Range, PreySite, FishSite;   // tiles: where the game is today, the best fishing water (-1: none)
-        public int Fields, Herd;                 // the band's fields and tame animals (not counting dogs)
-        public float CraftNeed;                  // 0..1: how many members lack gear the band could make
-        public float ShortWood, ShortStone, ShortOre, ShortGathered;   // 0..1: the stores' shortfall of each kind of material
+        public int Range, PreySite, FishSite;
+        public int Fields, Herd;
+        public float CraftNeed;
+        public float ShortWood, ShortStone, ShortOre, ShortGathered;
         public TechSet Tech;
         public Season Season;
         public bool ColdAhead;
     }
 
     static readonly int ActivityCount = Enum.GetValues<Activity>().Length;
-    // Per-thread scratch space (band days run in parallel).
+
     [ThreadStatic] static List<Agent>? t_members;
     [ThreadStatic] static List<Agent>? t_hunters;
     [ThreadStatic] static float[]? t_scores;
@@ -31,12 +31,10 @@ public sealed partial class Simulation
     static List<Agent> _hunters => t_hunters ??= new List<Agent>();
     static float[] _scores => t_scores ??= new float[ActivityCount];
     [ThreadStatic] static List<int>? t_land;
-    static List<int> _land => t_land ??= new List<int>();   // today's surveyed land tiles in the band's range
+    static List<int> _land => t_land ??= new List<int>();
 
-    /// <summary>How far (cells) a band's people go out to work: about a fifth of an original cell's width each way.</summary>
     internal int RangeOf(Band band) => (int)(World.Scale * 0.8f);
 
-    /// <summary>A tile within <paramref name="r"/> cells of <paramref name="cell"/> (wrapping, clamped at the poles).</summary>
     int Around(int cell, int r)
     {
         if (r <= 0) return cell;
@@ -44,7 +42,6 @@ public sealed partial class Simulation
         return World.Index(World.X(cell) + Rng.Range(-r, r + 1), y);
     }
 
-    /// <summary>CPU time inside a band's day by section, summed over threads (Profile "bd_*").</summary>
     static readonly string[] SectionNames = { "bd_survey", "bd_craft_need", "bd_choose", "bd_hunt", "bd_resolve", "bd_share", "bd_body_mind" };
     readonly long[] _sectionTicks = new long[7];
     void Section(int k, ref long t)
@@ -85,7 +82,7 @@ public sealed partial class Simulation
         foreach (var (species, head) in band.Herds) if (species != "dog") ctx.Herd += (int)head;
         float stored = band.FoodPool;
         foreach (var m in _members) { ctx.Tech |= m.Knows; stored += m.Food; }
-        // Who lacks gear the stores could make: a few people looked over every third day.
+
         if (Day - band.CraftNeedDay >= 3)
         {
             int lacking = 0, looked = 0;
@@ -107,7 +104,6 @@ public sealed partial class Simulation
         band.Stress = band.Stress * 0.97f + 0.03f * (hungerNow / _members.Count + 0.5f * ctx.Shortage);
         ctx.ColdAhead = ctx.Season == Season.Autumn || (w.TempMean[cell] - w.TempAmp[cell] < 2f && ctx.Season != Season.Summer);
 
-        // 1. Everyone decides what to do today.
         ctx.ShortWood = ShortageOf(band, GLog, GWood);
         ctx.ShortStone = ShortageOf(band, GStone, GFlint);
         ctx.ShortOre = ShortageOf(band, Ores);
@@ -122,14 +118,12 @@ public sealed partial class Simulation
 
         Section(2, ref t);
 
-        // 2. Group hunt, then individual activities.
         if (_hunters.Count > 0) Hunt(band, ctx);
         Section(3, ref t);
         foreach (var a in _members)
             if (a.Alive && a.Today != Activity.Hunt) Resolve(a, band, ctx);
         Section(4, ref t);
 
-        // 3. Sharing, eating, bodies, babies, minds.
         ShareAndEat(band, ctx);
         Section(5, ref t);
         foreach (var a in _members)
@@ -146,10 +140,6 @@ public sealed partial class Simulation
 
     static float Avail(float stock, float cap) => cap <= 0f ? 0f : stock / (stock + 0.25f * cap);
 
-    /// <summary>
-    /// Looks over the home range: a handful of sampled tiles stand for what is out there today.
-    /// Sets plant availability (average), the best hunting ground and the best fishing water.
-    /// </summary>
     void Survey(Band band, ref DayContext c)
     {
         var w = World;
@@ -179,16 +169,8 @@ public sealed partial class Simulation
         c.Predators = danger / samples * Config.PredatorDanger;
     }
 
-    // ------------------------------------------------------------------ shared harvests
-    //
-    // Ranges overlap, and bands in different cells run on different threads. Every write to a
-    // shared stock is deferred to the ordered commit, so during the parallel phase the stocks hold
-    // still: each cell group reads them as they stood at the start of the day, keeps a running
-    // tally of what it took, and its deductions are committed in group order.
-
     [ThreadStatic] static Dictionary<long, float>? t_taken;
 
-    // Shared tile stocks: 0 plants, 1 game, 2 fish, 3 standing trees, 4 loose stone and boulders, 5 ore.
     internal const int Plants = 0, Game = 1, FishStock = 2, Timber = 3, StoneStock = 4, OreStock = 5;
     float[] Stock(int kind) => kind switch
     {
@@ -199,7 +181,6 @@ public sealed partial class Simulation
         0 => World.PlantK, 1 => World.PreyK, 2 => World.FishK, 3 => World.TreesK, 4 => World.RockK, _ => World.OreK,
     };
 
-    /// <summary>What is left of a tile's stock for this group today.</summary>
     float Left(int kind, int tile)
     {
         float s = Stock(kind)[tile];
@@ -208,10 +189,9 @@ public sealed partial class Simulation
         return MathF.Max(0f, s - taken);
     }
 
-    /// <summary>Take up to <paramref name="want"/> from a tile's stock, with diminishing returns as it thins.</summary>
     float Take(int kind, int tile, float want)
     {
-        if (t_taken == null) return Ecology.Harvest(Stock(kind), Cap(kind), tile, want);   // outside the parallel phase
+        if (t_taken == null) return Ecology.Harvest(Stock(kind), Cap(kind), tile, want);
         float k = MathF.Max(Cap(kind)[tile], 1e-3f);
         float s = Left(kind, tile);
         float got = MathF.Min(want * s / (s + 0.25f * k), s);
@@ -220,7 +200,6 @@ public sealed partial class Simulation
         return got;
     }
 
-    /// <summary>Commits a group's harvests (inside its deferred buffer, so in group order).</summary>
     void CommitTaken()
     {
         if (t_taken == null || t_taken.Count == 0) return;
@@ -237,10 +216,7 @@ public sealed partial class Simulation
         });
     }
 
-    /// <summary>People working a tile push its predators back (deferred: tiles are shared across threads).</summary>
     void Press(int tile, float amount) => Later(() => World.HumanPressure[tile] = MathF.Min(1f, World.HumanPressure[tile] + amount));
-
-    // ------------------------------------------------------------------ choosing
 
     Activity Choose(Agent a, Band band, in DayContext c)
     {
@@ -282,9 +258,9 @@ public sealed partial class Simulation
             s[(int)Activity.Farm] = 0.5f + food * 0.6f + 0.3f * a.Efficacy[(int)Domain.Farming] + MathF.Min(0.4f, c.Fields / (float)_members.Count);
         if (c.Herd > 0)
             s[(int)Activity.Herd] = 0.2f + food * 0.3f + 0.2f * a.Efficacy[(int)Domain.Hunting] + MathF.Min(0.4f, c.Herd / 20f);
-        // Materials: wood, stone, ore and the rest, by how short the band is of them.
+
         float strong = 0.1f * a.Gene(Gene.Strength);
-        // (A background chore: enough to keep stocks up, not enough to crowd out food and family.)
+
         s[(int)Activity.Chop] = -0.3f + 0.55f * c.ShortWood + strong + (Techs.Has(c.Tech, TechId.Woodcutting) ? 0.05f : -0.15f);
         if (Techs.Has(c.Tech, TechId.StoneTools))
             s[(int)Activity.Quarry] = -0.35f + 0.5f * c.ShortStone + strong;
@@ -326,8 +302,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    // ------------------------------------------------------------------ doing
-
     Stimulus BeastHere(int cell) => World.Biome[cell] switch
     {
         Biome.Savanna or Biome.TropicalSeasonalForest or Biome.TropicalRainforest => Rng.Chance(0.7f) ? Stimulus.BigCat : Stimulus.Wolf,
@@ -344,12 +318,11 @@ public sealed partial class Simulation
         foreach (var h in _hunters)
             skill += 0.4f * h.Efficacy[(int)Domain.Hunting] + 0.2f * h.Gene(Gene.Strength) + 0.2f * h.Gene(Gene.Dexterity) + 0.1f * h.Gene(Gene.Perception);
         skill /= n;
-        // Weapons: a spear or bow in hand makes the party far more likely to bring something down; dogs help.
+
         float tools = 0f;
         foreach (var h in _hunters) tools += ToolBonus(h, Activity.Hunt) - 1f;
         float tech = tools / n * 0.55f + (band.Herds.GetValueOrDefault("dog") > 0f ? 0.06f : 0f);
 
-        // Predators may contest the hunt; each hunter faces them or flees.
         int fled = 0;
         if (Rng.Chance(MathF.Min(0.4f, c.Predators * 0.06f)))
         {
@@ -383,7 +356,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>Face a predator or flee. Returns false if the agent fled.</summary>
     bool Encounter(Agent a, Band band, Stimulus beast, int allies, Domain domain, float urgency)
     {
         var response = Fear.Decide(a, beast, urgency, allies, a.Efficacy[(int)domain], Rng);
@@ -418,7 +390,6 @@ public sealed partial class Simulation
             return true;
         }
 
-        // Lost the fight.
         a.Health -= Rng.Range(0.2f, 0.65f) * (1.2f - a.Gene(Gene.Constitution) * 0.4f) * (1f - Protection(a));
         a.Scars++;
         Fear.Defeated(a, beast, domain, allies > 0, Day);
@@ -443,7 +414,7 @@ public sealed partial class Simulation
             {
                 float want = 3.0f * (0.6f + 0.4f * a.Efficacy[(int)Domain.Foraging]) * (0.8f + 0.4f * a.Gene(Gene.Perception))
                              * ToolBonus(a, Activity.Forage) * tired * childFactor * MathF.Max(0.3f, c.Growth + 0.2f);
-                // The richest of a few places in the home range.
+
                 int site = _land[Rng.Next(_land.Count)];
                 for (int k = 0; k < 2; k++)
                 {
@@ -488,11 +459,11 @@ public sealed partial class Simulation
             case Activity.Mine: Mine(a, band, c); break;
             case Activity.Gather: GatherMaterials(a, band, c); break;
             case Activity.Socialize: Socialize(a, band); break;
-            case Activity.Court: Later(() => { if (a.Alive) Court(a, band); }); break;   // may reach into other bands
+            case Activity.Court: Later(() => { if (a.Alive) Court(a, band); }); break;
             case Activity.CareChild: CareForChild(a, band); break;
             case Activity.Experiment:
             {
-                var ctx = c;   // inventions can split bands and found peoples: global, so after the parallel phase
+                var ctx = c;
                 Later(() => { if (a.Alive) Experiment(a, band, ctx); });
                 break;
             }
@@ -521,8 +492,6 @@ public sealed partial class Simulation
         }
     }
 
-    // ------------------------------------------------------------------ food and bodies
-
     void ShareAndEat(Band band, in DayContext c)
     {
         bool sharingNormBand = false;
@@ -531,7 +500,7 @@ public sealed partial class Simulation
             if (!a.Alive || a.IsChild(Day)) continue;
             float co = a.T(Trait.Cooperativeness) + 0.2f * Held(a, MemeKind.SharingNorm);
             float keep = 1f + (1f - co) * 3f;
-            // Materials always go to the stores; food beyond what they keep, as generous as they are.
+
             Deposit(a, band, keep + MathF.Max(0f, a.Food - keep) * (1f - Math.Clamp(0.4f + 0.6f * co, 0f, 1f)));
             sharingNormBand |= co > 0.8f;
         }
@@ -541,7 +510,6 @@ public sealed partial class Simulation
         float heat = c.Temp > 25f ? 1.6f : c.Temp > 12f ? 1f : c.Temp > 2f ? 0.5f : 0.15f;
         float efficiency = Techs.Has(c.Tech, TechId.Cooking) && band.HasFireToday ? 1.15f : 1f;
 
-        // Children and the pregnant eat first from the common pool, then everyone else.
         for (int pass = 0; pass < 2; pass++)
             foreach (var a in _members)
             {
@@ -571,7 +539,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    /// <summary>Parents give their children everything they carry; partners share only their surplus.</summary>
     float FamilyFeeds(Agent a, float lacking)
     {
         float got = 0f;
@@ -596,25 +563,20 @@ public sealed partial class Simulation
         DeathCause worst = DeathCause.None;
         float damage = 0f;
 
-        // Starvation
         float hunger = a.NeedOf(Need.Hunger);
         if (hunger > 0.75f) { float d = 0.025f * (hunger - 0.6f) / 0.4f * (1.3f - con); damage += d; worst = DeathCause.Starvation; }
 
-        // Thirst
         ref float thirst = ref a.Needs[(int)Need.Thirst];
         thirst = c.Water < 0.25f ? MathF.Min(1f, thirst + (0.25f - c.Water) * 0.6f) : MathF.Max(0f, thirst - 0.3f);
         if (c.Temp > 36f) thirst = MathF.Min(1f, thirst + 0.08f);
         if (thirst > 0.8f) { damage += 0.03f; worst = DeathCause.Thirst; }
 
-        // Cold
-        // Warmth: what they wear, the hearth (if there is wood for it) and their dwelling.
         float comfort = 10f - Warmth(a) - (band.HasFireToday && Techs.Has(c.Tech, TechId.ControlledFire) ? 7f : 0f)
                         - band.ShelterWarmth * band.Shelter - (a.Genome.Has(Quirk.Hardy) ? 5f : 0f);
         float cold = MathF.Max(0f, (comfort - c.Temp) / 12f) * (age < 4f || age > 65f ? 1.5f : 1f);
         a.Needs[(int)Need.Warmth] = Math.Clamp(cold, 0f, 1f);
         if (cold > 0.8f) { float d = 0.025f * (cold - 0.8f) * (1.3f - con); damage += d; if (d > 0.01f) worst = DeathCause.Cold; }
 
-        // Disease
         if (a.Sick)
         {
             float d = 0.02f * band.PlagueSeverity * (a.Genome.Has(Quirk.Frail) ? 1.5f : 1f) * (BandKnowsCached(c, TechId.Herbalism) ? 0.6f : 1f) * (1.3f - con);
@@ -628,7 +590,6 @@ public sealed partial class Simulation
 
         WearGear(a, a.Today);
 
-        // Energy, social, safety needs
         ref float energy = ref a.Needs[(int)Need.Energy];
         energy = Math.Clamp(energy - 0.13f, 0f, 1f);
         ref float social = ref a.Needs[(int)Need.Social];
@@ -639,10 +600,6 @@ public sealed partial class Simulation
 
         if (a.Health <= 0f) { Kill(a, worst == DeathCause.None ? DeathCause.Disease : worst); return; }
 
-        // Ageing (Gompertz) and childhood illness.
-        // Forager-like: ~18% infant mortality, risky early childhood, adult hazard doubling every ~9 years.
-        // Crowding breeds illness, so large bands lose more (density dependence keeps growth in check).
-        // Roofs, wells, herbal lore, medicine and sanitation let a settled village grow without as much sickness.
         float care = 1f + band.Shelter * 0.5f + band.WaterBonus * 0.5f + (BandKnowsCached(c, TechId.Herbalism) ? 0.2f : 0f)
                      + (BandKnowsCached(c, TechId.Medicine) ? 0.4f : 0f) + (BandKnowsCached(c, TechId.Sanitation) ? 0.6f : 0f) + (BandKnowsCached(c, TechId.Hospitals) ? 0.8f : 0f);
         float crowding = 0.75f + _members.Count / (45f * care);
@@ -665,7 +622,7 @@ public sealed partial class Simulation
         }
         if (a.Sex != Sex.Female || a.PartnerId < 0) return;
         float age = a.Age(Day);
-        // Settled farmers wean earlier than foragers on the move, so births come closer together.
+
         float spacing = band.Sedentary && band.FoodPool > _members.Count * 5f ? 2.2f : 3.0f;
         if (age < 16f || age > 45f || Day - a.LastBirthDay < spacing * SimConfig.DaysPerYear) return;
         if (!Living.TryGetValue(a.PartnerId, out var partner) || partner.BandId != a.BandId) return;
@@ -682,7 +639,7 @@ public sealed partial class Simulation
 
     void ComeOfAge(Agent a, Band band)
     {
-        // Children pick up what the grown-ups around them do every day.
+
         foreach (var def in Techs.All)
         {
             float share = BandShare(band, def.Id);

@@ -53,9 +53,9 @@ public class GodPowerTests
         for (int i = 0; i < 3; i++) { sim.Act(new GodAction(Power.Heal, band.Cell)); Days(sim, 2); }
         var god = sim.PlayerGodOf(band.CultureId);
         Assert.NotNull(god);
-        Assert.Contains("Watcher", god!.Name);   // kindness -> a benevolent name
+        Assert.Contains("Watcher", god!.Name);
         Assert.Contains(sim.Chronicle.Moments, m => m.Kind == "revelation");
-        Days(sim, 31);   // monthly cache refresh
+        Days(sim, 31);
         Assert.True(sim.FaithInPlayer(band) > 0f);
     }
 
@@ -65,11 +65,11 @@ public class GodPowerTests
         var (sim, band) = World(seed: 9);
         for (int i = 0; i < 3; i++) { sim.Act(new GodAction(Power.Heal, band.Cell)); Days(sim, 2); }
         var god = sim.PlayerGodOf(band.CultureId)!;
-        foreach (int id in band.Members) sim.Living[id].Memes[god.Id] = 0.8f;   // a devout people
+        foreach (int id in band.Members) sim.Living[id].Memes[god.Id] = 0.8f;
         Days(sim, 30);
 
         sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1);
-        for (int i = 0; i < 180 && !sim.OpenPrayers.Any(p => p.BandId == band.Id); i++) { if (band.PlagueUntil < sim.Day) sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1); }   // keep the crisis going until someone prays
+        for (int i = 0; i < 180 && !sim.OpenPrayers.Any(p => p.BandId == band.Id); i++) { if (band.PlagueUntil < sim.Day) sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1); }
         var prayer = sim.OpenPrayers.First(p => p.BandId == band.Id);
         Assert.Equal(PrayerNeed.Healing, prayer.Need);
 
@@ -80,9 +80,8 @@ public class GodPowerTests
         float after = band.Members.Average(id => sim.Living.TryGetValue(id, out var a) ? a.Memes.GetValueOrDefault(god.Id) : 0f);
         Assert.True(after > before);
 
-        // Now ignore the next one.
         sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1);
-        for (int i = 0; i < 180 && !sim.OpenPrayers.Any(p => p.BandId == band.Id); i++) { if (band.PlagueUntil < sim.Day) sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1); }   // keep the crisis going until someone prays
+        for (int i = 0; i < 180 && !sim.OpenPrayers.Any(p => p.BandId == band.Id); i++) { if (band.PlagueUntil < sim.Day) sim.Act(new GodAction(Power.Plague, band.Cell)); Days(sim, 1); }
         var ignored = sim.OpenPrayers.FirstOrDefault(p => p.BandId == band.Id);
         Assert.NotNull(ignored);
         Days(sim, 160);
@@ -137,7 +136,7 @@ public class GodPowerTests
     public void A_message_waits_250_years_then_is_read_each_band_its_own_way()
     {
         var (sim, band) = World();
-        Assert.False(sim.CanMessage);   // the first only after 250 years
+        Assert.False(sim.CanMessage);
         sim.Act(new GodAction(Power.Message, band.Cell, Words: "Make peace", Medium: MessageMedium.Vision));
         Assert.Empty(sim.Inscriptions);
 
@@ -148,12 +147,11 @@ public class GodPowerTests
         sim.Act(new GodAction(Power.Message, band.Cell, Words: "Make peace", Medium: MessageMedium.Vision));
         Days(sim, 1);
         var ins = Assert.Single(sim.Inscriptions);
-        Assert.Contains(ins.Readings, r => r.BandId == band.Id && r.Understood);   // a vision needs no writing
+        Assert.Contains(ins.Readings, r => r.BandId == band.Id && r.Understood);
         Assert.Contains(sim.Chronicle.Events, e => e.Kind == "message_read" && e.BandId == band.Id);
         Assert.False(sim.CanMessage);
         Assert.Equal(ins.Day + Simulation.MessageCooldownDays, sim.NextMessageDay);
 
-        // Carved words stand as a stone until someone comes upon them.
         sim = new Simulation(new SimConfig { Seed = 5, FirstMessageYear = 0 });
         sim.RunYears(10);
         int far = Enumerable.Range(0, sim.World.W * sim.World.H)

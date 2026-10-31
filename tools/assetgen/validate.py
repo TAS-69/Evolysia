@@ -1,4 +1,4 @@
-"""Validate the current foundation and common manifest contracts."""
+
 import json
 import math
 from pathlib import Path

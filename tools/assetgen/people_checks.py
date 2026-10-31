@@ -1,4 +1,4 @@
-"""Layer, pose, hand alignment and assembly contracts for people."""
+
 import json
 import numpy as np
 from PIL import Image

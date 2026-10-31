@@ -1,4 +1,4 @@
-"""Resource availability guides regional architecture and clothing choices."""
+
 import json
 
 REQUIREMENTS={

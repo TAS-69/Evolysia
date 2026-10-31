@@ -3,30 +3,13 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// Bakes a rectangle of the planet into RGBA8 palette-slot indices at one art density (16, 32 or
-/// 64 px per cell): R = ground (landscape materials blended on a dual grid, then rivers),
-/// G = flora as it looks in season, B = flora off-season (bare in winter, dry-season states,
-/// snow-capped conifers, harvested fields), A = bit 1 where G is drawn, bit 2 where B is drawn.
-/// Colour comes later, per cell, from the nature LUT in tiles.gdshader, so seasons change without
-/// rebaking. Everything is placed in logical units (16 per cell), so every density draws the same
-/// world and the same plants in the same places - only the pixel detail changes. Thread-safe:
-/// detail chunks bake in the background.
-/// </summary>
 public static class TileBake
 {
-    public const int Px = 16;   // logical units per cell
+    public const int Px = 16;
 
-    /// <summary>
-    /// What the bake needs besides the world, snapshotted from the simulation (bakes run on other
-    /// threads while it steps): each field's crop and growth, the cells structures stand on, and how
-    /// much of each cell's timber and stone is left (0..255) - felled woods and quarried boulders
-    /// show as gaps.
-    /// </summary>
     public sealed record Input(WorldMap World, IReadOnlyDictionary<int, (string crop, float growth, bool orchard)> Fields,
                                IReadOnlySet<int> Occupied, byte[] Trees, byte[] Rocks);
 
-    /// <summary>The surface a cell is made of (landscape family material ids).</summary>
     public static string Material(Input input, int i)
     {
         var w = input.World;
@@ -41,7 +24,7 @@ public static class TileBake
         {
             Biome.DeepOcean => "deep_water",
             Biome.Ocean or Biome.Lake => "water",
-            Biome.Coast => "shallow_water",   // coral_shore is a beach (sand), not a reef
+            Biome.Coast => "shallow_water",
             Biome.IceSheet => "ice",
             Biome.Tundra => t < -9f ? "permafrost" : n > 0.66f ? "lichen_rock" : n < 0.2f ? "frozen_mud" : "tundra",
             Biome.BorealForest => rain > 700f && n > 0.55f ? "moss_floor" : "pine_needles",
@@ -61,7 +44,6 @@ public static class TileBake
         };
     }
 
-    /// <summary>Low land touching the sea: a beach.</summary>
     static bool Beach(WorldMap w, int i) =>
         w.IsLand(i) && w.Elevation[i] < 40f && w.Biome[i] is not (Biome.Lake or Biome.Wetland or Biome.IceSheet or Biome.Alpine or Biome.Volcanic)
         && Shore(w, i);
@@ -80,22 +62,18 @@ public static class TileBake
         return false;
     }
 
-    /// <summary>Smooth noise in 0..1 over a few cells, so soils come in patches rather than per cell.</summary>
     static float Patch(WorldMap w, int i)
     {
         float fx = w.X(i) / 3.5f, fy = w.Y(i) / 3.5f;
         int x0 = (int)MathF.Floor(fx), y0 = (int)MathF.Floor(fy);
         float tx = fx - x0, ty = fy - y0;
         tx = tx * tx * (3 - 2 * tx); ty = ty * ty * (3 - 2 * ty);
-        int period = (int)MathF.Ceiling(w.W / 3.5f);   // wraps east-west with the planet
+        int period = (int)MathF.Ceiling(w.W / 3.5f);
         float H(int a, int b) => (Hash(((a % period) + period) % period, b + 911) & 0xFFFF) / 65535f;
         float v = (H(x0, y0) * (1 - tx) + H(x0 + 1, y0) * tx) * (1 - ty) + (H(x0, y0 + 1) * (1 - tx) + H(x0 + 1, y0 + 1) * tx) * ty;
         return Math.Clamp((v - 0.5f) * 1.6f + 0.5f + ((Hash(i, 5) & 0xFF) / 255f - 0.5f) * 0.15f, 0f, 1f);
     }
 
-    /// <summary>
-    /// Bakes cells [cx0, cx0+cw) x [cy0, cy0+ch) (x wraps) at <paramref name="density"/> px per cell.
-    /// </summary>
     public static Baked Bake(Input input, int density, int cx0, int cy0, int cw, int ch)
     {
         int pixels = cw * density * ch * density;
@@ -107,17 +85,11 @@ public static class TileBake
         return new Baked(t.Px, t.Anchor);
     }
 
-    /// <summary>
-    /// A bake: slot indices (RGBA8, see the class summary) and, per pixel, where the plant drawn
-    /// there in season (R) and off season (G) is rooted, as 1 + (dx + 2) + 5 dy cells from the
-    /// pixel's own cell (0: its own cell). Plants take their colours from the cell they stand on.
-    /// </summary>
     public sealed record Baked(byte[] Px, byte[] Anchor);
 
-    /// <summary>The region being baked, in the world's pixel space at this density.</summary>
     readonly record struct Target(byte[] Px, byte[] Anchor, int X0, int Y0, int W, int H, int WorldW, int WorldH, int D)
     {
-        /// <summary>Writes a slot; flora layers also record the cell (ax, ay; x unwrapped) the plant is rooted in.</summary>
+
         public void Put(int gx, int gy, byte slot, int layer, int ax = 0, int ay = 0)
         {
             int ry = gy - Y0;
@@ -128,13 +100,11 @@ public static class TileBake
             if (layer == 0) { Px[o] = slot; return; }
             Px[o + layer] = slot;
             Px[o + 3] |= (byte)layer;
-            int dx = (int)MathF.Floor(gx / (float)D) - ax, dy = ay - gy / D;   // from the pixel's cell to the root
+            int dx = (int)MathF.Floor(gx / (float)D) - ax, dy = ay - gy / D;
             dx = -dx;
             Anchor[(ry * W + rx) * 2 + layer - 1] = dx is >= -2 and <= 2 && dy is >= 0 and <= 4 ? (byte)(1 + dx + 2 + 5 * dy) : (byte)0;
         }
     }
-
-    // ---- ground ---------------------------------------------------------------------------------
 
     sealed record Mat(string Id, int Priority, Sheet Plain, Sheet Corners, int Variants);
 
@@ -154,11 +124,6 @@ public static class TileBake
         }
     }
 
-    /// <summary>
-    /// Dual grid: one tile per cell corner, covering the quarters of the four cells that meet there.
-    /// The lowest-priority material fills it with a random plain variant; each higher one is laid
-    /// over with the corner tile whose mask marks the quarters at or above its priority.
-    /// </summary>
     static void Ground(Input input, Target t, int cx0, int cy0, int cw, int ch)
     {
         var w = input.World;
@@ -166,7 +131,7 @@ public static class TileBake
         var fallback = MatOf("dirt", d)!;
         var mats = new Dictionary<int, Mat>();
         Mat MatAt(int i) => mats.TryGetValue(i, out var m) ? m : mats[i] = MatOf(Material(input, i), d) ?? fallback;
-        Span<int> corner = stackalloc int[4];   // TL, TR, BR, BL - the order of the mask bits 1, 2, 4, 8
+        Span<int> corner = stackalloc int[4];
         var present = new List<Mat>(4);
         for (int vy = cy0; vy <= Math.Min(cy0 + ch, w.H); vy++)
             for (int vx = cx0; vx <= cx0 + cw; vx++)
@@ -189,9 +154,6 @@ public static class TileBake
             }
     }
 
-    // ---- rivers ---------------------------------------------------------------------------------
-
-    /// <summary>River connection masks (N=1, E=2, S=4, W=8); each river cell drains into its best 4-neighbour.</summary>
     static int[]? _riverMask;
     static WorldMap? _riverWorld;
 
@@ -226,7 +188,6 @@ public static class TileBake
 
     public static bool IsRiver(WorldMap w, int i) => w.IsLand(i) && w.Biome[i] != Biome.Lake && w.Flow[i] >= WorldGen.RiverFlow * 2f;
 
-    /// <summary>Rivers come from the 16 px overlay family (no finer art yet), enlarged at 32 / 64.</summary>
     static void Rivers(WorldMap w, Target t, int cx0, int cy0, int cw, int ch)
     {
         var stream = Art.Get("overlays.river_stream");
@@ -245,12 +206,6 @@ public static class TileBake
             }
     }
 
-    // ---- flora ----------------------------------------------------------------------------------
-
-    /// <summary>
-    /// A kind of plant: its 16 px flora sheet (with seasonal states) and its civilisation detail
-    /// art (16/32/64). Either may be missing; the other stands in.
-    /// </summary>
     readonly record struct Kind(string? Flora, string? Detail);
 
     static readonly Dictionary<string, Kind> Kinds = new()
@@ -309,15 +264,12 @@ public static class TileBake
         ["clay_deposit"] = new(null, "nature_clay_deposit"),
     };
 
-    /// <summary>Boulders, outcrops and scree: what quarrying breaks up.</summary>
     static bool IsRock(string kind) => kind is "boulder" or "scree" or "granite_outcrop" or "sandstone_outcrop" or "basalt_outcrop" or "ore_outcrop";
 
-    /// <summary>Trees and tall woody plants: what people fell.</summary>
     static bool IsTree(string kind) =>
         Kinds.TryGetValue(kind, out var k) ? k.Detail?.StartsWith("tree_") == true || k.Flora?.Contains("_mature") == true || k.Flora?.Contains("_old") == true
                                            : kind.Contains("_burned") || kind == "conifer_dead";
 
-    /// <summary>What grows in a biome, with relative weights, and how many plants a cell holds (one cell is one tile).</summary>
     static ((string id, float weight)[] kinds, int count) FloraOf(Biome b) => b switch
     {
         Biome.BorealForest => (new[] { ("conifer_mature", 4f), ("conifer_old", 2f), ("conifer_young", 2f), ("pine", 1f), ("birch", 0.6f), ("conifer_sapling", 0.6f), ("shrub", 0.5f), ("moss", 0.4f), ("fallen_log", 0.2f) }, 2),
@@ -337,7 +289,6 @@ public static class TileBake
         _ => (Array.Empty<(string, float)>(), 0),
     };
 
-    /// <summary>Kinds that replace a biome's usual flora in special places (river banks, tropical shores).</summary>
     static string? Special(WorldMap w, int i, uint h)
     {
         if (w.Biome[i] == Biome.Wetland && w.TempMean[i] > 22f && Shore(w, i) && (h & 3) == 0) return "mangrove";
@@ -346,17 +297,14 @@ public static class TileBake
         return null;
     }
 
-    /// <summary>A plant rooted at a logical position (16 units per cell; x may run past the planet's edge).</summary>
     public readonly record struct Plant(int X, int Y, string Kind, int Variant, bool Snowy)
     {
-        /// <summary>The cell its base stands on (unwrapped x): its colours come from there.</summary>
+
         public (int x, int y) Cell => ((int)MathF.Floor(X / (float)Px), Y / Px);
     }
 
-    /// <summary>A field's look by growth: seedlings, growing, ripe; nothing when bare between seasons.</summary>
     static string? CropStage(float growth) => growth <= 0.01f ? null : growth < 0.3f ? "seedling" : growth < 0.8f ? "growing" : "ripe";
 
-    /// <summary>Which crop art draws a crop good: grains, roots and tubers, gourds and vines, fibre plants.</summary>
     public static string CropArt(string crop) => crop switch
     {
         "wheat" or "barley" or "oats" or "rye" or "rice" or "millet" or "maize" or "grain" => "grain",
@@ -365,16 +313,10 @@ public static class TileBake
         _ => "fiber",
     };
 
-    /// <summary>How a plant is drawn at a density: in season, off season (null: gone), a snow cap, and the pixel scale.</summary>
     public sealed record PlantArt(Sheet Summer, Sheet? Off, Sheet? Cap, int Scale, int Row);
 
     static readonly Dictionary<(string, int, bool), (Sheet, Sheet?, Sheet?, int)?> ArtCache = new();
 
-    /// <summary>
-    /// The art for a plant at a density. At 16 px the flora family (bare, dry and snow-capped
-    /// states); finer densities use the civilisation detail art, whose colours still follow the
-    /// season through the nature LUT; anything without detail art is enlarged.
-    /// </summary>
     public static PlantArt? ArtOf(Plant p, int d)
     {
         (Sheet, Sheet?, Sheet?, int)? art;
@@ -389,7 +331,7 @@ public static class TileBake
         int scale = d / Px;
         if (kindId.StartsWith("crop:"))
         {
-            // Crops show their growth stage; the field is the same in and out of season (it is sown or bare).
+
             string art = kindId[5..];
             if (art.StartsWith("grain_") && !art.EndsWith("seedling") && d > Px && Art.Lod("civilisation.crop_grain_detail", d) is { } detail) return (detail, detail, null, 1);
             if (Art.Get($"flora.crop_{art}") is not { } crop) return null;
@@ -409,7 +351,6 @@ public static class TileBake
         return null;
     }
 
-    /// <summary>The plants rooted in a cell (x unwrapped), in a fixed order. Pure: the same every call.</summary>
     public static void PlantsOf(Input input, int x, int y, List<Plant> into)
     {
         var w = input.World;
@@ -421,7 +362,7 @@ public static class TileBake
             else if (CropStage(field.growth) is { } stage) into.Add(new Plant(x * Px + 8, y * Px + 15, $"crop:{CropArt(field.crop)}_{stage}", 0, false));
             return;
         }
-        if (input.Occupied.Contains(i)) return;   // built on: cleared
+        if (input.Occupied.Contains(i)) return;
         if (!w.IsLand(i) || w.Volcano[i] || w.Biome[i] == Biome.Lake || Beach(w, i)) return;
         var (kinds, count) = FloraOf(w.Biome[i]);
         if (count == 0) return;
@@ -432,13 +373,13 @@ public static class TileBake
         for (int n = 0; n < count; n++)
         {
             uint h = Hash(i, n * 7 + 3);
-            if ((h & 0xFF) < 40) continue;   // gaps, so cells don't read as a grid
+            if ((h & 0xFF) < 40) continue;
             float pick = (h >> 8 & 0xFFFF) / 65536f * total;
             string id = kinds[^1].id;
             foreach (var (kid, weight) in kinds) { if (pick < weight) { id = kid; break; } pick -= weight; }
             if (n == 0 && Special(w, i, h >> 24) is { } special) id = special;
             if (burned) id = BurnedOf(id);
-            // Felled and quarried: the share of trees and boulders still standing (stable per plant).
+
             if (IsTree(id) && (Hash(i, n * 3 + 101) & 0xFF) >= input.Trees[i]) continue;
             if (IsRock(id) && (Hash(i, n * 3 + 103) & 0xFF) >= input.Rocks[i]) continue;
             int px = x * Px + 2 + (int)(Hash(i, n * 2 + 11) % 12u);
@@ -451,10 +392,10 @@ public static class TileBake
     {
         var w = input.World;
         var plants = new List<Plant>();
-        // Plants rooted just outside the region can reach into it (trees are two cells tall).
+
         for (int y = Math.Max(cy0 - 1, 0); y < Math.Min(cy0 + ch + 3, w.H); y++)
             for (int x = cx0 - 2; x < cx0 + cw + 2; x++) PlantsOf(input, x, y, plants);
-        plants.Sort((a, b) => a.Y != b.Y ? a.Y.CompareTo(b.Y) : a.X.CompareTo(b.X));   // y-sort: nearer plants overlap
+        plants.Sort((a, b) => a.Y != b.Y ? a.Y.CompareTo(b.Y) : a.X.CompareTo(b.X));
         int d = t.D, scale = d / Px;
         foreach (var p in plants)
         {
@@ -474,18 +415,11 @@ public static class TileBake
         return id is "pine" or "cedar" or "juniper" ? "conifer_burned" : id is "birch" or "willow" or "baobab" or "fruit_tree" or "mangrove" ? "broadleaf_burned" : "stump";
     }
 
-    // ---- helpers --------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Copies one frame's slot indices into the region at global pixel (ox, oy), each art pixel
-    /// <paramref name="scale"/> x <paramref name="scale"/>. Layer 0 writes the ground channel (R);
-    /// layer 1 / 2 write in-season (G) / off-season (B) flora and mark A.
-    /// </summary>
     static void Blit(Target t, Sheet sheet, int frame, int row, int ox, int oy, int scale, int layer, int ax = 0, int ay = 0)
     {
         if (row >= sheet.Rows || frame >= sheet.Frames) return;
         int fw = sheet.FrameW, fh = sheet.FrameH;
-        // Quick reject: wholly above or below the region.
+
         if (oy + fh * scale <= t.Y0 || oy >= t.Y0 + t.H) return;
         for (int y = 0; y < fh; y++)
             for (int x = 0; x < fw; x++)

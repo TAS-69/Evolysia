@@ -8,7 +8,6 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>Inspector and chronicle text (BBCode). Links: [url=agent:ID] and [url=band:ID].</summary>
 public static class Describe
 {
     static readonly string Muted = Palette.Hex(Palette.Parchment);
@@ -27,7 +26,6 @@ public static class Describe
 
     public static string Title(string s) => s.Length == 0 ? s : char.ToUpper(s[0]) + s[1..].Replace('_', ' ');
 
-    /// <summary>A thin bar drawn with background-coloured small spaces (works with any font).</summary>
     public static string Bar(float v, Color color, int width = 20)
     {
         int n = Math.Clamp((int)MathF.Round(v * width), 0, width);
@@ -35,7 +33,6 @@ public static class Describe
         return $"[font_size=7][bgcolor={Palette.Hex(color)}]{on}[/bgcolor][bgcolor={Palette.Hex(Palette.Raised)}]{off}[/bgcolor][/font_size]";
     }
 
-    /// <summary>Rows of label | bar | note, aligned in a table.</summary>
     public static string Rows(IEnumerable<(string label, string bar, string note)> rows) =>
         "[table=3]" + string.Join("", rows.Select(r => $"[cell]{r.label}  [/cell][cell]{r.bar}[/cell][cell] {r.note}[/cell]")) + "[/table]\n";
 
@@ -48,16 +45,13 @@ public static class Describe
         Activity.Quarry => "quarrier", Activity.Mine => "miner", Activity.Gather => "gatherer", _ => "wanderer",
     };
 
-    /// <summary>A coloured sex-and-age mark: rose for women, blue for men, gold for children.</summary>
     public static string SexAge(Agent a, int day) =>
         Ui.C($"{(a.Sex == Sex.Female ? "♀" : "♂")}{a.Age(day):0}", a.IsChild(day) ? Ui.Child : a.Sex == Sex.Female ? Ui.Female : Ui.Male);
 
-    /// <summary>A role, tinted by the kind of work (food, making, spirit, people, mind).</summary>
     public static string Work(Activity a) => Ui.C(Role(a), Ui.Work(a));
 
     static string GoodText(Evolysia.Sim.Economy.GoodDef g, float qty) => $"{Ui.C(Title(g.Id), Ui.Good(g.Kind))} {qty:0}";
 
-    /// <summary>Section headings (a bold line after a break) in ochre.</summary>
     static string Sections(string text) =>
         System.Text.RegularExpressions.Regex.Replace(text, @"\n\[b\]([^\[]+)\[/b\]", m => $"\n[b]{Ui.C(m.Groups[1].Value, Palette.Ochre)}[/b]");
 
@@ -101,7 +95,6 @@ public static class Describe
         else if (b.Awe > 0.2f)
             sb.Append($"[color={Palette.Hex(Palette.Divine)}]They have begun to wonder who is watching ({b.Awe:0.0} awe).[/color]\n");
 
-        // What they have built, keep and herd.
         var built = b.Structures.Select(id => sim.Structures.GetValueOrDefault(id)).Where(s => s != null).Select(s => s!).ToList();
         if (built.Count > 0)
         {
@@ -247,8 +240,6 @@ public static class Describe
         };
     }
 
-    // ---- voices (LLM narration) -------------------------------------------------------------
-
     static string Fact(Narration.Narration n, string key) => n.Moment.Facts.GetValueOrDefault(key, "").Replace('_', ' ');
 
     public static string VoiceTitle(Narration.Narration n) => n.Moment.Kind switch
@@ -278,7 +269,6 @@ public static class Describe
         return i >= 0 && i < text.Length ? text[i] : n.Get("choice");
     }
 
-    /// <summary>Body text of a narration: inner voice in italics, speech in quotes, beliefs highlighted.</summary>
     public static string VoiceBody(Narration.Narration n)
     {
         var parts = new List<string>();

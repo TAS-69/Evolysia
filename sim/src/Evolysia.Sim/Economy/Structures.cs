@@ -2,40 +2,29 @@ using Evolysia.Sim.Agents;
 
 namespace Evolysia.Sim.Economy;
 
-/// <summary>What a structure is for.</summary>
 public enum StructureRole : byte { Dwelling, Storage, Station, Hearth, Field, Pen, Shrine, Defence, Water, Civic, Vessel, Power }
 
-/// <summary>
-/// A kind of structure people can build. Ids are the art ids (civilisation detail art, or the
-/// early structures family for windbreaks, tents, pit houses, granaries, wells and monuments).
-/// </summary>
-/// <param name="Housing">People it shelters.</param>
-/// <param name="Warmth">Degrees of cold its shelter keeps off.</param>
-/// <param name="Capacity">Bulk of goods it stores.</param>
-/// <param name="Effect">Strength of its special effect (faith, defence, water, healing, teaching, trade, power, research).</param>
-/// <param name="Portable">Taken down and carried when a band moves camp (tents).</param>
 public sealed record StructureDef(ushort Index, string Id, StructureRole Role, TechId[] Techs, int W, int H, (ushort good, float qty)[] Materials,
                                   float Labour, int Housing, float Warmth, float Capacity, float Effect, bool Portable, int Days);
 
 public enum StructureState : byte { Planned, Building, Complete, Damaged, Ruined, Burned }
 
-/// <summary>A structure standing (or being built, or crumbling) on the tile grid.</summary>
 public sealed class Structure
 {
     public int Id;
     public ushort Def;
-    public int Cell;                 // top-left of the footprint
-    public int BandId = -1;          // -1: abandoned
+    public int Cell;
+    public int BandId = -1;
     public StructureState State;
-    public float Progress;           // labour put in (person-days)
-    public float Condition = 1f;     // 0..1, falls with age, weather and neglect; repaired by builders
+    public float Progress;
+    public float Condition = 1f;
     public int BuiltDay = -1;
-    public int PlannedDay;           // when it was sited (stale plans are given up)
-    public string Crop = "";         // fields: what is sown
-    public float Growth;             // fields: 0 bare .. 1 ripe
-    public float Yield;              // fields: person-days of crop tended into it so far this season
-    public float Clearing;           // labour added for felling and clearing the site
-    public string Style = "";        // dwellings: regional style (wall/roof/floor)
+    public int PlannedDay;
+    public string Crop = "";
+    public float Growth;
+    public float Yield;
+    public float Clearing;
+    public string Style = "";
     public StructureDef Kind => Structures.All[Def];
     public bool Standing => State is StructureState.Complete or StructureState.Damaged;
 }
@@ -61,7 +50,7 @@ public static class Structures
     static Structures()
     {
         var D = StructureRole.Dwelling; var St = StructureRole.Storage; var X = StructureRole.Station;
-        // Dwellings: from a screen against the wind to stone houses. Thatch is reeds or straw (fiber).
+
         S("windbreak", D, T(TechId.StoneTools), "fiber:3,wood:1", 1f, housing: 3, warmth: 2f, days: 400);
         S("lean_to", D, T(TechId.Woodcutting), "wood:4,hide:1", 2f, w: 2, housing: 4, warmth: 4f, days: 700);
         S("hide_tent", D, T(TechId.Shelter), "hide:4,wood:3,rope:0.5", 3f, w: 2, h: 2, housing: 6, warmth: 8f, portable: true, days: 1500);
@@ -74,9 +63,8 @@ public static class Structures
         S("housing_block", D, T(TechId.Concrete), "concrete:20,steel:4,glass:4", 40f, w: 4, h: 3, housing: 30, warmth: 18f, days: 20000);
         S("pressure_habitat", D, T(TechId.SpaceHabitats), "advanced_alloy:8,glass:6,electronics:4", 60f, w: 3, h: 3, housing: 12, warmth: 25f, days: 30000);
 
-        // Fire, storage and workstations
-        S("hearth", StructureRole.Hearth, T(TechId.ControlledFire), "", 0.6f, warmth: 5f, days: 3000);   // a fire pit: stones from where it is dug
-        S("basket", St, T(TechId.Baskets), "fiber:2", 0.4f, capacity: 12f, days: 500);   // grass or reed
+        S("hearth", StructureRole.Hearth, T(TechId.ControlledFire), "", 0.6f, warmth: 5f, days: 3000);
+        S("basket", St, T(TechId.Baskets), "fiber:2", 0.4f, capacity: 12f, days: 500);
         S("storage_pit", St, T(TechId.FoodStorage), "stone:2", 3f, capacity: 40f, days: 4000);
         S("crate", St, T(TechId.Carpentry), "wood:3", 1f, capacity: 25f, days: 2000);
         S("chest", St, T(TechId.Carpentry), "wood:3,copper_ingot:0.2", 1.5f, capacity: 30f, days: 4000);
@@ -108,7 +96,6 @@ public static class Structures
         S("robot_arm", X, T(TechId.Robotics), "steel:2,electronics:2,components:2", 8f, effect: 1.8f, days: 8000);
         S("cooking_pot", X, T(TechId.Cooking, TechId.Pottery), "ceramic:1", 0.3f, effect: 1.1f, days: 1500);
 
-        // Farming
         S("field", StructureRole.Field, T(TechId.Agriculture), "", 1.5f, days: 100000);
         S("orchard", StructureRole.Field, T(TechId.Orchards), "", 3f, days: 100000);
         S("feed_trough", StructureRole.Pen, T(TechId.Domestication), "wood:3", 1f, effect: 6f, days: 2500);
@@ -118,14 +105,12 @@ public static class Structures
         S("hydroponic_rack", StructureRole.Field, T(TechId.Hydroponics), "steel:2,glass:2,electronics:1", 6f, effect: 4f, days: 8000);
         S("biotech_vat", X, T(TechId.Biotech), "glass:3,steel:2,electronics:2", 8f, effect: 2f, days: 8000);
 
-        // Water and health
         S("well", StructureRole.Water, T(TechId.Wells), "stone:8,wood:2,rope:1", 10f, effect: 0.6f, days: 20000);
         S("water_barrel", StructureRole.Water, T(TechId.Carpentry), "wood:3", 1f, effect: 0.15f, days: 2000);
         S("water_pump", StructureRole.Water, T(TechId.Machinery), "steel:3,components:2", 6f, effect: 0.9f, days: 10000);
         S("wash_basin", StructureRole.Civic, T(TechId.Sanitation), "ceramic:2", 1f, effect: 0.1f, days: 5000);
         S("medical_table", StructureRole.Civic, T(TechId.Medicine), "wood:3,cloth:1", 2f, effect: 0.3f, days: 5000);
 
-        // Faith, power and learning
         S("totem", StructureRole.Shrine, T(TechId.Carving), "log:1", 2f, effect: 0.3f, days: 5000);
         S("burial_mound", StructureRole.Shrine, T(TechId.Burial), "", 3f, effect: 0.2f, days: 100000);
         S("cairn", StructureRole.Shrine, T(TechId.Burial), "stone:6", 2f, effect: 0.2f, days: 50000);
@@ -145,12 +130,10 @@ public static class Structures
         S("solar_panel", StructureRole.Power, T(TechId.SolarPower), "glass:2,electronics:1,steel:1", 5f, effect: 0.6f, days: 10000);
         S("battery_bank", StructureRole.Power, T(TechId.Batteries), "battery:4,steel:1", 4f, effect: 0.5f, days: 8000);
 
-        // Defence
         S("weapons_rack", StructureRole.Defence, T(TechId.Fortification), "wood:2", 1f, effect: 0.1f, days: 4000);
         S("armour_stand", StructureRole.Defence, T(TechId.Armour), "wood:2", 1f, effect: 0.05f, days: 4000);
         S("palisade", StructureRole.Defence, T(TechId.Fortification), "log:2", 1.5f, effect: 0.04f, days: 4000);
 
-        // Vessels and vehicles (kept by the shore or the camp)
         S("raft", StructureRole.Vessel, T(TechId.Rafts), "log:4,rope:1", 3f, effect: 0.5f, days: 1500);
         S("canoe", StructureRole.Vessel, T(TechId.Boats), "log:2", 4f, effect: 1f, days: 2500);
         S("rowing_boat", StructureRole.Vessel, T(TechId.Boats, TechId.Carpentry), "wood:6", 5f, effect: 1.2f, days: 4000);

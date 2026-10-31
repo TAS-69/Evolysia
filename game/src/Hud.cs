@@ -3,11 +3,6 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// The interface (refined dark earthy, see <see cref="Ui"/>): a slim top bar (date, numbers, minds,
-/// speed, overlay, new world), the powers bar grouped by kind, the chronicle on the right, the
-/// inspector on the left, voices below, and the dream and message dialogs.
-/// </summary>
 public partial class Hud : CanvasLayer
 {
     public Label Date = null!, Stats = null!, Perf = null!, VoiceStatus = null!;
@@ -36,7 +31,7 @@ public partial class Hud : CanvasLayer
 
     public event Action<Power?>? PowerPicked;
     public event Action<DreamKind, string>? DreamSent;
-    /// <summary>The player's message: words and how they are given.</summary>
+
     public event Action<string, MessageMedium>? MessageSent;
 
     public override void _Ready()
@@ -45,7 +40,6 @@ public partial class Hud : CanvasLayer
         root.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
         AddChild(root);
 
-        // ---- top bar: who and when on the left, controls on the right
         var top = new PanelContainer();
         top.SetAnchorsPreset(Control.LayoutPreset.TopWide);
         top.OffsetLeft = 8; top.OffsetRight = -8; top.OffsetTop = 6; top.OffsetBottom = 46;
@@ -81,7 +75,6 @@ public partial class Hud : CanvasLayer
         Perf.AddThemeColorOverride("font_color", new Color(Palette.Parchment, 0.45f));
         Perf.AddThemeFontSizeOverride("font_size", 11);
 
-        // Speed: one segmented control.
         var speeds = new HBoxContainer();
         speeds.AddThemeConstantOverride("separation", 0);
         var group = new ButtonGroup();
@@ -106,12 +99,11 @@ public partial class Hud : CanvasLayer
         foreach (var o in Enum.GetValues<Overlay>()) OverlayPick.AddItem(o.ToString(), (int)o);
         OverlayPick.ItemSelected += i => OverlayChosen?.Invoke((Overlay)(int)i);
         bar.AddChild(OverlayPick);
-        SeedEdit = new LineEdit { Visible = false };   // the seed lives on the new-world screen
+        SeedEdit = new LineEdit { Visible = false };
         var newWorld = new Button { Text = "New world…", FocusMode = Control.FocusModeEnum.None, TooltipText = "Choose a planet and its first peoples" };
         newWorld.Pressed += () => NewWorldRequested?.Invoke();
         bar.AddChild(newWorld);
 
-        // ---- chronicle (right)
         var right = new PanelContainer();
         right.SetAnchorsPreset(Control.LayoutPreset.RightWide);
         right.OffsetLeft = -360; right.OffsetTop = 54; right.OffsetBottom = -8; right.OffsetRight = -8;
@@ -123,11 +115,10 @@ public partial class Hud : CanvasLayer
         PrayersList.MetaClicked += meta => LinkClicked?.Invoke(meta.AsString());
         rv.AddChild(PrayersList);
         Feed = Rich();
-        Feed.MetaUnderlined = false;   // every line is a link; the bullet colour says what kind
+        Feed.MetaUnderlined = false;
         rv.AddChild(HeadRow(right, "Chronicle", Feed));
         rv.AddChild(Feed);
 
-        // ---- inspector (left)
         InspectorPanel = new PanelContainer { Visible = false };
         InspectorPanel.SetAnchorsPreset(Control.LayoutPreset.LeftWide);
         InspectorPanel.OffsetLeft = 8; InspectorPanel.OffsetRight = 412; InspectorPanel.OffsetTop = 54; InspectorPanel.OffsetBottom = -8;
@@ -144,7 +135,6 @@ public partial class Hud : CanvasLayer
 
         BuildPowers(root);
 
-        // ---- voices (bottom centre)
         var voices = new PanelContainer();
         voices.SetAnchorsPreset(Control.LayoutPreset.BottomWide);
         voices.OffsetLeft = 420; voices.OffsetRight = -368; voices.OffsetTop = -150; voices.OffsetBottom = -30;
@@ -167,10 +157,6 @@ public partial class Hud : CanvasLayer
         root.AddChild(help);
     }
 
-    /// <summary>
-    /// A panel's heading with a collapse arrow: collapsed, the body hides and the panel shrinks to
-    /// its heading (towards the screen edge it is anchored to).
-    /// </summary>
     HBoxContainer HeadRow(PanelContainer panel, string title, Control body)
     {
         var row = new HBoxContainer();
@@ -180,7 +166,7 @@ public partial class Hud : CanvasLayer
         row.AddChild(fold);
         var heading = Ui.Heading(title);
         heading.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        heading.MouseFilter = Control.MouseFilterEnum.Stop;   // the heading itself also folds
+        heading.MouseFilter = Control.MouseFilterEnum.Stop;
         heading.GuiInput += e => { if (e is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left }) fold.EmitSignal(BaseButton.SignalName.Pressed); };
         row.AddChild(heading);
         float anchorTop = panel.AnchorTop, anchorBottom = panel.AnchorBottom, top = panel.OffsetTop, bottom = panel.OffsetBottom;
@@ -201,7 +187,6 @@ public partial class Hud : CanvasLayer
 
     readonly Dictionary<string, Button> _folds = new();
 
-    /// <summary>Collapses or expands a panel by its heading (inspector, chronicle, voices).</summary>
     public void Fold(string panel)
     {
         if (_folds.TryGetValue(panel.ToLowerInvariant(), out var b)) b.EmitSignal(BaseButton.SignalName.Pressed);
@@ -214,7 +199,6 @@ public partial class Hud : CanvasLayer
         return d;
     }
 
-    /// <summary>Squares off a button's inner corners so a row of them reads as one control.</summary>
     static void Segment(Button b, Theme theme, bool first, bool last)
     {
         foreach (var state in new[] { "normal", "hover", "pressed", "hover_pressed" })
@@ -241,7 +225,7 @@ public partial class Hud : CanvasLayer
         var row = new HBoxContainer();
         row.AddThemeConstantOverride("separation", 1);
         col.AddChild(row);
-        // Kindness, wrath, then the word: grouped and tinted by kind.
+
         var groups = new[]
         {
             (Power[])[Power.Rain, Power.Drought, Power.Bless, Power.Fertility, Power.Heal, Power.Game],
@@ -283,7 +267,6 @@ public partial class Hud : CanvasLayer
         PowerHint.AddThemeFontSizeOverride("font_size", 12);
         col.AddChild(PowerHint);
 
-        // ---- dream dialog
         DreamDialog = Dialog(root, "Send a dream", 440);
         var dv = (VBoxContainer)DreamDialog.GetChild(0);
         DreamKindPick = new OptionButton { FocusMode = Control.FocusModeEnum.None };
@@ -298,7 +281,6 @@ public partial class Hud : CanvasLayer
             DreamWords.Text = "";
         }));
 
-        // ---- message dialog
         MessageDialog = Dialog(root, "Leave a message", 480);
         var mv = (VBoxContainer)MessageDialog.GetChild(0);
         _messageWhere = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart };
@@ -352,7 +334,6 @@ public partial class Hud : CanvasLayer
         return row;
     }
 
-    /// <summary>Opens the message dialog for a chosen place.</summary>
     public void AskMessage(string where)
     {
         _messageWhere.Text = where;
@@ -360,7 +341,6 @@ public partial class Hud : CanvasLayer
         MessageWords.GrabFocus();
     }
 
-    /// <summary>The message button shows how long until it can be used again.</summary>
     public void ShowMessageCharge(int yearsLeft)
     {
         if (!_powerButtons.TryGetValue(Power.Message, out var b)) return;

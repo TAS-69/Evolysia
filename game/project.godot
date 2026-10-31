@@ -1,10 +1,17 @@
-; Evolysia - Godot 4.7 (.NET) client for the simulation in ../sim
 
 config_version=5
 
 [application]
 
 config/name="Evolysia"
+config/description="A living world. A watchful god. Usually a sensible combination."
+config/version="0.1.0-alpha.1"
+config/icon="res://branding/evolysia-logo.png"
+boot_splash/bg_color=Color(0.117647, 0.094118, 0.07451, 1)
+boot_splash/image="res://branding/evolysia-logo.png"
+boot_splash/show_image=true
+boot_splash/stretch_mode=0
+boot_splash/use_filter=true
 run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 

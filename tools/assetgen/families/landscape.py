@@ -1,4 +1,4 @@
-"""Detailed terrain materials, seam-compatible transitions and exposed rock faces."""
+
 import json
 from functools import lru_cache
 from pathlib import Path

@@ -1,9 +1,5 @@
 namespace Evolysia.Sim.Core;
 
-/// <summary>
-/// Seeded 3D value noise. The world samples it on a cylinder (x wraps around the planet),
-/// so terrain has no seam at the date line.
-/// </summary>
 public sealed class Noise
 {
     readonly int[] _perm = new int[512];
@@ -34,7 +30,6 @@ public sealed class Noise
         return Lerp(Lerp(x00, x10, ty), Lerp(x01, x11, ty), tz);
     }
 
-    /// <summary>Fractal sum, roughly in [-1, 1].</summary>
     public float Fbm(float x, float y, float z, int octaves, float lacunarity = 2f, float gain = 0.5f)
     {
         float sum = 0f, amp = 1f, norm = 0f;
@@ -48,7 +43,6 @@ public sealed class Noise
         return sum / norm;
     }
 
-    /// <summary>Fbm on a cylinder: u in [0,1) wraps, v is the vertical coordinate.</summary>
     public float Cylinder(float u, float v, float scale, int octaves, float offset = 0f)
     {
         float a = u * 2f * MathF.PI;

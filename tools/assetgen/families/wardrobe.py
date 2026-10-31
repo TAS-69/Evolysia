@@ -1,4 +1,4 @@
-"""Modular, independently dyed outfits on the shared people animation rig."""
+
 import json
 import math
 from pathlib import Path

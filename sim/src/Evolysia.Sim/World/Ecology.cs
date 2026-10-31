@@ -2,14 +2,9 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.World;
 
-/// <summary>
-/// Food webs as logistic stocks per cell: forageable plants, huntable game and fish regrow toward
-/// a capacity set by biome, season and this year's rain. People deplete them; predators thin out
-/// where people press on them.
-/// </summary>
 public static class Ecology
 {
-    // Peak sustainable yield in person-days per day for a cell: (plants, game, predator danger 0..1)
+
     static readonly Dictionary<Biome, (float plant, float game, float danger)> Table = new()
     {
         [Biome.IceSheet] = (0f, 1f, 0.15f),
@@ -32,15 +27,11 @@ public static class Ecology
 
     public const float PlantGrowth = 0.10f, GameGrowth = 0.06f, FishGrowth = 0.08f;
 
-    /// <summary>
-    /// Capacities per cell. The table is per original (160-wide) cell, so each finer cell holds its
-    /// share of the area, times <paramref name="capacityScale"/> (how crowded the planet may get).
-    /// </summary>
     public static void InitCapacities(WorldMap w, Noise noise, float capacityScale = 1f)
     {
         Span<int> nb = stackalloc int[8];
         float area = w.CellArea * capacityScale;
-        int reach = Math.Max(1, (int)MathF.Round(w.Scale * 0.4f));   // how far inland the sea's fish count
+        int reach = Math.Max(1, (int)MathF.Round(w.Scale * 0.4f));
         for (int i = 0; i < w.Count; i++)
         {
             if (!w.IsLand(i) && w.Biome[i] != Biome.Coast) continue;
@@ -50,7 +41,7 @@ public static class Ecology
             float u = (float)w.X(i) / w.W, v = (float)w.Y(i) / w.H;
             float lushness = 1f + 0.25f * noise.Cylinder(u, v, 18f, 2, 7.7f);
             float river = w.Flow[i] > WorldGen.RiverFlow ? 1.3f : 1f;
-            // Capacity = yield * 4 / growth rate (max sustainable yield of a logistic is gK/4).
+
             w.PlantK[i] = plant * lushness * river * 4f / PlantGrowth * area;
             w.PreyK[i] = game * lushness * 4f / GameGrowth * area;
             w.PredatorBase[i] = danger * Math.Clamp(lushness, 0.7f, 1.2f);
@@ -67,7 +58,6 @@ public static class Ecology
         InitMaterials(w);
     }
 
-    /// <summary>How wooded a biome is (0..1): what a cell's trees regrow towards.</summary>
     public static float TreeDensity(Biome b) => b switch
     {
         Biome.BorealForest or Biome.TemperateForest or Biome.TemperateRainforest or Biome.TropicalRainforest => 1f,
@@ -81,7 +71,6 @@ public static class Ecology
         _ => 0f,
     };
 
-    /// <summary>Timber, stone and ore lying on each cell at the start of the world.</summary>
     static void InitMaterials(WorldMap w)
     {
         string[] metals = { "copper_ore", "copper_ore", "tin_ore", "iron_ore", "iron_ore", "iron_ore", "gold_ore", "silver_ore", "coal", "coal" };
@@ -93,7 +82,7 @@ public static class Ecology
             w.Trees[i] = w.TreesK[i];
             bool rocky = b is Biome.Alpine or Biome.Volcanic or Biome.ColdDesert || w.Elevation[i] > 1500f;
             ulong h = Rng.Mix((ulong)i * 0x9E3779B97F4A7C15UL);
-            w.RockK[i] = rocky ? 30f : (h & 7) == 0 ? 8f : 1.5f;   // scattered boulders in ordinary country
+            w.RockK[i] = rocky ? 30f : (h & 7) == 0 ? 8f : 1.5f;
             w.Rock[i] = w.RockK[i];
             float fault = w.Fault[i];
             if (fault > 0.3f && (h >> 8 & 0xFF) < 22 + fault * 40f)
@@ -119,7 +108,6 @@ public static class Ecology
         return false;
     }
 
-    /// <summary>New year: regional rain anomalies (droughts emerge where it drops below ~0.6).</summary>
     public static void NewYear(WorldMap w, Noise noise, int year)
     {
         for (int i = 0; i < w.Count; i++)
@@ -127,14 +115,14 @@ public static class Ecology
             float u = (float)w.X(i) / w.W, v = (float)w.Y(i) / w.H;
             float n = noise.Fbm(MathF.Cos(u * 6.2832f) * 1.2f, MathF.Sin(u * 6.2832f) * 1.2f + v * 3f, year * 0.37f, 3);
             w.YearRain[i] = Math.Clamp(1f + 0.9f * n, 0.25f, 1.6f);
-            if (w.RainBiasUntil[i] > year * SimConfig.DaysPerYear)   // a god's rain or drought outlasts the new year
+            if (w.RainBiasUntil[i] > year * SimConfig.DaysPerYear)
                 w.YearRain[i] = w.RainBias[i] > 1f ? MathF.Max(w.YearRain[i], w.RainBias[i]) : MathF.Min(w.YearRain[i], w.RainBias[i]);
         }
     }
 
     public static void Step(WorldMap w, int day, int dt)
     {
-        // Cells are independent, so rows run in parallel (results identical to sequential).
+
         Parallel.For(0, w.H, y =>
         {
             for (int i = y * w.W; i < (y + 1) * w.W; i++) StepCell(w, i, day, dt);
@@ -150,14 +138,14 @@ public static class Ecology
 
         float k = w.PlantK[i] * (0.4f + 0.6f * rain) * health;
         w.PlantStock[i] = Logistic(w.PlantStock[i], k, PlantGrowth * growth * dt, w.PlantK[i]);
-        if (growth < 0.05f) w.PlantStock[i] *= 1f - 0.002f * dt;    // winter: stores slowly rot
+        if (growth < 0.05f) w.PlantStock[i] *= 1f - 0.002f * dt;
 
         float gk = w.PreyK[i] * (0.6f + 0.4f * rain) * health;
         w.PreyStock[i] = Logistic(w.PreyStock[i], gk, GameGrowth * MathF.Max(growth, 0.3f) * dt, w.PreyK[i]);
         w.FishStock[i] = Logistic(w.FishStock[i], w.FishK[i], FishGrowth * dt, w.FishK[i]);
 
         w.HumanPressure[i] *= MathF.Pow(0.97f, dt);
-        // Felled woods grow back over a few decades; ash and fire kill standing trees.
+
         if (w.TreesK[i] > 0f)
         {
             if (w.Ash[i] > 0.3f) w.Trees[i] *= 1f - 0.02f * dt;
@@ -171,11 +159,10 @@ public static class Ecology
     static float Logistic(float s, float k, float rate, float baseK)
     {
         if (k <= 0f) return s * 0.98f;
-        s = MathF.Max(s, baseK * 0.02f);   // seed bank: nothing is ever fully wiped out
+        s = MathF.Max(s, baseK * 0.02f);
         return MathF.Max(0f, s + rate * s * (1f - s / k));
     }
 
-    /// <summary>Take up to <paramref name="want"/> from a stock with diminishing returns as it thins.</summary>
     public static float Harvest(float[] stock, float[] cap, int i, float want)
     {
         float k = MathF.Max(cap[i], 1f);

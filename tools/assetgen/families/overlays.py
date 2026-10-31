@@ -1,4 +1,4 @@
-"""Connected waterways, roads, seasonal surface cover and ground decals."""
+
 import json
 import math
 from pathlib import Path

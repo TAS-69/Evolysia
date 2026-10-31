@@ -7,7 +7,7 @@ namespace Evolysia.Sim;
 
 public sealed partial class Simulation
 {
-    /// <summary>When true, pivotal choices wait (brood) for an outside mind before instinct decides.</summary>
+
     public bool DeferDecisions;
     public int DecisionWindowDays = 10;
     public readonly List<Decision> Decisions = new();
@@ -16,10 +16,6 @@ public sealed partial class Simulation
 
     public IEnumerable<Decision> PendingDecisions => Decisions.Where(d => !d.Resolved);
 
-    /// <summary>
-    /// A mind chooses for someone. Accepted only while the decision is pending and only among its
-    /// sanctioned options. Applied between days, logged, so seed + logs replay exactly.
-    /// </summary>
     public bool Decide(int decisionId, string option)
     {
         var d = Decisions.FirstOrDefault(x => x.Id == decisionId);
@@ -54,7 +50,7 @@ public sealed partial class Simulation
 
         if (d.Kind == DecisionKind.Pivot && d.Pivot != null)
         {
-            // The person may have died while brooding: then nothing comes of it.
+
             if (Living.ContainsKey(d.AgentId) && Enum.GetValues<PivotChoice>().Where(c => Ids.Snake(c) == choice).ToArray() is [var picked])
                 FinishPivot(d.Pivot, picked);
         }
@@ -65,8 +61,6 @@ public sealed partial class Simulation
             CarryOutMeeting(a, b, choice);
     }
 
-    // ------------------------------------------------------------------ pivots
-
     internal void BeginPivot(Agent a, Band band, PivotCase pc)
     {
         if (!DeferDecisions)
@@ -74,7 +68,7 @@ public sealed partial class Simulation
             FinishPivot(pc, Psych.Pivot.Resolve(a, pc.Ctx, Rng));
             return;
         }
-        // Shortlist: the options this personality makes plausible (instinct's top three).
+
         var scores = Psych.Pivot.Scores(a, pc.Ctx);
         var ranked = Enumerable.Range(0, scores.Length).Where(i => !float.IsNegativeInfinity(scores[i]))
             .OrderByDescending(i => scores[i]).Take(3).Select(i => (PivotChoice)i).ToArray();
@@ -112,7 +106,7 @@ public sealed partial class Simulation
         switch (choice)
         {
             case PivotChoice.Conform:
-                if (pc.Tech is { } t) a.Knows &= ~Techs.Bit(t);   // abandons it; nobody else may know it
+                if (pc.Tech is { } t) a.Knows &= ~Techs.Bit(t);
                 a.Memes.Remove(pc.MemeId);
                 break;
             case PivotChoice.DoubleDown:
@@ -133,9 +127,6 @@ public sealed partial class Simulation
         RecordPivot(a, band, choice, pc.Kind, pc.What);
     }
 
-    // ------------------------------------------------------------------ first contact between peoples
-
-    /// <summary>Leader of <paramref name="a"/> meets a foreign people for the first time.</summary>
     void BeginMeeting(Band a, Band b, string instinct)
     {
         var leader = Living.GetValueOrDefault(a.LeaderId);
@@ -144,7 +135,7 @@ public sealed partial class Simulation
             CarryOutMeeting(a, b, instinct);
             return;
         }
-        a.Relations[b.Id] = a.RelationTo(b.Id);   // they have now seen each other
+        a.Relations[b.Id] = a.RelationTo(b.Id);
         b.Relations[a.Id] = b.RelationTo(a.Id);
         var options = new[] { "welcome", "wary", "raid" };
         var d = new Decision

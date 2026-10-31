@@ -7,23 +7,12 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim;
 
-/// <summary>
-/// Building on the tile grid. Bands decide what to build next in the sequential decisions phase
-/// (so two bands never claim the same tile), site it near camp, clear the trees and boulders off
-/// it (felling them for logs and stone), and builders put labour and materials into it over the
-/// following days. Structures age, get repaired, and are left behind - abandoned, decaying, and
-/// open to whoever settles there next - when a band moves on, except tents, which go with it.
-/// </summary>
 public sealed partial class Simulation
 {
-    /// <summary>Every structure in the world, by id.</summary>
+
     public readonly Dictionary<int, Structure> Structures = new();
     int _nextStructure = 1;
 
-    /// <summary>
-    /// Every 15 days (sequential): shelter, storage and fire from what stands; what the band wants on
-    /// hand; decay and repair; and, if nothing is under way, the next thing to build.
-    /// </summary>
     void EconomyUpkeep(Band band)
     {
         var known = default(TechSet);
@@ -36,7 +25,7 @@ public sealed partial class Simulation
         {
             if (!Structures.TryGetValue(sid, out var s)) { band.Structures.Remove(sid); continue; }
             var k = s.Kind;
-            // Age: a little every fortnight; neglected and abandoned things faster.
+
             if (s.Standing)
             {
                 s.Condition -= 15f / k.Days;
@@ -45,7 +34,7 @@ public sealed partial class Simulation
             }
             if (s.State is StructureState.Planned or StructureState.Building)
             {
-                // A job that has gone nowhere for four months is given up.
+
                 if (Day - s.PlannedDay > 120 && s.Progress < (s.Kind.Labour + s.Clearing) * 0.5f) { Remove(s); continue; }
                 unfinished++;
                 continue;
@@ -62,14 +51,14 @@ public sealed partial class Simulation
         band.Shelter = Math.Clamp(housing / (float)n, 0f, 1f);
         band.ShelterWarmth = warmth;
         band.StorageRoom = (int)storage;
-        band.HasFire = fire || (known.Has(TechId.ControlledFire) && band.Structures.Count == 0);   // an open fire before any hearth is built
+        band.HasFire = fire || (known.Has(TechId.ControlledFire) && band.Structures.Count == 0);
         band.HasColdStore = cold;
         float water = 0f;
         foreach (int sid in band.Structures)
             if (Structures.TryGetValue(sid, out var s) && s.Standing && s.Kind.Role == StructureRole.Water) water = MathF.Max(water, s.Kind.Effect);
         band.WaterBonus = water;
         AdoptAbandoned(band);
-        // A village that has lost the knack of farming takes to the road again.
+
         if (band.Sedentary && !known.Has(TechId.Agriculture)) band.Sedentary = false;
         UpdateTargets(band, known);
         DiscardClutter(band);
@@ -77,10 +66,6 @@ public sealed partial class Simulation
         if (unfinished < (band.Sedentary ? 3 : 1)) PlanNext(band, known, housing, storage);
     }
 
-    /// <summary>
-    /// Whether there is open land round a cell for a village and its fields: little of it claimed
-    /// by other living bands (abandoned camps and the band's own count as free).
-    /// </summary>
     internal bool OpenLand(int cell, int bandId = -1)
     {
         var w = World;
@@ -93,10 +78,9 @@ public sealed partial class Simulation
                 int id = w.StructureAt[w.Index(w.X(cell) + dx, y)];
                 if (id != 0 && Structures.TryGetValue(id, out var s) && s.BandId >= 0 && s.BandId != bandId) used++;
             }
-        return used <= 14;   // of 49 samples
+        return used <= 14;
     }
 
-    /// <summary>A band settling where others lived takes over what they left standing nearby.</summary>
     void AdoptAbandoned(Band band)
     {
         var w = World;
@@ -113,7 +97,6 @@ public sealed partial class Simulation
             }
     }
 
-    /// <summary>The next thing worth building, in order of need, and where.</summary>
     void PlanNext(Band band, TechSet known, int housing, float storage)
     {
         var w = World;
@@ -137,8 +120,7 @@ public sealed partial class Simulation
             }
             return best;
         }
-        // How readily the materials come: in the stores, or raw from the land; made goods not yet
-        // in hand count against a choice.
+
         float Availability(StructureDef d)
         {
             float f = 1f;
@@ -150,14 +132,14 @@ public sealed partial class Simulation
             }
             return f;
         }
-        // Only what the band knows how to build and can get every material for.
+
         bool Buildable(StructureDef d)
         {
             if (!Economy.Structures.CanBuild(known, d)) return false;
             foreach (var (g, _) in d.Materials) if (!CanObtain(known, g)) return false;
             return true;
         }
-        // One job of a kind at a time: a stuck house doesn't hold up the workshops.
+
         bool Pending(StructureRole role)
         {
             foreach (int sid in band.Structures)
@@ -172,8 +154,7 @@ public sealed partial class Simulation
         }
 
         if (known.Has(TechId.ControlledFire) && !Has("hearth")) { Plan(Economy.Structures.Get("hearth")); return; }
-        // Villages lay out a first few fields at once (they must eat), and the rest once half of
-        // them have a roof.
+
         int sown = Count(k => k.Role == StructureRole.Field);
         if (band.Sedentary && known.Has(TechId.Agriculture) && (housing >= n / 2 || sown < Math.Max(4, n / 6)))
         {
@@ -182,7 +163,7 @@ public sealed partial class Simulation
             if (fields < Math.Min(wanted, 6 + n / 4) && !Pending(StructureRole.Field))
             {
                 var fieldDef = Economy.Structures.Get(known.Has(TechId.Orchards) && fields % 6 == 5 ? "orchard" : "field")!;
-                // Hemmed in by other villages' fields with none of their own: they pack up and find land.
+
                 if (fields < 2 && Site(band, fieldDef) == null) { band.Sedentary = false; return; }
                 Plan(fieldDef, Math.Min(4, wanted - fields));
                 return;
@@ -193,8 +174,7 @@ public sealed partial class Simulation
             if (Structures.TryGetValue(sid, out var st) && st.Kind.Role == StructureRole.Dwelling && st.State is StructureState.Planned or StructureState.Building) going++;
         if (housing < n && going < (band.Sedentary ? 3 : 1))
         {
-            // Wanderers want what they can carry or put up quickly; villagers, what lasts. Villages
-            // put up several at once while people still sleep outside.
+
             var home = Best(StructureRole.Dwelling, d => band.Sedentary ? d.Housing * (1f + d.Warmth / 10f) * MathF.Sqrt(d.Days / 1000f) / MathF.Sqrt(d.Labour)
                                                                         : d.Housing * (d.Portable ? 2f : 1f) / (1f + d.Labour * 0.3f));
             if (home != null)
@@ -212,7 +192,7 @@ public sealed partial class Simulation
             int wanted = Math.Clamp(n / 2, 4, 60);
             if (fields < wanted && !Pending(StructureRole.Field)) { Plan(Economy.Structures.Get(known.Has(TechId.Orchards) && fields % 6 == 5 ? "orchard" : "field"), Math.Min(4, wanted - fields)); return; }
         }
-        // Workstations for what the band knows how to make.
+
         if (!Pending(StructureRole.Station))
             foreach (var id in WantedStations(band, known))
                 if (!Has(id) && Economy.Structures.Get(id) is { } station && Economy.Structures.CanBuild(known, station)) { Plan(station); return; }
@@ -230,12 +210,11 @@ public sealed partial class Simulation
         if (band.Sedentary)
             foreach (var d in Economy.Structures.All)
                 if (d.Role is StructureRole.Civic or StructureRole.Power && Economy.Structures.CanBuild(known, d) && !Has(d.Id) && Rng.Chance(0.3f)) { Plan(d); return; }
-        // Growing villages keep improving their homes once housing is met.
+
         if (band.Sedentary && Best(StructureRole.Dwelling, d => d.Warmth * MathF.Sqrt(d.Days)) is { } better && Count(k => k == better) < n / Math.Max(1, better.Housing) + 1 && Rng.Chance(0.25f))
             Plan(better);
     }
 
-    /// <summary>Workstations worth having: those serving recipes the band knows (heavy ones only in villages).</summary>
     IEnumerable<string> WantedStations(Band band, TechSet known)
     {
         var wanted = new List<string>();
@@ -255,7 +234,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    /// <summary>A ring of palisade around the village, a few segments at a time.</summary>
     void PlanPalisade(Band band, StructureDef wall)
     {
         var w = World;
@@ -271,16 +249,11 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>
-    /// Where to put something: sampled cells near camp whose footprint is dry, open land, close to
-    /// the camp and to what the band has already built; fields further out on good soil, boats on
-    /// the shore. Wooded or stony cells are allowed (they get cleared) but plain ground is preferred.
-    /// </summary>
     int? Site(Band band, StructureDef def)
     {
         var w = World;
         bool field = def.Role == StructureRole.Field, vessel = def.Role == StructureRole.Vessel;
-        // A village's core (homes, workshops, stores) grows with it; its fields lie beyond.
+
         int core = band.Sedentary ? Math.Min(14, 4 + band.Members.Count / 12) : 3;
         int inner = field ? core : 1, outer = field ? core + 8 : core;
         if (vessel) outer = World.Cells(0.8f);
@@ -336,10 +309,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    /// <summary>
-    /// Claims the footprint and clears it: standing trees are felled (logs into the band's stores)
-    /// and boulders broken up (stone into the stores); the clearing work is added to the job.
-    /// </summary>
     internal Structure Place(Band band, StructureDef def, int cell, float progress = 0f)
     {
         var w = World;
@@ -368,7 +337,6 @@ public sealed partial class Simulation
         s.BuiltDay = Day;
     }
 
-    /// <summary>Ruined beyond repair: it stays as a ruin for a while, then the land takes it back.</summary>
     void Ruin(Structure s)
     {
         s.State = StructureState.Ruined;
@@ -380,13 +348,12 @@ public sealed partial class Simulation
 
     readonly List<int> _ruins = new();
 
-    /// <summary>Yearly: ruins and long-abandoned structures crumble away and free their tiles.</summary>
     void ClearRuins()
     {
         foreach (var s in Structures.Values.ToList())
         {
             if (s.BandId >= 0) continue;
-            // Ruins crumble; abandoned fields go back to the wild within a few years.
+
             s.Condition -= s.State == StructureState.Ruined ? 0.3f : s.Kind.Role == StructureRole.Field ? 0.35f : 360f / MathF.Max(200, s.Kind.Days) * 3f;
             if (s.Condition <= 0f && s.State != StructureState.Ruined) { s.State = StructureState.Ruined; s.Condition = 0.6f; continue; }
             if (s.Condition > 0f) continue;
@@ -408,13 +375,6 @@ public sealed partial class Simulation
         if (Bands.TryGetValue(s.BandId, out var band)) band.Structures.Remove(s.Id);
     }
 
-    /// <summary>
-    /// A day's building: the nearest unfinished job, with materials taken from the stores as the
-    /// work proceeds; repairs when nothing is under way. A builder who finds the materials missing
-    /// goes to fetch them instead (felling, quarrying or gathering). Returns false if there was
-    /// nothing to do.
-    /// </summary>
-    // The band's unfinished and damaged works, listed once per band-day (jobs only finish during it).
     [ThreadStatic] static List<Structure>? t_jobs;
     [ThreadStatic] static Band? t_jobsBand;
     [ThreadStatic] static int t_jobsDay;
@@ -432,13 +392,12 @@ public sealed partial class Simulation
 
     bool BuildWork(Agent a, Band band, in DayContext c)
     {
-        // The most pressing job: a roof while people sleep outside, then the fire, stores and
-        // workshops, fields last; work already under way is finished before new work is begun.
+
         Structure? job = null;
         float best = float.MinValue;
         int fields = 0;
         foreach (var f in FieldsOf(band)) if (f.Standing) fields++;
-        bool hungry = fields < band.Members.Count / 6 || band.FoodPool < band.Members.Count * 10f;   // food first
+        bool hungry = fields < band.Members.Count / 6 || band.FoodPool < band.Members.Count * 10f;
         foreach (var s in JobsOf(band))
         {
             if (s.State is not (StructureState.Planned or StructureState.Building or StructureState.Damaged)) continue;
@@ -470,7 +429,7 @@ public sealed partial class Simulation
         var k = job.Kind;
         float total = k.Labour + job.Clearing;
         float step = MathF.Min(rate, total - job.Progress);
-        // Materials go in with the work; short of any, the job waits and the builder fetches it.
+
         float fraction = step / MathF.Max(0.01f, total);
         foreach (var (g, q) in k.Materials)
         {
@@ -504,21 +463,15 @@ public sealed partial class Simulation
                 $"The {band.Name} raise the world's first {k.Id.Replace('_', ' ')}.", k.Role is StructureRole.Field ? 0.3f : 0.55f, builder.Id, band.Id));
     }
 
-    /// <summary>Goes to get a missing building material: the work that brings it in.</summary>
     void FetchFor(Agent a, Band band, ushort good, in DayContext c)
     {
         if (good == GLog || good == GWood) Chop(a, band, c);
         else if (good == GStone || good == GFlint) Quarry(a, band, c);
         else if (Goods.All[good].Id.EndsWith("_ore") || Goods.All[good].Id is "coal" or "sulfur") Mine(a, band, c);
         else if (good == GClay || good == GReed || good == GSand || good == GFiber || good == GBamboo || good == GSalt) GatherMaterials(a, band, c);
-        else CraftWork(a, band, c);   // rope, bricks, cloth, ingots...
+        else CraftWork(a, band, c);
     }
 
-    /// <summary>
-    /// The band moves camp: tents are taken down and put up again at the new camp; everything else
-    /// is left standing, abandoned. What the stores hold beyond what people and their pack animals
-    /// and carts can carry is left behind.
-    /// </summary>
     internal void LeaveCamp(Band band, int newCell)
     {
         var portable = new List<StructureDef>();
@@ -526,12 +479,12 @@ public sealed partial class Simulation
         {
             if (!Structures.TryGetValue(sid, out var s)) continue;
             if (s.Kind.Portable && s.Standing) { portable.Add(s.Kind); Remove(s); continue; }
-            s.BandId = -1;   // abandoned where it stands
+            s.BandId = -1;
         }
         band.Structures.Clear();
         float carry = band.Members.Count * 6f;
         foreach (var (species, count) in band.Herds) if (species is "horse" or "camel") carry += count * 10f;
-        // Food is carried first; materials only as far as backs (and pack animals) allow.
+
         float foodBulk = 0f;
         foreach (var (good, qty) in band.Stores.Held()) if (good.Kind == GoodKind.Food) foodBulk += qty * good.Weight;
         float room = MathF.Max(0f, carry - foodBulk);
@@ -548,10 +501,9 @@ public sealed partial class Simulation
         band.Cell = newCell;
         foreach (var def in portable)
             if (Site(band, def) is { } cell) Place(band, def, cell, progress: def.Labour * 0.7f);
-        band.Cell = was;   // the caller moves the band
+        band.Cell = was;
     }
 
-    /// <summary>Damage to what stands near a cell (fire, flood, earthquake): a share of structures lose condition or burn.</summary>
     internal void DamageStructures(int cell, int radius, float severity, bool fire)
     {
         var w = World;

@@ -4,18 +4,9 @@ using Evolysia.Sim.Economy;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// What the simulation has done to the land, for the tile art: fields and their crops, the cells
-/// structures stand on, felled woods and quarried boulders. Also the regional building styles
-/// (civilisation regional_styles.json) that dwellings are drawn in.
-/// </summary>
 public static class Settlements
 {
-    /// <summary>
-    /// The bake input, snapshotted from the simulation (bakes run on other threads while it
-    /// steps): every field (crop, growth, orchard), every cell a structure stands on, and what is
-    /// left of each cell's timber and stone (0..255).
-    /// </summary>
+
     public static TileBake.Input BakeInput(Simulation sim)
     {
         var w = sim.World;
@@ -43,7 +34,6 @@ public static class Settlements
         return new TileBake.Input(w, fields, occupied, trees, rocks);
     }
 
-    /// <summary>A regional building style: wall, roof and floor materials (civilisation asset ids).</summary>
     public readonly record struct Style(string Wall, string Roof, string Floor);
 
     static Dictionary<string, Style>? _styles;

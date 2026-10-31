@@ -1,4 +1,4 @@
-"""Overlay completeness, edge compatibility and native pixel contracts."""
+
 import numpy as np
 from PIL import Image
 from overlay_preview import network

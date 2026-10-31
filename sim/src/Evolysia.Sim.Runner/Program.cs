@@ -9,7 +9,6 @@ using Evolysia.Sim.Psych;
 using Evolysia.Sim.Runner;
 using Evolysia.Sim.World;
 
-// Headless runner: dotnet run -c Release --project src/Evolysia.Sim.Runner -- --seed 42 --years 500 --out runs/seed42
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -36,7 +35,7 @@ for (int i = 0; i < args.Length; i++)
         case "--invention-rate": cfg.InventionRate = float.Parse(Next()); break;
         case "--disaster-rate": cfg.DisasterRate = float.Parse(Next()); break;
         case "--quiet": quiet = true; break;
-        case "--profile": profile = true; break;   // time by phase every 25 years
+        case "--profile": profile = true; break;
         case "--trace": traceYears = int.Parse(Next()); break;
         case "--narrate": narrateCount = int.Parse(Next()); break;
         case "--minds": mindsBudget = int.Parse(Next()); break;
@@ -75,14 +74,14 @@ void OnYear(Simulation s)
 }
 if (mindsBudget > 0) await RunWithMinds(sim, years, mindsBudget, llmUrl, Path.Combine(outDir, "minds.md"), OnYear);
 else sim.RunYears(years, OnYear);
-if (sim.Stats.Year.Births + sim.Stats.Year.Deaths.Sum() > 0) { /* partial final year is left out of the CSV */ }
+if (sim.Stats.Year.Births + sim.Stats.Year.Deaths.Sum() > 0) {                                                 }
 Console.WriteLine("Time by phase: " + string.Join(", ", sim.Profile.OrderByDescending(p => p.Value).Select(p => $"{p.Key} {p.Value:0.0}s")));
 var settled = sim.Bands.Values.Select(b => sim.World.Landmass[b.Cell]).Distinct().Count();
 Console.WriteLine($"Settled landmasses: {settled}; voyages: {sim.Stats.History.Sum(r => r.Voyages)} " +
                   $"({sim.Stats.History.Sum(r => r.LostAtSea)} lost at sea); shores sighted: {sim.Stats.History.Sum(r => r.ShoresSighted)}.");
 Console.WriteLine($"Done: {sim.Year} years in {sw.Elapsed.TotalSeconds:0.0}s. Population {sim.Living.Count}, ever lived {sim.EverLived}. " +
                   $"Peak memory {System.Diagnostics.Process.GetCurrentProcess().PeakWorkingSet64 / 1_000_000} MB.");
-// The built world and the economy at the end.
+
 Console.WriteLine("Structures: " + string.Join(", ", sim.Structures.Values.GroupBy(s => $"{s.Kind.Id}/{s.State}").OrderByDescending(g => g.Count()).Take(30).Select(g => $"{g.Key} {g.Count()}")));
 var stores = new Evolysia.Sim.Economy.Inventory();
 foreach (var b in sim.Bands.Values) foreach (var (g, q) in b.Stores.Held()) stores.Add(g.Index, q);
@@ -108,9 +107,6 @@ if (narrateCount > 0) await Narrate(sim, narrateCount, llmUrl, Path.Combine(outD
 Console.WriteLine($"Wrote {Path.GetFullPath(outDir)}");
 return 0;
 
-// ---------------------------------------------------------------------------------------------
-
-// Pivotal choices made by the local model (up to a budget), instinct for the rest; report how they differ.
 static async Task RunWithMinds(Simulation sim, int years, int budget, string url, string path, Action<Simulation> onYear)
 {
     using var backend = new Evolysia.Narration.LlamaServerBackend(url, url.Replace(":8081", ":8082"));
@@ -160,7 +156,6 @@ static async Task RunWithMinds(Simulation sim, int years, int budget, string url
     Console.WriteLine($"Minds made {made.Count} choices ({agree} matched instinct's favourite) -> {path}");
 }
 
-// Give the most important moments a voice through the local model (tools/llm_lab `lab.py serve`).
 static async Task Narrate(Simulation sim, int count, string url, string path)
 {
     using var backend = new Evolysia.Narration.LlamaServerBackend(url, url.Replace(":8081", ":8082"));
@@ -170,7 +165,7 @@ static async Task Narrate(Simulation sim, int count, string url, string path)
         return;
     }
     var narrator = new Evolysia.Narration.Narrator(backend);
-    // A mix: round-robin over kinds, most important kind first, newest moments first within a kind.
+
     var byKind = sim.Chronicle.Moments.Select((m, i) => (m, i)).GroupBy(x => x.m.Kind)
         .OrderByDescending(g => Evolysia.Narration.Prompts.Priority(g.Key))
         .Select(g => new Queue<(LlmMoment m, int i)>(g.Reverse())).ToList();
@@ -185,7 +180,7 @@ static async Task Narrate(Simulation sim, int count, string url, string path)
         var req = Evolysia.Narration.Prompts.Build(sim, p.i, p.m);
         return req == null ? null : (req, await narrator.NarrateNowAsync(req));
     }
-    var tasks = picks.Select(One).ToList();   // the server's parallel slots handle them concurrently
+    var tasks = picks.Select(One).ToList();
     foreach (var t in tasks)
     {
         var result = await t;
@@ -202,9 +197,6 @@ static async Task Narrate(Simulation sim, int count, string url, string path)
     Console.WriteLine($"Narrated {s.Done} moments ({s.Failed} rejected) in {sw.Elapsed.TotalSeconds:0.0}s, avg {s.AvgLatencyMs:0} ms each -> {path}");
 }
 
-// ---------------------------------------------------------------------------------------------
-
-// Monthly view of the oldest surviving band's economy: what people do, eat and suffer.
 static void Trace(Simulation sim, int years)
 {
     Console.WriteLine("year.mo  band  n  kids  pool  food/p  hunger  plant%  prey%  grow  temp  shelter  activities");
@@ -384,7 +376,7 @@ static void WriteMaps(Simulation sim, string prefix)
         byte v = (byte)Math.Clamp(e >= 0 ? 80 + e / 4500f * 175f : 40 + (e + 5000f) / 5000f * 40f, 0, 255);
         elev[i * 3] = v; elev[i * 3 + 1] = e >= 0 ? v : (byte)(v / 2); elev[i * 3 + 2] = e >= 0 ? (byte)(v * 0.8f) : (byte)Math.Min(255, v * 2);
     }
-    // Bands as dots coloured by culture hue.
+
     var people = (byte[])biome.Clone();
     foreach (var band in sim.Bands.Values)
     {

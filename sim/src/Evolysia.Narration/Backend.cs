@@ -6,16 +6,12 @@ namespace Evolysia.Narration;
 
 public interface INarrationBackend
 {
-    /// <summary>Returns the raw JSON text the model produced.</summary>
+
     Task<string> CompleteAsync(NarrationRequest request, CancellationToken ct);
     Task<bool> HealthyAsync(CancellationToken ct);
     string Describe();
 }
 
-/// <summary>
-/// llama.cpp's llama-server (OpenAI-compatible), as started by tools/llm_lab (`lab.py serve`):
-/// the main model on :8081, the helper on :8082. Helper requests fall back to main if no helper runs.
-/// </summary>
 public sealed class LlamaServerBackend : INarrationBackend, IDisposable
 {
     readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(90) };

@@ -1,4 +1,4 @@
-"""Indexed portrait assembly and labelled review galleries."""
+
 import json
 import math
 import numpy as np

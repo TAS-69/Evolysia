@@ -1,12 +1,12 @@
-# Model catalog. `hf` is passed to `llama-server -hf <repo>:<quant>`; llama-server
-# downloads the GGUF on first use into tools/llm_lab/models/.
-#
-# size_gb       ~ weight file size (approximate, check the HF page)
-# kv_gb_per_8k  ~ KV cache per 8k tokens of total context at q8_0 (rough guess;
-#                 `lab.py status` reports the real buffer sizes after launch)
-# kind          chat | embed
 
-# --- Helpers ("sub-agents"): small, short-output background tasks. Fine on CPU. ---
+
+
+
+
+
+
+
+
 
 [models."qwen3.5-0.8b"]
 hf = "unsloth/Qwen3.5-0.8B-GGUF:UD-Q4_K_XL"
@@ -22,7 +22,7 @@ size_gb = 1.4
 kv_gb_per_8k = 0.08
 notes = "Small helper. Adds decent memory summaries. ~1.6 GB RAM on CPU."
 
-# --- Main minds: dialogue, decisions, reflections, pivots. Want these on GPU. ---
+
 
 [models."qwen3.5-4b"]
 hf = "unsloth/Qwen3.5-4B-GGUF:UD-Q4_K_XL"
@@ -52,7 +52,7 @@ size_gb = 17.0
 kv_gb_per_8k = 0.4
 notes = "24 GB tier main. MoE, ~4B active params so it runs fast."
 
-# --- Embeddings: memory retrieval. Tiny; CPU is the right home. ---
+
 
 [models."qwen3-embed-0.6b"]
 hf = "Qwen/Qwen3-Embedding-0.6B-GGUF:Q8_0"

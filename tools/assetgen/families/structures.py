@@ -1,4 +1,4 @@
-"""Material-based landmark structures, condition states and contained fire."""
+
 import json
 from pathlib import Path
 import numpy as np

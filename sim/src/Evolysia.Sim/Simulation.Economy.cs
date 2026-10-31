@@ -7,12 +7,6 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim;
 
-/// <summary>
-/// Goods, gear and work: what each day's work brings in (by biome, season and the tile worked),
-/// tools and clothing (owned, worn out, remade), crafting by recipe at a band's workstations,
-/// storage and spoilage, fuel for the hearth, fields and herds. Everything here touches only the
-/// band living its day, or shared tiles through the deferred harvest tally.
-/// </summary>
 public sealed partial class Simulation
 {
     static readonly ushort GWood = Goods.Id("wood"), GLog = Goods.Id("log"), GStone = Goods.Id("stone"), GFlint = Goods.Id("flint"),
@@ -20,9 +14,6 @@ public sealed partial class Simulation
         GHide = Goods.Id("hide"), GFur = Goods.Id("fur"), GBone = Goods.Id("bone"), GAntler = Goods.Id("antler"), GMeat = Goods.Id("meat_raw"),
         GHerbs = Goods.Id("herbs"), GBamboo = Goods.Id("bamboo"), GHoney = Goods.Id("honey"), GMilk = Goods.Id("milk"), GEggs = Goods.Id("eggs");
 
-    // ------------------------------------------------------------------ gear
-
-    /// <summary>How much this person's best tool speeds an activity (1 with nothing that helps).</summary>
     internal static float ToolBonus(Agent a, Activity act)
     {
         float best = 1f;
@@ -35,7 +26,6 @@ public sealed partial class Simulation
         return best;
     }
 
-    /// <summary>The tool someone works with today (for drawing them), or null.</summary>
     public static ItemDef? HeldTool(Agent a, Activity act)
     {
         ItemDef? best = null;
@@ -49,14 +39,12 @@ public sealed partial class Simulation
         return best;
     }
 
-    /// <summary>Whether a tool is meant for an activity (a club is a hunting tool even though it adds nothing).</summary>
     static bool Serves(ItemDef d, Activity act)
     {
         foreach (var (a, _) in d.Uses) if (a == act) return true;
         return false;
     }
 
-    /// <summary>The piece worn in a clothing slot (the warmest, if several), or null.</summary>
     public static ItemDef? Worn(Agent a, ItemSlot slot)
     {
         ItemDef? best = null;
@@ -94,7 +82,6 @@ public sealed partial class Simulation
         return p;
     }
 
-    /// <summary>A day's wear: the tool used and the clothes worn age; worn-out things are thrown away.</summary>
     void WearGear(Agent a, Activity act)
     {
         var tool = HeldTool(a, act);
@@ -110,7 +97,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>Gives someone an item, replacing a worse one in the same clothing slot (it goes to the band's spares).</summary>
     void Equip(Agent a, Band band, ItemDef def)
     {
         if (def.Slot != ItemSlot.Tool)
@@ -123,9 +109,6 @@ public sealed partial class Simulation
         a.Gear.Add(new Item(def.Index));
     }
 
-    // ------------------------------------------------------------------ what work brings in
-
-    /// <summary>The plant foods of a place and season, with relative weights.</summary>
     static (ushort good, float weight)[] PlantFoods(Biome b, Season s)
     {
         static (ushort, float) G(string id, float w) => (Goods.Id(id), w);
@@ -145,7 +128,6 @@ public sealed partial class Simulation
         };
     }
 
-    /// <summary>Picks one of weighted options with this band's stream.</summary>
     ushort PickGood((ushort good, float weight)[] options)
     {
         float total = 0f;
@@ -155,12 +137,11 @@ public sealed partial class Simulation
         return options[^1].good;
     }
 
-    /// <summary>A forager's haul: <paramref name="value"/> person-days of the place's foods, plus firewood, fibre and herbs on the way.</summary>
     void ForageYield(Agent a, int site, float value, in DayContext c)
     {
         var w = World;
         var foods = PlantFoods(w.Biome[site], c.Season);
-        // A haul is two or three kinds of food.
+
         for (int k = 0; k < 3 && value > 0.01f; k++)
         {
             ushort g = PickGood(foods);
@@ -168,12 +149,11 @@ public sealed partial class Simulation
             a.Pack.Add(g, part / MathF.Max(0.1f, Goods.All[g].Food));
             value -= part;
         }
-        if (w.TreesK[site] > 0f && Rng.Chance(0.6f)) a.Pack.Add(GWood, 0.4f * w.Trees[site] / MathF.Max(1f, w.TreesK[site]) + 0.1f);   // fallen wood
+        if (w.TreesK[site] > 0f && Rng.Chance(0.6f)) a.Pack.Add(GWood, 0.4f * w.Trees[site] / MathF.Max(1f, w.TreesK[site]) + 0.1f);
         if (Rng.Chance(0.25f)) a.Pack.Add(w.Biome[site] is Biome.Wetland ? GReed : GFiber, 0.3f);
         if (w.Biome[site] is Biome.TropicalRainforest or Biome.TropicalSeasonalForest && Rng.Chance(0.1f)) a.Pack.Add(GBamboo, 0.3f);
     }
 
-    /// <summary>The game of a place: (meat per animal, hide, bone, antler, fur) - what a kill gives besides meat.</summary>
     (float hide, float bone, float antler, float fur) Carcass(int site)
     {
         var w = World;
@@ -218,25 +198,23 @@ public sealed partial class Simulation
         a.Pack.Add(fish, value / Goods.All[fish].Food);
     }
 
-    /// <summary>A tile within the home range rich in a stock (the best of a few looks), or -1.</summary>
     int FindTile(Band band, in DayContext c, int kind, float minimum)
     {
         int best = -1;
         float bestScore = float.MinValue;
-        int r = Math.Max(1, c.Range) * (kind == StoneStock || kind == OreStock ? 2 : 1);   // people walk further for stone and ore
+        int r = Math.Max(1, c.Range) * (kind == StoneStock || kind == OreStock ? 2 : 1);
         for (int k = 0; k < 8; k++)
         {
             int t = Around(band.Cell, r);
             float left = Left(kind, t);
             if (left <= minimum) continue;
-            // The nearest good stand: woods round a camp get felled first, so settlements open out over time.
+
             float score = left - World.Distance(t, band.Cell) * (kind == Timber ? 1.5f : 0.5f);
             if (score > bestScore) { bestScore = score; best = t; }
         }
         return best;
     }
 
-    /// <summary>Felling: logs from a wooded tile (an axe makes it far quicker); thins the trees there.</summary>
     void Chop(Agent a, Band band, in DayContext c)
     {
         int site = FindTile(band, c, Timber, 0.5f);
@@ -245,12 +223,11 @@ public sealed partial class Simulation
         bool axe = HeldTool(a, Activity.Chop) != null;
         float logs = Take(Timber, site, (axe ? 1.2f : 0.35f) * ToolBonus(a, Activity.Chop) * (0.6f + 0.4f * a.Gene(Gene.Strength)));
         a.Pack.Add(GLog, logs);
-        a.Pack.Add(GWood, logs * 0.5f);   // branches and offcuts
+        a.Pack.Add(GWood, logs * 0.5f);
         a.Needs[(int)Need.Energy] += 0.2f;
         Psychology.Practice(a, Domain.Building, logs > 0.4f, 0.4f);
     }
 
-    /// <summary>Quarrying: stone (and flint) from boulders and outcrops; the boulders are used up.</summary>
     void Quarry(Agent a, Band band, in DayContext c)
     {
         int site = FindTile(band, c, StoneStock, 0.5f);
@@ -263,7 +240,6 @@ public sealed partial class Simulation
         Psychology.Practice(a, Domain.Building, got > 0.5f, 0.4f);
     }
 
-    /// <summary>Mining: ore from a surface deposit (copper, tin, iron, gold, silver, coal, sulfur).</summary>
     void Mine(Agent a, Band band, in DayContext c)
     {
         int site = FindTile(band, c, OreStock, 0.5f);
@@ -276,7 +252,6 @@ public sealed partial class Simulation
         if (Rng.Chance(0.0003f)) Kill(a, DeathCause.Accident, null, ", in a collapse");
     }
 
-    /// <summary>Gathering materials: clay and reeds by water, sand on beaches and dunes, salt on flats and shores, fibre in grass.</summary>
     void GatherMaterials(Agent a, Band band, in DayContext c)
     {
         var w = World;
@@ -298,9 +273,6 @@ public sealed partial class Simulation
         a.Needs[(int)Need.Energy] += 0.15f;
     }
 
-    // ------------------------------------------------------------------ wants
-
-    /// <summary>0..1: how short the band is of a good against what it wants on hand.</summary>
     internal static float Shortage(Band band, ushort good)
     {
         if (band.Targets.Length <= good) return 0f;
@@ -318,10 +290,6 @@ public sealed partial class Simulation
         return s;
     }
 
-    /// <summary>
-    /// Nobody keeps piles of what they have no use for: non-food goods beyond about twice what the
-    /// band wants on hand (and a little of everything) are left lying, given away or burned.
-    /// </summary>
     void DiscardClutter(Band band)
     {
         foreach (var (good, qty) in band.Stores.Held().ToList())
@@ -332,7 +300,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>Whether a band could come by a good: gathered raw from the land, or made by a recipe it knows.</summary>
     internal static bool CanObtain(TechSet known, ushort good)
     {
         var g = Goods.All[good];
@@ -345,11 +312,6 @@ public sealed partial class Simulation
         return g.Kind == GoodKind.Food;
     }
 
-    /// <summary>
-    /// What a band wants on hand (every 15 days): firewood for the season, materials for what it is
-    /// building, the inputs of the tools and clothes its people lack, and a little of everything it
-    /// knows how to use.
-    /// </summary>
     void UpdateTargets(Band band, TechSet known)
     {
         if (band.Targets.Length != Goods.Count) band.Targets = new float[Goods.Count];
@@ -357,7 +319,7 @@ public sealed partial class Simulation
         Array.Clear(t);
         int n = band.Members.Count;
         bool cold = World.TempMean[band.Cell] - World.TempAmp[band.Cell] < 8f;
-        if (known.Has(TechId.ControlledFire)) t[GWood] = n * (cold ? 0.12f : 0.04f) * 20f;   // about three weeks of firewood
+        if (known.Has(TechId.ControlledFire)) t[GWood] = n * (cold ? 0.12f : 0.04f) * 20f;
         if (known.Has(TechId.StoneTools)) t[GFlint] = 4f;
         if (known.Has(TechId.Baskets)) t[GReed] = 4f;
         if (known.Has(TechId.Cordage)) t[GFiber] = 4f;
@@ -368,14 +330,14 @@ public sealed partial class Simulation
                 float left = 1f - s.Progress / MathF.Max(0.1f, s.Kind.Labour);
                 foreach (var (g, q) in s.Kind.Materials) t[g] += q * left;
             }
-        // The inputs of the gear people lack (one of each wanted item per two people lacking it, at most a few).
+
         foreach (int id in band.Members)
         {
             if (!Living.TryGetValue(id, out var a) || a.IsChild(Day)) continue;
             if (WantedItem(a, band, known) is { } want)
                 foreach (var (g, q) in want.Inputs) t[g] = MathF.Min(t[g] + q * 0.5f, 40f);
         }
-        // Raw materials for intermediate goods the band can make.
+
         foreach (var r in Crafts.Recipes)
         {
             if (!known.Has(r.Tech)) continue;
@@ -386,13 +348,9 @@ public sealed partial class Simulation
         if (band.Sedentary) { t[GWood] *= 1.5f; t[GStone] = MathF.Max(t[GStone], 6f); t[GLog] = MathF.Max(t[GLog], 6f); }
     }
 
-    /// <summary>
-    /// The most useful item this person lacks that their people know how to make: warm clothes in the
-    /// cold, the tool for their main work, a weapon for a hunter, finery for a leader.
-    /// </summary>
     ItemDef? WantedItem(Agent a, Band band, TechSet known, Band? from = null)
     {
-        // With a store to make it from, only what its materials allow; otherwise the best known (what to gather for).
+
         ItemDef? BestItem(TechSet k, ItemSlot slot, ItemMeasure measure, Activity act = default)
         {
             foreach (var d in Ranked(k, slot, measure, act))
@@ -420,7 +378,6 @@ public sealed partial class Simulation
         return null;
     }
 
-    /// <summary>What an item is judged by when choosing what to make someone.</summary>
     enum ItemMeasure : byte { Warmth, Clothing, Shoes, Use, Power, Prestige, Protection }
 
     static float Measure(ItemDef d, ItemMeasure m, Activity act) => m switch
@@ -436,16 +393,11 @@ public sealed partial class Simulation
 
     static readonly System.Collections.Concurrent.ConcurrentDictionary<(TechSet, ItemSlot, ItemMeasure, Activity), ItemDef[]> RankedCache = new();
 
-    /// <summary>
-    /// The items in a slot that <paramref name="known"/> can make and that score on a measure, best
-    /// first (ties to the more lasting, then catalogue order). A pure function of its key, so cached
-    /// and shared across threads and worlds.
-    /// </summary>
     static ItemDef[] Ranked(TechSet known, ItemSlot slot, ItemMeasure measure, Activity act)
     {
         if (measure != ItemMeasure.Use) act = default;
         if (RankedCache.TryGetValue((known, slot, measure, act), out var hit)) return hit;
-        if (RankedCache.Count > 100_000) RankedCache.Clear();   // bounded over very long histories
+        if (RankedCache.Count > 100_000) RankedCache.Clear();
         var ranked = new List<(ItemDef d, float s, int i)>();
         var items = Crafts.BySlot[(int)slot];
         for (int i = 0; i < items.Length; i++)
@@ -461,17 +413,10 @@ public sealed partial class Simulation
         return result;
     }
 
-    // ------------------------------------------------------------------ crafting
-
-    /// <summary>
-    /// A day's crafting: first something a member lacks, made from the stores at the right
-    /// workstation; otherwise turning raw goods into what the band wants (preserving food, rope,
-    /// cloth, leather, bricks, metal). The crafter works at the station.
-    /// </summary>
     void CraftWork(Agent a, Band band, in DayContext c)
     {
         float skill = (0.6f + 0.6f * a.Efficacy[(int)Domain.Crafting]) * ToolBonus(a, Activity.Craft);
-        // 1. Gear someone lacks (asking round a few people).
+
         for (int k = 0; k < Math.Min(8, band.Members.Count); k++)
         {
             int id = band.Members[Rng.Next(band.Members.Count)];
@@ -484,7 +429,7 @@ public sealed partial class Simulation
             a.Needs[(int)Need.Energy] += 0.1f;
             return;
         }
-        // 2. Goods the band wants: the recipe whose output it is shortest of.
+
         Recipe? best = null;
         float bestNeed = 0.05f;
         int site = band.Cell;
@@ -493,7 +438,7 @@ public sealed partial class Simulation
             if (!a.Knows.Has(r.Tech) || !HasInputs(band, r.Inputs) || !HasStation(band, r.Station, out int st)) continue;
             float need = 0f;
             foreach (var (g, _) in r.Outputs) need = MathF.Max(need, Shortage(band, g));
-            // Preserving: raw perishables in store are worth drying or cooking before they rot.
+
             foreach (var (g, q) in r.Inputs)
                 if (Goods.All[g].Spoil > 0.05f && Goods.All[g].Food > 0f && band.Stores[g] > q * 2f) need = MathF.Max(need, 0.7f);
             if (need > bestNeed) { bestNeed = need; best = r; site = st >= 0 ? st : band.Cell; }
@@ -514,8 +459,6 @@ public sealed partial class Simulation
         return true;
     }
 
-    /// <summary>Whether the band has a standing workstation of this kind (none needed: true), and where.</summary>
-    // During a band's day: its standing workstations by kind (the first of each), listed once.
     [ThreadStatic] static Dictionary<string, int>? t_stations;
     [ThreadStatic] static Band? t_stationsBand;
     [ThreadStatic] static int t_stationsDay;
@@ -542,13 +485,6 @@ public sealed partial class Simulation
         return false;
     }
 
-    // ------------------------------------------------------------------ fields and herds
-
-    /// <summary>
-    /// A day in the fields: sowing at the start of the growing season, tending (each day of work
-    /// adds to the harvest), and bringing the crop in when it is ripe or the season turns.
-    /// </summary>
-    // The band's standing fields, listed once per band-day (farmers each tend the least grown).
     [ThreadStatic] static List<Structure>? t_fields;
     [ThreadStatic] static Band? t_fieldsBand;
     [ThreadStatic] static int t_fieldsDay;
@@ -584,14 +520,13 @@ public sealed partial class Simulation
         {
             ushort g = Goods.Id(field.Crop.Length > 0 ? field.Crop : "grain");
             band.Stores.Add(g, field.Yield / MathF.Max(0.2f, Goods.All[g].Food));
-            if (Goods.All[g].Food > 0.5f) band.Stores.Add(GFiber, field.Yield * 0.05f);   // straw
+            if (Goods.All[g].Food > 0.5f) band.Stores.Add(GFiber, field.Yield * 0.05f);
             field.Growth = 0f; field.Yield = 0f;
         }
         Psychology.Practice(a, Domain.Farming, true, 0.5f);
         a.Needs[(int)Need.Energy] += 0.16f;
     }
 
-    /// <summary>What a field grows: the staple that suits its climate (orchards: fruit).</summary>
     string CropFor(Structure field)
     {
         var w = World;
@@ -608,7 +543,6 @@ public sealed partial class Simulation
         return new[] { "wheat", "barley", "wheat", "peas", "lentils", "onion", "carrot", "beet", "potato", "oats", "lettuce", "melon" }[h % 12];
     }
 
-    /// <summary>The band's tame animals by the land: dogs everywhere, and the herd that suits it.</summary>
     internal string HerdSpecies(int cell) => World.Biome[cell] switch
     {
         Biome.Alpine or Biome.Shrubland => "goat",
@@ -619,7 +553,6 @@ public sealed partial class Simulation
         _ => "sheep",
     };
 
-    /// <summary>Herding: milk, eggs and wool from the band's animals, more of them over time, surplus slaughtered.</summary>
     void HerdWork(Agent a, Band band, in DayContext c)
     {
         a.Site = Around(band.Cell, Math.Max(1, c.Range));
@@ -644,7 +577,6 @@ public sealed partial class Simulation
         a.Needs[(int)Need.Energy] += 0.1f;
     }
 
-    /// <summary>Every 15 days: herds grow towards what the pens and land hold; the surplus is slaughtered for meat and hides.</summary>
     void HerdUpkeep(Band band)
     {
         if (band.Herds.Count == 0) return;
@@ -668,7 +600,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>A successful hunt by people who know how to tame animals may bring young ones home alive.</summary>
     void MaybeCapture(Band band, int site)
     {
         if (!BandKnows(band, TechId.Domestication) || !Rng.Chance(0.12f)) return;
@@ -677,12 +608,6 @@ public sealed partial class Simulation
         band.Herds[species] = have + Rng.Range(1, 3);
     }
 
-    // ------------------------------------------------------------------ stores
-
-    /// <summary>
-    /// Evening: everyone puts materials into the band's stores and shares food beyond what they
-    /// keep for themselves (how much they keep depends on how cooperative they are).
-    /// </summary>
     void Deposit(Agent a, Band band, float keep)
     {
         if (a.Pack is not { } pack) return;
@@ -691,11 +616,6 @@ public sealed partial class Simulation
         if (food > keep) pack.GiveFood(band.Stores, (food - keep));
     }
 
-    /// <summary>
-    /// The stores' day: firewood burns on the hearth (more in the cold), goods spoil (heat speeds it,
-    /// pits, granaries, pottery and cold stores slow it), and what doesn't fit in the stores lies
-    /// out and goes off faster.
-    /// </summary>
     void StoresUpkeep(Band band, in DayContext c)
     {
         int n = _members.Count;
@@ -711,8 +631,7 @@ public sealed partial class Simulation
         if (band.StorageRoom > 0) kept = 0.55f;
         if (Techs.Has(c.Tech, TechId.Pottery)) kept *= 0.8f;
         if (band.HasColdStore) kept *= 0.3f;
-        // Food that doesn't fit in the stores (or in people's homes: a few weeks' worth each) lies
-        // out and goes off faster.
+
         float food = band.Stores.FoodValue, room = 20f + n * (band.Shelter > 0f ? 12f : 6f) + band.StorageRoom;
         float overflow = food > room ? MathF.Min(2.5f, 1f + 0.5f * (food - room) / room) : 1f;
         band.Stores.Spoil(0.3f * heat * kept * overflow);

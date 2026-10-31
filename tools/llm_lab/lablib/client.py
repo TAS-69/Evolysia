@@ -1,4 +1,4 @@
-"""Minimal OpenAI-compatible client for llama-server, with a mock mode for offline testing."""
+
 
 import hashlib
 import json
@@ -13,7 +13,6 @@ from dataclasses import dataclass
 THINK_RE = re.compile(r"<think>.*?</think>", re.S)
 FENCE_RE = re.compile(r"^```(?:json)?\s*|\s*```$")
 
-
 @dataclass
 class ChatResult:
     text: str = ""
@@ -25,7 +24,6 @@ class ChatResult:
     latency_s: float = 0.0
     error: str | None = None
 
-
 class Endpoint:
     def __init__(self, role: str, url: str | None, mock: bool = False, mock_seed: int = 0):
         self.role, self.url, self.mock = role, url, mock
@@ -34,7 +32,6 @@ class Endpoint:
     def __repr__(self):
         return f"Endpoint({self.role}, {'mock' if self.mock else self.url})"
 
-    # ---- chat ---------------------------------------------------------------
     def chat(self, messages, schema=None, temperature=0.7, max_tokens=300, seed=None) -> ChatResult:
         t0 = time.perf_counter()
         if self.mock:
@@ -52,7 +49,7 @@ class Endpoint:
                                            "json_schema": {"name": "out", "strict": True, "schema": schema}}
             try:
                 out = _post(self.url + "/v1/chat/completions", body)
-            except Exception as e:  # network / server error: record, don't crash the run
+            except Exception as e:
                 return ChatResult(error=str(e), latency_s=time.perf_counter() - t0)
             text = out["choices"][0]["message"].get("content") or ""
             usage = out.get("usage", {})
@@ -68,14 +65,12 @@ class Endpoint:
                 pass
         return res
 
-    # ---- embeddings ---------------------------------------------------------
     def embed(self, texts: list[str]) -> list[list[float]]:
         if self.mock:
             return [_hash_embed(t) for t in texts]
         out = _post(self.url + "/v1/embeddings", {"model": self.role, "input": texts})
         vecs = [d["embedding"] for d in sorted(out["data"], key=lambda d: d["index"])]
         return [_normalise(v) for v in vecs]
-
 
 def _post(url, body, timeout=300):
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
@@ -86,24 +81,18 @@ def _post(url, body, timeout=300):
     except urllib.error.HTTPError as e:
         raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from None
 
-
 def _normalise(v):
     n = math.sqrt(sum(x * x for x in v)) or 1.0
     return [x / n for x in v]
 
-
 def cosine(a, b) -> float:
     return sum(x * y for x, y in zip(a, b))
-
 
 def _hash_embed(text, dims=64):
     v = [0.0] * dims
     for w in re.findall(r"[a-z]+", text.lower()):
         v[int(hashlib.md5(w.encode()).hexdigest(), 16) % dims] += 1
     return _normalise(v)
-
-
-# ---- tiny JSON-schema subset (what our schemas use) --------------------------
 
 def validate(x, s) -> bool:
     t = s.get("type")
@@ -123,7 +112,6 @@ def validate(x, s) -> bool:
         return (ok and not isinstance(x, bool)
                 and s.get("minimum", -math.inf) <= x <= s.get("maximum", math.inf))
     return True
-
 
 def mock_from_schema(s, rng):
     if "enum" in s:

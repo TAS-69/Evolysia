@@ -1,4 +1,4 @@
-"""Room composition, visible inventory and civilisation coverage contracts."""
+
 import json
 from .civilisation import CONTAINERS, RESOURCES, OBJECTS, DENSITIES, FLOORS, WALLS, ROOFS, OUTDOOR, VEHICLES
 

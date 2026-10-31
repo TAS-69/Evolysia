@@ -1,4 +1,4 @@
-"""Portrait part inventory, expression recipes and compositing checks."""
+
 import numpy as np
 from families.portraits import PARTS, PROFILES, ORDER, EXPRESSIONS
 from portrait_preview import PortraitAssembly

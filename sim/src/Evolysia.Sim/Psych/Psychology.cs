@@ -5,38 +5,33 @@ namespace Evolysia.Sim.Psych;
 
 public enum Agency : byte { Self, Other, Nature, Unknown }
 
-/// <summary>An event as one agent experiences it (OCC-style appraisal input).</summary>
 public readonly record struct Appraisal(
     EventCategory Category,
     string Kind,
-    float Valence,        // -1 bad .. +1 good, for this agent
-    float Intensity,      // 0..1
+    float Valence,
+    float Intensity,
     Agency Agency,
-    bool Threat = false,  // danger to self
-    bool Loss = false,    // someone/something cared about is gone
+    bool Threat = false,
+    bool Loss = false,
     bool Witnessed = false,
     int OtherId = -1,
     string Detail = "");
 
-/// <summary>
-/// Turns events into emotions, emotions into memories, and lived emotion into slow personality
-/// change. Temperament scales how strongly each agent reacts.
-/// </summary>
 public static class Psychology
 {
     static readonly float[] Decay =
     {
-        0.85f,  // Joy
-        0.82f,  // Fear
-        0.80f,  // Anger
-        0.95f,  // Sadness
-        0.93f,  // Shame
-        0.90f,  // Pride
-        0.80f,  // Disgust
-        0.40f,  // Surprise
-        0.985f, // Love
-        1.00f,  // Calm (derived)
-        0.92f,  // Envy
+        0.85f,
+        0.82f,
+        0.80f,
+        0.95f,
+        0.93f,
+        0.90f,
+        0.80f,
+        0.40f,
+        0.985f,
+        1.00f,
+        0.92f,
     };
 
     public static void Appraise(Agent a, in Appraisal e, int day)
@@ -73,11 +68,9 @@ public static class Psychology
         if (importance > 0.35f) a.Remember(new LifeEvent(day, e.Category, e.Kind, importance, e.OtherId, e.Detail));
     }
 
-    /// <summary>Someone else succeeds where this agent struggles.</summary>
     public static void Envy(Agent a, float amount) =>
         a.Feel(Emotion.Envy, amount * (1f - a.T(Trait.Cooperativeness)) * (0.5f + a.T(Trait.RewardDependence)));
 
-    /// <summary>Daily: emotions fade, and whatever an agent keeps feeling slowly reshapes them.</summary>
     public static void DailyUpdate(Agent a, int day)
     {
         bool terrors = a.Genome.Has(Quirk.NightTerrors), melancholic = a.Genome.Has(Quirk.Melancholic);
@@ -91,10 +84,6 @@ public static class Psychology
         float distress = a.Emo(Emotion.Fear) + a.Emo(Emotion.Anger) + a.Emo(Emotion.Sadness) + a.Emo(Emotion.Shame);
         a.Emotions[(int)Emotion.Calm] = Math.Clamp(1f - distress * 0.6f, 0f, 1f);
 
-        // Chronic emotion -> personality drift. Signals are centred on a typical day so an ordinary
-        // life leaves traits where the genes put them; a frightening, lonely or triumphant life moves
-        // them. Offsets also fade (half-life ~10 years) unless experience keeps renewing them, so
-        // the equilibrium shift is roughly KDrift * signal / ReturnRate, about +/-0.2 for a sustained signal.
         const float KDrift = 0.00012f, ReturnRate = 0.0002f;
         a.Shift(Trait.HarmAvoidance, KDrift * (a.Emo(Emotion.Fear) - 0.08f) * 2f, day);
         a.Shift(Trait.RewardDependence, KDrift * (a.Belonging - 0.65f) * 2f, day);
@@ -109,9 +98,6 @@ public static class Psychology
         a.SelfEsteem += (0.5f - a.SelfEsteem) * 0.001f;
     }
 
-    /// <summary>
-    /// Public success: pride, confidence and standing. The self-assured can tip into arrogance.
-    /// </summary>
     public static void Praise(Agent a, Domain d, float magnitude, int day)
     {
         a.Feel(Emotion.Pride, 0.4f * magnitude);
@@ -124,7 +110,6 @@ public static class Psychology
         if (a.T(Trait.Cooperativeness) < 0.35f) a.Shift(Trait.Cooperativeness, -0.015f * magnitude, day);
     }
 
-    /// <summary>Practice makes confident; failure erodes confidence, faster for the anxious.</summary>
     public static void Practice(Agent a, Domain d, bool success, float weight = 1f)
     {
         ref float e = ref a.Efficacy[(int)d];

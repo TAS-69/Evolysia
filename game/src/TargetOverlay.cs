@@ -3,17 +3,13 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// While a power is armed: a ring at the cursor showing what it will touch. Also the player's words
-/// written on the ground, as faint gold marks that weather away (carved stones are structures).
-/// </summary>
 public partial class TargetOverlay : Node2D
 {
     public Power? Armed;
     public float CameraZoom = 1f;
     public float WrapWidth;
     public Simulation? Sim;
-    int _marks;   // inscriptions drawn last frame (redraw while any show)
+    int _marks;
     readonly List<(Vector2 pos, float radius, Color color, ulong born)> _bursts = new();
 
     public override void _Process(double delta)
@@ -51,7 +47,6 @@ public partial class TargetOverlay : Node2D
             }
     }
 
-    /// <summary>Ground writing: a ring of short strokes, brightest when fresh, fading as it weathers.</summary>
     void DrawInscriptions(float line)
     {
         _marks = 0;
@@ -70,7 +65,7 @@ public partial class TargetOverlay : Node2D
                 var c = centre + new Vector2(offset, 0f);
                 for (int k = 0; k < 9; k++)
                 {
-                    // One stroke per letter-ish, angled by the words themselves.
+
                     float a = k / 9f * Mathf.Tau;
                     float tilt = (ins.Text.Length > k ? ins.Text[k] % 7 : k) / 7f - 0.5f;
                     var p = c + new Vector2(MathF.Cos(a), MathF.Sin(a) * 0.6f) * r;

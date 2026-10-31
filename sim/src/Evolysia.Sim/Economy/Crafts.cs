@@ -3,22 +3,11 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.Economy;
 
-/// <summary>Where an item is worn or carried. Clothing slots match the wardrobe layers.</summary>
 public enum ItemSlot : byte { Tool, Legwear, Footwear, Top, Outerwear, Armour, Headwear, Accessory }
 
-/// <summary>
-/// A kind of tool or clothing piece. Ids are wardrobe part ids (assets/wardrobe/customisation.json),
-/// so what someone owns is exactly what is drawn on them.
-/// </summary>
-/// <param name="Warmth">Degrees of cold it keeps off when worn.</param>
-/// <param name="Protection">0..1 of a blow it turns aside (armour, helmets, shields).</param>
-/// <param name="Prestige">Standing it lends (ceremonial and royal dress).</param>
-/// <param name="Power">Fighting strength added when held (weapons).</param>
-/// <param name="Days">Days of use before it wears out.</param>
 public sealed record ItemDef(ushort Index, string Id, ItemSlot Slot, TechId[] Techs, (ushort good, float qty)[] Inputs, float Labour,
                              float Warmth, float Protection, float Prestige, float Power, int Days, (Activity act, float mult)[] Uses, string Station);
 
-/// <summary>An owned tool or clothing piece and how worn it is (0 new .. 1 worn out).</summary>
 public struct Item
 {
     public ushort Def;
@@ -27,14 +16,13 @@ public struct Item
     public readonly ItemDef Kind => Crafts.Items[Def];
 }
 
-/// <summary>Turning goods into goods: inputs, outputs, the technique, the workstation and the labour.</summary>
 public sealed record Recipe(string Id, TechId Tech, string Station, (ushort good, float qty)[] Inputs, (ushort good, float qty)[] Outputs,
                             float Labour, Domain Domain);
 
 public static class Crafts
 {
     public static readonly ItemDef[] Items;
-    /// <summary>Items by slot, in catalogue order.</summary>
+
     public static readonly ItemDef[][] BySlot;
     public static readonly Recipe[] Recipes;
     static readonly Dictionary<string, ushort> ItemByName = new();
@@ -58,7 +46,7 @@ public static class Crafts
     static Crafts()
     {
         var A = Activity.Hunt;
-        // ---- tools (held_item) ----------------------------------------------------------------
+
         I("club", ItemSlot.Tool, "wood:1", T(TechId.StoneTools), power: 0.06f, days: 400, labour: 0.2f, uses: (A, 1.0f));
         I("knife", ItemSlot.Tool, "flint:1,wood:0.2", T(TechId.StoneTools), power: 0.03f, days: 300, labour: 0.3f, uses: new[] { (Activity.Craft, 1.15f), (Activity.Hunt, 1.05f) });
         I("spear", ItemSlot.Tool, "wood:1,flint:0.5", T(TechId.Spear), power: 0.12f, days: 400, labour: 0.4f, uses: new[] { (A, 1.25f), (Activity.Fish, 1.1f) });
@@ -93,7 +81,6 @@ public static class Crafts
           uses: new[] { (Activity.Chop, 2.6f), (Activity.Quarry, 2.6f), (Activity.Mine, 2.6f), (Activity.Build, 2f), (Activity.Craft, 1.8f) });
         I("energy_blade", ItemSlot.Tool, "advanced_alloy:1,battery:1", T(TechId.EnergyTools), power: 0.7f, days: 5000, labour: 1.5f, station: "fabricator", uses: (A, 1.5f));
 
-        // ---- clothing --------------------------------------------------------------------------
         var L = ItemSlot.Legwear; var F = ItemSlot.Footwear; var Tp = ItemSlot.Top; var O = ItemSlot.Outerwear; var Ar = ItemSlot.Armour; var H = ItemSlot.Headwear; var Ac = ItemSlot.Accessory;
         I("wrap_skirt", L, "hide:1", T(TechId.HideClothing), warmth: 1f, days: 500, labour: 0.3f);
         I("fur_leggings", L, "fur:1.5", T(TechId.HideClothing), warmth: 5f, days: 600, labour: 0.5f);
@@ -219,12 +206,11 @@ public static class Crafts
         Items = _items.ToArray();
         BySlot = Enum.GetValues<ItemSlot>().Select(s => Items.Where(d => d.Slot == s).ToArray()).ToArray();
 
-        // ---- goods recipes --------------------------------------------------------------------
         Recipe R(string id, TechId tech, string station, string inputs, string outputs, float labour, Domain d = Domain.Crafting) =>
             new(id, tech, station, In(inputs), In(outputs), labour, d);
         Recipes = new[]
         {
-            // Food: cooking, preserving, grinding, baking, dairy, brewing, pressing
+
             R("cook_meat", TechId.Cooking, "hearth", "meat_raw:2,wood:0.3", "meat_cooked:2", 0.2f, Domain.Foraging),
             R("dry_meat", TechId.Drying, "fish_drying_rack", "meat_raw:3", "dried_meat:2", 0.3f, Domain.Foraging),
             R("dry_fish", TechId.Drying, "fish_drying_rack", "fish:3", "dried_fish:2", 0.3f, Domain.Fishing),
@@ -242,7 +228,7 @@ public static class Crafts
             R("press_oil", TechId.Grinding, "press", "nuts:4", "oil:1", 0.4f, Domain.Foraging),
             R("salt_meat", TechId.Drying, "", "meat_raw:3,salt:0.5", "dried_meat:2.5", 0.3f, Domain.Foraging),
             R("medicine", TechId.Herbalism, "", "herbs:3", "medicine:1", 0.4f, Domain.Healing),
-            // Materials
+
             R("split_wood", TechId.Woodcutting, "chopping_block", "log:1", "wood:4", 0.25f, Domain.Building),
             R("twist_rope", TechId.Cordage, "", "fiber:2", "rope:1", 0.3f),
             R("weave_cloth", TechId.Weaving, "loom", "fiber:3", "cloth:1.5", 0.5f),
@@ -271,14 +257,12 @@ public static class Crafts
 
     public static ItemDef? Item(ItemSlot slot, string id) => ItemByName.TryGetValue($"{slot}:{id}", out var i) ? Items[i] : null;
 
-    /// <summary>Whether someone knowing <paramref name="known"/> can make the item.</summary>
     public static bool CanMake(TechSet known, ItemDef def)
     {
         foreach (var t in def.Techs) if (!known.Has(t)) return false;
         return true;
     }
 
-    /// <summary>How much an item speeds an activity (1 when it doesn't help).</summary>
     public static float Use(ItemDef def, Activity act)
     {
         foreach (var (a, m) in def.Uses) if (a == act) return m;

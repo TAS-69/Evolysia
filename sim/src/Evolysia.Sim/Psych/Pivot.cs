@@ -3,27 +3,21 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.Psych;
 
-/// <summary>How someone responds when their circle rejects something they cared about.</summary>
 public enum PivotChoice : byte
 {
-    Conform,    // give in: abandon it, never try that kind of thing again
-    DoubleDown, // persist and try to prove them wrong
-    Withdraw,   // retreat from people, keep to themself
-    Resent,     // hold a grudge against those who mocked
-    Leave,      // walk away from the circle (with followers if any)
+    Conform,
+    DoubleDown,
+    Withdraw,
+    Resent,
+    Leave,
 }
 
 public readonly record struct PivotContext(
-    float Severity,        // 0..1 how public/harsh the rejection was
-    int Allies,            // people who sided with them
-    bool CanLeave,         // is there anywhere / anyone to go with
-    string Kind);          // "invention", "belief", "courtship", ...
+    float Severity,
+    int Allies,
+    bool CanLeave,
+    string Kind);
 
-/// <summary>
-/// Trait loadings match the LLM lab's "invention_mocked" scenario, so the numeric sim and the
-/// language model agree on what each personality tends to do. The LLM narrates the choice; it
-/// doesn't make it.
-/// </summary>
 public static class Pivot
 {
     static readonly (PivotChoice choice, (Trait t, float w)[] load)[] Options =
@@ -58,7 +52,6 @@ public static class Pivot
     public static PivotChoice Resolve(Agent a, in PivotContext ctx, Rng rng) =>
         (PivotChoice)rng.Softmax(Scores(a, ctx), 0.55f);
 
-    /// <summary>The personal (psychological) side of each choice. Social consequences live in the simulation.</summary>
     public static void ApplyInner(Agent a, PivotChoice c, Domain d, in PivotContext ctx, int day)
     {
         float s = 0.5f + 0.5f * ctx.Severity;
@@ -99,7 +92,7 @@ public static class Pivot
                 a.Shift(Trait.SelfDirectedness, 0.07f * s, day);
                 a.Shift(Trait.RewardDependence, -0.06f * s, day);
                 a.Shift(Trait.NoveltySeeking, 0.03f * s, day);
-                a.Belonging = 0.7f;   // the new circle
+                a.Belonging = 0.7f;
                 break;
         }
     }

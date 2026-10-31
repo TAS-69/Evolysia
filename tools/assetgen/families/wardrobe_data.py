@@ -1,4 +1,4 @@
-"""Selectable garments, independent dye regions and illustrative outfit recipes."""
+
 import json
 from .wardrobe import PARTS, ORDER, HAIR, TOPS
 

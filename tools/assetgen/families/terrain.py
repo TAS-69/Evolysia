@@ -1,4 +1,4 @@
-"""Palette-indexed material tiles and dual-grid elevation faces."""
+
 import hashlib
 import json
 import math

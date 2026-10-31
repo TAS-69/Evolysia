@@ -56,7 +56,7 @@ public class DecisionTests
             {
                 sim.Step();
                 foreach (var d in sim.PendingDecisions.ToList())
-                    if (sim.Day - d.Day >= 3) sim.Decide(d.Id, d.Options[^1]);   // a deterministic "mind"
+                    if (sim.Day - d.Day >= 3) sim.Decide(d.Id, d.Options[^1]);
             }
             return $"{sim.Living.Count}|{sim.Living.Keys.Sum()}|{sim.Chronicle.Events.Count}|{sim.DecisionLog.Count}|" +
                    string.Join(",", sim.DecisionLog.Select(e => e.Choice));

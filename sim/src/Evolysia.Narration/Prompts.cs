@@ -7,18 +7,13 @@ namespace Evolysia.Narration;
 
 public enum ModelRole { Main, Helper }
 
-/// <summary>A prompt ready to send, snapshotted from simulation state at the moment it happened.</summary>
 public sealed record NarrationRequest(
     int MomentIndex, LlmMoment Moment, string AgentName, ModelRole Role,
     string System, string User, JsonObject Schema, int MaxTokens, float Temperature, float BasePriority);
 
-/// <summary>
-/// One template per kind of moment. The simulation has already decided what happened; the model
-/// only gives it a voice, so every prompt states the outcome as fact and asks for words, not choices.
-/// </summary>
 public static class Prompts
 {
-    // Same system prompt the LLM lab evaluated (tools/llm_lab/lablib/evals.py SYSTEM_MAIN), plus voice rules.
+
     public const string SystemMain =
         "You voice one person living in a harsh early-human world simulation. Stay fully in character. " +
         "People here can be selfish, cowardly, cruel, dishonest, stubborn, superstitious or foolish: play the " +
@@ -26,7 +21,6 @@ public static class Prompts
         "the words. They know nothing of writing, metal (unless stated), or any modern idea. " +
         "Use plain, concrete, earthy English. Finish every sentence. Reply only with the requested JSON.";
 
-    // For choices: the exact framing tools/llm_lab evaluated (personality drives the choice).
     public const string SystemChoice =
         "You voice one person living in a harsh early-human world simulation. Stay fully in character. " +
         "People here can be selfish, cowardly, cruel, dishonest, stubborn, superstitious or foolish: play the " +
@@ -38,9 +32,9 @@ public static class Prompts
 
     static readonly Dictionary<string, float> KindPriority = new()
     {
-        // A choice waiting on a mind is time-critical: instinct takes over at the deadline.
+
         ["decision"] = 11f,
-        // Moments the player caused come first: they are watching for the response.
+
         ["dream"] = 12f, ["message_read"] = 12f, ["prayer_answered"] = 10f, ["revelation"] = 10f, ["prayer"] = 8f,
         ["schism"] = 9f, ["myth"] = 8f, ["voyage"] = 9f, ["killing"] = 7f, ["invention"] = 6f, ["pivot"] = 5f,
         ["notable_death"] = 4f, ["fear_overcome"] = 2f,
@@ -70,14 +64,12 @@ public static class Prompts
         _ => "love more deeply",
     };
 
-    /// <summary>The player's own words go into a prompt: keep them short and unable to break the frame.</summary>
     public static string SanitizeWords(string words)
     {
         var clean = new string(words.Where(ch => !char.IsControl(ch) && ch is not ('{' or '}' or '"' or '`')).ToArray()).Trim();
         return clean.Length > 200 ? clean[..200] : clean;
     }
 
-    /// <summary>If this narration answered a decision, which option did the mind pick?</summary>
     public static (int DecisionId, string Choice)? DecisionChoice(Narration n)
     {
         if (n.Moment.Kind != "decision" || !int.TryParse(n.Moment.Facts.GetValueOrDefault("decision_id"), out int id)) return null;
@@ -104,7 +96,7 @@ public static class Prompts
             _ => $"{name} showed the {band} their {F(m, "subject")}. Most of them scorned it." +
                  (F(m, "allies") is var al && al != "0" ? $" {al} sided with {name}." : " No one sided with them."),
         };
-        // Shuffle option order (stable per decision) so position is not mistaken for preference.
+
         var order = Enumerable.Range(0, ids.Length).OrderBy(i => (i * 7919 + index * 104729) % 97).ToArray();
         string options = string.Join("\n", order.Select(i => $"- {ids[i]}: {descriptions[i]}"));
         var schema = new JsonObject

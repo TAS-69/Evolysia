@@ -1,4 +1,4 @@
-"""Fauna inventory, frame, coat and pixel contracts."""
+
 import numpy as np
 from PIL import Image
 from families.fauna import contracts, SPEC, DOMESTIC, FPS

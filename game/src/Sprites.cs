@@ -2,25 +2,14 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// One piece of art standing in the world: drawn with its pivot (texture pixels) on its foot
-/// (world units), each texture pixel <see cref="PixelSize"/> world units wide, optionally mirrored.
-/// Sprites are y-sorted before drawing so nearer things overlap farther ones.
-/// </summary>
 public readonly record struct WorldSprite(Vector2 Foot, Texture2D Texture, Rect2 Source, Vector2 Pivot, float PixelSize, Color Modulate, float Shadow = 0f, bool Flip = false);
 
-/// <summary>Textures for sheets: reference colouring or LUT recolours, enlarged by whole factors when finer art is missing.</summary>
 public static class Sprites
 {
     static readonly Dictionary<(string, int, int, int), ImageTexture> Cache = new();
 
-    /// <summary>World units per art pixel at a density.</summary>
     public static float PixelSize(int density) => Main.CellPx / (float)density;
 
-    /// <summary>
-    /// A sheet's texture, enlarged <paramref name="scale"/> times, coloured by its reference PNG or,
-    /// with a culture / hair row, with culture_* or hair_* slots taken from that LUT row.
-    /// </summary>
     public static ImageTexture Texture(Sheet sheet, int scale = 1, int cultureRow = -1, int hairRow = -1)
     {
         var key = (sheet.Id, scale, cultureRow, hairRow);
@@ -47,10 +36,6 @@ public static class Sprites
 
     static readonly Dictionary<(string, int, int, int, int), ImageTexture> NatureCache = new();
 
-    /// <summary>
-    /// A sheet coloured through the nature LUT, blending row A towards row B (quantised to eighths):
-    /// plants drawn as sprites match the baked terrain exactly.
-    /// </summary>
     public static ImageTexture Nature(Sheet sheet, int scale, int rowA, int rowB, float blend)
     {
         int q = (int)MathF.Round(blend * 8f);
@@ -75,10 +60,6 @@ public static class Sprites
         return NatureCache[key] = ImageTexture.CreateFromImage(image);
     }
 
-    /// <summary>
-    /// A sprite for a multi-density asset (civilisation id) or, failing that, a 16 px base sheet
-    /// enlarged to the density. Null when neither exists.
-    /// </summary>
     public static WorldSprite? Make(string? lodId, string? baseId, int density, Vector2 foot, Color modulate, int frame = 0, int row = 0,
                                     float shadow = -1f, bool flip = false, int cultureRow = -1, int hairRow = -1)
     {

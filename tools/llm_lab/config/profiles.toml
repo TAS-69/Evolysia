@@ -1,20 +1,20 @@
-# A profile = one MAIN mind (dialogue, decisions, reflections, pivots)
-#           + optional HELPER sub-agent (naming, tagging, memory summaries)
-#           + optional EMBED model (memory retrieval).
-#
-# device = "gpu" | "cpu".  CPU keeps VRAM free for the main mind; helpers and
-# embeddings produce short outputs from short prompts, which CPUs handle well.
-# helper / embed: set model = "off" to disable (helper tasks then go to main).
-#
-# Change any of this per machine with `lab.py configure` (writes local.toml),
-# or per run with CLI flags (`lab.py plan --help`).
+
+
+
+
+
+
+
+
+
+
 
 [defaults]
 host = "127.0.0.1"
 ports = { main = 8081, helper = 8082, embed = 8083 }
 gpu_layers = 99
-gpu_device = ""              # "" = llama.cpp default; pin e.g. "Vulkan0" (see `llama-server --list-devices`)
-cache_type = "q8_0"          # KV cache quantization (halves KV memory vs f16)
+gpu_device = ""
+cache_type = "q8_0"
 
 [profiles.lite]
 description = "8-12 GB GPU: 4B main on GPU, tiny helper + embeddings on CPU"
@@ -40,7 +40,7 @@ main   = { model = "qwen3.5-4b",       device = "cpu", ctx = 8192,  slots = 2, t
 helper = { model = "off" }
 embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
 
-# Shorthands accepted wherever a helper model is expected.
+
 [helper_sizes]
 tiny   = "qwen3.5-0.8b"
 small  = "qwen3.5-2b"

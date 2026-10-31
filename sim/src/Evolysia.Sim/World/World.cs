@@ -2,49 +2,41 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.World;
 
-/// <summary>
-/// The planet as a grid of tiles (800 x 400 by default; each cell is one art tile, a few minutes'
-/// walk across). A band camps on one cell and works the cells around it. Stored as parallel
-/// arrays for speed. x wraps around the planet; y runs from the north pole (0) to the south pole.
-/// </summary>
 public sealed class WorldMap
 {
     public readonly int W, H;
     public readonly float AxialTilt;
 
-    // Static (from generation)
-    public readonly float[] Elevation;      // metres; < 0 is sea
-    public readonly float[] TempMean;       // annual mean, deg C
-    public readonly float[] TempAmp;        // seasonal half-swing, deg C
-    public readonly float[] Precip;         // annual mm
-    public readonly float[] Seasonality;    // 0..1, how wet/dry the seasons swing
-    public readonly float[] Flow;           // river discharge (accumulated runoff)
-    public readonly float[] WaterAccess;    // 0..1 fresh water availability
-    public readonly float[] Fault;          // 0..1 earthquake proneness
+    public readonly float[] Elevation;
+    public readonly float[] TempMean;
+    public readonly float[] TempAmp;
+    public readonly float[] Precip;
+    public readonly float[] Seasonality;
+    public readonly float[] Flow;
+    public readonly float[] WaterAccess;
+    public readonly float[] Fault;
     public readonly bool[] Volcano;
     public readonly Biome[] Biome;
-    public readonly float[] RowLat;         // latitude per row, degrees
-    public readonly int[] Landmass;         // connected land id (-1 for water and lakes)
+    public readonly float[] RowLat;
+    public readonly int[] Landmass;
     public int[] LandmassSize = Array.Empty<int>();
 
-    // Ecology (dynamic)
-    public readonly float[] PlantK, PlantStock;   // forageable food, person-days
-    public readonly float[] PreyK, PreyStock;     // huntable game, person-days
+    public readonly float[] PlantK, PlantStock;
+    public readonly float[] PreyK, PreyStock;
     public readonly float[] FishK, FishStock;
-    public readonly float[] Predators;            // 0..1 danger density
+    public readonly float[] Predators;
     public readonly float[] PredatorBase;
-    public readonly float[] Ash;                  // 0..1 lingering ash/burn damage
-    public readonly float[] YearRain;             // this year's rain multiplier (droughts < 0.6)
-    public readonly float[] HumanPressure;        // recent hunting/presence, pushes predators away
-    public readonly float[] RainBias;             // god-given rain (>1) or drought (<1); 1 = none
-    public readonly int[] RainBiasUntil;          // day it ends
+    public readonly float[] Ash;
+    public readonly float[] YearRain;
+    public readonly float[] HumanPressure;
+    public readonly float[] RainBias;
+    public readonly int[] RainBiasUntil;
 
-    // Materials on the ground (dynamic): felled, quarried and dug by people.
-    public readonly float[] Trees, TreesK;        // standing timber, in logs (fire burns it, it regrows slowly)
-    public readonly float[] Rock, RockK;          // loose stone, boulders and outcrops, in stone units (doesn't regrow)
-    public readonly float[] Ore, OreK;            // a surface deposit, in ore units
-    public readonly ushort[] OreGood;             // which good the deposit yields (a Goods index; 0 = none)
-    public readonly int[] StructureAt;            // structure id standing on each cell (0 = none)
+    public readonly float[] Trees, TreesK;
+    public readonly float[] Rock, RockK;
+    public readonly float[] Ore, OreK;
+    public readonly ushort[] OreGood;
+    public readonly int[] StructureAt;
 
     public float GlobalTempAnomaly;
 
@@ -65,11 +57,10 @@ public sealed class WorldMap
         for (int i = 0; i < n; i++) { YearRain[i] = 1f; RainBias[i] = 1f; }
     }
 
-    /// <summary>Cells per original (160-wide) cell along a side: 5 on the 800 x 400 planet.</summary>
     public float Scale => W / 160f;
-    /// <summary>A cell's area relative to an original cell (1 / Scale^2).</summary>
+
     public float CellArea => 1f / (Scale * Scale);
-    /// <summary>A distance written in original cells, in this world's cells (at least 1).</summary>
+
     public int Cells(float original) => Math.Max(1, (int)MathF.Round(original * Scale));
 
     public int Count => W * H;
@@ -80,10 +71,8 @@ public sealed class WorldMap
     public bool IsLand(int i) => Elevation[i] >= 0f;
     public bool IsWater(int i) => !IsLand(i) || Biome[i] == Core.Biome.Lake;
 
-    /// <summary>Land a band could live on (not water, not a lake).</summary>
     public bool IsDryLand(int i) => IsLand(i) && Biome[i] != Core.Biome.Lake;
 
-    /// <summary>Wrapped horizontal distance plus vertical distance (cells).</summary>
     public int Distance(int a, int b)
     {
         int dx = Math.Abs(X(a) - X(b));
@@ -91,7 +80,6 @@ public sealed class WorldMap
         return Math.Max(dx, Math.Abs(Y(a) - Y(b)));
     }
 
-    /// <summary>The 8 neighbours (fewer at the poles).</summary>
     public int Neighbors(int i, Span<int> buffer)
     {
         int x = X(i), y = Y(i), n = 0;
@@ -113,7 +101,6 @@ public sealed class WorldMap
     public bool IsTropical(int i) => MathF.Abs(RowLat[Y(i)]) < 23f;
     public bool IsNorth(int i) => RowLat[Y(i)] >= 0f;
 
-    /// <summary>-1..1 seasonal phase: +1 at local mid-summer.</summary>
     public float SeasonPhase(int i, int day)
     {
         float s = MathF.Sin(2f * MathF.PI * (DayOfYear(day) - 45) / SimConfig.DaysPerYear);
@@ -127,22 +114,19 @@ public sealed class WorldMap
         return (Season)(d / 90);
     }
 
-    /// <summary>Today's temperature including regional weather noise and global anomalies.</summary>
     public float Temperature(int i, int day)
     {
         float weather = HashNoise(i / 4, day) * 4f;
         return TempMean[i] + TempAmp[i] * SeasonPhase(i, day) + GlobalTempAnomaly + weather;
     }
 
-    /// <summary>0..1 relative wetness today (seasonal rain swing x this year's anomaly).</summary>
     public float Wetness(int i, int day)
     {
         float swing = Seasonality[i] * SeasonPhase(i, day);
-        if (MathF.Abs(RowLat[Y(i)]) is > 30f and < 45f) swing = -swing; // dry summers (mediterranean)
+        if (MathF.Abs(RowLat[Y(i)]) is > 30f and < 45f) swing = -swing;
         return MathF.Max(0f, (1f + swing) * YearRain[i]);
     }
 
-    /// <summary>0..1 plant growth today: warmth x water.</summary>
     public float Growth(int i, int day)
     {
         float t = Temperature(i, day);
@@ -153,7 +137,7 @@ public sealed class WorldMap
 
     static float HashNoise(int a, int day)
     {
-        // Smooth-ish in time: blend two daily hashed values over 5-day periods.
+
         int p = day / 5;
         float t = (day % 5) / 5f;
         float v0 = Hash01(a, p), v1 = Hash01(a, p + 1);

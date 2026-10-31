@@ -1,4 +1,4 @@
-"""Side-facing animal silhouettes and anchored skeletal pixel animation."""
+
 import json
 import math
 from pathlib import Path

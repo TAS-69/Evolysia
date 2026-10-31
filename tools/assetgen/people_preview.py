@@ -1,4 +1,4 @@
-"""People assembly, animation proof sheets and modular part galleries."""
+
 import json
 import math
 import numpy as np

@@ -7,23 +7,13 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// People in Codex's modular wardrobe art (assets/wardrobe, customisation.json): twelve layers -
-/// hair, body, legwear, footwear, top, outerwear, armour, body paint, headwear, accessory and a
-/// held tool - each with its own main and trim dye, at 16, 32 or 64 px, in any of the twenty
-/// animations. What someone wears comes from what they know and where they live; what they hold
-/// and how they move comes from what they are doing today. Each look x animation x direction x
-/// density is composited once into a small strip texture.
-/// </summary>
 public static class People
 {
     public static readonly string[] Layers =
         { "hair_back", "body", "legwear", "footwear", "top", "outerwear", "armour", "body_paint", "hair_front", "headwear", "accessory", "held_item" };
 
-    /// <summary>One wardrobe piece and its dyes (lut_cloth rows; 12 = undyed).</summary>
     public readonly record struct Piece(string? Part, int Main = 12, int Trim = 12);
 
-    /// <summary>Everything that decides how a person is drawn. <see cref="Key"/> identifies it for caching.</summary>
     public sealed class Look
     {
         public int Age, Build, Skin, Hair, Culture;
@@ -33,7 +23,6 @@ public static class People
         public void Set(string layer, string? part, int main = 12, int trim = 12) { Pieces[Array.IndexOf(Layers, layer)] = new Piece(part, main, trim); _key = null; }
     }
 
-    /// <summary>A composited animation: frames side by side, with its timing and foot pivot.</summary>
     public sealed record Strip(ImageTexture Texture, int Frames, int FrameW, int FrameH, float Fps, Vector2 Pivot);
 
     static readonly string[] Ages = { "child", "adult", "elder" };
@@ -43,7 +32,6 @@ public static class People
     static readonly Dictionary<string, Strip?> Cache = new();
     static Dictionary<string, (string? front, string? back)>? _hairStyles;
 
-    /// <summary>The animation for a day's activity (sim_actions in the wardrobe sidecars).</summary>
     public static string Animation(Activity activity, bool moving, bool child, bool sick)
     {
         if (sick) return "sleep";
@@ -67,11 +55,6 @@ public static class People
         };
     }
 
-    /// <summary>
-    /// How an agent looks today: age and build from life and genes, colours from genes and culture,
-    /// and exactly the clothes they own (Simulation.Worn) and the tool they work with
-    /// (Simulation.HeldTool). Woven pieces are dyed in their people's colours; hides and furs are not.
-    /// </summary>
     public static Look LookOf(Agent a, int day, int cultureHue, float temperature, bool leader, Activity activity)
     {
         var look = new Look();
@@ -80,11 +63,10 @@ public static class People
         float strength = a.Genome[Gene.Strength];
         look.Build = strength < 0.35f ? 0 : strength > 0.65f ? 2 : 1;
         look.Skin = Math.Clamp((int)(a.Genome[Gene.Pigment] * 8f), 0, 7);
-        look.Hair = look.Age == 2 ? 6 : Math.Clamp((int)(a.Genome[Gene.HairTone] * 8f), 0, 7);   // elders grey
+        look.Hair = look.Age == 2 ? 6 : Math.Clamp((int)(a.Genome[Gene.HairTone] * 8f), 0, 7);
         int hue = look.Culture = cultureHue % 12;
         bool child = look.Age == 0;
 
-        // Hair: each culture favours a couple of styles; some people wear their own.
         var styles = (a.Sex == Sex.Female) ^ (hue % 3 == 0) ? StylesB : StylesA;
         string style = child ? "child_tuft" : styles[(hue * 3 + (a.Id % 5 == 0 ? a.Id : 0)) % styles.Length];
         if (look.Age == 2 && a.Sex == Sex.Male && a.Id % 3 == 0) style = "cropped";
@@ -101,17 +83,13 @@ public static class People
                 bool dyed = item.Inputs.Any(i => Goods.All[i.good].Id is "cloth" or "fiber");
                 look.Set(layer, item.Id, dyed ? dye : 12, dyed ? trim : 12);
             }
-        // Peoples who know pigments paint themselves.
+
         if (!child && Techs.Has(a.Knows, TechId.Pigments))
             look.Set("body_paint", new[] { "cheek_dots", "brow_band", "arm_bands", "face_streak", "shoulder_dabs", "leg_marks" }[hue % 6], 12, 12);
         look.Set("held_item", child ? null : Simulation.HeldTool(a, activity)?.Id, 12, 12);
         return look;
     }
 
-    /// <summary>
-    /// A look in one animation and direction at one density, composited in layer order and
-    /// recoloured through the skin, hair, per-piece dye and culture LUTs. Null without the art.
-    /// </summary>
     public static Strip? Get(Look look, string anim, string dir, int density)
     {
         string key = $"{look.Key}|{anim}|{dir}|{density}";
@@ -147,7 +125,7 @@ public static class People
                             byte slot = sheet.SlotAt(sx + x, sy + y);
                             if (slot == Art.Empty) continue;
                             int o = y * fw * frames + f * fw + x;
-                            if (paint && !Art.SlotNames[slots[o] == Art.Empty ? 0 : slots[o]].StartsWith("skin_")) continue;   // paint only on bare skin
+                            if (paint && !Art.SlotNames[slots[o] == Art.Empty ? 0 : slots[o]].StartsWith("skin_")) continue;
                             var c = table[slot];
                             slots[o] = slot;
                             rgba[o * 4] = c.R; rgba[o * 4 + 1] = c.G; rgba[o * 4 + 2] = c.B; rgba[o * 4 + 3] = 255;
@@ -163,7 +141,6 @@ public static class People
         return strip;
     }
 
-    /// <summary>The logical profile (age, build, direction) index; side-only animations fall back to side.</summary>
     static int Profile(Sheet sheet, Look look, ref string dir)
     {
         for (int pass = 0; pass < 2; pass++)
@@ -179,7 +156,6 @@ public static class People
         return -1;
     }
 
-    /// <summary>Slot -> colour for one piece: skin, hair and culture rows for the person, main / trim dye rows for the piece.</summary>
     static Color32[] Table(Look look, int main, int trim)
     {
         var names = Art.SlotNames;

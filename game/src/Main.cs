@@ -5,13 +5,6 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// Scene root. Builds the world view, band layer, camera and HUD around a SimHost, keeps them in
-/// sync with the simulation, and handles selection.
-///
-/// Command line (after "--"): --seed N  --days N  --overlay Cultures  --select band|agent  --zoom Z  --focus x,y
-///                            --screenshot path.png  (captures after warm-up, then quits)
-/// </summary>
 public partial class Main : Node2D
 {
     public const int CellPx = 8;
@@ -57,7 +50,7 @@ public partial class Main : Node2D
         AddChild(_voices = new NarrationHost());
         _labels = new BandLabels { Bands = _bands };
         _hud.AddChild(_labels);
-        _hud.MoveChild(_labels, 0);   // under the panels
+        _hud.MoveChild(_labels, 0);
         RenderingServer.SetDefaultClearColor(Palette.Bg);
 
         _hud.SpeedChosen += SetSpeed;
@@ -99,11 +92,11 @@ public partial class Main : Node2D
 
         ulong seed = _args.TryGetValue("seed", out var s) && ulong.TryParse(s, out var parsed) ? parsed : 42;
         var config = new SimConfig { Seed = seed };
-        if (_args.GetValueOrDefault("demo") == "message") config.FirstMessageYear = 0;   // (screenshots) no 250-year wait
+        if (_args.GetValueOrDefault("demo") == "message") config.FirstMessageYear = 0;
         if (_args.TryGetValue("planet", out var pl) && Enum.TryParse<PlanetType>(pl, true, out var planet)) config.Planet = planet;
         if (_args.TryGetValue("tribes", out var tr) && int.TryParse(tr, out var tribes)) config.Tribes = Math.Clamp(tribes, 1, 6);
         NewWorld(config);
-        // A plain launch starts at the new-world screen (over a default world); command-line runs go straight in.
+
         if (_args.Count == 0 || _args.ContainsKey("setup")) ShowSetup(canCancel: false);
         if (_args.TryGetValue("overlay", out var ov) && Enum.TryParse<Overlay>(ov, true, out var overlay))
         {
@@ -113,7 +106,7 @@ public partial class Main : Node2D
         if (_args.TryGetValue("days", out var d) && int.TryParse(d, out var days))
         {
             _host.FastForward(days);
-            _voices.Attach(_host.Sim!);   // voice the most recent moments of the skipped history
+            _voices.Attach(_host.Sim!);
         }
         if (_args.TryGetValue("select", out var what) && what is "band" or "agent") SelectForDemo(what);
         if (_args.GetValueOrDefault("demo") == "gods") DemoGods();
@@ -122,7 +115,7 @@ public partial class Main : Node2D
         if (_args.TryGetValue("zoom", out var zs) && float.TryParse(zs, System.Globalization.CultureInfo.InvariantCulture, out var zoom))
             _camera.Focus(_camera.Position, zoom);
         if (_args.TryGetValue("focus", out var fs) && fs.Split(',') is [var fx, var fy] && int.TryParse(fx, out var cx) && int.TryParse(fy, out var cy))
-            _camera.Focus(new Vector2(cx + 0.5f, cy + 0.5f) * CellPx);   // --focus x,y: centre on a cell
+            _camera.Focus(new Vector2(cx + 0.5f, cy + 0.5f) * CellPx);
         if (_args.TryGetValue("fold", out var folds)) foreach (var f in folds.Split(',')) _hud.Fold(f);
         if (_args.TryGetValue("screenshot", out var shot)) { _screenshot = shot; _shotCountdown = 10; SetSpeed(0); }
         if (_args.TryGetValue("speed", out var sp) && int.TryParse(sp, out var speed)) SetSpeed(speed);
@@ -131,7 +124,6 @@ public partial class Main : Node2D
 
     SetupScreen? _setup;
 
-    /// <summary>The new-world screen; Begin starts the chosen world, Back returns to the current one.</summary>
     void ShowSetup(bool canCancel)
     {
         if (_setup != null) return;
@@ -182,7 +174,6 @@ public partial class Main : Node2D
         var sim = _host.Sim;
         if (sim == null) return;
 
-        // Map texture: every few days (seasons move slowly) but at most ~3x a second, or when the overlay changes.
         _mapTimer -= delta;
         if (_mapDirty || (sim.Day - _lastMapDay >= 5 && _mapTimer <= 0) || sim.Day < _lastMapDay)
         {
@@ -195,7 +186,6 @@ public partial class Main : Node2D
         _labels.QueueRedraw();
         if (sim.Day != _lastBandDay) { _bands.QueueRedraw(); _lastBandDay = sim.Day; }
 
-        // Ping notable new events on the map.
         var events = sim.Chronicle.Events;
         for (int i = _seenEvents; i < events.Count; i++)
             if (events[i].Salience >= 0.4f && sim.Bands.TryGetValue(events[i].BandId, out var band))
@@ -209,7 +199,6 @@ public partial class Main : Node2D
             RefreshHud(sim);
         }
 
-        // --select voice: open whoever was just given a voice (demo/screenshot mode).
         if (_sel == Selection.None && _voices.Recent.Count > 0 && _args.GetValueOrDefault("select") == "voice"
             && (!_args.ContainsKey("wait-choices") || _voices.Recent.Any(v => v.Moment.Kind == "decision")))
         {
@@ -219,21 +208,18 @@ public partial class Main : Node2D
             _labels.Say(n.Moment.BandId, n.Quote);
         }
 
-        // Minds decide only when the model is up and the player wants them to.
         sim.DeferDecisions = _hud.Minds.ButtonPressed && _voices.Narrator.Status.Online;
 
-        // Focus for the narrator: what the player is looking at gets voiced first.
         _voices.FocusAgentId = _sel == Selection.Agent ? _selId : -1;
         _voices.FocusBandId = _bands.SelectedBandId;
 
-        // Screenshot mode can wait for N voices (--wait-voices N), up to 120 s.
         if (_shotCountdown > 0)
         {
             int want = _args.TryGetValue("wait-voices", out var wv) && int.TryParse(wv, out var n) ? n : 0;
             int wantChoices = _args.TryGetValue("wait-choices", out var wc) && int.TryParse(wc, out var k) ? k : 0;
             _shotWait += delta;
-            bool ready = _voices.Recent.Count >= want && _voices.Recent.Count(v => v.Moment.Kind == "decision") >= wantChoices && !_tiles.Busy && (_setup == null || _setup.PreviewReady);   // and the tile chunks under the view are baked
-            if (ready && wantChoices > 0 && _host.SpeedIndex != 0) SetSpeed(0);   // freeze the moment for the picture
+            bool ready = _voices.Recent.Count >= want && _voices.Recent.Count(v => v.Moment.Kind == "decision") >= wantChoices && !_tiles.Busy && (_setup == null || _setup.PreviewReady);
+            if (ready && wantChoices > 0 && _host.SpeedIndex != 0) SetSpeed(0);
             if (ready || _shotWait > 240) { if (--_shotCountdown == 0) TakeScreenshot(); }
         }
     }
@@ -276,22 +262,16 @@ public partial class Main : Node2D
         RefreshInspector(sim);
     }
 
-    /// <summary>
-    /// Give a mind its say: when a choice is about to fall to instinct, hold time briefly (max 6 s
-    /// per choice). At top speed instinct rules, so fast-forwarding is never blocked.
-    /// </summary>
     bool HoldForMinds()
     {
         var sim = _host.Sim!;
-        if (!sim.DeferDecisions || _host.SpeedIndex >= 5) return false;   // at 10x and 25x time doesn't wait for minds
+        if (!sim.DeferDecisions || _host.SpeedIndex >= 5) return false;
         var due = sim.PendingDecisions.FirstOrDefault(d => d.Deadline <= sim.Day + 1);
         if (due == null) { if (_holdSince.Count > 50) _holdSince.Clear(); return false; }
         ulong now = Time.GetTicksMsec();
         if (!_holdSince.TryGetValue(due.Id, out var since)) _holdSince[due.Id] = since = now;
         return now - since < 6000;
     }
-
-    // ---- god powers ------------------------------------------------------------------------
 
     void OnPowerPicked(Power? power)
     {
@@ -366,7 +346,7 @@ public partial class Main : Node2D
             _ => null,
         };
         if (text == null) { ClearSelection(); return; }
-        // Replacing the text resets the scroll; restore it so live updates don't yank the reader.
+
         var scrollbar = _hud.Inspector.GetVScrollBar();
         double scroll = scrollbar.Value;
         if (_hud.Inspector.Text == text) return;
@@ -471,7 +451,7 @@ public partial class Main : Node2D
         _camera.Focus(_bands.BandPosition(band), 4f);
         if (what == "agent")
         {
-            // The most eventful life in the band makes the best demo.
+
             var person = band.Members.Select(id => sim.Living[id]).Where(a => a.IsAdult(sim.Day))
                 .OrderByDescending(a => a.Memory.Count + a.Scars * 2 + (a.SuppressedDomains != 0 ? 3 : 0)).First();
             Select(Selection.Agent, person.Id);
@@ -479,17 +459,11 @@ public partial class Main : Node2D
         else Select(Selection.Band, band.Id);
     }
 
-    /// <summary>--demo gods: show the faith loop on the largest band (wonders -> revelation -> dream).</summary>
-    /// <summary>
-    /// --demo village (screenshots only): the selected band settles and learns the later
-    /// techniques at once, so villages, fields, kilns and herds can be checked without simulating
-    /// centuries. Changes the simulation; never used in play.
-    /// </summary>
     void DemoVillage()
     {
         var sim = _host.Sim!;
         if (_sel != Selection.Band || !sim.Bands.TryGetValue(_selId, out var band)) return;
-        // Everything up to iron and the first cities; then two years for them to build with it.
+
         TechSet all = default;
         foreach (var t in Techs.All)
             if (t.Stage is "foraging" or "stonecraft" or "agriculture" or "metallurgy") all |= Techs.Bit(t.Id);
@@ -517,11 +491,10 @@ public partial class Main : Node2D
         _voices.Attach(sim, 6);
         _camera.Focus(_bands.BandPosition(band), 4f);
         if (sim.Living.ContainsKey(band.LeaderId)) Select(Selection.Agent, band.LeaderId); else Select(Selection.Band, band.Id);
-        _target.Armed = Power.Rain;   // show the targeting ring in the screenshot
+        _target.Armed = Power.Rain;
         _target.QueueRedraw();
     }
 
-    /// <summary>(Screenshots) words left on the ground beside the largest band, read, and the dialog open for the next.</summary>
     void DemoMessage()
     {
         var sim = _host.Sim!;
@@ -530,7 +503,7 @@ public partial class Main : Node2D
         int cell = sim.World.Index(sim.World.X(band.Cell) + 2, sim.World.Y(band.Cell) + 1);
         sim.Act(new GodAction(Power.Message, cell, Words: "Share the hunt with the strangers by the river", Medium: MessageMedium.Ground));
         _host.FastForward(40);
-        _camera.Focus(new Vector2(sim.World.X(cell) + 0.5f, sim.World.Y(cell) - 9.5f) * CellPx, 3f);   // the marks below the dialog
+        _camera.Focus(new Vector2(sim.World.X(cell) + 0.5f, sim.World.Y(cell) - 9.5f) * CellPx, 3f);
         Select(Selection.Cell, cell);
         _hud.AskMessage("At the river bend: temperate grassland. 2 bands near enough to find it.");
     }

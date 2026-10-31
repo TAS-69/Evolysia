@@ -2,16 +2,11 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.World;
 
-/// <summary>
-/// Planet generation: continents and mountains, temperature by latitude and altitude, rain from
-/// prevailing winds with rain shadows, rivers by flow accumulation, biomes by the Whittaker scheme,
-/// then the ecology carrying capacities each biome supports.
-/// </summary>
 public static class WorldGen
 {
     public static WorldMap Generate(SimConfig cfg)
     {
-        var rng = Rng.Derive(cfg.Seed, 0x574F524C44UL); // "WORLD"
+        var rng = Rng.Derive(cfg.Seed, 0x574F524C44UL);
         var noise = new Noise(rng);
         var w = new WorldMap(cfg.Width, cfg.Height, cfg.AxialTiltDegrees);
 
@@ -38,17 +33,16 @@ public static class WorldGen
             float u = (float)w.X(i) / w.W, v = (float)w.Y(i) / w.H;
             float continent = noise.Cylinder(u, v, 3.2f, 5);
             float detail = noise.Cylinder(u, v, 11f, 4, 17.3f);
-            float fine = w.Scale > 1.5f ? noise.Cylinder(u, v, 48f, 3, 29.9f) : 0f;   // coves and headlands a fine grid can show
-            float r = 1f - MathF.Abs(noise.Cylinder(u, v, 5.5f, 3, 41.7f));   // ridged: peaks where noise crosses 0
+            float fine = w.Scale > 1.5f ? noise.Cylinder(u, v, 48f, 3, 29.9f) : 0f;
+            float r = 1f - MathF.Abs(noise.Cylinder(u, v, 5.5f, 3, 41.7f));
             ridge[i] = r * r * r;
-            // Keep the poles mostly oceanic so the map has no giant polar strip.
+
             float pole = MathF.Abs(v - 0.5f) * 2f;
             raw[i] = cfg.Planet == PlanetType.Thalassia
-                ? 0.35f * continent + 0.6f * detail + 0.3f * fine          // an ocean world: scattered islands, no continents
+                ? 0.35f * continent + 0.6f * detail + 0.3f * fine
                 : continent + 0.25f * detail + 0.07f * fine - 0.35f * MathF.Max(0f, pole - 0.75f);
         }
 
-        // Pick sea level so the requested fraction of cells is land.
         var sorted = (float[])raw.Clone();
         Array.Sort(sorted);
         float sea = sorted[(int)((1f - cfg.Land) * (n - 1))];
@@ -58,8 +52,8 @@ public static class WorldGen
         {
             if (raw[i] >= sea)
             {
-                float h = (raw[i] - sea) / MathF.Max(max - sea, 1e-4f);              // 0..1
-                float mountains = ridge[i] * MathF.Min(1f, h * 3f) * 3200f;          // ridges rise inland
+                float h = (raw[i] - sea) / MathF.Max(max - sea, 1e-4f);
+                float mountains = ridge[i] * MathF.Min(1f, h * 3f) * 3200f;
                 w.Elevation[i] = MathF.Pow(h, 1.3f) * 1800f + mountains;
                 w.Fault[i] = Math.Clamp(ridge[i] * 1.2f, 0f, 1f);
             }
@@ -93,7 +87,6 @@ public static class WorldGen
         return dist;
     }
 
-    /// <summary>How much warmer (or colder) than an Earth-like planet each type runs.</summary>
     static float Warming(PlanetType p) => p switch { PlanetType.Ignis => 15f, PlanetType.Cryos => -16f, PlanetType.Thalassia => 2f, _ => 0f };
 
     static void Temperature(WorldMap w, int[] distToSea, PlanetType planet)
@@ -103,14 +96,13 @@ public static class WorldGen
         {
             float lat = w.RowLat[w.Y(i)] * MathF.PI / 180f;
             float t = -15f + 42f * MathF.Cos(lat) + Warming(planet);
-            if (w.IsLand(i)) t -= w.Elevation[i] * 0.0065f;               // lapse rate
+            if (w.IsLand(i)) t -= w.Elevation[i] * 0.0065f;
             float continental = Math.Clamp(distToSea[i] / (8f * w.Scale), 0f, 1f);
             w.TempMean[i] = t;
             w.TempAmp[i] = (1.5f + 16f * MathF.Abs(MathF.Sin(lat)) * tilt) * (0.55f + 0.45f * continental);
         }
     }
 
-    // Annual rain by latitude band: wet tropics, dry subtropics, wet mid-latitudes, dry poles.
     static readonly (float lat, float rain)[] RainBands =
         { (0, 1.0f), (10, 0.9f), (20, 0.45f), (28, 0.22f), (38, 0.55f), (50, 0.8f), (62, 0.55f), (75, 0.3f), (90, 0.15f) };
 
@@ -129,17 +121,15 @@ public static class WorldGen
     static void Rain(WorldMap w, Noise noise, PlanetType planet)
     {
         float wetness = planet switch { PlanetType.Ignis => 0.35f, PlanetType.Cryos => 0.7f, PlanetType.Thalassia => 1.15f, _ => 1f };
-        // Walk each row downwind, carrying moisture: refilled over sea, drained over land,
-        // dumped on rising ground (orographic rain) which leaves rain shadows behind mountains.
-        // Rates are per original cell, so a finer grid takes smaller steps.
+
         float drain = MathF.Pow(0.955f, 1f / w.Scale), refill = 0.3f / w.Scale;
         for (int y = 0; y < w.H; y++)
         {
             float absLat = MathF.Abs(w.RowLat[y]);
-            int dir = absLat is >= 30f and < 60f ? +1 : -1;   // westerlies blow eastward; trades/polar blow west
+            int dir = absLat is >= 30f and < 60f ? +1 : -1;
             float baseRain = LatRain(absLat) * wetness;
             float moisture = 1f;
-            // two passes so the wrap-around starting point doesn't matter
+
             for (int pass = 0; pass < 2; pass++)
                 for (int s = 0; s < w.W; s++)
                 {
@@ -156,7 +146,7 @@ public static class WorldGen
                         w.Precip[i] = MathF.Max(20f, (2300f * baseRain * (0.2f + 0.8f * moisture) + 1800f * orographic) * jitter);
                     }
                 }
-            // Seasonal swing: strong monsoon-like in the outer tropics, moderate elsewhere.
+
             float season = absLat < 25f ? Math.Clamp((absLat - 3f) / 12f, 0f, 0.85f) : absLat < 45f ? 0.45f : 0.25f;
             for (int x = 0; x < w.W; x++) w.Seasonality[w.Index(x, y)] = season;
         }
@@ -165,7 +155,7 @@ public static class WorldGen
     static void Rivers(WorldMap w)
     {
         int n = w.Count;
-        // Priority-flood: raise pits so every land cell drains to the sea.
+
         var filled = new float[n];
         var done = new bool[n];
         var pq = new PriorityQueue<int, float>();
@@ -188,14 +178,13 @@ public static class WorldGen
             }
         }
 
-        // Accumulate runoff from high to low.
         var order = new int[n];
         for (int i = 0; i < n; i++) order[i] = i;
         Array.Sort(order, (a, b) => filled[b].CompareTo(filled[a]));
         foreach (int i in order)
         {
             if (!w.IsLand(i)) continue;
-            w.Flow[i] += MathF.Max(0f, w.Precip[i] - 250f) / 1000f * w.CellArea;   // evaporation eats the first 250 mm; per original-cell area
+            w.Flow[i] += MathF.Max(0f, w.Precip[i] - 250f) / 1000f * w.CellArea;
             int k = w.Neighbors(i, nb), best = -1;
             float lowest = filled[i];
             for (int j = 0; j < k; j++)
@@ -203,13 +192,11 @@ public static class WorldGen
             if (best >= 0 && w.IsLand(best)) w.Flow[best] += w.Flow[i];
         }
 
-        // Deep depressions in wet land become lakes.
         for (int i = 0; i < n; i++)
             if (w.IsLand(i) && filled[i] - w.Elevation[i] > 25f && w.Precip[i] > 350f)
                 w.Biome[i] = Biome.Lake;
     }
 
-    /// <summary>Cells from the nearest land (0 on land).</summary>
     static int[] DistanceToLand(WorldMap w)
     {
         var dist = new int[w.Count];
@@ -230,7 +217,6 @@ public static class WorldGen
         return dist;
     }
 
-    /// <summary>Label connected land (8-neighbour), so voyages can tell a new continent from home.</summary>
     static void Landmasses(WorldMap w)
     {
         Array.Fill(w.Landmass, -1);
@@ -261,7 +247,7 @@ public static class WorldGen
     static void Biomes(WorldMap w, Noise noise, Rng rng, PlanetType planet)
     {
         Span<int> nb = stackalloc int[8];
-        // Shallow coastal water reaches a little way out from land (about a fifth of an original cell).
+
         var shore = DistanceToLand(w);
         int coastWidth = Math.Max(1, (int)MathF.Round(w.Scale * 0.4f));
         for (int i = 0; i < w.Count; i++)
@@ -286,11 +272,10 @@ public static class WorldGen
                         : (p < 280f ? Biome.HotDesert : p < 950f ? Biome.Savanna : p < 1800f ? Biome.TropicalSeasonalForest : Biome.TropicalRainforest);
         }
 
-        // Volcanoes along the strongest faults.
         var candidates = new List<int>();
         for (int i = 0; i < w.Count; i++)
             if (w.IsLand(i) && w.Biome[i] != Biome.Lake && w.Fault[i] > (planet == PlanetType.Ignis ? 0.6f : 0.75f)) candidates.Add(i);
-        // A volcanic world is studded with them.
+
         int volcanoes = planet == PlanetType.Ignis ? Math.Clamp((int)(candidates.Count * w.CellArea / 12f), 20, 70)
                                                    : Math.Clamp((int)(candidates.Count * w.CellArea / 80f), 4, 14);
         for (int k = 0; k < volcanoes && candidates.Count > 0; k++)
@@ -300,7 +285,7 @@ public static class WorldGen
             candidates.RemoveAt(idx);
             w.Volcano[c] = true;
             w.Biome[c] = Biome.Volcanic;
-            // The volcano's flanks: a ragged disc of volcanic ground as wide as the old single cell.
+
             int r = Math.Max(0, (int)(w.Scale * (planet == PlanetType.Ignis ? 1.2f : 0.5f)));
             for (int dy = -r; dy <= r; dy++)
                 for (int dx = -r; dx <= r; dx++)
@@ -308,7 +293,7 @@ public static class WorldGen
                     int y = w.Y(c) + dy;
                     if (y < 0 || y >= w.H) continue;
                     int f = w.Index(w.X(c) + dx, y);
-                    float ragged = 0.55f + 0.6f * ((uint)f * 2654435761u >> 24) / 255f;   // a fixed per-cell jitter, no draws from rng
+                    float ragged = 0.55f + 0.6f * ((uint)f * 2654435761u >> 24) / 255f;
                     if (dx * dx + dy * dy > (r + 0.5f) * (r + 0.5f) * ragged) continue;
                     if (w.IsLand(f) && w.Biome[f] != Biome.Lake) w.Biome[f] = Biome.Volcanic;
                 }

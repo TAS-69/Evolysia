@@ -1,4 +1,4 @@
-"""Regional materials, food forms, specialist fixtures, nature and transport."""
+
 import numpy as np
 from PIL import Image, ImageDraw
 from .terrain import stable

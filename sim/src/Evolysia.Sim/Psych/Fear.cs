@@ -5,12 +5,6 @@ namespace Evolysia.Sim.Psych;
 
 public enum FearResponse : byte { Avoid, Confront }
 
-/// <summary>
-/// Fear learning. A scare raises fear of that thing (Rescorla-Wagner style) and spreads to its
-/// category in proportion to harm avoidance. Avoiding keeps the fear alive (no exposure). Facing it
-/// and succeeding sharply reduces it, leaves lasting "inoculation", builds confidence and adds a
-/// little thrill-seeking. Facing it and failing sensitises and generalises.
-/// </summary>
 public static class Fear
 {
     public static void Scare(Agent a, Stimulus s, float intensity, int day)
@@ -31,14 +25,12 @@ public static class Fear
         a.Shift(Trait.HarmAvoidance, 0.008f * intensity, day);
     }
 
-    /// <summary>Seeing or hearing about someone else's terror teaches a weaker version of it.</summary>
     public static void Observe(Agent a, Stimulus s, float intensity, int day)
     {
         float k = a.Genome.Has(Quirk.Empath) ? 0.7f : 0.45f;
         Scare(a, s, intensity * k, day);
     }
 
-    /// <summary>Being near the feared thing with nothing bad happening: slow extinction.</summary>
     public static void SafeExposure(Agent a, Stimulus s)
     {
         float rate = 0.012f * (1.1f - a.T(Trait.HarmAvoidance)) * (a.Genome.Has(Quirk.NightTerrors) ? 0.5f : 1f);
@@ -47,10 +39,6 @@ public static class Fear
         a.CategoryFear[c] = MathF.Max(0f, a.CategoryFear[c] - rate * 0.4f);
     }
 
-    /// <summary>
-    /// Courage vs fear at the moment of truth. Need, confidence, allies, persistence, thrill and
-    /// past mastery push towards confronting; learned fear (amplified by harm avoidance) pushes away.
-    /// </summary>
     public static FearResponse Decide(Agent a, Stimulus s, float needUrgency, int allies, float efficacy, Rng rng)
     {
         float ha = a.T(Trait.HarmAvoidance);
@@ -65,7 +53,6 @@ public static class Fear
         return courage + rng.Normal(0f, 0.15f) > fear ? FearResponse.Confront : FearResponse.Avoid;
     }
 
-    /// <summary>Faced the fear and won. Returns true when this was a genuine triumph over fear.</summary>
     public static bool Overcame(Agent a, Stimulus s, Domain d, int day)
     {
         float before = a.EffectiveFear(s);
@@ -75,13 +62,12 @@ public static class Fear
         a.Efficacy[(int)d] = Math.Clamp(a.Efficacy[(int)d] + 0.05f + 0.1f * before, 0f, 1f);
         a.SelfEsteem = Math.Clamp(a.SelfEsteem + 0.05f * (0.5f + before), 0f, 1f);
         a.Feel(Emotion.Pride, 0.3f + 0.4f * before);
-        a.Feel(Emotion.Joy, 0.2f + 0.4f * before);                     // the rush
-        a.Shift(Trait.NoveltySeeking, 0.03f * before, day);            // a taste for thrill
+        a.Feel(Emotion.Joy, 0.2f + 0.4f * before);
+        a.Shift(Trait.NoveltySeeking, 0.03f * before, day);
         a.Shift(Trait.HarmAvoidance, -0.04f * before, day);
         return before > 0.35f;
     }
 
-    /// <summary>Faced it and lost: sensitisation, generalisation, lost confidence, maybe shame.</summary>
     public static void Defeated(Agent a, Stimulus s, Domain d, bool witnessed, int day)
     {
         Scare(a, s, 0.9f, day);
@@ -90,7 +76,6 @@ public static class Fear
         if (witnessed) a.Feel(Emotion.Shame, 0.2f * a.T(Trait.RewardDependence));
     }
 
-    /// <summary>Fled. Relief rewards avoidance a little; going without has a social cost for the approval-hungry.</summary>
     public static void Avoided(Agent a, bool witnessed, int day)
     {
         a.Shift(Trait.HarmAvoidance, 0.003f, day);

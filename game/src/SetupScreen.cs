@@ -4,11 +4,6 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// The new-world screen: seed, planet type (Terra, Ignis, Cryos, Thalassia), how many peoples begin
-/// (1-6), and whether they are scattered at random or placed by hand on a preview of the planet.
-/// The preview is generated in the background whenever the seed or planet changes.
-/// </summary>
 public partial class SetupScreen : Control
 {
     public event Action<SimConfig>? Begin;
@@ -36,9 +31,9 @@ public partial class SetupScreen : Control
     };
 
     public bool CanCancel { set => _cancel.Visible = value; }
-    /// <summary>The planet chosen when the screen opens (set before adding it).</summary>
+
     public PlanetType Planet { set => _planet = value; }
-    /// <summary>The planet preview is drawn (screenshot mode waits for it).</summary>
+
     public bool PreviewReady => _preview != null && _generating == null && _wanted == _shown;
     bool Placing => _place.ButtonPressed;
 
@@ -51,7 +46,6 @@ public partial class SetupScreen : Control
         AddChild(dim);
         dim.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
-        // The panel is centred in a full-window container, so it stays centred at any window size.
         var centre = new CenterContainer { MouseFilter = MouseFilterEnum.Ignore };
         AddChild(centre);
         centre.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -61,10 +55,19 @@ public partial class SetupScreen : Control
         columns.AddThemeConstantOverride("separation", 22);
         panel.AddChild(columns);
 
-        // ---- settings
         var left = new VBoxContainer { CustomMinimumSize = new Vector2(330, 0) };
         left.AddThemeConstantOverride("separation", 10);
         columns.AddChild(left);
+        var logo = new TextureRect
+        {
+            Texture = GD.Load<Texture2D>("res://branding/evolysia-logo.png"),
+            CustomMinimumSize = new Vector2(330, 109),
+            ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+            TextureFilter = TextureFilterEnum.Linear,
+            MouseFilter = MouseFilterEnum.Ignore,
+        };
+        left.AddChild(logo);
         var title = new Label { Text = "A new world" };
         title.AddThemeFontSizeOverride("font_size", 24);
         title.AddThemeColorOverride("font_color", Palette.Divine);
@@ -145,7 +148,6 @@ public partial class SetupScreen : Control
         actions.AddChild(_begin);
         left.AddChild(actions);
 
-        // ---- the planet
         var right = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         right.AddThemeConstantOverride("separation", 8);
         columns.AddChild(right);
@@ -180,7 +182,7 @@ public partial class SetupScreen : Control
 
     public override void _Process(double delta)
     {
-        // One preview at a time, in the background; the latest wish wins.
+
         if (_generating == null && _wanted != _shown)
         {
             var (seed, planet) = _wanted;
@@ -202,7 +204,6 @@ public partial class SetupScreen : Control
         }
     }
 
-    /// <summary>The planet as a small map: biome colours, a little shading for relief.</summary>
     static ImageTexture Paint(WorldMap w)
     {
         var image = Image.CreateEmpty(w.W, w.H, false, Image.Format.Rgb8);
@@ -268,7 +269,6 @@ public partial class SetupScreen : Control
     }
 }
 
-/// <summary>Where the placed peoples will wake on the setup map: numbered rings in distinct colours.</summary>
 public partial class SetupMarkers : Control
 {
     public Func<(WorldMap? map, IReadOnlyList<int> placed, bool show)>? Source;

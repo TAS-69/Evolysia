@@ -51,7 +51,6 @@ public class PsychologyTests
         Assert.True(confronter.T(Trait.NoveltySeeking) > nsBefore, "overcoming fear adds a taste for thrill");
         Assert.True(confronter.Efficacy[(int)Domain.Hunting] > effBefore);
 
-        // Inoculated: the same scare later lands softer than it did the first time.
         var naive = Person(ha: 0.7f);
         Fear.Scare(naive, Stimulus.Bear, 0.9f, Day);
         Fear.Scare(confronter, Stimulus.Bear, 0.9f, Day);
@@ -101,8 +100,8 @@ public class PsychologyTests
     }
 
     [Theory]
-    [InlineData(0.9f, 0.1f, 0.2f, PivotChoice.Conform)]     // approval-bound, unsure, gives up easily
-    [InlineData(0.1f, 0.9f, 0.9f, PivotChoice.DoubleDown)]  // independent, self-directed, stubborn
+    [InlineData(0.9f, 0.1f, 0.2f, PivotChoice.Conform)]
+    [InlineData(0.1f, 0.9f, 0.9f, PivotChoice.DoubleDown)]
     public void Pivot_follows_personality(float rd, float sd, float ps, PivotChoice expected)
     {
         var rng = new Rng(11);

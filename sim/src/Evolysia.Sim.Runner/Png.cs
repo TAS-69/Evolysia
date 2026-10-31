@@ -2,7 +2,6 @@ using System.IO.Compression;
 
 namespace Evolysia.Sim.Runner;
 
-/// <summary>Minimal RGB PNG encoder (no dependencies), for world map snapshots.</summary>
 static class Png
 {
     public static void Write(string path, int width, int height, byte[] rgb, int scale = 1)
@@ -11,7 +10,7 @@ static class Png
         using var raw = new MemoryStream();
         for (int y = 0; y < h; y++)
         {
-            raw.WriteByte(0);   // filter: none
+            raw.WriteByte(0);
             int sy = y / scale;
             for (int x = 0; x < w; x++)
             {
@@ -23,7 +22,7 @@ static class Png
         file.Write(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 });
         var ihdr = new byte[13];
         BE(ihdr, 0, w); BE(ihdr, 4, h);
-        ihdr[8] = 8; ihdr[9] = 2;   // 8-bit RGB
+        ihdr[8] = 8; ihdr[9] = 2;
         Chunk(file, "IHDR", ihdr);
         using (var z = new MemoryStream())
         {

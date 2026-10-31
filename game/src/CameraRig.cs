@@ -2,11 +2,10 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>Right/middle-drag or WASD to pan, wheel to zoom towards the cursor.</summary>
 public partial class CameraRig : Camera2D
 {
     public Vector2 WorldSize;
-    public const float MinZoom = 0.2f, MaxZoom = 16f;   // at 0.2 the whole planet fits; the view stays within the three drawn copies
+    public const float MinZoom = 0.2f, MaxZoom = 16f;
     bool _dragging;
 
     public event Action? Changed;
@@ -21,7 +20,7 @@ public partial class CameraRig : Camera2D
                 var before = GetGlobalMousePosition();
                 float z = Math.Clamp(Zoom.X * (mb.ButtonIndex == MouseButton.WheelUp ? 1.15f : 1f / 1.15f), MinZoom, MaxZoom);
                 Zoom = Vector2.One * z;
-                Position += before - GetGlobalMousePosition();   // keep the point under the cursor fixed
+                Position += before - GetGlobalMousePosition();
                 ClampPosition();
                 GetViewport().SetInputAsHandled();
             }
@@ -55,10 +54,6 @@ public partial class CameraRig : Camera2D
         ClampPosition();
     }
 
-    /// <summary>
-    /// East-west the planet wraps: pan forever, with the position folded back into one planet-width
-    /// (the copies drawn on each side make the jump invisible). North-south the view stays on the planet.
-    /// </summary>
     void ClampPosition()
     {
         var half = GetViewportRect().Size / (2f * Zoom.X);

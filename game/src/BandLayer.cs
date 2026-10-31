@@ -5,24 +5,16 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// Draws every band at its cell. Zoomed out: wandering bands as circles, settled villages as squares,
-/// coloured by culture and sized by population. Zoomed in: the band's camp or village and its
-/// people going about their day (<see cref="Camps"/>), and the wildlife around them
-/// (<see cref="Wildlife"/>), in Codex's art at the density the zoom calls for (16, 32 or 64 px per
-/// cell). Notable events flash as expanding rings so the eye finds where history is happening.
-/// </summary>
 public partial class BandLayer : Node2D
 {
     public Simulation? Sim;
     public int SelectedBandId = -1;
     public float CameraZoom = 1f;
 
-    /// <summary>Zoom from which camps are drawn as art rather than markers.</summary>
     public const float CampZoom = 1.8f;
-    /// <summary>The camera's view in world units (centre copy), for culling.</summary>
+
     public Rect2 View;
-    /// <summary>The terrain, whose plants stand in front of anything rooted behind them.</summary>
+
     public TileView? Tiles;
 
     readonly List<(Vector2 pos, Color color, double born)> _pings = new();
@@ -35,7 +27,7 @@ public partial class BandLayer : Node2D
 
     public override void _Ready()
     {
-        // Crisp art at any zoom (see pixel.gdshader); markers and lines draw unaffected.
+
         Material = new ShaderMaterial { Shader = GD.Load<Shader>("res://shaders/pixel.gdshader") };
         TextureFilter = TextureFilterEnum.Linear;
     }
@@ -44,13 +36,12 @@ public partial class BandLayer : Node2D
     {
         var w = Sim!.World;
         if (Sim.Day != _spreadDay || Sim.Bands.Count != _spreadCount) Spread();
-        // A little stable jitter, so bands don't sit on a grid.
+
         float jx = ((band.Id * 7919) % 100) / 100f - 0.5f, jy = ((band.Id * 104729) % 100) / 100f - 0.5f;
         var centre = new Vector2((w.X(band.Cell) + 0.5f + jx * 0.4f) * Main.CellPx, (w.Y(band.Cell) + 0.5f + jy * 0.4f) * Main.CellPx);
         return centre + _spread.GetValueOrDefault(band.Id);
     }
 
-    /// <summary>Bands sharing a cell stand apart in a ring, so their camps don't pile up.</summary>
     void Spread()
     {
         _spreadDay = Sim!.Day;
@@ -70,7 +61,6 @@ public partial class BandLayer : Node2D
 
     public static float Radius(Band band) => 0.9f + MathF.Sqrt(band.Members.Count) * 0.28f;
 
-    /// <summary>How far from its position a band can be clicked: its marker, or its camp when zoomed in.</summary>
     float HitRadius(Band band) => ShowCamps ? (band.Sedentary ? 18f : 8f) : Radius(band);
 
     public void Ping(Vector2 pos, Color color) => _pings.Add((pos, color, Time.GetTicksMsec() / 1000.0));
@@ -78,13 +68,11 @@ public partial class BandLayer : Node2D
     public override void _Process(double delta)
     {
         if (_pings.Count > 0) QueueRedraw();
-        if (ShowCamps) QueueRedraw();   // people walk and animals graze every frame
+        if (ShowCamps) QueueRedraw();
     }
 
-    /// <summary>Width of the planet in world units; everything repeats every WrapWidth east-west.</summary>
     public float WrapWidth => Sim == null ? 0f : Sim.World.W * Main.CellPx;
 
-    /// <summary>The copy of a world position nearest to <paramref name="near"/> (e.g. the camera).</summary>
     public Vector2 NearestCopy(Vector2 pos, Vector2 near)
     {
         float w = WrapWidth;
@@ -99,7 +87,7 @@ public partial class BandLayer : Node2D
         float outline = 1f / MathF.Max(CameraZoom, 0.5f);
         double now = Time.GetTicksMsec() / 1000.0;
         _pings.RemoveAll(p => now - p.born > 2.5);
-        if (ShowCamps) DrawCamps(outline, now);   // placed at the copy nearest the view already
+        if (ShowCamps) DrawCamps(outline, now);
         foreach (float offset in new[] { -WrapWidth, 0f, WrapWidth })
         {
             DrawSetTransform(new Vector2(offset, 0f));
@@ -145,8 +133,6 @@ public partial class BandLayer : Node2D
         }
     }
 
-    // ---- camps ----------------------------------------------------------------------------------
-
     void DrawCamps(float outline, double now)
     {
         _sprites.Clear();
@@ -162,13 +148,13 @@ public partial class BandLayer : Node2D
         Camps.AddStructures(Sim, View, density, now, SelectedBandId, _sprites);
         Wildlife.Add(Sim, View, density, now, _sprites);
         AddOccluders(density);
-        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));   // y-sort by base: nearer things overlap farther ones
+        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));
         foreach (var s in _sprites)
             if (s.Shadow > 0f) DrawTextureRect(ShadowTexture, new Rect2(s.Foot - new Vector2(s.Shadow, s.Shadow * 0.35f), new Vector2(s.Shadow * 2f, s.Shadow * 0.7f)), false, new Color(0f, 0f, 0f, 0.16f));
         foreach (var s in _sprites)
         {
             var size = s.Source.Size * s.PixelSize;
-            var pivot = s.Flip ? new Vector2(s.Source.Size.X - s.Pivot.X, s.Pivot.Y) : s.Pivot;   // mirror about the foot
+            var pivot = s.Flip ? new Vector2(s.Source.Size.X - s.Pivot.X, s.Pivot.Y) : s.Pivot;
             var topLeft = s.Foot - pivot * s.PixelSize;
             var rect = s.Flip ? new Rect2(topLeft.X + size.X, topLeft.Y, -size.X, size.Y) : new Rect2(topLeft, size);
             DrawTextureRectRegion(s.Texture, rect, s.Source, s.Modulate);
@@ -180,11 +166,6 @@ public partial class BandLayer : Node2D
     readonly Dictionary<(int, int), List<TileBake.Plant>> _plantsByCell = new();
     readonly HashSet<(int, int)> _occluding = new();
 
-    /// <summary>
-    /// Plants are baked into the terrain, under every sprite. Those rooted further south than a
-    /// person, animal or object and overlapping it are added again as sprites, so the y-sort puts
-    /// them in front, coloured exactly as the terrain draws them (from the cell they stand on).
-    /// </summary>
     void AddOccluders(int density)
     {
         if (Tiles?.Input is not { } input) return;
@@ -236,7 +217,6 @@ public partial class BandLayer : Node2D
 
     static ImageTexture? _shadow;
 
-    /// <summary>A soft-edged white ellipse, tinted and stretched under everything that stands on the ground.</summary>
     static ImageTexture ShadowTexture
     {
         get
@@ -270,7 +250,6 @@ public partial class BandLayer : Node2D
 
     Vector2 CellCenter(int cell) => new Vector2(Sim!.World.X(cell) + 0.5f, Sim.World.Y(cell) + 0.5f) * Main.CellPx;
 
-    /// <summary>Destination as seen from the origin, taking the short way round the planet.</summary>
     Vector2 Unwrapped(Vector2 from, Vector2 to)
     {
         float width = Sim!.World.W * Main.CellPx;
@@ -279,7 +258,6 @@ public partial class BandLayer : Node2D
         return to;
     }
 
-    /// <summary>Sea routes: recent voyages bright, older ones fading into a map of where people went.</summary>
     void DrawVoyages(float line)
     {
         foreach (var v in Sim!.Voyages)
@@ -289,16 +267,16 @@ public partial class BandLayer : Node2D
             bool lost = v.BandId < 0 || v.Sailed - v.Lost <= 0;
             var a = CellCenter(v.FromCell);
             var b = Unwrapped(a, CellCenter(v.ToCell));
-            var mid = (a + b) / 2 + (b - a).Orthogonal() * 0.18f;   // a gentle arc
+            var mid = (a + b) / 2 + (b - a).Orthogonal() * 0.18f;
             var color = new Color(lost ? Palette.Terracotta : Palette.River.Lightened(0.35f), alpha);
             const int segments = 16;
-            int drawn = lost ? segments / 2 : segments;              // lost voyages end at sea
+            int drawn = lost ? segments / 2 : segments;
             Vector2 prev = a;
             for (int i = 1; i <= drawn; i++)
             {
                 float t = i / (float)segments;
                 var p = a.Lerp(mid, t).Lerp(mid.Lerp(b, t), t);
-                if (i % 2 == 1) DrawLine(prev, p, color, line * (years < 2f ? 1.6f : 1f));   // dashed
+                if (i % 2 == 1) DrawLine(prev, p, color, line * (years < 2f ? 1.6f : 1f));
                 prev = p;
             }
             if (lost) { DrawLine(prev + new Vector2(-1, -1), prev + new Vector2(1, 1), color, line * 1.5f); DrawLine(prev + new Vector2(-1, 1), prev + new Vector2(1, -1), color, line * 1.5f); }
@@ -306,7 +284,6 @@ public partial class BandLayer : Node2D
         }
     }
 
-    /// <summary>For the selected band: the shores its scouts have sighted across the sea.</summary>
     void DrawKnownShores(Band band, float line)
     {
         var from = BandPosition(band);

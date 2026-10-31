@@ -1,4 +1,4 @@
-"""Labelled animal animations, native silhouettes and coat lookup galleries."""
+
 import json
 import math
 import numpy as np

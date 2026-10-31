@@ -5,10 +5,6 @@ using Evolysia.Sim.Society;
 
 namespace Evolysia.Narration;
 
-/// <summary>
-/// Numeric state -> the short adjective sheet small models act on well. The phrasing matches
-/// tools/llm_lab/lablib/personas.py, which is what the model choice was evaluated against.
-/// </summary>
 public static class CharacterSheet
 {
     static readonly Dictionary<Trait, (string high, string low)> Phrases = new()
@@ -41,7 +37,6 @@ public static class CharacterSheet
         Activity.CareChild => "caregiver", _ => "storyteller",
     };
 
-    /// <summary>Full sheet: who they are, how they feel, what weighs on them, what they believe.</summary>
     public static string Build(Simulation sim, Agent a)
     {
         int day = a.Alive ? sim.Day : a.DeathDay;

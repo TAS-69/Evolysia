@@ -1,10 +1,5 @@
 namespace Evolysia.Sim.Core;
 
-/// <summary>
-/// PCG32. Small, fast and bit-identical across platforms and .NET versions, which System.Random
-/// does not promise. Every random decision in the simulation goes through one of these, so a world
-/// seed reproduces a run exactly.
-/// </summary>
 public sealed class Rng
 {
     ulong _state;
@@ -18,7 +13,6 @@ public sealed class Rng
         NextUInt();
     }
 
-    /// <summary>An independent stream derived from a seed and a key (e.g. "worldgen").</summary>
     public static Rng Derive(ulong seed, ulong key) => new(Mix(seed ^ Mix(key)), Mix(key + 1));
 
     public static ulong Mix(ulong z)
@@ -38,10 +32,8 @@ public sealed class Rng
         return (xorShifted >> rot) | (xorShifted << ((-rot) & 31));
     }
 
-    /// <summary>Uniform in [0, 1).</summary>
     public float NextFloat() => (NextUInt() >> 8) * (1f / 16777216f);
 
-    /// <summary>Uniform integer in [0, max).</summary>
     public int Next(int max) => max <= 0 ? 0 : (int)(((ulong)NextUInt() * (ulong)max) >> 32);
 
     public int Range(int min, int maxExclusive) => min + Next(maxExclusive - min);
@@ -54,14 +46,12 @@ public sealed class Rng
         return mean + sd * MathF.Sqrt(-2f * MathF.Log(u1)) * MathF.Cos(2f * MathF.PI * u2);
     }
 
-    /// <summary>Beta(2,2): the median of three uniforms. Used to blend parents' genes.</summary>
     public float Beta22()
     {
         float a = NextFloat(), b = NextFloat(), c = NextFloat();
         return MathF.Max(MathF.Min(a, b), MathF.Min(MathF.Max(a, b), c));
     }
 
-    /// <summary>Beta(k,k) for k &lt; 1 via inverse-power trick; pushes values towards 0 and 1.</summary>
     public float Spread(float k)
     {
         float u = NextFloat();
@@ -71,7 +61,6 @@ public sealed class Rng
 
     public T Pick<T>(IReadOnlyList<T> list) => list[Next(list.Count)];
 
-    /// <summary>Index chosen with probability proportional to weights (all &gt;= 0).</summary>
     public int Weighted(ReadOnlySpan<float> weights)
     {
         float total = 0f;
@@ -86,7 +75,6 @@ public sealed class Rng
         return weights.Length - 1;
     }
 
-    /// <summary>Softmax sample over scores at the given temperature.</summary>
     public int Softmax(ReadOnlySpan<float> scores, float temperature)
     {
         Span<float> w = stackalloc float[scores.Length];

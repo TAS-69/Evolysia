@@ -1,6 +1,6 @@
 # Detailed civilisation art
 
-Close views use artwork authored at 64 pixels per tile, with 32 and 16 pixel density levels. The logical world grid stays at 16 units per cell. Existing asset IDs, files and palette slots remain unchanged. This additive sample supplies art and integration contracts; it does not implement civilisation gameplay.
+Close views use artwork authored at 64 pixels per tile, with 32 and 16 pixel density levels. The logical world grid stays at 16 units per cell. Existing asset IDs, files and palette slots remain unchanged. This kit supplies art and integration contracts. The client now uses its multi-density terrain, modular houses, wardrobe and representative storage; see [current game coverage](../../docs/wiki/Art-and-customisation.md).
 
 ```
 python tools/assetgen/build.py civilisation wardrobe landscape
@@ -69,4 +69,4 @@ Start with `civilisation_zoom.png`, `civilisation_overview.png`, `civilisation_s
 
 Review `wardrobe_outfits_1.png`, `wardrobe_outfits_2.png`, `wardrobe_dyes.png` and the wardrobe part/action sheets for character customisation. `civilisation_regions.png`, `civilisation_resources.png` and the transport sheets cover regional construction and goods. `landscape_random_tilings.png` and the per-material sheets show terrain, cliffs, variants and every animated frame.
 
-Validation covers the inventory, palette/index agreement, hard alpha, colour budgets, density transforms, unique animation frames, compatible wall edges, seeded random tilings, surface seams, container fill changes, covered-resource occlusion, mixed inventories, persistent-item conservation, room access and the 8 MB preview limit. Game camera, rendering, navigation, jobs, production chains, inventories and logistics are outside this asset-only change.
+Validation covers the inventory, palette/index agreement, hard alpha, colour budgets, density transforms, unique animation frames, compatible wall edges, seeded random tilings, surface seams, container fill changes, covered-resource occlusion, mixed inventories, persistent-item conservation, room access and the 8 MB preview limit. These checks validate asset contracts. They do not certify the complete gameplay catalogue, independent container inventories or cargo logistics.

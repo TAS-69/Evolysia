@@ -6,28 +6,18 @@ using Evolysia.Sim.World;
 
 namespace Evolysia.Sim;
 
-/// <summary>
-/// The whole world, stepped one day at a time. Engine-agnostic: a renderer reads the public
-/// state; nothing here knows about Godot or the LLM.
-/// </summary>
 public sealed partial class Simulation
 {
     public readonly SimConfig Config;
     public readonly WorldMap World;
     readonly Rng _mainRng;
-    [ThreadStatic] static Rng? t_rng;               // a band's own stream while it lives its day
-    [ThreadStatic] static DayBuffer? t_buffer;      // global effects waiting for the ordered commit
+    [ThreadStatic] static Rng? t_rng;
+    [ThreadStatic] static DayBuffer? t_buffer;
 
-    /// <summary>
-    /// The random stream for whatever is running now: a band's own stream (seed, band, day) inside
-    /// band days, the world stream everywhere else. That is what makes results independent of
-    /// thread count and scheduling.
-    /// </summary>
     public Rng Rng => t_rng ?? _mainRng;
 
     sealed class DayBuffer { public readonly List<Action> Deferred = new(); public readonly long[] Ticks = new long[8]; }
 
-    /// <summary>Run now, or, inside a parallel band day, after all bands finish (in band order).</summary>
     internal void Later(Action action)
     {
         if (t_buffer is { } b) b.Deferred.Add(action);
@@ -39,11 +29,11 @@ public sealed partial class Simulation
     public int Year => Day / SimConfig.DaysPerYear;
 
     public readonly Dictionary<int, Agent> Living = new();
-    /// <summary>The dead still remembered: everyone for 25 years, the notable for good (see PruneDead).</summary>
+
     public readonly Dictionary<int, Agent> Dead = new();
-    /// <summary>Every death, compactly: (id, day, age in years, cause, sex, generation).</summary>
+
     public readonly List<(int Id, int Day, float Age, DeathCause Cause, Sex Sex, int Generation)> DeathLog = new();
-    /// <summary>Everyone who has ever lived.</summary>
+
     public int EverLived => _nextAgent - 1;
     public readonly SortedDictionary<int, Band> Bands = new();
     public readonly Dictionary<int, Culture> Cultures = new();
@@ -60,7 +50,7 @@ public sealed partial class Simulation
     {
         Config = config;
         World = WorldGen.Generate(config);
-        _mainRng = Rng.Derive(config.Seed, 0x4C494645UL); // "LIFE"
+        _mainRng = Rng.Derive(config.Seed, 0x4C494645UL);
         _climateNoise = new Noise(Rng.Derive(config.Seed, 0x434C494DUL));
         Ecology.NewYear(World, _climateNoise, 0);
         SeedPopulation();
@@ -68,8 +58,6 @@ public sealed partial class Simulation
 
     public Agent? Find(int id) => Living.TryGetValue(id, out var a) ? a : Dead.TryGetValue(id, out var d) ? d : null;
     public Band? BandOf(Agent a) => Bands.TryGetValue(a.BandId, out var b) ? b : null;
-
-    // ------------------------------------------------------------------ setup
 
     void SeedPopulation()
     {
@@ -81,7 +69,7 @@ public sealed partial class Simulation
                 good.Add(i);
         if (good.Count == 0)
             for (int i = 0; i < w.Count; i++) if (w.IsLand(i) && w.PlantK[i] > 0f) good.Add(i);
-        // People begin on great landmasses, not stray islands (unless islands are all there is).
+
         int biggest = w.LandmassSize.Length == 0 ? 0 : w.LandmassSize.Max();
         var mainland = good.Where(i => w.Landmass[i] >= 0 && w.LandmassSize[w.Landmass[i]] >= biggest / 3).ToList();
         if (mainland.Count > 0 && Config.Planet != PlanetType.Thalassia) good = mainland;
@@ -91,7 +79,7 @@ public sealed partial class Simulation
         var usedHues = new HashSet<int>();
         for (int t = 0; t < homes.Count; t++)
         {
-            // Each tribe is its own people: its own language, colours and ways.
+
             var culture = NewCulture(null);
             for (int k = 0; k < 12 && !usedHues.Add(culture.Hue); k++) culture.Hue = (culture.Hue + 5) % 12;
             int home = homes[t];
@@ -102,10 +90,6 @@ public sealed partial class Simulation
         }
     }
 
-    /// <summary>
-    /// Where each tribe begins: the cells the player placed them on (moved to the nearest liveable
-    /// land), or else spread well apart across good land at random.
-    /// </summary>
     List<int> TribeHomes(List<int> good)
     {
         var w = World;
@@ -120,7 +104,7 @@ public sealed partial class Simulation
         homes.Add(good[Rng.Next(Math.Min(30, good.Count))]);
         while (homes.Count < tribes)
         {
-            // The farthest of a few dozen good places from every tribe already placed.
+
             int best = good[0];
             int bestD = -1;
             for (int k = 0; k < 60; k++)
@@ -148,7 +132,7 @@ public sealed partial class Simulation
                 a.Gear.Add(new Economy.Item(Economy.Crafts.Item(Economy.ItemSlot.Tool, "knife")!.Index));
                 adults.Add(a);
             }
-            // Pair some adults and give them children.
+
             var women = adults.Where(a => a.Sex == Sex.Female).ToList();
             var men = adults.Where(a => a.Sex == Sex.Male).ToList();
             for (int k = 0; k < Math.Min(women.Count, men.Count) && k < 5; k++) Bond(women[k], men[k], 0);
@@ -225,7 +209,6 @@ public sealed partial class Simulation
         return a;
     }
 
-    /// <summary>Lists someone as a member (once: a person living their day twice would be fed, aged and birthed twice).</summary>
     internal static void AddMember(Band band, int id)
     {
         if (!band.Members.Contains(id)) band.Members.Add(id);
@@ -239,9 +222,6 @@ public sealed partial class Simulation
         x.Feel(Emotion.Love, 0.6f); y.Feel(Emotion.Love, 0.6f);
     }
 
-    // ------------------------------------------------------------------ main loop
-
-    /// <summary>Wall-clock seconds spent per phase (for tuning performance).</summary>
     public readonly Dictionary<string, double> Profile = new();
     readonly System.Diagnostics.Stopwatch _watch = new();
 
@@ -275,12 +255,6 @@ public sealed partial class Simulation
         if (WorldMap.DayOfYear(Day) == 0) Timed("stats", () => Stats.CloseYear(this));
     }
 
-    /// <summary>
-    /// Every band lives its day. Bands sharing a cell share its food, so they run together in id
-    /// order; different cells run in parallel. Each band draws from its own random stream and
-    /// defers anything global (births, death bookkeeping, chronicle, cross-band acts), committed
-    /// afterwards in a fixed order, so 1 thread and 16 threads give the identical history.
-    /// </summary>
     void BandDays()
     {
         var groups = Bands.Values.Where(b => !b.Disbanded).GroupBy(b => b.Cell).Select(g => g.ToArray()).ToArray();
@@ -307,8 +281,7 @@ public sealed partial class Simulation
             for (int gi = 0; gi < groups.Length; gi++) Live(gi);
         else
         {
-            // Heaviest groups first, handed out one at a time (big villages would otherwise leave
-            // threads idle). Order of work doesn't matter: buffers are committed by group index.
+
             var heaviestFirst = Enumerable.Range(0, groups.Length).OrderByDescending(gi => groups[gi].Sum(b => b.Members.Count)).ToArray();
             Parallel.ForEach(System.Collections.Concurrent.Partitioner.Create(heaviestFirst, System.Collections.Concurrent.EnumerablePartitionerOptions.NoBuffering),
                 new ParallelOptions { MaxDegreeOfParallelism = Config.Threads }, Live);
@@ -350,12 +323,6 @@ public sealed partial class Simulation
         CultureDrift();
     }
 
-    // ------------------------------------------------------------------ life and death
-
-    /// <summary>
-    /// Memory stays bounded however many generations pass: the ordinary dead are forgotten 25 years
-    /// on; leaders, the renowned and parents of the living are kept.
-    /// </summary>
     void PruneDead()
     {
         int cutoff = Day - 25 * SimConfig.DaysPerYear;
@@ -368,7 +335,7 @@ public sealed partial class Simulation
             if (!parent) forget.Add(id);
         }
         foreach (int id in forget) Dead.Remove(id);
-        // The living let go of the dead and of acquaintances that never came to anything.
+
         var drop = new List<int>();
         foreach (var a in Living.Values)
         {
@@ -424,7 +391,7 @@ public sealed partial class Simulation
             Living.Remove(a.Id);
             Dead[a.Id] = a;
             DeathLog.Add((a.Id, a.DeathDay, (a.DeathDay - a.BirthDay) / (float)SimConfig.DaysPerYear, a.DeathCause, a.Sex, a.Generation));
-            // What they carried and owned goes to their people.
+
             if (Bands.TryGetValue(a.BandId, out var heirs))
             {
                 if (a.Food > 0f || a.Pack.Bulk > 0f) a.Pack.MoveAllTo(heirs.Stores);
@@ -432,7 +399,7 @@ public sealed partial class Simulation
             }
             a.DropPack();
             a.Gear.Clear();
-            a.Relations.Clear();      // keep the archive light
+            a.Relations.Clear();
             a.Memes.Clear();
             if (Bands.TryGetValue(a.BandId, out var band))
             {
@@ -467,7 +434,7 @@ public sealed partial class Simulation
         };
         child.Name = Names.Make(Cultures[band.CultureId].Syllables, Rng);
         for (int d = 0; d < Ids.DomainCount; d++) child.Efficacy[d] = 0.1f;
-        // Upbringing: character starts tilted towards the parents' lived character, beliefs too.
+
         for (int t = (int)Trait.SelfDirectedness; t <= (int)Trait.SelfTranscendence; t++)
         {
             float parents = (mother.T((Trait)t) + father.T((Trait)t)) * 0.5f;

@@ -39,8 +39,8 @@ public class WorldAndGeneticsTests
             firstGene.Add(child.Genes[0]);
             if (child.Has(Quirk.Hardy)) hardyKids++;
         }
-        Assert.InRange(firstGene.Average(), 0.46f, 0.54f);   // centred on the parents' midpoint
-        Assert.InRange(hardyKids, 150, 260);                 // ~50% inherit a parent's quirk (plus rare new ones)
+        Assert.InRange(firstGene.Average(), 0.46f, 0.54f);
+        Assert.InRange(hardyKids, 150, 260);
     }
 
     [Fact]

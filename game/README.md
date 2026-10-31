@@ -1,14 +1,14 @@
-# Evolysia game client (step 3)
+# Evolysia game client
 
 A Godot 4.7 **.NET** project that hosts the simulation from `../sim` and lets you watch and inspect the
-world (800 x 400 cells). Zoomed in, it draws Codex's art from `../assets` at the density the zoom calls for:
+world (800 x 400 cells). Zoomed in, it draws the original artwork from `../assets` at the density the zoom calls for:
 16 px per cell, then 32 and 64 px as you close in (civilisation `render_contract.json`: up to 24 screen px per cell,
 up to 48, beyond). Everything shown comes from the simulation: the woods people have felled, the boulders they've
 broken, their fields and crops, every structure they've built, their animals, and each person's own clothes and
 tools. Zoomed out, and for the data overlays, it shows a smooth procedural map.
 
 ## Run it
-The .NET build of Godot is in the repo root (`Godot_v4.7.2-stable_mono_win64`). The standard build next to it can't run C#.
+Install Godot 4.7.2 .NET. A local download may be kept at `Godot_v4.7.2-stable_mono_win64`; it is ignored by Git. The standard engine cannot run C#. See the [source build guide](../docs/wiki/Building-and-testing.md).
 
 - **Editor:** open `Godot_v4.7.2-stable_mono_win64.exe`, choose Import, select `game/project.godot`, then press F5.
 - **Directly:**
@@ -49,7 +49,7 @@ Links in the chronicle and inspector jump to that band or person. Click a panel'
 ## What's on screen
 The planet **wraps east-west**, as the simulation does: pan forever in either direction and the far coasts and sea routes continue seamlessly. Terrain, markers, routes and effects are drawn on three copies, and the camera folds back into one planet-width, so the jump is invisible.
 
-- **Planet, zoomed in:** Codex's landscape tiles at 16, 32 or 64 px, baked in 512 px chunks in the background around the view (a chunk rebakes when its patch of world changes). Each cell's biome, soil patch and shore pick one of 56 materials, blended on a dual grid. Water and lava animate. Rivers use the connection sets, sized by flow. Plants are scattered by biome (flora family at 16 px, civilisation detail art above) and coloured from the cell they stand on, through the nature LUT for its biome and season. Felled trees, quarried boulders and built-on cells show as gaps; fields show their crop and growth. Plants rooted in front of a person, animal or building are drawn over it.
+- **Planet, zoomed in:** landscape tiles at 16, 32 or 64 px, baked in 512 px chunks in the background around the view (a chunk rebakes when its patch of world changes). Each cell's biome, soil patch and shore pick one of 56 materials, blended on a dual grid. Water and lava animate. Rivers use the connection sets, sized by flow. Plants are scattered by biome (flora family at 16 px, civilisation detail art above) and coloured from the cell they stand on, through the nature LUT for its biome and season. Felled trees, quarried boulders and built-on cells show as gaps; fields show their crop and growth. Plants rooted in front of a person, animal or building are drawn over it.
 - **Planet, zoomed out:** colour comes from biome, today's plant growth and the season, plus hillshading, rivers and ash. Coastlines are smoothed from interpolated elevation.
 - **Bands, zoomed in:** every structure the simulation has sited, drawn by kind and state: dwellings composited from regional wall, floor and roof pieces (with scaffolding while they go up, damage, ruins and burns after); hearths that burn while there is firewood; stores showing what the band holds; workshops, shrines, pens, palisades that join up, boats and carts. The selected village, at 64 px, shows its houses roofless. Every member walks between home and the tile they work today, in the wardrobe pieces they own, holding the tool they use, animated by what they are doing. Herds graze round their pens; wild animals keep their distance.
 - **Bands, zoomed out:** circles are wandering bands, squares are farming villages. Colour is culture, size is population, and sick bands turn yellow-green.
@@ -74,7 +74,7 @@ The bar under the top bar holds your powers in three groups: **kind** ones in go
 - **Answering:** use the matching power on their band, or strike their enemies for protection. Answered prayers deepen faith and raise the priest's standing.
 - **Ignoring:** silence breeds doubt, and faith in you fades like any belief unless something renews it.
 - **What it sets off:** each act is announced in the chronicle, and believers' revelations, prayers, thanks and dreams are voiced by the narrator.
-- **Replay:** every act is logged with its day (`Simulation.ActionLog`), so seed plus log replays the same history.
+- **Replay:** every act is logged with its day (`Simulation.ActionLog`), so seed plus action and accepted-decision logs replay the same history.
 
 Demo: `--demo gods` heals and blesses the largest band until it names you, then sends its leader a peace dream.
 
@@ -96,8 +96,8 @@ How it works:
 A local model voices notable moments: pivots after rejection, myths, inventions, schisms, overcome fears, killings and notable deaths.
 - **Starting it:** start the model with the **Start model** button in the top bar, or run `python tools/llm_lab/lab.py serve`. This uses your lab profile (default `lite`: Qwen3.5-4B on GPU, 0.8B helper on CPU). The top bar shows *Voices on/offline*; hover it for throughput.
 - **Where voices appear:** the **Voices** panel (inner thought in italics, speech in quotes, new beliefs and rituals highlighted), speech bubbles over the band on the map, and an **Inner voice** section in the person inspector.
-- **What gets voiced:** a bounded, prioritised queue (`Evolysia.Narration.Narrator`). Schisms and myths outrank routine moments. Whoever you have selected (+4), their band (+2) and anything on screen (+1) jump the queue. Stale moments lose priority, and the least important are dropped. At 1×-3× nearly everything is voiced; at 10× and above only the big moments are.
-- **Narration never changes the simulation.** The model voices outcomes the simulation already decided, so worlds stay deterministic.
+- **What gets voiced:** a bounded, prioritised queue (`Evolysia.Narration.Narrator`). Schisms and myths outrank routine moments. Whoever you have selected (+4), their band (+2) and anything on screen (+1) jump the queue. Stale moments lose priority, and the least important are dropped. Coverage depends on server throughput. At high speeds the bounded queue skips more moments.
+- Ordinary narration describes decided outcomes. With **Minds** enabled, valid choices for pending pivotal decisions can change the simulation; those accepted choices must be included when replaying a history. Late or invalid replies fall back to instinct.
 - Add `--select voice --wait-voices N` to the screenshot flags to capture voices.
 
 ## Structure (`src/`)
@@ -126,4 +126,4 @@ A local model voices notable moments: pivots after rejection, myths, inventions,
 - Art still missing at some densities is enlarged from 16 px (rivers, early structures such as totems and storage pits, crops other than grain); cliffs, territory borders and roads aren't drawn yet.
 - Spatially index structures for drawing when worlds hold tens of thousands of them.
 - Optionally step the simulation on a worker thread. Each day already runs across cores (`SimConfig.Threads`, cores minus 2 in the game), so the UI stays responsive without it.
-- Swap power-bar text for the Codex icon set (art guide section 11.3), and add Raise/Lower land, Possess and Follow.
+- Swap power-bar text for the final icon set (art guide section 11.3), and add Raise/Lower land, Possess and Follow.

@@ -2,50 +2,37 @@ using Evolysia.Sim.Core;
 
 namespace Evolysia.Sim.Agents;
 
-/// <summary>
-/// Every technique people can discover, from knapping stone to interplanetary travel. The first 18
-/// are the original set; the rest follow the civilisation catalogue's stages
-/// (assets/civilisation/catalogue.json). There are no eras: anyone who knows a technique's
-/// prerequisites can stumble on it, though harder ones take far longer and need the right
-/// surroundings.
-/// </summary>
 public enum TechId : byte
 {
-    // The original foraging-to-bronze set (ids unchanged).
+
     StoneTools, ControlledFire, Cooking, Spear, HideClothing, Shelter, Baskets, Fishing, Herbalism,
     FoodStorage, Bow, Pottery, Weaving, Boats, Domestication, Agriculture, Copper, Bronze,
-    // Foraging and stonecraft
+
     Woodcutting, Butchery, BoneTools, Cordage, Quarrying, Pigments, Music, Burial, Carving, Drying,
     Tanning, Netting, Rafts, Sledges, Grinding,
-    // Farming villages
+
     Dairy, Beekeeping, Milling, Baking, Brewing, Irrigation, Wells, Orchards, Plough, Thatching,
     Mudbrick, Masonry, Carpentry, Kilns, FiredBrick, Wheel, Sailing, Trade, Writing, Counting,
     Governance, Monarchy, Priesthood, Medicine, Fortification, Armour, Alchemy, Mysticism,
-    // Metals
+
     Charcoal, Iron, Steel, Glass, Mining, Swords, Crossbow, Roads, Riding, Shipbuilding, Schools, Sanitation,
-    // Machines
+
     Machinery, Printing, SteamPower, Railways, PowerLooms, Chemistry, Firearms, Concrete, Hospitals,
-    // Electricity
+
     Electricity, Refrigeration, Telecommunication, Motors, Aviation, SolarPower, Batteries,
-    // Information
+
     Electronics, Computing, Robotics, Recycling, Networks,
-    // Advanced
+
     Biotech, Hydroponics, Fabrication, AdvancedMaterials, FusionPower, Hover, EnergyTools,
-    // Space
+
     Rocketry, LifeSupport, SpaceHabitats, OrbitalIndustry, Interplanetary,
 }
 
-/// <summary>What in a band's surroundings makes a technique likely to occur to someone.</summary>
 public enum Affordance : byte { None, Water, Coast, Forest, Rock, Ore, Clay, Sand, Cold, Hot, Dry, Grass, Settled, Many, Herds, Spirit }
 
-/// <summary>
-/// A technique someone can discover. Nothing is unlocked globally: individuals know techniques,
-/// teach them, and can lose them if everyone who knows dies or abandons them.
-/// </summary>
 public sealed record TechDef(TechId Id, Domain Domain, float Difficulty, float Value, TechId[] Requires,
                              Affordance Needs = Affordance.None, string Stage = "foraging");
 
-/// <summary>A set of techniques (up to 256): what a person, or everyone in a band, knows.</summary>
 public struct TechSet : IEquatable<TechSet>
 {
     ulong _a, _b, _c, _d;
@@ -70,7 +57,6 @@ public struct TechSet : IEquatable<TechSet>
     public readonly int Count => System.Numerics.BitOperations.PopCount(_a) + System.Numerics.BitOperations.PopCount(_b)
                                  + System.Numerics.BitOperations.PopCount(_c) + System.Numerics.BitOperations.PopCount(_d);
 
-    /// <summary>The techniques in the set, in id order.</summary>
     public readonly IEnumerable<TechId> Ids()
     {
         for (int i = 0; i < Techs.Count; i++) if (Has((TechId)i)) yield return (TechId)i;
@@ -93,14 +79,14 @@ public static class Techs
 
     const Affordance N = Affordance.None;
 
-    public static readonly int Count = Enum.GetValues<TechId>().Length;   // before All: Build() needs it
+    public static readonly int Count = Enum.GetValues<TechId>().Length;
     public static readonly TechDef[] All = Build();
 
     static TechDef[] Build()
     {
         var list = new List<TechDef>
         {
-            // The original set: unchanged in role, difficulty and prerequisites.
+
             T(TechId.StoneTools, Domain.Crafting, 1f, 0.5f, N, "foraging"),
             T(TechId.ControlledFire, Domain.Crafting, 2f, 0.9f, N, "foraging"),
             T(TechId.Cooking, Domain.Foraging, 1.5f, 0.6f, N, "foraging", TechId.ControlledFire),
@@ -120,7 +106,6 @@ public static class Techs
             T(TechId.Copper, Domain.Crafting, 8f, 0.8f, Affordance.Ore, "metallurgy", TechId.Pottery),
             T(TechId.Bronze, Domain.Crafting, 10f, 0.9f, Affordance.Ore, "metallurgy", TechId.Copper),
 
-            // Foraging and stonecraft
             T(TechId.Woodcutting, Domain.Building, 1.5f, 0.6f, Affordance.Forest, "foraging", TechId.StoneTools),
             T(TechId.Butchery, Domain.Hunting, 1.5f, 0.5f, N, "foraging", TechId.StoneTools),
             T(TechId.BoneTools, Domain.Crafting, 2.5f, 0.5f, N, "foraging", TechId.Butchery),
@@ -137,7 +122,6 @@ public static class Techs
             T(TechId.Sledges, Domain.Building, 3f, 0.5f, Affordance.Cold, "agriculture", TechId.Woodcutting, TechId.Cordage),
             T(TechId.Grinding, Domain.Foraging, 3f, 0.6f, N, "stonecraft", TechId.StoneTools, TechId.Cooking),
 
-            // Farming villages
             T(TechId.Dairy, Domain.Farming, 7f, 0.7f, Affordance.Herds, "agriculture", TechId.Domestication, TechId.Pottery),
             T(TechId.Beekeeping, Domain.Farming, 6f, 0.5f, Affordance.Forest, "agriculture", TechId.Baskets, TechId.ControlledFire),
             T(TechId.Milling, Domain.Farming, 7f, 0.7f, Affordance.Settled, "agriculture", TechId.Agriculture, TechId.Grinding),
@@ -167,7 +151,6 @@ public static class Techs
             T(TechId.Alchemy, Domain.Healing, 16f, 0.5f, N, "metallurgy", TechId.Herbalism, TechId.Kilns, TechId.Writing),
             T(TechId.Mysticism, Domain.Spiritual, 10f, 0.5f, Affordance.Spirit, "metallurgy", TechId.Priesthood, TechId.Pigments),
 
-            // Metals
             T(TechId.Charcoal, Domain.Crafting, 6f, 0.6f, Affordance.Forest, "metallurgy", TechId.ControlledFire, TechId.Woodcutting),
             T(TechId.Iron, Domain.Crafting, 16f, 1f, Affordance.Ore, "metallurgy", TechId.Bronze, TechId.Charcoal),
             T(TechId.Steel, Domain.Crafting, 20f, 0.9f, Affordance.Ore, "metallurgy", TechId.Iron),
@@ -181,7 +164,6 @@ public static class Techs
             T(TechId.Schools, Domain.Social, 18f, 0.7f, Affordance.Settled, "metallurgy", TechId.Writing),
             T(TechId.Sanitation, Domain.Healing, 18f, 0.8f, Affordance.Settled, "metallurgy", TechId.Masonry, TechId.Medicine),
 
-            // Machines
             T(TechId.Machinery, Domain.Crafting, 24f, 0.9f, N, "mechanisation", TechId.Steel, TechId.Wheel, TechId.Counting),
             T(TechId.Printing, Domain.Social, 24f, 0.8f, N, "mechanisation", TechId.Writing, TechId.Machinery),
             T(TechId.SteamPower, Domain.Crafting, 28f, 1f, N, "mechanisation", TechId.Machinery, TechId.Mining),
@@ -192,7 +174,6 @@ public static class Techs
             T(TechId.Concrete, Domain.Building, 26f, 0.7f, N, "mechanisation", TechId.Masonry, TechId.Kilns, TechId.Machinery),
             T(TechId.Hospitals, Domain.Healing, 30f, 0.9f, N, "mechanisation", TechId.Medicine, TechId.Sanitation, TechId.Chemistry),
 
-            // Electricity
             T(TechId.Electricity, Domain.Crafting, 36f, 1f, N, "electrification", TechId.SteamPower, TechId.Chemistry),
             T(TechId.Refrigeration, Domain.Foraging, 38f, 0.8f, N, "electrification", TechId.Electricity),
             T(TechId.Telecommunication, Domain.Social, 40f, 0.8f, N, "electrification", TechId.Electricity, TechId.Printing),
@@ -201,14 +182,12 @@ public static class Techs
             T(TechId.SolarPower, Domain.Crafting, 44f, 0.8f, Affordance.Hot, "electrification", TechId.Electricity, TechId.Glass),
             T(TechId.Batteries, Domain.Crafting, 42f, 0.7f, N, "electrification", TechId.Electricity),
 
-            // Information
             T(TechId.Electronics, Domain.Crafting, 50f, 0.9f, N, "information", TechId.Electricity, TechId.Chemistry),
             T(TechId.Computing, Domain.Social, 56f, 0.9f, N, "information", TechId.Electronics, TechId.Counting),
             T(TechId.Robotics, Domain.Crafting, 62f, 0.8f, N, "information", TechId.Computing, TechId.Motors),
             T(TechId.Recycling, Domain.Building, 54f, 0.6f, N, "information", TechId.Chemistry, TechId.Machinery),
             T(TechId.Networks, Domain.Social, 60f, 0.8f, N, "information", TechId.Computing, TechId.Telecommunication),
 
-            // Advanced
             T(TechId.Biotech, Domain.Healing, 70f, 0.9f, N, "advanced", TechId.Computing, TechId.Hospitals),
             T(TechId.Hydroponics, Domain.Farming, 64f, 0.8f, N, "advanced", TechId.Electricity, TechId.Biotech),
             T(TechId.Fabrication, Domain.Crafting, 72f, 0.9f, N, "advanced", TechId.Robotics, TechId.AdvancedMaterials),
@@ -217,7 +196,6 @@ public static class Techs
             T(TechId.Hover, Domain.Building, 85f, 0.7f, N, "advanced", TechId.FusionPower, TechId.Motors),
             T(TechId.EnergyTools, Domain.Crafting, 88f, 0.6f, N, "advanced", TechId.FusionPower, TechId.Fabrication),
 
-            // Space
             T(TechId.Rocketry, Domain.Building, 80f, 0.8f, N, "space", TechId.Aviation, TechId.Chemistry, TechId.Computing),
             T(TechId.LifeSupport, Domain.Healing, 90f, 0.8f, N, "space", TechId.Rocketry, TechId.Hydroponics),
             T(TechId.SpaceHabitats, Domain.Building, 100f, 0.8f, N, "space", TechId.LifeSupport, TechId.AdvancedMaterials),
@@ -242,7 +220,6 @@ public static class Techs
         return CanLearn(known, id);
     }
 
-    /// <summary>Someone can take a technique in once they know everything it builds on.</summary>
     public static bool CanLearn(TechSet known, TechId id)
     {
         foreach (var r in Get(id).Requires) if (!known.Has(r)) return false;

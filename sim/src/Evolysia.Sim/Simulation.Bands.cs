@@ -8,7 +8,6 @@ namespace Evolysia.Sim;
 
 public sealed partial class Simulation
 {
-    // ------------------------------------------------------------------ every 15 days
 
     void BandDecisions()
     {
@@ -34,15 +33,12 @@ public sealed partial class Simulation
         }
     }
 
-    // People per block of cells (a block is a home range wide), cached while no band moves, splits
-    // or merges (CellScore asks a few dozen times per band).
     Dictionary<int, int>? _cellPeople;
     bool _cellPeopleValid;
 
     int BlockSize => Math.Max(1, (int)(World.Scale * 0.8f));
     int BlockOf(int cell) => World.Y(cell) / BlockSize * (World.W / BlockSize + 1) + World.X(cell) / BlockSize;
 
-    /// <summary>People living close enough to share <paramref name="cell"/>'s home range.</summary>
     int PeopleNear(int cell)
     {
         if (!_cellPeopleValid || _cellPeople == null)
@@ -64,10 +60,6 @@ public sealed partial class Simulation
         return sum;
     }
 
-    /// <summary>
-    /// Food around a cell, per original-cell area: the home range sampled at its centre and eight
-    /// points round it (the cell alone when ranges are a single cell).
-    /// </summary>
     float RangeFood(int cell, bool fishing)
     {
         var w = World;
@@ -91,7 +83,6 @@ public sealed partial class Simulation
                + w.PreyStock[c] * 0.6f + w.FishStock[c] * (fishing ? 0.8f : 0.2f);
     }
 
-    /// <summary>Candidate cells within <paramref name="radius"/>: all of them when few, else a fixed-size sample.</summary>
     IEnumerable<int> Candidates(int cell, int radius, int samples)
     {
         int x0 = World.X(cell), y0 = World.Y(cell);
@@ -135,7 +126,7 @@ public sealed partial class Simulation
     {
         if (band.Sedentary && band.Members.Count > 0)
         {
-            // Farmers only abandon their village in a real crisis.
+
             if (AverageHunger(band) < 0.7f) return;
         }
         var leader = Living.GetValueOrDefault(band.LeaderId);
@@ -157,7 +148,7 @@ public sealed partial class Simulation
         bool desperate = hunger > 0.5f || thirst > 0.5f;
         if (desperate && leader != null && BestShore(band, leader) is { } shore && shore.score > MathF.Max(bestScore, here) + 0.1f)
         {
-            Sail(band, leader, null, shore.cell);   // the whole band takes to the sea
+            Sail(band, leader, null, shore.cell);
             return;
         }
         if (best == band.Cell) return;
@@ -187,14 +178,9 @@ public sealed partial class Simulation
     int Capacity(Band band) =>
         32 + (BandKnows(band, TechId.FoodStorage) ? 10 : 0) + (band.Sedentary ? 50 : 0) + (BandKnows(band, TechId.Pottery) ? 8 : 0);
 
-    /// <summary>
-    /// A hungry band sheds a family group to open new land, led by someone restless and unafraid.
-    /// This is how people spread across the planet.
-    /// </summary>
     bool MaybeBud(Band band)
     {
-        // Wanderers bud when hungry. Villages bud when they outgrow their land: a crowded or hungry
-        // village sends a party off to found a new village on good land nearby - how farming spreads.
+
         bool village = band.Sedentary;
         if (village ? band.Members.Count < 55 || (band.Stress < 0.05f && band.Members.Count < 75) || Day - band.FoundedDay < 3 * SimConfig.DaysPerYear
                     : band.Stress < 0.1f || band.Members.Count < 22 || Day - band.FoundedDay < 360) return false;
@@ -207,7 +193,7 @@ public sealed partial class Simulation
         int target = -1; float bestScore = float.MinValue;
         foreach (int c in Candidates(band.Cell, World.Cells(village ? 4 : 3), 48))
         {
-            if (World.Distance(c, band.Cell) < World.Cells(village ? 2 : 1)) continue;   // far enough to be new land (clear of the village's fields)
+            if (World.Distance(c, band.Cell) < World.Cells(village ? 2 : 1)) continue;
             if (village && (!FarmLand(c) || !OpenLand(c))) continue;
             float s = CellScore(band, c, pioneer) + Rng.Normal(0f, 0.05f);
             if (s > bestScore) { bestScore = s; target = c; }
@@ -233,7 +219,7 @@ public sealed partial class Simulation
         Stats.Year.Splits++;
         if (village)
         {
-            nb.Sedentary = true;   // they take seed, tools and know-how: a new village
+            nb.Sedentary = true;
             Chronicle.Add(new WorldEvent(Day, EventCategory.Discovery, "new_village",
                 $"{pioneer.Name} leads {nb.Members.Count} of the {band.Name} to found a new village, the {nb.Name}.", 0.3f, pioneer.Id, nb.Id));
         }
@@ -243,7 +229,6 @@ public sealed partial class Simulation
         return true;
     }
 
-    /// <summary>Land farmers would settle: the biomes agriculture takes to, dry, with water near.</summary>
     bool FarmLand(int c) =>
         World.IsDryLand(c) && World.WaterAccess[c] > 0.4f && World.Biome[c] is Biome.TemperateGrassland or Biome.TemperateForest or Biome.Savanna
             or Biome.TropicalSeasonalForest or Biome.Shrubland or Biome.Wetland or Biome.TemperateRainforest or Biome.BorealForest;
@@ -253,7 +238,7 @@ public sealed partial class Simulation
     void MaybeSplit(Band band)
     {
         if (MaybeBud(band)) return;
-        // Too big to feed or too bitter to stay together: a rival faction leaves.
+
         float tension = 0f; int pairs = 0;
         var leader = Living.GetValueOrDefault(band.LeaderId);
         if (leader == null) return;
@@ -268,7 +253,6 @@ public sealed partial class Simulation
         bool tooBig = band.Members.Count > Capacity(band);
         if (!tooBig && !(tension > 0.25f && band.Members.Count >= 12)) return;
 
-        // The rival: most prestigious adult who isn't fond of the leader.
         Agent? rival = null;
         foreach (int id in band.Members)
             if (Living.TryGetValue(id, out var m) && m.IsAdult(Day) && m.Id != leader.Id && m.Age(Day) > 20f
@@ -291,7 +275,6 @@ public sealed partial class Simulation
         Stats.Year.Splits++;
     }
 
-    /// <summary>Moves founder + followers (and their partners and young children) to a new band nearby.</summary>
     Band Split(Band from, Agent founder, List<Agent> followers, int cultureId, int cell = -1, bool announce = true)
     {
         BandsChanged();
@@ -313,7 +296,7 @@ public sealed partial class Simulation
             m.BandId = nb.Id;
             m.CultureId = cultureId;
         }
-        // The leavers take their share of the stores.
+
         from.Stores.MoveFraction(nb.Stores, nb.Members.Count / (float)Math.Max(1, nb.Members.Count + from.Members.Count));
         nb.LeaderId = founder.Id;
         nb.Shelter = 0.05f;
@@ -324,7 +307,6 @@ public sealed partial class Simulation
         return nb;
     }
 
-    /// <summary>A rejected inventor or prophet walks out with the people who believed in them.</summary>
     void Schism(Agent founder, Band band, List<Agent> allies, string kind, string what, TechId? tech, int memeId)
     {
         var parent = Cultures[band.CultureId];
@@ -348,11 +330,9 @@ public sealed partial class Simulation
         }));
     }
 
-    // ------------------------------------------------------------------ every 30 days
-
     void Contacts()
     {
-        // Each band meets at most one neighbour a month, so contact scales with bands, not pairs.
+
         var bands = Bands.Values.Where(b => !b.Disbanded && b.Members.Count > 0).ToArray();
         var near = new List<Band>();
         int contact = World.Cells(2);
@@ -395,7 +375,7 @@ public sealed partial class Simulation
         bool hostile = warmth < 0.32f && (ma.hunger > 0.35f || mb.hunger > 0.35f || ma.xeno + mb.xeno > 0f);
         if (first && !sameCulture)
         {
-            // A meeting of peoples: the hungrier side's leader decides how to greet the strangers.
+
             var decider = ma.hunger >= mb.hunger ? a : b;
             BeginMeeting(decider, decider == a ? b : a, hostile ? "raid" : warmth > 0.45f ? "welcome" : "wary");
             return;
@@ -421,10 +401,6 @@ public sealed partial class Simulation
             }
     }
 
-    /// <summary>
-    /// Friends in plenty help friends in want: at a feast the better-fed band gives a share of its
-    /// surplus food (more freely for those who know trade and count it as fair exchange).
-    /// </summary>
     void ShareFood(Band a, Band b)
     {
         float perA = a.FoodPool / Math.Max(1, a.Members.Count), perB = b.FoodPool / Math.Max(1, b.Members.Count);
@@ -446,7 +422,6 @@ public sealed partial class Simulation
             foreach (int id in band.Members)
                 if (Living.TryGetValue(id, out var m)) { Fear.SafeExposure(m, Stimulus.Strangers); m.Feel(Emotion.Joy, 0.1f); }
 
-        // Marriage across bands.
         var single = SingleAdult(a); var other = SingleAdult(b);
         if (single != null && other != null && single.Sex != other.Sex && Rng.Chance(0.5f))
         {
@@ -459,7 +434,7 @@ public sealed partial class Simulation
         if (first)
             Chronicle.Add(new WorldEvent(Day, EventCategory.Trade, "first_contact",
                 $"The {a.Name} and the {b.Name} meet for the first time and share a feast.",
-                a.CultureId != b.CultureId ? 0.45f : 0.26f, -1, a.Id));   // only a meeting of peoples is big news
+                a.CultureId != b.CultureId ? 0.45f : 0.26f, -1, a.Id));
         if (a.Members.Count < 6 && a.RelationTo(b.Id) > 0.3f) Merge(a, b);
         else if (b.Members.Count < 6 && b.RelationTo(a.Id) > 0.3f) Merge(b, a);
 
@@ -482,7 +457,7 @@ public sealed partial class Simulation
         {
             if (BandShare(from, t) < 0.3f || !Rng.Chance(0.35f)) continue;
             var learner = learners[Rng.Next(learners.Count)]!;
-            if (!Techs.CanLearn(learner.Knows, t)) continue;   // it builds on things they don't know yet
+            if (!Techs.CanLearn(learner.Knows, t)) continue;
             learner.Knows |= Techs.Bit(t);
             Chronicle.Add(new WorldEvent(Day, EventCategory.Trade, "tech_spread",
                 $"The {to.Name} learn {Techs.Name(t).Replace('_', ' ')} from the {from.Name}.", 0.3f, learner.Id, to.Id));
@@ -511,7 +486,6 @@ public sealed partial class Simulation
         if (from.Members.Count == 0) Disband(from);
     }
 
-    /// <summary>A band too small to survive alone joins the friendliest neighbour.</summary>
     void MaybeJoinNeighbour(Band band)
     {
         if (band.Members.Count >= 8) return;
@@ -577,7 +551,6 @@ public sealed partial class Simulation
             (casualtiesV + casualtiesA == 0 ? (won ? 0.26f : 0.2f) : 0.35f + 0.08f * (casualtiesV + casualtiesA)), -1, attacker.Id));
     }
 
-    /// <summary>Taboos from shared fear, norms from leaders, and new cultures from drift.</summary>
     void CulturalUpkeep()
     {
         foreach (var band in Bands.Values.ToArray())
@@ -586,7 +559,6 @@ public sealed partial class Simulation
             int adults = AdultCount(band);
             if (adults < 3) continue;
 
-            // Shared fear hardens into taboo.
             for (int c = 0; c < Ids.CategoryCount; c++)
             {
                 var cat = (StimulusCategory)c;
@@ -607,7 +579,6 @@ public sealed partial class Simulation
                     $"The {band.Name} begin to shun {TabooText(cat)}.", firstEver ? 0.5f : 0.3f, voice.Id, band.Id));
             }
 
-            // Leaders' temperaments seed norms.
             if (Rng.Chance(0.02f) && Living.TryGetValue(band.LeaderId, out var leader))
             {
                 MemeKind? kind =
@@ -661,7 +632,6 @@ public sealed partial class Simulation
         _ => Ids.Snake(k),
     };
 
-    /// <summary>Yearly: bands whose shared beliefs have drifted far from their culture's become a new people.</summary>
     internal void CultureDrift()
     {
         var byCulture = Bands.Values.Where(b => !b.Disbanded).GroupBy(b => b.CultureId).ToList();

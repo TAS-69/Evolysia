@@ -108,3 +108,8 @@
 - Landscape supplies 56 materials and eight cliff types across 384 sheets. Every material has four full-tile variants and all sixteen dual-grid masks at each density; tilled soil retains both orientations, and water/lava retain four frames. Corner geometry is recalculated on the same field at each density to preserve exact compatible edges. New material priority is anchored to the original material family, with a secondary offset that does not change any original ordering.
 - Use random plain variants for homogeneous mask-15 terrain areas to reduce repetition. Surface borders remain seam-compatible. Exposed rock faces use internal form shading under top-left light; no ground shadows are baked. Dense grass and rock textures were reviewed and reduced where they made the repeating grid too obvious.
 - Full game camera/detail switching, persistent inventory transfers, actual equipment selection, specialist jobs, navigation, production and transport remain outside the authorised art-only paths. The generators supply the art, metadata and review assemblers needed for those integration steps.
+
+## Alpha branding and integration — 2026-10-31
+
+- The provided SVG remains the official source. Its proportionally rasterised menu/splash PNG and padded Windows icon are branding derivatives, separate from the pixel-sprite palette contract. The custom splash replaces the default engine image while retaining engine notices.
+- Earlier integration boundaries record the scope of those art phases. The client now renders multi-density terrain, modular buildings, owned gear and representative stores. Full stack identity, per-container inventories, logistics, portrait integration and the complete catalogue remain incomplete; see the current wiki.

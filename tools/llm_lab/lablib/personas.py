@@ -1,9 +1,4 @@
-"""Numeric trait vectors -> short adjective character sheets the model can act on.
 
-Temperament (inherited): NS novelty_seeking, HA harm_avoidance, RD reward_dependence, PS persistence.
-Character (learned):     SD self_directedness, CO cooperativeness, ST self_transcendence.
-Values are 0..1; 0.5 is average.
-"""
 
 import random
 from dataclasses import dataclass
@@ -20,7 +15,6 @@ PHRASES = {
     "ST": ("spiritual, sees spirits and omens everywhere", "practical, scoffs at spirits and omens"),
 }
 
-
 @dataclass
 class Persona:
     name: str
@@ -33,7 +27,7 @@ class Persona:
         return {t: (self.traits[t] - 0.5) * 2 for t in TRAITS}
 
     def temperature(self) -> float:
-        # Novelty seekers behave less predictably.
+
         return round(0.6 + 0.5 * self.traits["NS"], 2)
 
     def sheet(self) -> str:
@@ -46,12 +40,10 @@ class Persona:
         temperament = "; ".join(parts) if parts else "fairly ordinary in temperament"
         return f"{self.name}, {self.age}, {self.role}. Personality: {temperament}."
 
-
 def _p(name, age, role, archetype, **t):
     traits = {k: 0.5 for k in TRAITS}
     traits.update(t)
     return Persona(name, age, role, traits, archetype)
-
 
 ARCHETYPES = [
     _p("Ama", 24, "gatherer", "timid conformist", NS=0.2, HA=0.9, RD=0.9, PS=0.3, SD=0.15, CO=0.7),
@@ -67,11 +59,10 @@ ARCHETYPES = [
 NAMES = ["Ilo", "Juno", "Kesh", "Lira", "Moro", "Nadi", "Oru", "Pell", "Quen", "Rasa", "Sefu", "Tavi"]
 ROLES = ["gatherer", "hunter", "fisher", "builder", "herder", "toolmaker", "weaver", "scout"]
 
-
 def random_personas(n: int, seed: int = 7) -> list[Persona]:
     rng = random.Random(seed)
     out = []
     for i in range(n):
-        traits = {t: round(rng.betavariate(0.8, 0.8), 2) for t in TRAITS}  # favour extremes a bit
+        traits = {t: round(rng.betavariate(0.8, 0.8), 2) for t in TRAITS}
         out.append(Persona(NAMES[i % len(NAMES)], rng.randint(16, 60), rng.choice(ROLES), traits))
     return out

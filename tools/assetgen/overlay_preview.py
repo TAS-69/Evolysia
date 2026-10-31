@@ -1,4 +1,4 @@
-"""Overlay frame galleries, native background strips and network mosaics."""
+
 import json
 import math
 import numpy as np

@@ -5,49 +5,39 @@ using Godot;
 
 namespace Evolysia.Game;
 
-/// <summary>
-/// The planet in Codex's tile art, drawn over the procedural <see cref="WorldView"/> when zoomed
-/// in. Three density levels share one layout, each baked in the background as 512 px chunks
-/// around the view: 16 px per cell, then, as the camera closes in, 32 and 64 px
-/// (render_contract.json: up to 24 screen px per cell -> 16, up to 48 -> 32, beyond -> 64). Each
-/// level fades in over the one below, which stays visible until the finer chunks are ready. The
-/// art is baked to slot indices (<see cref="TileBake"/>); every redraw only refreshes small
-/// per-cell textures (season row, snow, shade, tint) that tiles.gdshader turns into colour.
-/// </summary>
 public partial class TileView : Node2D
 {
-    /// <summary>Cells per chunk side at a density: every chunk is 512 px square.</summary>
+
     static int ChunkCells(int density) => 512 / density;
-    static readonly string[] Animated = { "deep_water", "water", "shallow_water", "lava" };   // cell_c.b kinds 1..4
+    static readonly string[] Animated = { "deep_water", "water", "shallow_water", "lava" };
 
     WorldMap? _world;
     TileBake.Input? _input;
     Image? _cellA, _cellB, _cellC;
     ImageTexture? _texA, _texB, _texC, _lut;
     byte[] _a = Array.Empty<byte>(), _b = Array.Empty<byte>(), _c = Array.Empty<byte>();
-    byte[] _kind = Array.Empty<byte>();     // per cell: animated material kind
-    int[] _rows = Array.Empty<int>();       // per biome x season: lut_nature row
+    byte[] _kind = Array.Empty<byte>();
+    int[] _rows = Array.Empty<int>();
     int _inputDay = int.MinValue / 2;
     bool _desaturate;
     float _zoom = 1f;
     Vector2 _viewCentre, _viewSize;
     readonly Level[] _levels = new Level[3];
 
-    /// <summary>One density: its shared shader inputs and its baked chunks.</summary>
     sealed class Level
     {
         public int D;
         public ImageTexture Snow = null!, Ice = null!, Anim = null!, AnimSlots = null!;
         public readonly Dictionary<(int, int), Chunk> Chunks = new();
         public float Fade;
-        public Node2D Node = null!;   // levels draw in tree order, coarse under fine
+        public Node2D Node = null!;
     }
 
     sealed class Chunk
     {
         public int Cx, Cy, Cw, Ch;
-        public bool Baked, Stale;       // has a texture; its patch of world has changed since
-        public long Signature;          // of its patch of world when last baked
+        public bool Baked, Stale;
+        public long Signature;
         public Sprite2D? Sprite;
         public ShaderMaterial? Material;
         public ImageTexture? Texture, Roots;
@@ -56,19 +46,18 @@ public partial class TileView : Node2D
     }
 
     public bool Active => _world != null && Art.Available;
-    /// <summary>What the current bake was made from (plants and fields), for drawing plants as sprites.</summary>
+
     public TileBake.Input? Input => _input;
 
-    /// <summary>A cell's nature LUT rows and blend today, and whether it is off season (as the shader sees it).</summary>
     public (int rowA, int rowB, float blend, bool off) SeasonOf(int cell)
     {
         if (_a.Length <= cell * 4) return (Art.ReferenceRow, Art.ReferenceRow, 0f, false);
         int o = cell * 4;
         return (_a[o], _a[o + 1], _a[o + 2] / 255f, (_c[o + 1] & 1) != 0);
     }
-    /// <summary>Chunks under the view are still baking.</summary>
+
     public bool Busy { get; private set; }
-    /// <summary>The density currently drawn on top (16 when no finer chunks are showing).</summary>
+
     public int Density => _zoom >= 6f ? 64 : _zoom >= 3f ? 32 : 16;
 
     public void Bind(WorldMap world, TileBake.Input input)
@@ -77,7 +66,7 @@ public partial class TileView : Node2D
         _world = world;
         _input = input;
         if (!Art.Available) { Visible = false; return; }
-        _ = Art.SlotNames;   // load the palette here, before any bake thread needs it
+        _ = Art.SlotNames;
         BuildRows();
         (_cellA, _texA, _a) = CellTexture(world);
         (_cellB, _texB, _b) = CellTexture(world);
@@ -94,7 +83,7 @@ public partial class TileView : Node2D
         AddChild(level.Node);
         level.Snow = TileSlots(Art.Lod("landscape.snow_plain", d), d);
         level.Ice = TileSlots(Art.Lod("landscape.ice_plain", d), d);
-        // Animated plains: 4 frames across, (kind x 4 variants) down; and which slots each kind owns.
+
         var anim = new byte[4 * d * Animated.Length * 4 * d * 4];
         var owned = new byte[256 * 4];
         for (int k = 0; k < Animated.Length; k++)
@@ -118,7 +107,6 @@ public partial class TileView : Node2D
         return level;
     }
 
-    /// <summary>Puts a finished bake on screen: the chunk's sprite, texture and shader inputs.</summary>
     void Finish(Level level, Chunk chunk, TileBake.Baked baked)
     {
         int d = level.D;
@@ -162,7 +150,6 @@ public partial class TileView : Node2D
         foreach (var copy in chunk.Sprite.GetChildren().OfType<Sprite2D>()) copy.Texture = chunk.Texture;
     }
 
-    /// <summary>The camera moved or zoomed: which levels show, and which chunks they need.</summary>
     public void SetView(Vector2 centre, Vector2 size, float zoom)
     {
         _zoom = zoom;
@@ -194,13 +181,12 @@ public partial class TileView : Node2D
                 chunk.Sprite.Visible = show;
                 if (show) chunk.Material!.SetShaderParameter("fade", level.Fade);
             }
-            // A finer level that is fully faded in and fully baked hides the coarser ones (saves fill).
+
             if (wanted && level.Fade >= 1f && complete) coveredAbove = true;
         }
         Busy = busy;
     }
 
-    /// <summary>Keeps the chunks under the view baked (nearest first, a few at a time in the background).</summary>
     bool UpdateChunks(Level level, ulong now)
     {
         var w = _world!;
@@ -227,7 +213,7 @@ public partial class TileView : Node2D
                     needed.Add((chunk, centre.DistanceSquaredTo(_viewCentre)));
                 }
             }
-        // Collect finished bakes; start new ones, nearest the centre of the view first.
+
         int running = 0;
         foreach (var chunk in level.Chunks.Values)
         {
@@ -254,10 +240,9 @@ public partial class TileView : Node2D
         return complete;
     }
 
-    /// <summary>Frees the chunks seen longest ago once a level holds more than it needs.</summary>
     static void Evict(Level level, ulong now)
     {
-        int keep = 72;   // 512 px chunks: about 110 MB at most per level
+        int keep = 72;
         if (level.Chunks.Count <= keep) return;
         foreach (var (key, chunk) in level.Chunks.Where(c => c.Value.Task == null && c.Value.LastSeen + 2000 < now)
                                                  .OrderBy(c => c.Value.LastSeen).Take(level.Chunks.Count - keep).ToList())
@@ -274,8 +259,7 @@ public partial class TileView : Node2D
         if (!Visible) return;
         var w = _world;
         int day = sim.Day;
-        // People fell, quarry, build and farm; eruptions burn. Every fortnight, the chunks whose patch
-        // of world has changed rebake as they come into view.
+
         if (day - _inputDay >= 15 || day < _inputDay)
         {
             _inputDay = day;
@@ -301,7 +285,7 @@ public partial class TileView : Node2D
             bool off;
             if (HasWetDry(biome))
             {
-                float phase = w.SeasonPhase(i, day);   // +1 wettest
+                float phase = w.SeasonPhase(i, day);
                 _a[o] = (byte)Row(biome, Season.Wet);
                 _a[o + 1] = (byte)Row(biome, Season.Dry);
                 float blend = Math.Clamp(0.5f - phase * 1.5f, 0f, 1f);
@@ -315,29 +299,27 @@ public partial class TileView : Node2D
                 float progress = d % 90 / 90f;
                 _a[o] = (byte)Row(biome, (Season)season);
                 _a[o + 1] = (byte)Row(biome, (Season)((season + 1) % 4));
-                _a[o + 2] = (byte)(Math.Clamp((progress - 0.75f) / 0.25f, 0f, 1f) * 255f);   // ease into the next season
+                _a[o + 2] = (byte)(Math.Clamp((progress - 0.75f) / 0.25f, 0f, 1f) * 255f);
                 off = season == (int)Season.Winter;
             }
             float t = w.Temperature(i, day);
             float cover = w.IsLand(i) && w.Biome[i] != Biome.Lake
                 ? Math.Clamp((-1f - t) / 7f, 0f, 0.95f)
-                : w.Biome[i] != Biome.DeepOcean ? Math.Clamp((-6f - t) / 8f, 0f, 0.95f) : 0f;   // snow / sea and lake ice
+                : w.Biome[i] != Biome.DeepOcean ? Math.Clamp((-6f - t) / 8f, 0f, 0.95f) : 0f;
             _a[o + 3] = (byte)(cover * 255f);
 
             if (territory != null && territory.TryGetValue(i, out var tint))
             { _b[o] = (byte)(tint.R * 255f); _b[o + 1] = (byte)(tint.G * 255f); _b[o + 2] = (byte)(tint.B * 255f); _b[o + 3] = 255; }
-            else { _b[o] = _b[o + 1] = _b[o + 2] = _b[o + 3] = 0; }   // premultiplied, so edges blend cleanly
+            else { _b[o] = _b[o + 1] = _b[o + 2] = _b[o + 3] = 0; }
 
             _c[o] = (byte)(WorldView.Shade(w, i) * 128f);
             _c[o + 1] = (byte)((off ? 1 : 0) | (w.IsWater(i) ? 2 : 0));
-            _c[o + 2] = cover > 0.5f ? (byte)0 : _kind[i];   // frozen water stays still
+            _c[o + 2] = cover > 0.5f ? (byte)0 : _kind[i];
         }
         Upload(_cellA!, _texA!, _a);
         Upload(_cellB!, _texB!, _b);
         Upload(_cellC!, _texC!, _c);
     }
-
-    // ---- helpers --------------------------------------------------------------------------------
 
     void RefreshKinds()
     {
@@ -346,10 +328,6 @@ public partial class TileView : Node2D
         for (int i = 0; i < w.Count; i++) _kind[i] = (byte)(Array.IndexOf(Animated, TileBake.Material(_input!, i)) + 1);
     }
 
-    /// <summary>
-    /// A chunk's patch of world as the art sees it (with a margin: trees reach in from the cells
-    /// around): ash and burns, timber and stone left (coarsely), what is built, and each field's crop stage.
-    /// </summary>
     static long ChunkSignature(Chunk chunk, TileBake.Input input)
     {
         var w = input.World;
@@ -397,7 +375,6 @@ public partial class TileView : Node2D
         texture.Update(image);
     }
 
-    /// <summary>The first frame of a plain tile as slot indices in R (for snow and ice cover).</summary>
     static ImageTexture TileSlots(Sheet? sheet, int d)
     {
         var bytes = new byte[d * d * 4];

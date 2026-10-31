@@ -1,4 +1,4 @@
-"""Detailed modular art at three densities on the unchanged logical grid."""
+
 import json
 from pathlib import Path
 import numpy as np

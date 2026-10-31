@@ -1,125 +1,38 @@
-# Evolysia simulation core (step 2)
+# Evolysia simulation
 
-A headless, deterministic, engine-agnostic simulation of a generated planet and the people who live
-on it. Godot (step 3) will render it; the LLM (step 4) will give it a voice. This layer decides what
-actually happens, all of it numerically.
+An engine-independent C# simulation of autonomous people, ecology and emerging societies. `Evolysia.Sim` and `Evolysia.Narration` target .NET 8; the runner and tests target .NET 10.
 
-```bash
-cd sim
-dotnet test tests/Evolysia.Sim.Tests
-dotnet run -c Release --project src/Evolysia.Sim.Runner -- --seed 42 --years 500 --out runs/seed42
+Run from the repository root:
+
+```powershell
+dotnet test sim/Evolysia.Sim.slnx -c Release
+dotnet run -c Release --project sim/src/Evolysia.Sim.Runner -- --seed 42 --years 25 --threads 4 --out build/runs/seed42
 ```
 
-Runner flags: `--seed --years --out --width --height --planet --tribes --bands --band-size --invention-rate --disaster-rate --quiet`
-and `--trace N`, which prints one band's monthly food economy for N years (useful for tuning).
-`--profile` prints, every 25 years, where the time went (phases, the sections of a band's day and each activity) and the working set.
-`--minds N` has the local model make up to N pivotal choices during the run (writes `minds.md`).
-`--narrate N` voices a mix of the N most important moments after the run, through the local model
-(`python tools/llm_lab/lab.py serve`), and writes `narrated.md`. `--llm URL` points it at a different server.
+The runner exports generated/end maps, yearly statistics, agents, deaths, a chronicle and narratable moments. These are reports, not resumable saves. Add `--profile` for timing by phase, `--trace N` for early-year traces, `--planet Terra|Ignis|Cryos|Thalassia` or `--tribes N` for world setup. Optional `--narrate N` and `--minds N` connect to a separately running local server; the default endpoint is `http://127.0.0.1:8081`.
 
-| project | target | role |
-|---|---|---|
-| `src/Evolysia.Sim` | net8.0, no dependencies | the simulation library (Godot-compatible) |
-| `src/Evolysia.Sim.Runner` | net10.0 console | headless runs, CSV/Markdown/PNG/JSONL output |
-| `src/Evolysia.Narration` | net8.0 | LLM voices for `Chronicle.Moments`: character sheets, per-moment prompts with JSON schemas, llama-server client, prioritised narrator queue |
-| `tests/Evolysia.Sim.Tests` | xUnit | psychology, genetics, world generation, determinism, narration (fake backend) |
+## Structure
 
-## Outputs (`runs/<name>/`)
-| file | contents |
+| Location | Responsibility |
 |---|---|
-| `chronicle.md` | Population curve, deaths by cause, pivot choices, personality at start vs end, world firsts, notable events by century |
-| `stats_yearly.csv` | One row per year: population, bands, cultures, fertility, techniques, all event counters, deaths by cause, pivots, trait means and spreads, fear by category |
-| `agents_end.csv` | Every living person: traits (effective and genetic), role, techniques, beliefs, top fear, quirks |
-| `deaths.csv` | Every death: year, age, cause |
-| `llm_moments.jsonl` | The moments to hand to the LLM for narration (pivots, myths, inventions, schisms, overcome fears, notable deaths), each with its decided facts |
-| `world_*.png`, `end_*.png` | Biome, elevation and people/culture maps at the start and the end |
+| `World/` | Cylindrical world generation, climate, biomes and ecological stocks |
+| `Agents/` | Genomes, agent state and the 106-technique table |
+| `Psych/` | Emotion appraisal, fear learning, character change and pivotal responses |
+| `Society/` | Bands, cultures, language and names |
+| `Economy/` | Quantity inventories, 107 goods, 146 gear definitions, 40 recipes and 90 structures |
+| `Simulation.*.cs` | Daily activities, social contact, settlement, economy, sea travel, messages and disasters |
+| `Gods.cs` | Seventeen player powers and their targeting data |
+| `Decisions.cs` | Pending pivotal choices and accepted decision records |
+| `Evolysia.Narration/` | Structured prompts, bounded narration queues and local endpoint communication |
+| `Evolysia.Sim.Runner/` | Reports and headless experiments |
+| `tests/` | World generation, inheritance, psychology, economy, sea travel, powers, narration and determinism checks |
 
-## What's modelled
+The default world is 800 × 400 cells, wraps east-west and uses 360-day years. Utility scoring handles routine work. With deferred choices enabled, selected pivotal moments expose a shortlist; only valid, timely answers are accepted. Otherwise instinct resolves the decision.
 
-**Planets.** `SimConfig.Planet` picks the world:
-- *Terra:* balanced continents and every climate (34% land).
-- *Ignis:* 15 °C hotter, dry, with 20-70 volcanoes along its faults (42% land).
-- *Cryos:* 16 °C colder, with ice sheets and tundra (36% land).
-- *Thalassia:* an ocean world of small islands (about 7% land).
+Band work uses per-band random streams and commits global effects in fixed order. The test suite compares histories across one, four and sixteen threads. Repeatability requires the same seed, player actions and accepted pivotal choices; external narration text is not deterministic.
 
-`SimConfig.Tribes` (1-6) starts that many distinct peoples, each with its own culture, language and hue, as `StartBands` bands each. They go to good land as far apart as possible, preferring the large landmasses (except on Thalassia), or to `TribeCells` if the player placed them.
+## Current scope
 
-**World** (`World/`). Continents and ridged mountains from cylindrical noise (wraps east-west); temperature by
-latitude, altitude and continentality; seasons from axial tilt; rain from prevailing-wind bands with rain shadows;
-rivers by priority-flood plus flow accumulation; lakes; Whittaker biomes (IDs shared with `docs/art`); volcanoes on
-faults. Ecology runs as logistic stocks (plants, game, fish) per cell with seasonal growth and yearly regional rain
-anomalies (droughts). The planet is 800 x 400 cells; each cell is one art tile (a person is about a tile tall).
-Rules written for the original 160 x 80 grid scale through `WorldMap.Scale` (5) and `CellArea`. Every land cell also
-holds standing timber, loose stone and boulders, and sometimes an ore deposit (copper, tin, iron, gold, silver, coal,
-sulfur) that people fell, quarry and dig out; trees grow back over decades, stone and ore don't.
+Read [Worlds and people](../docs/wiki/Worlds-and-people.md), [Economy and construction](../docs/wiki/Economy-and-construction.md) and [Known limitations](../docs/wiki/Known-limitations.md). In particular, inventories are quantities by good type, not persistent stack entities inside every rendered container. The catalogue is broader than the currently completed gameplay and visual integration.
 
-**People** (`Agents/`, `Psych/`).
-- **Genome:** 4 temperament genes (novelty seeking, harm avoidance, reward dependence, persistence), starting tilts for 3 character traits, 8 aptitudes, pigment and hair genes, and quirks. A child blends both parents (Beta(2,2) per gene), plus polygenic segregation noise (keeps population variety), plus **1-3 divergent genes or a new quirk**.
-- **Personality** = genes + **experience offsets**. Offsets move with lived emotion (chronic fear raises harm avoidance, pride and self-esteem raise self-directedness, love and joy against anger and envy shift cooperativeness), scaled by age-dependent plasticity. They fade back towards the genetic baseline (half-life about 10 years) unless experience keeps renewing them. Children start tilted towards their parents' lived character, beliefs and fears.
-- **Emotions:** 11 of them, from OCC-style appraisal, decaying daily.
-- **Fear learning:** scares raise fear of the specific thing and spread to its category in proportion to harm avoidance. **Avoidance** preserves the fear. **Facing it and winning** cuts it sharply, leaves lasting inoculation, builds confidence and adds a little thrill-seeking. **Losing** sensitises it further. Watching someone else's terror, or hearing stories of it, teaches a weaker version.
-- **Pivots:** an invention, a myth, a creation (song, carving, trick) or a courtship gift that the circle scorns. The person conforms (abandons it and suppresses that whole domain; a technique can be lost this way), doubles down, withdraws, resents, or leaves and founds a new band, sometimes a new people. The choice is a softmax over trait loadings that match the LLM lab's scenarios, adjusted by allies, belonging, shame and anger.
-
-**Society** (`Society/`, `Simulation.*.cs`).
-- **Daily life:** utility-AI activities (forage, hunt as a party, fish, farm, herd, build, craft, fell trees, quarry, mine, gather materials, experiment, ritual, explore, teach, care for children, court, mourn, play). Each person works a real tile in the band's home range (`Agent.Site`). Food is shared or hoarded according to cooperativeness and norms; parents feed children first; infants nurse.
-- **Bodies:** hunger, thirst, cold, disease and plague, forager-like mortality with crowding effects, pregnancy and childbirth.
-- **Bands:** they migrate, bud off pioneers to new land when hungry, split along grudges, merge when tiny, marry across bands, meet neighbours for feasts (trading techniques and memes) or raids, and settle into villages with agriculture.
-- **Techniques:** 101 of them, from stone tools to interplanetary travel (`Agents/Tech.cs`), known by individuals. They're invented (driven by need and by surroundings: forest, rock, ore, clay, sand, water, climate, a settled or large community, herds, faith), judged by the band, taught (only to those who know what they build on), spread on contact, and can be lost.
-
-**Economy** (`Economy/`, `Simulation.Economy.cs`, `Simulation.Building.cs`). See `docs/OVERHAUL.md`.
-- **Goods:** 107 kinds (foods, materials, fuels, metals, manufactured goods), each with its food value, spoil rate and bulk. Bands keep stores; people carry packs. Food is eaten most-perishable first; heat speeds spoiling, storage and pottery slow it.
-- **Gear:** 140 tools and clothing pieces (the wardrobe art's parts), owned by people and worn out by use. Clothes keep out the cold, armour turns blows, weapons win fights and hunts, tools speed their job, finery lends standing. Crafters make what members lack from the stores, at the right workstation.
-- **Recipes:** 41 (cooking, drying, grinding, baking, dairy, brewing, rope, cloth, leather, charcoal, pottery, bricks, dressed stone, smelting copper, bronze, iron and steel, glass, concrete, machine parts, electronics, batteries, alloys).
-- **Structures:** 92 kinds (dwellings from windbreaks to housing blocks, stores, workstations, fields and orchards, pens, wells, shrines, defences, boats and vehicles). Bands plan them in priority order, site them on open land near camp, clear the site (felling and quarrying for logs and stone), and build them with materials and labour. They age and are repaired; tents move with the band; the rest is abandoned and later adopted or reclaimed by the wild.
-- **Farming and herding:** fields are sown, tended and harvested into the stores by crop and climate; herds breed up to their pens, give milk, eggs and wool, and their surplus is slaughtered. Villages grow, lay out more fields beyond their core, and bud off new villages on open land.
-- **Memes:** myths (an unexplained disaster plus a spiritual person produces a god and a ritual), taboos (born from shared fear), and norms (from leaders' temperaments). They spread with conformity and prestige bias. Bands whose beliefs drift become new cultures with related-sounding languages.
-
-**The sea** (`Simulation.Sea.cs`). World generation labels landmasses. Rafts hop narrow straits through ordinary migration.
-- **Sighting land:** with *boats*, which any coastal band can invent, islanders most readily, scouts sight land across open water. Each band remembers up to 12 shores.
-- **Range** (in original cells): 6 with boats, 10 with weaving (sails), 25 with sailing, 60 with shipbuilding.
-- **Who sails:** hungry pioneers bud off across the sea when a remembered shore beats the nearby valleys; a desperate band may sail as a whole.
-- **Risk:** losses grow with distance and winter, and sometimes a voyage is never seen again. First landing on a landmass is a world event, and survivors' fear of water shifts.
-- **Results:** across seeds 7, 42, 3 and 11, people reached 5-12 landmasses in 500 years, with 14-164 voyages.
-
-**The player** (`Gods.cs`, `Simulation.Gods.cs`). `Simulation.Act(GodAction)` applies one of 16 powers between days and logs it for replay.
-- **Recognition:** witnessed acts build awe until a seer names the player-god for that culture (Watcher Above or Hand in the Sky, depending on how kind you have been). Dreams can make a prophet directly.
-- **Prayers:** believers in crisis open prayers (rain, food, healing, children, protection). Answering one deepens faith; letting it expire after 120 days breeds doubt.
-- **Dreams:** worship, leave, peace, seek, courage and love each have a concrete effect. Your words reach the narrator, sanitised, as the dream's content.
-- **Messages** (`Simulation.Messages.cs`): the player's own words, written on the ground (fades after 60 years), carved in a standing stone (a real structure) or sent as a vision.
-  - **Reading:** bands that come within reach read them once. Each adult interprets them by temperament, faith and literacy (`Writing`, or any vision): scripture (a belief, and possibly a named player-god), vision (awe), command (obeyed by keyword: peace, war, stay, go, sail, build an altar, learn, pray), dismissed, or dread.
-  - **Choice:** the band acts on its leader's reading, which becomes a `Decision` for a mind when minds are on.
-  - **Cooldown:** the first only after `SimConfig.FirstMessageYear` (250), then one every 250 years.
-
-**Minds** (`Decisions.cs`, `Simulation.Decisions.cs`). With `DeferDecisions` on, pivots, first contacts between peoples and readings of the player's messages become `Decision`s.
-- **The shortlist:** instinct's top three options, with plain-language descriptions. `Simulation.Decide(id, option)` accepts a choice only from that shortlist while the decision is pending.
-- **Fallback:** at the deadline, instinct rolls as before.
-- **Replay:** everything goes into `DecisionLog`.
-- **Runner mode:** `--minds N` lets the local model make up to N choices and writes `minds.md`. It records, for each choice, the options, instinct's favourite, the pick, the thought and the words.
-
-## Tuning knobs
-- `SimConfig`: world size, land fraction, axial tilt, starting bands, invention/disaster/predator multipliers, soft agent cap.
-- Main rates are commented in place: foraging yield (`Simulation.Day.cs`), fertility and mortality (`Body`/`Reproduce`), drift (`Psychology.DailyUpdate`), contact (`Contacts`).
-
-Typical outcome on the 800 x 400 world: about 150-200 founders reach 6-16 thousand by year 250 and 17-40 thousand by
-year 300, still growing, with villages from roughly year 75 (see `docs/OVERHAUL.md`, phase 7).
-
-**Performance.** Band days run in parallel: bands sharing a cell run together, different cells run concurrently, and the heaviest groups go first.
-- **Determinism:** each band uses its own random stream (seed, band, day). Global effects (births, death bookkeeping, chronicle entries, courtship across bands, inventions and schisms) are deferred and committed in a fixed order, so **any thread count gives the identical history**. `ParallelTests` checks 1, 4 and 16 threads.
-- **Also parallel:** ecology runs in parallel by row.
-- **Memory:** server GC is on, memes nobody remembers are pruned monthly, and the ordinary dead are forgotten 25 years on (`DeathLog` keeps every death compactly). About 35 KB per person including GC headroom: 1.3 GB at 28k people, so ~120k fits in about 5 GB.
-- **Timing:** seed 42 on 16 threads. Cost grows with population, and about 40% of it is sequential (band decisions, the commit, cultural upkeep):
-
-  | population | ms per day | days per second |
-  |---|---|---|
-  | 10-17k | 3.5 | ~285 |
-  | 17-28k | 7.3 | ~135 |
-  | ~40k | ~13 | ~75 |
-
-  The game's top speed (25x, 300 days a second) holds up to roughly 15k people; above that it runs as fast as the machine allows. The game shows the speed actually reached.
-- **Hot paths kept cheap:** craftable items are ranked once per technique set (`Ranked`), food totals are cached per inventory, fields, jobs and workstations are listed once per band-day, material shortfalls are computed once per band-day, and the plague check looks up techniques only when the dice could matter.
-- **Profiling:** runner `--profile` prints time by phase and by section of the band day, the working set, GC pauses and allocations, every 25 years.
-- **Settings:** `SimConfig.Threads` (default: all cores) and runner `--threads N`.
-
-## Next steps
-- **Godot 4 (.NET build):** the Godot in the repo root is the standard build, which can't run C#. Use the .NET build ("mono"), reference `Evolysia.Sim`, step the simulation on a worker thread, and render from `WorldMap` and `Simulation`.
-- **More speed:** the sequential phases (band decisions and the commit) could run per region in parallel. For ~120k at 25x, people would need updating less often than daily at the top speeds.
+`SimConfig` exposes population, climate, timing and tuning parameters. Large population capacity and late-game balance remain development targets. Historical timing estimates are not release hardware guarantees; use the runner's profile output on the build and hardware being evaluated.

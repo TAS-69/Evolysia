@@ -1,4 +1,4 @@
-"""Detailed material sheets and seeded dual-grid landscape compositions."""
+
 import json
 import math
 import numpy as np

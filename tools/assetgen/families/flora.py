@@ -1,4 +1,4 @@
-"""Seeded plant silhouettes, clustered canopies and domestication stages."""
+
 import json
 import math
 from pathlib import Path

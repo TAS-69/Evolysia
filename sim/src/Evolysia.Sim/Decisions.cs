@@ -6,27 +6,21 @@ namespace Evolysia.Sim;
 
 public enum DecisionKind : byte { Pivot, Meeting, Message }
 
-/// <summary>
-/// A choice someone is brooding over. The simulation has already limited it to options their
-/// personality makes plausible; a mind (the LLM) may pick one before the deadline, otherwise
-/// instinct (the trait-weighted roll) decides. Either way the outcome is logged as an input.
-/// </summary>
 public sealed class Decision
 {
     public int Id, Day, Deadline, AgentId, BandId, OtherBandId = -1;
     public DecisionKind Kind;
     public string[] Options = Array.Empty<string>();
     public string[] Descriptions = Array.Empty<string>();
-    public string InstinctFavourite = "";     // what temperament alone most likely does
+    public string InstinctFavourite = "";
     public bool Resolved;
     public string? Chosen;
-    public string Source = "";                // "mind" or "instinct"
+    public string Source = "";
     internal PivotCase? Pivot;
     internal string MeetingInstinct = "";
     internal int MessageId = -1;
 }
 
-/// <summary>Everything needed to carry out a pivot later, whichever way it is decided.</summary>
 internal sealed record PivotCase(int AgentId, int BandId, Domain Domain, PivotContext Ctx, string Kind, string What,
                                  int[] AllyIds, int MemeId, TechId? Tech, int GrudgeTargetId);
 
