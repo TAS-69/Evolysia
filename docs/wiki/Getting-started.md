@@ -1,6 +1,6 @@
 # Getting started
 
-Download the Windows x64 archive from [Releases](https://github.com/TAS-69/Evolysia/releases), extract it completely and run `Evolysia.exe`. Keep `assets`, the managed data folder and `Evolysia.pck` alongside the executable. Exported packages include .NET. The published 0.1.0 alpha predates current source; for 0.2.0-dev build from source and follow [Required model connection](Local-models). Local bootstrap needs Python 3.11+; a separately hosted compatible endpoint is also supported.
+Download the Windows x64 archive from [Releases](https://github.com/TAS-69/Evolysia/releases), extract it completely and run `Evolysia.exe`. Keep `assets`, the managed data folder and `Evolysia.pck` alongside the executable. Exported packages include .NET. Version 0.2.0-alpha.1 requires a running model: follow [Required model connection](Local-models). Local bootstrap needs Python 3.11+; a separately hosted compatible endpoint is also supported.
 
 Use a Vulkan-capable GPU. This alpha has been checked on Windows; Linux, macOS, integrated GPUs and alternative rendering backends have not been release-tested.
 

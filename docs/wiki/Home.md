@@ -2,7 +2,7 @@
 
 Evolysia is a god-game about autonomous people, emerging societies and the consequences of being noticed by a deity. I am developing it as an open-source simulation with original, separately licensed artwork.
 
-Current source is **0.2.0-dev**, with required generative councils, manufacturing, utilities, staffed services, roads, terrain shaping, possession and named world saves. The first published release, **0.1.0-alpha.1**, is the earlier Windows prototype. Start with [Getting started](Getting-started), then explore the systems below.
+The latest release is **0.2.0-alpha.1**, with required generative councils that learn by experience and discover techniques by experiment, plus manufacturing, utilities, staffed services, roads, terrain shaping, possession and named world saves. The first release, **0.1.0-alpha.1**, is the earlier Windows prototype. Start with [Getting started](Getting-started), then explore the systems below.
 
 | Page | Contents |
 |---|---|
@@ -10,7 +10,7 @@ Current source is **0.2.0-dev**, with required generative councils, manufacturin
 | [Worlds and people](Worlds-and-people) | Planet generation, inheritance, psychology and culture |
 | [Economy and construction](Economy-and-construction) | Goods, gear, buildings, farming and transport |
 | [Art and customisation](Art-and-customisation) | Zoom, modular outfits, materials and coverage |
-| [Local models](Local-models) | Required connection, councils and personal memories |
+| [Local models](Local-models) | Required connection, councils, discovery and personal memories |
 | [Building and testing](Building-and-testing) | Source setup, runner, checks and Windows packaging |
 | [Known limitations](Known-limitations) | What the alpha does and does not yet support |
 | [Licensing](Licensing) | Code, artwork and third-party terms |

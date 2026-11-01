@@ -10,12 +10,12 @@ Each person has a genome, age, kinship, aptitudes, needs, techniques, possession
 
 Fear learning distinguishes avoidance, facing danger successfully and being hurt. Stories and witnessed terror can spread weaker fears. Hunger, thirst, cold, illness, injury, childbirth and age affect survival.
 
-Activities are chosen by utility rather than direct player orders. People forage, hunt, fish, farm, herd, build, craft, gather materials, experiment, teach, court, care, mourn and play. Their work has a tile location; the renderer animates travel between home and work.
+Activities are chosen by each band's council (the required model), never by direct player orders; the rules-only diagnostic mode uses utility scores instead. People forage, hunt, fish, farm, herd, build, craft, gather materials, experiment, teach, court, care, mourn and play. Their work has a tile location; the renderer animates travel between home and work.
 
 ## Society and knowledge
 
 Bands migrate, split, merge, meet neighbours, exchange techniques, raid and settle. Culture includes shared language, norms, myths, taboos and beliefs. Leaders and social responses affect whether an unusual invention or idea is accepted, suppressed or carried into a new band.
 
-The simulation defines 106 techniques, from early tools to advanced technology. Individuals know and teach techniques subject to prerequisites and opportunity. There are no fixed era switches. A catalogue definition is not a promise that a normal alpha run will reliably discover and support every late-game activity.
+The simulation defines 106 techniques, from early tools to advanced technology. Individuals know and teach techniques subject to prerequisites and opportunity. New ones are discovered only by experiment: a council proposes an action on things its people can perceive, and the simulation judges it against each technique's hidden way in (see [Local models](Local-models)). There are no fixed era switches. A catalogue definition is not a promise that a normal alpha run will reliably discover and support every late-game activity.
 
 Ordinary simulation results are deterministic for a seed, ordered player actions and accepted decisions. Band work uses separate random streams and ordered commits. Tests compare histories across one, four and sixteen threads. Unconstrained external-model responses are outside that guarantee.

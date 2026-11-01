@@ -1,6 +1,6 @@
 # Required model connection
 
-Current source (`0.2.0-dev`) requires a working generative model for ordinary gameplay. The published `0.1.0-alpha.1` predates this requirement. Opening the game does not download anything; **Start model** explicitly runs the local bootstrap.
+Version `0.2.0-alpha.1` requires a working generative model for ordinary gameplay. The earlier `0.1.0-alpha.1` predates this requirement. Opening the game does not download anything; **Start model** explicitly runs the local bootstrap.
 
 ## Set up
 

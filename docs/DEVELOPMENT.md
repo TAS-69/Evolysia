@@ -1,6 +1,6 @@
 # Development status
 
-Current source: **0.2.0-dev**. The published `0.1.0-alpha.1` remains a separate historical build. Catalogue coverage and completed gameplay are tracked separately.
+Current release: **0.2.0-alpha.1**. The published `0.1.0-alpha.1` remains a separate historical build. Catalogue coverage and completed gameplay are tracked separately.
 
 ## Connected systems
 
@@ -50,4 +50,4 @@ python tools/assetgen/validate.py
 
 Rules-only tests explicitly select `RequireModel=false`; this is a diagnostic mode. Use a real structured-output endpoint separately, inspect accepted/rejected plans and actual work, then reopen a saved world in the client. Synthetic replies cannot establish model quality.
 
-The [November validation record](releases/v0.2.0-dev-2026-11-01-validation.md) separates this pass from the [previous development validation](releases/v0.2.0-dev-validation.md). No new public release is implied by local builds.
+The [0.2.0-alpha.1 validation record](releases/v0.2.0-alpha.1-validation.md) covers the published build; earlier development passes are recorded in [November](releases/v0.2.0-dev-2026-11-01-validation.md) and [before](releases/v0.2.0-dev-validation.md).

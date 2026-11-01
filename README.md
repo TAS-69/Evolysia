@@ -12,16 +12,16 @@
 
 Evolysia is a top-down god-game about autonomous people and the worlds they make. Start with scattered bands on a generated planet, watch them learn, settle, trade and quarrel, then decide how much divine intervention is a reasonable amount. The people may disagree.
 
-**Current source: `0.2.0-dev`.** Model integration is required for gameplay. Councils generate plans that govern work, construction, experiments, migration and relationships; people remember their own reasons. Nobody is handed a manual: bands learn what their work, buildings and products do by trying them, and find new techniques only through experiments of their own devising. Manufacturing, power, staffed services, roads, terrain shaping, possession, physical cargo, specialist interiors and named saves are connected. This is still a development build with incomplete systems and changing save formats.
+**Latest release: [`0.2.0-alpha.1`](https://github.com/TAS-69/Evolysia/releases/tag/v0.2.0-alpha.1).** Model integration is required for gameplay. Councils generate plans that govern work, construction, experiments, migration and relationships; people remember their own reasons. Nobody is handed a manual: bands learn what their work, buildings and products do by trying them, and find new techniques only through experiments of their own devising. Manufacturing, power, staffed services, roads, terrain shaping, possession, physical cargo, specialist interiors and named saves are connected. This is still an alpha with incomplete systems and changing save formats.
 
-The published **`0.1.0-alpha.1`** is the earlier prototype. Its [release notes](docs/releases/v0.1.0-alpha.1.md) describe that download; the documentation below describes current source.
+The earlier prototype, **`0.1.0-alpha.1`**, remains available; its [release notes](docs/releases/v0.1.0-alpha.1.md) describe that download. [Release notes for 0.2.0-alpha.1](docs/releases/v0.2.0-alpha.1.md).
 
 ![The new-world screen](docs/images/new-world.png)
 
 ## Start playing
 
-1. Build current source using the instructions below, or use [Releases](https://github.com/TAS-69/Evolysia/releases) for the earlier alpha.
-2. For current source, start a compatible model with Python 3.11+: `python tools/llm_lab/lab.py bootstrap --helper off --embed off`. The first run installs the local runtime and downloads weights.
+1. Download `Evolysia-0.2.0-alpha.1-windows-x64.zip` from [Releases](https://github.com/TAS-69/Evolysia/releases) and extract it, or build from source using the instructions below.
+2. Start a compatible model with Python 3.11+: `python tools/llm_lab/lab.py bootstrap --helper off --embed off`. The first run installs the local runtime and downloads weights.
 3. Launch the game. Choose a seed, planet and one to six peoples. Begin unlocks after the model completes a structured handshake.
 
 Exported Windows packages include their .NET runtime. Current gameplay also needs a running model endpoint; local bootstrap requires Python, disk space and sufficient memory. **World → Model connection** changes the endpoint and model name. A lost connection holds time at every speed. The renderer requires a Vulkan-capable GPU; other platforms and graphics backends remain unverified.
@@ -30,6 +30,7 @@ Exported Windows packages include their .NET runtime. Current gameplay also need
 
 - Four planet types: temperate **Terra**, volcanic **Ignis**, frozen **Cryos** and island-covered **Thalassia**, on an 800 × 400 world that wraps east-west.
 - Individual genomes, families, needs, emotions, learned fears and changing personalities. People inherit traits, form relationships, invent techniques and sometimes take rejection very personally.
+- **Discovery, not a manual.** Each band knows only its traditions and what it has seen for itself: what a day's work actually brings, what a building or product turned out to do, clues and dead ends. New techniques are found only through experiments its council devises, an action on things the people can perceive, judged against hidden ways in. Near misses leave clues; knowledge can die with the people who hold it.
 - Migrating bands, emerging cultures, belief, leadership, conflict, farming, herding and dangerous sea journeys.
 - Finite timber, stone and ore; 107 goods, 146 gear definitions, 40 processing recipes, 130 structure definitions and 106 techniques. Availability depends on knowledge, surroundings and materials.
 - Zoom from a planet map to modular people and settlements, with 16, 32 and 64 pixel artwork densities where available. Clothing pieces have separate main and trim dyes; regional building materials and selected settlements' roof cutaways add detail.
