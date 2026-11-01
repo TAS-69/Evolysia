@@ -28,6 +28,7 @@ public sealed partial class Simulation
 
             if (s.Standing)
             {
+                if (!s.InteriorBuilt) BuildInterior(s);
                 s.Condition -= 15f / k.Days;
                 if (s.Condition < 0.5f) s.State = StructureState.Damaged;
                 if (s.Condition <= 0.05f) { Ruin(s); continue; }
@@ -94,11 +95,18 @@ public sealed partial class Simulation
                 if (id == 0 || !Structures.TryGetValue(id, out var s) || s.BandId >= 0 || !s.Standing) continue;
                 s.BandId = band.Id;
                 band.Structures.Add(id);
+                if (s.Kind.Capacity > 0f && s.Contents.Parent == null) band.Stores.Attach(s.Contents);
+                foreach (var child in Structures.Values.Where(c => c.ParentBuildingId == s.Id && c.BandId < 0 && c.Standing))
+                {
+                    child.BandId = band.Id; band.Structures.Add(child.Id);
+                    if (child.Kind.Capacity > 0f && child.Contents.Parent == null) s.Contents.Attach(child.Contents);
+                }
             }
     }
 
     void PlanNext(Band band, TechSet known, int housing, float storage)
     {
+        if (Config.RequireModel) { PlanFromMind(band, known); return; }
         var w = World;
         int n = band.Members.Count;
         int Count(Func<StructureDef, bool> pick)
@@ -309,10 +317,12 @@ public sealed partial class Simulation
         return false;
     }
 
-    internal Structure Place(Band band, StructureDef def, int cell, float progress = 0f)
+    internal Structure Place(Band band, StructureDef def, int cell, float progress = 0f, StructureDesign? design = null)
     {
         var w = World;
-        var s = new Structure { Id = _nextStructure++, Def = def.Index, Cell = cell, BandId = band.Id, State = StructureState.Planned, Progress = progress, PlannedDay = Day };
+        var s = new Structure { Id = _nextStructure++, Def = def.Index, Cell = cell, BandId = band.Id, State = StructureState.Planned, Progress = progress, PlannedDay = Day,
+            CustomKind = design?.Definition, CustomLayout = design?.Layout, CustomName = design?.Name ?? "" };
+        s.RegionalMaterials = ConstructionMaterials(band, def);
         float clearing = 0f;
         for (int y = 0; y < def.H; y++)
             for (int x = 0; x < def.W; x++)
@@ -335,10 +345,20 @@ public sealed partial class Simulation
         s.State = StructureState.Complete;
         s.Condition = 1f;
         s.BuiltDay = Day;
+        SawBuilt(s);
+        BuildInterior(s);
+        if (s.Kind.Capacity > 0f && Bands.TryGetValue(s.BandId, out var band) && s.Contents.Parent == null)
+        {
+            if (s.Kind.Id is "grain_bin" or "granary") s.Contents.Filter = "grain,millet,rice,maize,wheat,barley,oats";
+            band.Stores.Attach(s.Contents);
+            foreach (var (good, qty) in band.Stores.Held().ToArray()) band.Stores.TransferTo(s.Contents, good.Index, MathF.Min(qty, s.Kind.Capacity / MathF.Max(0.01f, good.Weight)));
+        }
     }
 
     void Ruin(Structure s)
     {
+        foreach (var child in Structures.Values.Where(c => c.ParentBuildingId == s.Id && c.Standing).ToArray()) Ruin(child);
+        s.Contents.Detach();
         s.State = StructureState.Ruined;
         s.Condition = 0f;
         if (Bands.TryGetValue(s.BandId, out var band)) band.Structures.Remove(s.Id);
@@ -363,6 +383,11 @@ public sealed partial class Simulation
 
     void Remove(Structure s)
     {
+        foreach (var child in Structures.Values.Where(c => c.ParentBuildingId == s.Id).ToArray()) Remove(child);
+        foreach (var job in Hauls.Values.Where(h => (h.SourceId == s.Id || h.TargetId == s.Id || h.VehicleId == s.Id) && h.Active))
+            CancelHaul(job, "A container was removed.");
+        s.Contents.Detach();
+        s.Contents.ReleaseAll(); s.Contents.MoveAllTo(GroundAt(s.TransitCell >= 0 ? s.TransitCell : s.Cell));
         var w = World;
         var def = s.Kind;
         for (int y = 0; y < def.H; y++)
@@ -431,7 +456,7 @@ public sealed partial class Simulation
         float step = MathF.Min(rate, total - job.Progress);
 
         float fraction = step / MathF.Max(0.01f, total);
-        foreach (var (g, q) in k.Materials)
+        foreach (var (g, q) in job.Materials)
         {
             float need = q * fraction;
             if (!band.Stores.Has(g, need))
@@ -446,7 +471,7 @@ public sealed partial class Simulation
                 fraction = step / MathF.Max(0.01f, total);
             }
         }
-        foreach (var (g, q) in k.Materials) band.Stores.Take(g, q * fraction);
+        foreach (var (g, q) in job.Materials) band.Stores.Take(g, q * fraction);
         job.Progress += step;
         job.State = StructureState.Building;
         if (job.Progress >= total - 1e-3f) Later(() => FinishBuilding(job, a, band));
@@ -474,10 +499,12 @@ public sealed partial class Simulation
 
     internal void LeaveCamp(Band band, int newCell)
     {
+        foreach (var job in Hauls.Values.Where(h => h.BandId == band.Id && h.Active)) CancelHaul(job, "The band moved camp.");
         var portable = new List<StructureDef>();
         foreach (int sid in band.Structures.ToList())
         {
             if (!Structures.TryGetValue(sid, out var s)) continue;
+            s.Contents.Detach();
             if (s.Kind.Portable && s.Standing) { portable.Add(s.Kind); Remove(s); continue; }
             s.BandId = -1;
         }
@@ -489,13 +516,13 @@ public sealed partial class Simulation
         foreach (var (good, qty) in band.Stores.Held()) if (good.Kind == GoodKind.Food) foodBulk += qty * good.Weight;
         float room = MathF.Max(0f, carry - foodBulk);
         if (foodBulk > carry)
-            foreach (var (good, qty) in band.Stores.Held().ToList()) band.Stores.Take(good.Index, good.Kind == GoodKind.Food ? qty * (1f - carry / foodBulk) : qty);
+            foreach (var (good, qty) in band.Stores.Held().ToList()) band.Stores.TransferTo(GroundAt(band.Cell), good.Index, good.Kind == GoodKind.Food ? qty * (1f - carry / foodBulk) : qty);
         else
         {
             float materials = band.Stores.Bulk - foodBulk;
             if (materials > room)
                 foreach (var (good, qty) in band.Stores.Held().ToList())
-                    if (good.Kind != GoodKind.Food) band.Stores.Take(good.Index, qty * (1f - room / materials));
+                    if (good.Kind != GoodKind.Food) band.Stores.TransferTo(GroundAt(band.Cell), good.Index, qty * (1f - room / materials));
         }
         int was = band.Cell;
         band.Cell = newCell;

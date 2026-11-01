@@ -29,6 +29,7 @@ public sealed partial class Simulation
     {
         foreach (var d in Decisions.Where(d => !d.Resolved && d.Deadline <= Day).ToList())
         {
+            if (Config.RequireModel) continue;
             string choice = d.Kind == DecisionKind.Pivot && d.Pivot != null && Living.TryGetValue(d.AgentId, out var a)
                 ? Ids.Snake(Psych.Pivot.Resolve(a, d.Pivot.Ctx, Rng))
                 : d.MeetingInstinct;
@@ -63,7 +64,7 @@ public sealed partial class Simulation
 
     internal void BeginPivot(Agent a, Band band, PivotCase pc)
     {
-        if (!DeferDecisions)
+        if (!DeferDecisions && !Config.RequireModel)
         {
             FinishPivot(pc, Psych.Pivot.Resolve(a, pc.Ctx, Rng));
             return;
@@ -71,7 +72,7 @@ public sealed partial class Simulation
 
         var scores = Psych.Pivot.Scores(a, pc.Ctx);
         var ranked = Enumerable.Range(0, scores.Length).Where(i => !float.IsNegativeInfinity(scores[i]))
-            .OrderByDescending(i => scores[i]).Take(3).Select(i => (PivotChoice)i).ToArray();
+            .OrderByDescending(i => scores[i]).Take(Config.RequireModel ? scores.Length : 3).Select(i => (PivotChoice)i).ToArray();
         var d = new Decision
         {
             Id = _nextDecision++, Day = Day, Deadline = Day + DecisionWindowDays, AgentId = a.Id, BandId = band.Id,
@@ -129,8 +130,13 @@ public sealed partial class Simulation
 
     void BeginMeeting(Band a, Band b, string instinct)
     {
+        if (Config.RequireModel && BandPlans.TryGetValue(a.Id, out var plan) && plan.Plan.Diplomacy.FirstOrDefault(d => d.BandId == b.Id) is { } intent)
+        {
+            CarryOutMeeting(a, b, intent.Stance);
+            return;
+        }
         var leader = Living.GetValueOrDefault(a.LeaderId);
-        if (!DeferDecisions || leader == null)
+        if (!Config.RequireModel && !DeferDecisions || leader == null)
         {
             CarryOutMeeting(a, b, instinct);
             return;

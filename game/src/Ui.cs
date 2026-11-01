@@ -6,6 +6,12 @@ namespace Evolysia.Game;
 
 public static class Ui
 {
+    public static string Plain(string text)
+    {
+        var result = new System.Text.StringBuilder();
+        foreach (char c in text) result.Append(c == '[' ? "[lb]" : c == ']' ? "[rb]" : c.ToString());
+        return result.ToString();
+    }
     public static readonly Color Glass = new(Palette.Panel, 0.94f);
     public static readonly Color Line = new(Palette.Border, 0.75f);
     public static readonly Color Muted = new(Palette.Parchment, 0.62f);
@@ -20,8 +26,8 @@ public static class Ui
     {
         Activity.Forage or Activity.Hunt or Activity.Fish or Activity.Farm or Activity.Herd => FoodWork,
         Activity.Craft or Activity.Build or Activity.Chop or Activity.Quarry or Activity.Mine or Activity.Gather => MakeWork,
-        Activity.Ritual or Activity.Mourn => SpiritWork,
-        Activity.Socialize or Activity.Court or Activity.Teach or Activity.CareChild or Activity.Play => SocialWork,
+        Activity.Ritual or Activity.Mourn or Activity.Heal => SpiritWork,
+        Activity.Socialize or Activity.Court or Activity.Teach or Activity.CareChild or Activity.Play or Activity.Govern => SocialWork,
         _ => MindWork,
     };
 
@@ -48,7 +54,7 @@ public static class Ui
     {
         var l = new Label { Text = Spaced(text.ToUpperInvariant()) };
         l.AddThemeColorOverride("font_color", Palette.Ochre);
-        l.AddThemeFontSizeOverride("font_size", 11);
+        l.AddThemeFontSizeOverride("font_size", 14);
         return l;
     }
 
@@ -73,7 +79,11 @@ public static class Ui
 
     public static Theme Build()
     {
-        var theme = new Theme();
+        var theme = new Theme { DefaultFont = Typeface.Interface };
+        theme.SetFont("normal_font", "RichTextLabel", Typeface.Reading);
+        theme.SetFont("bold_font", "RichTextLabel", Typeface.ReadingBold);
+        theme.SetFont("italics_font", "RichTextLabel", Typeface.ReadingItalic);
+        theme.SetFont("bold_italics_font", "RichTextLabel", Typeface.ReadingBold);
         theme.SetStylebox("panel", "PanelContainer", Box(Glass, Line, 10, 12, shadow: true));
         theme.SetStylebox("panel", "Panel", Box(Glass, Line, 10, 12, shadow: true));
         var flat = new Color(Palette.Raised, 0.85f);
@@ -101,14 +111,14 @@ public static class Ui
         foreach (var type in new[] { "Label", "Button", "LineEdit", "TextEdit", "OptionButton", "PopupMenu", "TooltipLabel", "CheckBox" })
         {
             theme.SetColor("font_color", type, Palette.Bone);
-            theme.SetFontSize("font_size", type, 13);
+            theme.SetFontSize("font_size", type, 16);
         }
         theme.SetColor("font_hover_color", "Button", Palette.Bone);
         theme.SetColor("font_pressed_color", "Button", Palette.Divine);
         theme.SetColor("font_disabled_color", "Button", new Color(Palette.Parchment, 0.4f));
         theme.SetColor("font_placeholder_color", "LineEdit", new Color(Palette.Parchment, 0.45f));
         theme.SetColor("default_color", "RichTextLabel", Palette.Bone);
-        foreach (var size in new[] { "normal_font_size", "bold_font_size", "italics_font_size" }) theme.SetFontSize(size, "RichTextLabel", 13);
+        foreach (var size in new[] { "normal_font_size", "bold_font_size", "italics_font_size" }) theme.SetFontSize(size, "RichTextLabel", 16);
         theme.SetConstant("line_separation", "RichTextLabel", 3);
         return theme;
     }

@@ -42,7 +42,7 @@ public static class Describe
         Activity.Herd => "herder", Activity.Craft => "crafter", Activity.Build => "builder", Activity.Ritual => "shaman",
         Activity.Teach => "teacher", Activity.Experiment => "tinkerer", Activity.Explore => "scout", Activity.CareChild => "caregiver",
         Activity.Socialize => "storyteller", Activity.Court => "suitor", Activity.Mourn => "mourner", Activity.Chop => "woodcutter",
-        Activity.Quarry => "quarrier", Activity.Mine => "miner", Activity.Gather => "gatherer", _ => "wanderer",
+        Activity.Quarry => "quarrier", Activity.Mine => "miner", Activity.Gather => "gatherer", Activity.Heal => "healer", Activity.Govern => "official", Activity.Guard => "guard", _ => "wanderer",
     };
 
     public static string SexAge(Agent a, int day) =>
@@ -77,8 +77,25 @@ public static class Describe
         sb.Append($"{Ui.Tag(culture.Name, Palette.Culture(culture.Hue))} people · {(b.Sedentary ? "village" : "wandering band")}\n");
         sb.Append($"{members.Count} people ({kids} children) · led by {(b.LeaderId >= 0 ? AgentLink(sim, b.LeaderId) : "no one")}\n");
         sb.Append($"Founded year {b.FoundedDay / SimConfig.DaysPerYear}{(b.ParentBandId >= 0 ? $", from {BandLink(sim, b.ParentBandId)}" : "")}\n\n");
+        if (sim.BandPlans.TryGetValue(b.Id, out var plan))
+        {
+            sb.Append($"[b]Shared plans[/b]\n{Ui.Plain(plan.Plan.Goal)}\n");
+            if (plan.Plan.Institution.Length > 0) sb.Append($"{Ui.Plain(plan.Plan.Institution)}: {Ui.Plain(plan.Plan.Doctrine)}\n");
+            sb.Append($"Sharing: {plan.Plan.Sharing:P0}\n\n");
+        }
 
         float food = b.FoodPool + members.Sum(a => a.Food);
+        var orders = sim.Production.Values.Where(j => j.BandId == b.Id && j.Active).ToArray();
+        if (orders.Length > 0)
+        {
+            sb.Append("[b]Manufacturing[/b]\n");
+            foreach (var job in orders.Take(5)) sb.Append($"{AgentLink(sim, job.WorkerId)} · {Ui.Plain(job.Product.Split('/').Last().Replace('_', ' '))} · {job.Remaining} remaining · {job.State}\n");
+            sb.Append('\n');
+        }
+        if (sim.Energy.TryGetValue(b.Id, out var energy) && (energy.Capacity > 0f || energy.Produced > 0f || energy.Consumed > 0f))
+            sb.Append($"[b]Power[/b]\nGenerated {energy.Produced:0.0} · used {energy.Consumed:0.0} · stored {energy.Stored:0.0}/{energy.Capacity:0.0}\n\n");
+        if (sim.Civics.TryGetValue(b.Id, out var civic) && civic.Patients + civic.Lessons + civic.Ceremonies + civic.Sessions > 0)
+            sb.Append($"[b]Public services[/b]\nTreatments {civic.Patients} · lessons {civic.Lessons} · ceremonies {civic.Ceremonies} · councils {civic.Sessions}\nDefence readiness {civic.Preparedness:P0}\n\n");
         sb.Append(Rows(new[]
         {
             ("Food stores", Bar(Math.Clamp(food / MathF.Max(1, members.Count * 6f), 0f, 1f), Palette.Moss), $"{food / MathF.Max(1, members.Count):0.0} days each"),
@@ -98,9 +115,9 @@ public static class Describe
         var built = b.Structures.Select(id => sim.Structures.GetValueOrDefault(id)).Where(s => s != null).Select(s => s!).ToList();
         if (built.Count > 0)
         {
-            var standing = built.Where(s => s.Standing).GroupBy(s => s.Kind).OrderByDescending(g => g.Count())
-                .Select(g => Ui.C(g.Count() > 1 ? $"{g.Count()} {Title(g.Key.Id)}s" : Title(g.Key.Id), Ui.Structure(g.Key.Role)));
-            var going = built.Where(s => !s.Standing).Select(s => Title(s.Kind.Id)).Distinct();
+            var standing = built.Where(s => s.Standing).GroupBy(s => (name: s.CustomName.Length > 0 ? s.CustomName : Title(s.Kind.Id), s.Kind.Role)).OrderByDescending(g => g.Count())
+                .Select(g => Ui.C(g.Count() > 1 ? $"{g.Count()} {Ui.Plain(g.Key.name)}s" : Ui.Plain(g.Key.name), Ui.Structure(g.Key.Role)));
+            var going = built.Where(s => !s.Standing).Select(s => Ui.Plain(s.CustomName.Length > 0 ? s.CustomName : Title(s.Kind.Id))).Distinct();
             sb.Append($"\n[b]Built[/b]\n{string.Join(", ", standing)}\n");
             if (going.Any()) sb.Append($"[color={Muted}]Going up: {string.Join(", ", going)}[/color]\n");
         }
@@ -112,6 +129,13 @@ public static class Describe
         TechSet known = default; foreach (var a in members) known |= a.Knows;
         var techs = Techs.All.Where(t => Techs.Has(known, t.Id)).Select(t => Title(Techs.Name(t.Id)));
         sb.Append($"\n[b]Know-how[/b]\n{string.Join(", ", techs)}\n");
+        // What they are trying to find out, and the latest of what they have learned for themselves.
+        var trying = sim.ExperimentsOf(b);
+        if (trying.Count > 0)
+            sb.Append($"\n[b]Experimenting[/b]\n{string.Join("\n", trying.Select(x => $"{Ui.C(Evolysia.Sim.Agents.Discovery.Gerund(x.Method), Ui.MindWork)} {string.Join(" and ", x.Subjects.Select(s => s.Replace('_', ' ')))} [color={Muted}]— {x.Idea}[/color]"))}\n");
+        var learned = sim.LoreFor(b).Where(l => l.about is "clue" or "dead end" or "work" or "building" or "making").Take(6).ToList();
+        if (learned.Count > 0)
+            sb.Append($"\n[b]Learned[/b]\n{string.Join("\n", learned.Select(l => $"{Ui.C(l.about, l.about == "dead end" ? Ui.Muted : Ui.SpiritWork)} {l.text}"))}\n");
 
         var beliefs = b.MemePrevalence.Where(kv => kv.Value >= 0.1f).OrderByDescending(kv => kv.Value)
             .Select(kv => $"{Title(sim.Memes[kv.Key].Name)} [color={Muted}]({kv.Value * 100:0}%)[/color]").ToList();
@@ -151,6 +175,13 @@ public static class Describe
         if (family.Count > 0) sb.Append(string.Join(" · ", family) + "\n");
         if (a.Children.Count > 0) sb.Append("children " + string.Join(", ", a.Children.Select(c => AgentLink(sim, c))) + "\n");
         sb.Append(inner);
+        if (sim.Minds.TryGetValue(a.Id, out var mind))
+        {
+            sb.Append($"\n[b]What matters to me[/b]\n{Ui.Plain(mind.Goal)}\n[i]{Ui.Plain(mind.Thought)}[/i]\n");
+            if (mind.Speech.Length > 0) sb.Append($"“{Ui.Plain(mind.Speech)}”\n");
+            sb.Append("\n[b]Remembered reflections[/b]\n");
+            foreach (var m in mind.Memories.TakeLast(3).Reverse()) sb.Append($"Y{m.Day / SimConfig.DaysPerYear}: {Ui.Plain(m.Reflection)}\n");
+        }
 
         sb.Append("\n[b]Personality[/b]  [color=" + Muted + "](bar = now, number = change from birth)[/color]\n");
         sb.Append(Rows(Enum.GetValues<Trait>().Select(t =>
@@ -272,7 +303,7 @@ public static class Describe
     public static string VoiceBody(Narration.Narration n)
     {
         var parts = new List<string>();
-        void Line(string key, Func<string, string> fmt) { var v = n.Get(key); if (v.Length > 0) parts.Add(fmt(v)); }
+        void Line(string key, Func<string, string> fmt) { var v = n.Get(key); if (v.Length > 0) parts.Add(fmt(Ui.Plain(v))); }
         string parchment = Palette.Hex(Palette.Parchment), divine = Palette.Hex(Palette.Divine);
         Line("dream", v => $"[color={parchment}][i]{v}[/i][/color]");
         Line("thought", v => $"[color={parchment}][i]{v}[/i][/color]");
@@ -324,7 +355,7 @@ public static class Describe
         var sb = new StringBuilder();
         foreach (var e in sim.Chronicle.Events.Where(e => e.Salience >= 0.35f).TakeLast(max).Reverse())
         {
-            string text = e.Text;
+            string text = Ui.Plain(e.Text);
             string body = e.BandId >= 0 && sim.Bands.ContainsKey(e.BandId) ? $"[url=band:{e.BandId}]{text}[/url]"
                         : e.AgentId >= 0 ? $"[url=agent:{e.AgentId}]{text}[/url]" : text;
             sb.Append($"[color={Palette.Hex(CategoryColor(e.Category))}]●[/color] [color={Muted}]Y{e.Day / SimConfig.DaysPerYear}[/color] {body}\n");

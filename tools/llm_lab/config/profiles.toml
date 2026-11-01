@@ -18,25 +18,25 @@ cache_type = "q8_0"
 
 [profiles.lite]
 description = "8-12 GB GPU: 4B main on GPU, tiny helper + embeddings on CPU"
-main   = { model = "qwen3.5-4b",       device = "gpu", ctx = 16384, slots = 4 }
+main   = { model = "qwen3.5-4b",       device = "gpu", ctx = 32768, slots = 2 }
 helper = { model = "qwen3.5-0.8b",     device = "cpu", ctx = 4096,  slots = 2, threads = 6 }
 embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
 
 [profiles.balanced]
 description = "16 GB GPU: 9B main on GPU, small helper + embeddings on CPU"
-main   = { model = "qwen3.5-9b",       device = "gpu", ctx = 24576, slots = 6 }
+main   = { model = "qwen3.5-9b",       device = "gpu", ctx = 24576, slots = 2 }
 helper = { model = "qwen3.5-2b",       device = "cpu", ctx = 4096,  slots = 2, threads = 8 }
 embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
 
 [profiles.full]
 description = "24 GB GPU: 26B-A4B MoE main on GPU, small helper + embeddings on CPU"
-main   = { model = "gemma-4-26b-a4b",  device = "gpu", ctx = 32768, slots = 8 }
+main   = { model = "gemma-4-26b-a4b",  device = "gpu", ctx = 32768, slots = 2 }
 helper = { model = "qwen3.5-2b",       device = "cpu", ctx = 4096,  slots = 2, threads = 8 }
 embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
 
 [profiles.cpu]
 description = "No usable GPU: everything on CPU (slow, but works for testing)"
-main   = { model = "qwen3.5-4b",       device = "cpu", ctx = 8192,  slots = 2, threads = 12 }
+main   = { model = "qwen3.5-4b",       device = "cpu", ctx = 16384, slots = 1, threads = 12 }
 helper = { model = "off" }
 embed  = { model = "qwen3-embed-0.6b", device = "cpu", ctx = 4096,  slots = 2, threads = 2 }
 

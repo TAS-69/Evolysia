@@ -4,7 +4,7 @@ public class ParallelTests
 {
     static string Fingerprint(int threads, ulong seed, int years)
     {
-        var sim = new Simulation(new SimConfig { Seed = seed, Threads = threads });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = seed, Threads = threads });
         sim.RunYears(years);
         var people = string.Join(";", sim.Living.Values.OrderBy(a => a.Id)
             .Select(a => $"{a.Id}:{a.BandId}:{a.Health:0.0000}:{a.Food:0.0000}:{string.Join(",", a.TraitOffset.Select(t => t.ToString("0.0000")))}"));

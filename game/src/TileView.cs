@@ -252,6 +252,12 @@ public partial class TileView : Node2D
         }
     }
 
+    public void InvalidateTerrain()
+    {
+        _inputDay = int.MinValue / 2;
+        TileBake.InvalidateRivers();
+    }
+
     public void Redraw(Simulation sim, Overlay overlay)
     {
         if (!Active || _world == null) return;
@@ -339,6 +345,7 @@ public partial class TileView : Node2D
                 long v = (long)(input.Trees[i] >> 5) + ((long)(input.Rocks[i] >> 5) << 3) + (w.Ash[i] > 0.25f ? 1L << 6 : 0L) + (w.Ash[i] > 0.3f ? 1L << 7 : 0L)
                          + (input.Occupied.Contains(i) ? 1L << 8 : 0L);
                 if (input.Fields.TryGetValue(i, out var f)) v += ((long)(f.growth <= 0.01f ? 1 : f.growth < 0.3f ? 2 : f.growth < 0.8f ? 3 : 4) << 9) + ((long)f.crop.Length << 12);
+                  v += ((long)input.Roads.GetValueOrDefault(i) << 20) + ((long)(int)(w.Elevation[i] / 10f) << 23) + ((long)(int)w.Biome[i] << 45);
                 s = s * 1000003 + v;
             }
         return s;

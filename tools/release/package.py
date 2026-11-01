@@ -28,7 +28,7 @@ def verify(stage):
         raise RuntimeError("The Windows package must contain one self-contained .NET runtime")
     manifest = json.loads((stage / "assets/manifest.json").read_text())
     expected = {p.relative_to(ROOT / "assets").as_posix() for p in (ROOT / "assets").rglob("*")
-                if p.is_file() and "_preview" not in p.parts and p.suffix in (".png", ".json", ".gpl")}
+                if p.is_file() and "_preview" not in p.parts and p.suffix in (".png", ".json", ".gpl", ".ttf", ".txt")}
     actual = {p.relative_to(stage / "assets").as_posix() for p in (stage / "assets").rglob("*") if p.is_file()}
     if actual != expected:
         raise RuntimeError(f"Artwork package mismatch: {len(expected - actual)} missing, {len(actual - expected)} extra")
@@ -66,7 +66,7 @@ def main():
         if result.returncode or "ERROR:" in result.stdout + result.stderr:
             raise RuntimeError("Godot export failed; see build/export.log")
     for source in (ROOT / "assets").rglob("*"):
-        if source.is_file() and "_preview" not in source.parts and source.suffix in (".png", ".json", ".gpl"):
+        if source.is_file() and "_preview" not in source.parts and source.suffix in (".png", ".json", ".gpl", ".ttf", ".txt"):
             copy(source, STAGE / "assets" / source.relative_to(ROOT / "assets"))
     lab = ROOT / "tools/llm_lab"
     for relative in ("lab.py", "README.md"):
@@ -77,8 +77,9 @@ def main():
                 copy(source, STAGE / "tools/llm_lab" / source.relative_to(lab))
     for name in ("LICENSE", "ART-LICENSE.md", "THIRD_PARTY_NOTICES.md"):
         copy(ROOT / name, STAGE / name)
-    notes = (ROOT / "docs/releases/v0.1.0-alpha.1.md").read_text(encoding="utf-8")
-    notes = notes.replace("(v0.1.0-alpha.1-validation.md)", "(https://github.com/TAS-69/Evolysia/blob/v0.1.0-alpha.1/docs/releases/v0.1.0-alpha.1-validation.md)")
+    version = re.search(r'config/version="([^"]+)"', (ROOT / "game/project.godot").read_text(encoding="utf-8"))[1]
+    notes = (ROOT / f"docs/releases/v{version}.md").read_text(encoding="utf-8")
+    notes = notes.replace(f"(v{version}-validation.md)", f"(https://github.com/TAS-69/Evolysia/blob/v{version}/docs/releases/v{version}-validation.md)")
     (STAGE / "README.md").write_text(notes, encoding="utf-8", newline="\n")
     copy(ROOT / "game/branding/godot-notices.json", STAGE / "godot-notices.json")
     copy(ROOT / "tools/llm_lab/README.md", STAGE / "tools/llm_lab/README.md")

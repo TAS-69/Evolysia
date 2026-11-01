@@ -8,7 +8,7 @@ public class SeaTests
     [Fact]
     public void Land_is_divided_into_landmasses()
     {
-        var w = WorldGen.Generate(new SimConfig { Seed = 3 });
+        var w = WorldGen.Generate(new SimConfig { RequireModel = false, Seed = 3 });
         Assert.True(w.LandmassSize.Length >= 3, $"only {w.LandmassSize.Length} landmasses");
         for (int i = 0; i < w.Count; i++)
             Assert.Equal(w.IsDryLand(i), w.Landmass[i] >= 0);
@@ -30,7 +30,7 @@ public class SeaTests
     [Fact]
     public void Sea_reach_respects_range_and_only_crosses_water()
     {
-        var sim = new Simulation(new SimConfig { Seed = 3 });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 3 });
         var (from, to, d) = FindCrossing(sim, 6);
         Assert.InRange(d, 1, 6);
         Assert.DoesNotContain(sim.ShoresWithin(from, d - 1), kv => kv.Key == to && kv.Value >= d);
@@ -40,7 +40,7 @@ public class SeaTests
     [Fact]
     public void Pioneers_can_sail_to_a_new_land()
     {
-        var sim = new Simulation(new SimConfig { Seed = 3 });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 3 });
         sim.RunYears(5);
         var band = sim.Bands.Values.OrderByDescending(b => b.Members.Count).First();
         var (from, to, d) = FindCrossing(sim, 6);
@@ -67,7 +67,7 @@ public class SeaTests
     [Fact]
     public void Over_centuries_people_cross_the_sea()
     {
-        var sim = new Simulation(new SimConfig { Seed = 7 });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 7 });
         sim.RunYears(220);
         int settled = sim.Bands.Values.Select(b => sim.World.Landmass[b.Cell]).Distinct().Count();
         Assert.True(sim.Stats.History.Sum(r => r.Voyages) > 0, "an island people should take to the sea");

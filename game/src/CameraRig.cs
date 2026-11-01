@@ -7,8 +7,10 @@ public partial class CameraRig : Camera2D
     public Vector2 WorldSize;
     public const float MinZoom = 0.2f, MaxZoom = 16f;
     bool _dragging;
+    public bool KeyboardEnabled = true;
 
     public event Action? Changed;
+    public event Action? UserPanned;
 
     public override void _UnhandledInput(InputEvent e)
     {
@@ -27,6 +29,7 @@ public partial class CameraRig : Camera2D
         }
         else if (e is InputEventMouseMotion mm && _dragging)
         {
+            UserPanned?.Invoke();
             Position -= mm.Relative / Zoom;
             ClampPosition();
         }
@@ -39,8 +42,9 @@ public partial class CameraRig : Camera2D
         if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right)) dir.X += 1;
         if (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up)) dir.Y -= 1;
         if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) dir.Y += 1;
-        if (dir != Vector2.Zero)
+        if (KeyboardEnabled && GetViewport().GuiGetFocusOwner() is not (LineEdit or TextEdit) && dir != Vector2.Zero)
         {
+            UserPanned?.Invoke();
             Position += dir.Normalized() * (float)delta * 600f / Zoom.X;
             ClampPosition();
         }

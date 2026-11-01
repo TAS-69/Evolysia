@@ -1,0 +1,42 @@
+{
+  "repository": "https://github.com/google/fonts",
+  "revision": "6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec",
+  "fonts": [
+    {
+      "file": "PixelifySans.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/pixelifysans/PixelifySans%5Bwght%5D.ttf",
+      "sha256": "9ba86cd010a4de309d263ceff8e8044092c9db7efda869620cb9ff1c4389e8a5",
+      "license_file": "pixelifysans-OFL.txt"
+    },
+    {
+      "file": "AlegreyaSans-Regular.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/alegreyasans/AlegreyaSans-Regular.ttf",
+      "sha256": "8fab634196007afca839f1e5a6fb300976daff55d8528b590ef032f01b14ea10",
+      "license_file": "alegreyasans-OFL.txt"
+    },
+    {
+      "file": "AlegreyaSans-Bold.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/alegreyasans/AlegreyaSans-Bold.ttf",
+      "sha256": "a3055a1893759bdbd7504bb22abc583769e7974c49353176eac0b03792c9fb8e",
+      "license_file": "alegreyasans-OFL.txt"
+    },
+    {
+      "file": "AlegreyaSans-Italic.ttf",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/alegreyasans/AlegreyaSans-Italic.ttf",
+      "sha256": "f49f6f2bdd84df850b25b0f8185d8a051e1d1eb2dd08e2f91b8c7b86d9a9e1a6",
+      "license_file": "alegreyasans-OFL.txt"
+    }
+  ],
+  "licenses": [
+    {
+      "file": "pixelifysans-OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/pixelifysans/OFL.txt",
+      "sha256": "b66ba46f511a851ab09998b5a5a9fdbb102545a3864cb993095e1745996873a7"
+    },
+    {
+      "file": "alegreyasans-OFL.txt",
+      "source": "https://raw.githubusercontent.com/google/fonts/6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec/ofl/alegreyasans/OFL.txt",
+      "sha256": "0677891e6a143f297350d260ad766ad33bfc18ed5fa4f213acf648d6b597ec1a"
+    }
+  ]
+}

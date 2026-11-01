@@ -261,11 +261,22 @@ public partial class WorldView : Sprite2D
             if (w.Fault[i] > 0.6f) s += "Fault line: earthquakes possible\n";
         }
 
+        var works = sim.Structures.Values.Where(st => st.Cell == i || st.Id == w.StructureAt[i]).Take(6).ToArray();
+        foreach (var work in works)
+        {
+            s += $"\n[b]{Ui.Plain(work.CustomName.Length > 0 ? work.CustomName : Describe.Title(work.Kind.Id))}[/b] · {work.State}\n";
+            foreach (var (good, quantity) in work.Contents.Held().Take(8)) s += $"{Describe.Title(good.Id)} {quantity:0.0}\n";
+        }
+        if (sim.GroundStock.TryGetValue(i, out var loose))
+        {
+            s += "\n[b]Loose stock[/b]\n";
+            foreach (var (good, quantity) in loose.Held().Take(12)) s += $"{Describe.Title(good.Id)} {quantity:0.0}\n";
+        }
         foreach (var ins in sim.Inscriptions)
         {
             if (ins.Medium == MessageMedium.Vision || w.Distance(ins.Cell, i) > 2) continue;
             string medium = ins.Medium == MessageMedium.Stone ? "carved in stone" : ins.Visible(day) ? "written on the ground" : "once written here, now weathered away";
-            s += $"\n[color={Palette.Hex(Palette.Divine)}]Your words, {medium} (year {ins.Day / SimConfig.DaysPerYear}):[/color]\n[i]“{ins.Text}”[/i]\n";
+            s += $"\n[color={Palette.Hex(Palette.Divine)}]Your words, {medium} (year {ins.Day / SimConfig.DaysPerYear}):[/color]\n[i]“{Ui.Plain(ins.Text)}”[/i]\n";
             foreach (var (rday, bandId, reading, understood) in ins.Readings)
             {
                 string who = sim.Bands.TryGetValue(bandId, out var b) ? $"[url=band:{bandId}]the {b.Name}[/url]" : "a band now gone";

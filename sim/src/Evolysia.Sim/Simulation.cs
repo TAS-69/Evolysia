@@ -49,6 +49,7 @@ public sealed partial class Simulation
     public Simulation(SimConfig config)
     {
         Config = config;
+        DeferDecisions = config.RequireModel;
         World = WorldGen.Generate(config);
         _mainRng = Rng.Derive(config.Seed, 0x4C494645UL);
         _climateNoise = new Noise(Rng.Derive(config.Seed, 0x434C494DUL));
@@ -189,6 +190,7 @@ public sealed partial class Simulation
             LastMoveDay = Day, Shelter = 0.1f,
         };
         band.Name = Names.Make(Cultures[cultureId].Syllables, Rng, 2, 3);
+        band.Stores.Owner = $"band/{band.Id}/ground";
         Bands[band.Id] = band;
         BandsChanged();
         return band;
@@ -234,14 +236,25 @@ public sealed partial class Simulation
 
     public void Step()
     {
+        if (Config.RequireModel && WaitingForMinds)
+            throw new InvalidOperationException("The world is waiting for model decisions.");
         if (WorldMap.DayOfYear(Day) == 0) Timed("new_year", NewYear);
         ResolveDueDecisions();
         if (Day % Config.EcologyStepDays == 0) Timed("ecology", () => Ecology.Step(World, Day, Config.EcologyStepDays));
 
         Timed("disasters", WorldDisasters);
+        WeatherLooseStock();
+        MaintainProduction();
+        MaintainRoads();
+        RebuildWorkIndexes();
+        PrepareEnergy();
         Timed("band_days", BandDays);
 
         FlushDeathsAndBirths();
+        AdvanceHauls();
+        MaintainProduction();
+        PerformServices();
+        StoreEnergy();
         if (Day % 15 == 0) Timed("band_decisions", BandDecisions);
         if (Day % 30 == 0)
         {
@@ -257,6 +270,7 @@ public sealed partial class Simulation
 
     void BandDays()
     {
+        EnsureLore();
         var groups = Bands.Values.Where(b => !b.Disbanded).GroupBy(b => b.Cell).Select(g => g.ToArray()).ToArray();
 
         var buffers = new DayBuffer[groups.Length];
@@ -319,7 +333,9 @@ public sealed partial class Simulation
         Ecology.NewYear(World, _climateNoise, Year);
         _volcanicCooling *= 0.55f;
         World.GlobalTempAnomaly = World.GlobalTempAnomaly * 0.7f + Rng.Normal(0f, 0.35f) - _volcanicCooling;
-        foreach (var band in Bands.Values) if (!band.Disbanded) ElectLeader(band);
+        // With minds, a leader serves until death or until their people choose another in council.
+        foreach (var band in Bands.Values)
+            if (!band.Disbanded && (!Config.RequireModel || !band.Members.Contains(band.LeaderId))) ElectLeader(band);
         CultureDrift();
     }
 
@@ -349,6 +365,7 @@ public sealed partial class Simulation
     internal void Kill(Agent a, DeathCause cause, Stimulus? witnessedAs = null, string how = "")
     {
         if (!a.Alive) return;
+        if (a.Id == ControlledAgentId) { ControlledAgentId = -1; ControlTargetCell = -1; ControlledActivity = Activity.Rest; }
         a.Alive = false; a.DeathCause = cause; a.DeathDay = Day;
 
         var band = BandOf(a);
@@ -388,6 +405,7 @@ public sealed partial class Simulation
         BandsChanged();
         foreach (var a in _dying)
         {
+            foreach (var job in Hauls.Values.Where(h => h.WorkerId == a.Id && h.Active)) CancelHaul(job, "The carrier died.");
             Living.Remove(a.Id);
             Dead[a.Id] = a;
             DeathLog.Add((a.Id, a.DeathDay, (a.DeathDay - a.BirthDay) / (float)SimConfig.DaysPerYear, a.DeathCause, a.Sex, a.Generation));
@@ -397,6 +415,7 @@ public sealed partial class Simulation
                 if (a.Food > 0f || a.Pack.Bulk > 0f) a.Pack.MoveAllTo(heirs.Stores);
                 foreach (var item in a.Gear) if (heirs.Spares.Count < 40) heirs.Spares.Add(item);
             }
+            else a.Pack.MoveAllTo(GroundAt(a.Site >= 0 ? a.Site : 0));
             a.DropPack();
             a.Gear.Clear();
             a.Relations.Clear();
@@ -404,7 +423,11 @@ public sealed partial class Simulation
             if (Bands.TryGetValue(a.BandId, out var band))
             {
                 band.Members.Remove(a.Id);
-                if (band.LeaderId == a.Id) ElectLeader(band);
+                if (band.LeaderId == a.Id)
+                {
+                    ElectLeader(band);   // someone steps in at once; with minds, the band then decides who leads in council
+                    if (Config.RequireModel && band.Members.Count > 0) Reconsider(band.Id);
+                }
                 if (band.Members.Count == 0) Disband(band);
             }
         }

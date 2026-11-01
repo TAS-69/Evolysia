@@ -6,7 +6,7 @@ namespace Evolysia.Sim.Tests;
 
 public class EconomyTests
 {
-    static Simulation NewSim(ulong seed = 11) => new(new SimConfig { Seed = seed, Threads = 1 });
+    static Simulation NewSim(ulong seed = 11) => new(new SimConfig { RequireModel = false, Seed = seed, Threads = 1 });
 
     [Fact]
     public void Every_recipe_item_and_structure_refers_to_real_goods_and_known_wardrobe_parts()
@@ -59,7 +59,7 @@ public class EconomyTests
         Assert.Contains(sim.Structures.Values, s => s.Standing);
         foreach (var s in sim.Structures.Values.Where(s => s.Standing || s.State == StructureState.Building))
         {
-            Assert.Equal(s.Id, sim.World.StructureAt[s.Cell]);
+            Assert.Equal(s.ParentBuildingId >= 0 ? s.ParentBuildingId : s.Id, sim.World.StructureAt[s.Cell]);
             Assert.True(sim.World.IsDryLand(s.Cell));
         }
         float timberAfter = Enumerable.Range(0, sim.World.Count).Sum(i => sim.World.Trees[i]);

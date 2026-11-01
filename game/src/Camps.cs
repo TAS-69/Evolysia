@@ -27,8 +27,10 @@ public static class Camps
         foreach (var s in sim.Structures.Values)
         {
             var k = s.Kind;
+            if (s.ParentBuildingId >= 0 && sim.Structures.TryGetValue(s.ParentBuildingId, out var parent) && parent.Standing &&
+                parent.Layout is { Roof: not null } && !(parent.BandId == selectedBand && density >= 64)) continue;
             if (k.Role == StructureRole.Field || s.State == StructureState.Planned) continue;
-            var corner = CellPos(sim, s.Cell, centre);
+            var corner = CellPos(sim, s.TransitCell >= 0 ? s.TransitCell : s.Cell, centre);
             var foot = corner + new Vector2(k.W * 0.5f, k.H) * Main.CellPx;
             if (!grown.HasPoint(foot)) continue;
             sim.Bands.TryGetValue(s.BandId, out var band);
@@ -42,13 +44,37 @@ public static class Camps
                 _ => Colors.White,
             };
             if (band != null && band.PlagueUntil > sim.Day) modulate *= new Color(0.85f, 1f, 0.7f);
-            into.Add(new WorldSprite(foot, v.Texture, v.Source, v.Pivot, Sprites.PixelSize(density), modulate, v.Shadow));
+            bool openRoom = s.Layout is { } layout && (layout.Roof == null || s.BandId == selectedBand && density >= 64 || s.State is StructureState.Ruined or StructureState.Burned);
+            into.Add(new WorldSprite(foot, v.Texture, v.Source, v.Pivot, Sprites.PixelSize(density), modulate, v.Shadow, SortY: openRoom ? corner.Y - 0.01f : float.NaN));
             if (s.State == StructureState.Building && Sprites.Make("civilisation.scaffold", null, density, foot + new Vector2(0, 0.01f), Colors.White, shadow: 0f) is { } scaffold)
                 into.Add(scaffold);
         }
     }
 
     readonly record struct Look(Texture2D Texture, Rect2 Source, Vector2 Pivot, float Shadow);
+
+    public static void AddStock(Simulation sim, Rect2 view, int density, List<WorldSprite> into)
+    {
+        void Pile(int cell, Evolysia.Sim.Economy.Inventory inventory)
+        {
+            var foot = CellPos(sim, cell, view.GetCenter()) + Vector2.One * Main.CellPx * 0.5f;
+            if (!view.Grow(Main.CellPx).HasPoint(foot)) return;
+            int row = 0;
+            foreach (var stack in inventory.Stacks.GroupBy(s => s.Good).OrderByDescending(g => g.Sum(s => s.Quantity)).Take(3))
+            {
+                string id = "civilisation.stored_" + Evolysia.Sim.Economy.Goods.All[stack.Key].Id;
+                int count = Math.Clamp((int)MathF.Ceiling(stack.Sum(s => s.Quantity) / 10f), 1, 3);
+                for (int k = 0; k < count; k++)
+                {
+                    var position = foot + new Vector2(k - 1, row - 1) * Main.CellPx * 0.25f;
+                    if (Sprites.Make(id, null, density, position, Colors.White, shadow: 0f) is { } item) into.Add(item);
+                }
+                row++;
+            }
+        }
+        foreach (var (cell, inventory) in sim.GroundStock) Pile(cell, inventory);
+        foreach (var band in sim.Bands.Values) Pile(band.Cell, band.Stores);
+    }
 
     static Look Whole(Composite c, float shadow) => new(c.Texture, new Rect2(Vector2.Zero, c.Texture.GetSize()), c.Pivot, shadow);
 
@@ -63,6 +89,12 @@ public static class Camps
         var style = Settlements.StyleOf(w.Biome[s.Cell]);
         bool ruined = s.State is StructureState.Ruined or StructureState.Burned;
         bool roofed = !ruined && !(selectedBand >= 0 && s.BandId == selectedBand && d >= 64);
+        if (s.Layout is { } room)
+        {
+            var roomStyle = new Settlements.Style(room.Wall ?? "wood", room.Roof ?? "thatch", room.Floor);
+            if (s.Materials.Any(m => Evolysia.Sim.Economy.Goods.All[m.good].Id == "bamboo") && roomStyle.Wall is "wood" or "wattle" or "reed") roomStyle = roomStyle with { Wall = "bamboo" };
+            return House(roomStyle, k.W, k.H, d, roofed && room.Roof != null, false, room.Wall != null) is { } building ? Whole(building, shadow) : null;
+        }
         Look? Building(Settlements.Style st, int cw, int ch) => House(st, cw, ch, d, roofed) is { } h ? Whole(h, shadow) : null;
         switch (k.Id)
         {
@@ -85,7 +117,7 @@ public static class Camps
                 bool fired = band is { HasFireToday: true } && !ruined;
                 return From(Sprites.Make($"civilisation.{k.Id}{(fired ? "" : "_unlit")}", null, d, Vector2.Zero, Colors.White, fired ? frame : 0));
             case "basket" or "crate" or "chest" or "grain_bin":
-                if (band != null && Stocked(k.Id, StoredGood(band), Math.Clamp((int)MathF.Ceiling(band.FoodPool / Math.Max(1, band.Members.Count) / 3f), 0, 9), d) is { } store)
+                if (Stocked(k.Id, StoredGood(s.Contents), Math.Clamp((int)MathF.Ceiling(s.Contents.Bulk / MathF.Max(1f, k.Capacity) * 9f), 0, 9), d) is { } store)
                     return Whole(store, Main.CellPx * 0.35f);
                 break;
             case "totem":
@@ -103,16 +135,16 @@ public static class Camps
         StructureState.Building => "building", StructureState.Damaged => "damaged", StructureState.Ruined => "ruined", StructureState.Burned => "burned", _ => "complete",
     };
 
-    static string StoredGood(Band band)
+    static string StoredGood(Evolysia.Sim.Economy.Inventory inventory)
     {
         string best = "food";
         float most = 0f;
-        foreach (var (good, qty) in band.Stores.Held())
+        foreach (var (good, qty) in inventory.Held())
             if (good.Kind == GoodKind.Food && qty > most && Art.Lod($"civilisation.stored_{good.Id}", 16) != null) { most = qty; best = good.Id; }
         return best;
     }
 
-    public static void AddPeople(Simulation sim, Band band, Vector2 camp, int density, double now, List<WorldSprite> into)
+    public static void AddPeople(Simulation sim, Band band, Vector2 camp, int density, double now, List<WorldSprite> into, int onlyPerson = -1)
     {
         var w = sim.World;
         var tint = band.PlagueUntil > sim.Day ? new Color(0.85f, 1f, 0.7f) : Colors.White;
@@ -128,6 +160,7 @@ public static class Camps
         int placed = 0;
         foreach (int id in band.Members)
         {
+            if (onlyPerson >= 0 && id != onlyPerson) continue;
             if (!sim.Living.TryGetValue(id, out var agent)) continue;
             uint h = TileBake.Hash(id, 9);
             bool child = agent.IsChild(sim.Day);
@@ -142,7 +175,9 @@ public static class Camps
             Vector2 at, velocity = Vector2.Zero;
             bool working = true;
             bool away = site.DistanceSquaredTo(home) > 4f;
-            if (agent.Sick) at = home;
+            bool physical = id == sim.ControlledAgentId || sim.HaulFor(id) != null || sim.ProductionFor(id) != null || sim.ServiceFor(id) != null || sim.RoadFor(id) != null;
+            if (physical) at = site;
+            else if (agent.Sick) at = home;
             else if (!away) at = site;
             else if (phase < 0.12) { at = home.Lerp(site, (float)(phase / 0.12)); velocity = site - home; }
             else if (phase < 0.75) at = site;
@@ -178,9 +213,9 @@ public static class Camps
 
     static readonly Dictionary<string, Composite?> Composites = new();
 
-    public static Composite? House(Settlements.Style style, int cw, int ch, int d, bool roofed)
+    public static Composite? House(Settlements.Style style, int cw, int ch, int d, bool roofed, bool furniture = true, bool walls = true)
     {
-        string key = $"house|{style}|{cw}x{ch}|{d}|{roofed}";
+        string key = $"house|{style}|{cw}x{ch}|{d}|{roofed}|{furniture}|{walls}";
         if (Composites.TryGetValue(key, out var cached)) return cached;
         Composite? result = null;
         string wall = Art.Lod($"civilisation.wall_{style.Wall}_00", d) != null ? style.Wall : "wattle";
@@ -210,6 +245,7 @@ public static class Camps
                 for (int x = 0; x < cw; x++)
                 {
                     bool side = x == 0 || x == cw - 1, end = y == 0 || y == ch - 1;
+                    if (!walls) continue;
                     if (!side && !end) continue;
                     if (!roofed && y == ch - 1) continue;
                     int mask = (side && y > 0 ? 1 : 0) | (end && x < cw - 1 ? 2 : 0) | (side && y < ch - 1 ? 4 : 0) | (end && x > 0 ? 8 : 0);
@@ -233,7 +269,7 @@ public static class Camps
                         img[o] = (byte)(img[o] * k); img[o + 1] = (byte)(img[o + 1] * k); img[o + 2] = (byte)(img[o + 2] * k);
                     }
             }
-            else
+            else if (furniture)
             {
                 if (Art.Lod("civilisation.hearth", d) is { } hearth) Stamp(hearth, d / 2, d / 2);
                 if (Art.Lod("civilisation.bed", d) is { } bed && cw >= 3) Stamp(bed, (cw - 2) * d + d / 2, d / 2);

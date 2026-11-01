@@ -102,10 +102,10 @@ public sealed partial class Simulation
         band.Awe += vision ? 1.5f : 0.8f;
         var leader = Living.GetValueOrDefault(band.LeaderId);
         var instinct = leader != null ? Interpret(leader, band, literate) : (MessageReading)Array.IndexOf(counts, counts.Max());
-        if (DeferDecisions && leader != null)
+        if ((DeferDecisions || Config.RequireModel) && leader != null)
         {
             var options = new[] { instinct }.Concat(Enum.GetValues<MessageReading>().Where(r => r != instinct)
-                .OrderByDescending(r => counts[(int)r])).Take(3).Select(r => Ids.Snake(r)).ToArray();
+                .OrderByDescending(r => counts[(int)r])).Where(r => literate || r != MessageReading.Command).Take(Config.RequireModel ? 5 : 3).Select(r => Ids.Snake(r)).ToArray();
             var d = new Decision
             {
                 Id = _nextDecision++, Day = Day, Deadline = Day + DecisionWindowDays, AgentId = leader.Id, BandId = band.Id,
@@ -164,7 +164,7 @@ public sealed partial class Simulation
                 foreach (int id in band.Members) if (Living.TryGetValue(id, out var m)) m.Feel(Emotion.Joy, 0.3f);
                 break;
             case MessageReading.Command:
-                what += " " + Obey(band, ins);
+                if (!Config.RequireModel) what += " " + Obey(band, ins);
                 break;
             case MessageReading.Dismissed:
                 band.DivineFavor -= 0.5f;
@@ -175,6 +175,7 @@ public sealed partial class Simulation
                 break;
         }
         Chronicle.Add(new WorldEvent(Day, EventCategory.Spiritual, "message_read", what, 0.7f, band.LeaderId, band.Id));
+        if (Config.RequireModel) Reconsider(band.Id);
         if (leader != null)
             Chronicle.Moment(new LlmMoment(Day, "message_read", leader.Id, band.Id, new()
             {

@@ -1,5 +1,6 @@
 using Evolysia.Sim.Core;
 using Evolysia.Sim.Economy;
+using Evolysia.Sim.Persistence;
 
 namespace Evolysia.Sim.Society;
 
@@ -53,6 +54,7 @@ public enum MemeKind : byte { SpiritBelief, Ritual, Taboo, SharingNorm, Hospital
 
 public sealed class Meme
 {
+    [SaveOptional] public string Doctrine = "";
     public int Id;
     public MemeKind Kind;
     public StimulusCategory Target;

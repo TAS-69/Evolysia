@@ -2,7 +2,10 @@ using Godot;
 
 namespace Evolysia.Game;
 
-public readonly record struct WorldSprite(Vector2 Foot, Texture2D Texture, Rect2 Source, Vector2 Pivot, float PixelSize, Color Modulate, float Shadow = 0f, bool Flip = false);
+public readonly record struct WorldSprite(Vector2 Foot, Texture2D Texture, Rect2 Source, Vector2 Pivot, float PixelSize, Color Modulate, float Shadow = 0f, bool Flip = false, float SortY = float.NaN)
+{
+    public float DepthY => float.IsNaN(SortY) ? Foot.Y : SortY;
+}
 
 public static class Sprites
 {
@@ -38,11 +41,11 @@ public static class Sprites
 
     public static ImageTexture Nature(Sheet sheet, int scale, int rowA, int rowB, float blend)
     {
-        int q = (int)MathF.Round(blend * 8f);
+        int q = Math.Clamp((int)MathF.Round(blend * 255f), 0, 255);
         var key = (sheet.Id, scale, rowA, rowB, q);
         if (NatureCache.TryGetValue(key, out var t)) return t;
         if (NatureCache.Count > 3000) NatureCache.Clear();
-        float f = q / 8f;
+        float f = q / 255f;
         var rgba = new byte[sheet.Width * sheet.Height * 4];
         for (int i = 0; i < sheet.Slots.Length; i++)
         {
@@ -50,12 +53,12 @@ public static class Sprites
             if (s == Art.Empty) continue;
             var a = Art.Nature.At(s, rowA);
             var b = Art.Nature.At(s, rowB);
-            rgba[i * 4] = (byte)(a.R + (b.R - a.R) * f);
-            rgba[i * 4 + 1] = (byte)(a.G + (b.G - a.G) * f);
-            rgba[i * 4 + 2] = (byte)(a.B + (b.B - a.B) * f);
+            rgba[i * 4] = (byte)MathF.Round(a.R + (b.R - a.R) * f);
+            rgba[i * 4 + 1] = (byte)MathF.Round(a.G + (b.G - a.G) * f);
+            rgba[i * 4 + 2] = (byte)MathF.Round(a.B + (b.B - a.B) * f);
             rgba[i * 4 + 3] = 255;
         }
-        var image = Image.CreateFromData(sheet.Width, sheet.Height, false, Image.Format.Rgba8, rgba);
+        using var image = Image.CreateFromData(sheet.Width, sheet.Height, false, Image.Format.Rgba8, rgba);
         if (scale > 1) image.Resize(sheet.Width * scale, sheet.Height * scale, Image.Interpolation.Nearest);
         return NatureCache[key] = ImageTexture.CreateFromImage(image);
     }

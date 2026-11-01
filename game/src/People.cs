@@ -42,14 +42,15 @@ public static class People
             Activity.Forage => "gather",
             Activity.Hunt => "attack",
             Activity.Farm => "dig",
-            Activity.Craft or Activity.Experiment => "craft",
+            Activity.Craft or Activity.Experiment or Activity.Heal => "craft",
             Activity.Build => "build",
-            Activity.Socialize or Activity.Court or Activity.Teach => "talk",
+            Activity.Socialize or Activity.Court or Activity.Teach or Activity.Govern => "talk",
             Activity.Ritual => "pray",
             Activity.Mourn => "mourn",
             Activity.Chop => "chop",
             Activity.Quarry or Activity.Mine => "dig",
             Activity.Gather => "gather",
+            Activity.Haul => "carry",
             Activity.Play => "play",
             _ => "idle",
         };
@@ -62,14 +63,18 @@ public static class People
         look.Age = years < 14f ? 0 : years >= 55f ? 2 : 1;
         float strength = a.Genome[Gene.Strength];
         look.Build = strength < 0.35f ? 0 : strength > 0.65f ? 2 : 1;
+        if (a.Appearance.Build >= 0) look.Build = Math.Clamp(a.Appearance.Build, 0, 2);
         look.Skin = Math.Clamp((int)(a.Genome[Gene.Pigment] * 8f), 0, 7);
+        if (a.Appearance.Skin >= 0) look.Skin = Math.Clamp(a.Appearance.Skin, 0, 7);
         look.Hair = look.Age == 2 ? 6 : Math.Clamp((int)(a.Genome[Gene.HairTone] * 8f), 0, 7);
+        if (a.Appearance.Hair >= 0) look.Hair = Math.Clamp(a.Appearance.Hair, 0, 7);
         int hue = look.Culture = cultureHue % 12;
         bool child = look.Age == 0;
 
         var styles = (a.Sex == Sex.Female) ^ (hue % 3 == 0) ? StylesB : StylesA;
         string style = child ? "child_tuft" : styles[(hue * 3 + (a.Id % 5 == 0 ? a.Id : 0)) % styles.Length];
         if (look.Age == 2 && a.Sex == Sex.Male && a.Id % 3 == 0) style = "cropped";
+        if (a.Appearance.HairStyle.Length > 0 && HairStyles().ContainsKey(a.Appearance.HairStyle)) style = a.Appearance.HairStyle;
         HairStyles().TryGetValue(style, out var hair);
         look.Set("hair_back", hair.back);
         look.Set("hair_front", hair.front);
@@ -81,12 +86,13 @@ public static class People
             if (Simulation.Worn(a, slot) is { } item)
             {
                 bool dyed = item.Inputs.Any(i => Goods.All[i.good].Id is "cloth" or "fiber");
-                look.Set(layer, item.Id, dyed ? dye : 12, dyed ? trim : 12);
+                var colours = a.Appearance.Garments.GetValueOrDefault(layer);
+                look.Set(layer, item.Id, colours is { Main: >= 0 } ? colours.Main : dyed ? dye : 12, colours is { Trim: >= 0 } ? colours.Trim : dyed ? trim : 12);
             }
 
         if (!child && Techs.Has(a.Knows, TechId.Pigments))
             look.Set("body_paint", new[] { "cheek_dots", "brow_band", "arm_bands", "face_streak", "shoulder_dabs", "leg_marks" }[hue % 6], 12, 12);
-        look.Set("held_item", child ? null : Simulation.HeldTool(a, activity)?.Id, 12, 12);
+        look.Set("held_item", child ? null : Simulation.HeldTool(a, activity == Activity.Guard ? Activity.Hunt : activity)?.Id, 12, 12);
         return look;
     }
 
@@ -134,7 +140,8 @@ public static class People
             }
             var pivot = body.Meta.TryGetProperty("row_pivots", out var rp) && profile >= 0 && profile < rp.GetArrayLength()
                 ? new Vector2(rp[profile][0].GetInt32(), rp[profile][1].GetInt32()) : new Vector2(body.PivotX, body.PivotY);
-            strip = new Strip(ImageTexture.CreateFromImage(Image.CreateFromData(fw * frames, fh, false, Image.Format.Rgba8, rgba)),
+            using var image = Image.CreateFromData(fw * frames, fh, false, Image.Format.Rgba8, rgba);
+            strip = new Strip(ImageTexture.CreateFromImage(image),
                               frames, fw, fh, body.Meta.TryGetProperty("fps", out var fps) ? fps.GetSingle() : 4f, pivot);
         }
         Cache[key] = strip;
@@ -156,7 +163,7 @@ public static class People
         return -1;
     }
 
-    static Color32[] Table(Look look, int main, int trim)
+    internal static Color32[] Table(Look look, int main, int trim)
     {
         var names = Art.SlotNames;
         int reference = Art.ReferenceRow;

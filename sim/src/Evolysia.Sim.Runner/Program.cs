@@ -14,6 +14,8 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
 var cfg = new SimConfig();
 int years = 500;
+int? days = null;
+string? save = null, load = null;
 string outDir = "runs/latest";
 bool quiet = false, profile = false;
 int traceYears = 0, narrateCount = 0, mindsBudget = 0;
@@ -25,6 +27,10 @@ for (int i = 0; i < args.Length; i++)
     {
         case "--seed": cfg.Seed = ulong.Parse(Next()); break;
         case "--years": years = int.Parse(Next()); break;
+        case "--days": days = int.Parse(Next()); break;
+        case "--rules-only": cfg.RequireModel = false; break;
+        case "--save": save = Next(); break;
+        case "--load": load = Next(); break;
         case "--out": outDir = Next(); break;
         case "--width": cfg.Width = int.Parse(Next()); break;
         case "--height": cfg.Height = int.Parse(Next()); break;
@@ -47,12 +53,12 @@ for (int i = 0; i < args.Length; i++)
 Directory.CreateDirectory(outDir);
 
 var sw = Stopwatch.StartNew();
-var sim = new Simulation(cfg);
-Console.WriteLine($"World {cfg.Width}x{cfg.Height}, seed {cfg.Seed}: generated in {sw.ElapsedMilliseconds} ms. " +
+var sim = load == null ? new Simulation(cfg) : Evolysia.Sim.Persistence.WorldSave.Load(load);
+Console.WriteLine($"World {sim.World.W}x{sim.World.H}, seed {sim.Config.Seed}: ready in {sw.ElapsedMilliseconds} ms. " +
                   $"{sim.Living.Count} people in {sim.Bands.Count} bands.");
 WriteMaps(sim, Path.Combine(outDir, "world"));
 var startTraits = TraitSnapshot(sim);
-if (traceYears > 0) Trace(sim, traceYears);
+if (traceYears > 0 && !sim.Config.RequireModel) Trace(sim, traceYears);
 
 var lastProfile = new Dictionary<string, double>();
 var lastPause = TimeSpan.Zero; long lastAlloc = 0;
@@ -72,9 +78,54 @@ void OnYear(Simulation s)
         foreach (var (k, v) in s.Profile) lastProfile[k] = v;
     }
 }
-if (mindsBudget > 0) await RunWithMinds(sim, years, mindsBudget, llmUrl, Path.Combine(outDir, "minds.md"), OnYear);
+if (sim.Config.RequireModel)
+{
+    using var backend = new Evolysia.Narration.LlamaServerBackend(llmUrl);
+    using var director = new Evolysia.Narration.CognitionDirector(backend);
+    int end = sim.Day + (days ?? years * SimConfig.DaysPerYear);
+    var progress = Stopwatch.StartNew(); int last = sim.Day, rejected = 0;
+    while (sim.Day < end && sim.Living.Count > 0)
+    {
+        director.Pump(sim);
+        if (director.Rejected != rejected)
+        {
+            rejected = director.Rejected;
+            Console.WriteLine($"Plan rejected: {director.LastError}");
+            File.AppendAllText(Path.Combine(outDir, "rejected-plans.jsonl"), JsonSerializer.Serialize(new { director.LastError, director.LastRejectedReply }) + "\n");
+        }
+        if (!director.Hold(sim))
+        {
+            sim.Step();
+            if (WorldMap.DayOfYear(sim.Day) == 0) OnYear(sim);
+            if (sim.Day != last) { progress.Restart(); last = sim.Day; }
+        }
+        else
+        {
+            if (progress.Elapsed.TotalSeconds > 150) { Console.Error.WriteLine(director.Status + " " + director.LastError); return 2; }
+            await Task.Delay(20);
+        }
+    }
+    Console.WriteLine($"Model plans and decisions: {director.Accepted} accepted, {director.Rejected} rejected.");
+    File.WriteAllText(Path.Combine(outDir, "plans.json"), System.Text.Json.JsonSerializer.Serialize(sim.PlanLog, Evolysia.Narration.CognitionPrompts.Json));
+    // What each band learned for itself: experiments tried, what came of them, and its lore.
+    var lore = new StringBuilder("# Lore\n");
+    foreach (var band in sim.Bands.Values.OrderBy(b => b.Id))
+    {
+        lore.Append($"\n## {band.Name}\n\nExperiments proposed:\n");
+        foreach (var p in sim.PlanLog.Where(p => p.BandId == band.Id))
+            foreach (var x in p.Plan.Experiments ?? Array.Empty<ExperimentIntent>())
+                lore.Append($"- day {p.Day}: {x.Action} {string.Join(" + ", x.Subjects)} — {x.Idea}\n");
+        lore.Append("\nOutcomes:\n");
+        foreach (var e in sim.Chronicle.Events.Where(e => e.BandId == band.Id && e.Kind is "experiment" or "invention")) lore.Append($"- day {e.Day}: {e.Text}\n");
+        lore.Append("\nLore:\n");
+        foreach (var (about, text) in sim.LoreFor(band, 200)) lore.Append($"- {about}: {text}\n");
+    }
+    File.WriteAllText(Path.Combine(outDir, "lore.md"), lore.ToString());
+}
+else if (mindsBudget > 0) await RunWithMinds(sim, years, mindsBudget, llmUrl, Path.Combine(outDir, "minds.md"), OnYear);
+else if (days is { } count) { for (int i = 0; i < count; i++) sim.Step(); }
 else sim.RunYears(years, OnYear);
-if (sim.Stats.Year.Births + sim.Stats.Year.Deaths.Sum() > 0) {                                                 }
+if (save != null) Evolysia.Sim.Persistence.WorldSave.Save(sim, save);
 Console.WriteLine("Time by phase: " + string.Join(", ", sim.Profile.OrderByDescending(p => p.Value).Select(p => $"{p.Key} {p.Value:0.0}s")));
 var settled = sim.Bands.Values.Select(b => sim.World.Landmass[b.Cell]).Distinct().Count();
 Console.WriteLine($"Settled landmasses: {settled}; voyages: {sim.Stats.History.Sum(r => r.Voyages)} " +

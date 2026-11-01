@@ -425,6 +425,8 @@ public sealed partial class Simulation
             Create(a, band);
             return;
         }
+        // With minds, knowledge comes only from the experiments they chose.
+        if (Config.RequireModel) { WorkExperiment(a, band, 1f); return; }
         var w = World;
         int cell = band.Cell;
         foreach (var def in Techs.All)

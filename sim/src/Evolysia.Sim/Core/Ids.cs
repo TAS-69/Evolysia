@@ -46,6 +46,7 @@ public enum Activity : byte
     Rest, Forage, Hunt, Fish, Farm, Herd, Craft, Build, Socialize, Court, CareChild,
     Teach, Experiment, Ritual, Explore, Mourn, Play,
     Chop, Quarry, Mine, Gather,
+    Haul, Heal, Govern, Guard,
 }
 
 [Flags]

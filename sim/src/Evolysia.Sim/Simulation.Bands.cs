@@ -16,6 +16,12 @@ public sealed partial class Simulation
             if (band.Disbanded || band.Members.Count == 0) continue;
             EconomyUpkeep(band);
             for (int c = 0; c < Ids.CategoryCount; c++) band.PlaceDread[c] *= 0.97f;
+            if (Config.RequireModel)
+            {
+                FollowMigrationPlan(band);
+                Notice(band);
+                continue;
+            }
 
             if (!band.Sedentary && BandShare(band, TechId.Agriculture) >= 0.3f && World.Growth(band.Cell, Day) > 0f && OpenLand(band.Cell, band.Id)
                 && World.Biome[band.Cell] is Biome.TemperateGrassland or Biome.TemperateForest or Biome.Savanna
@@ -435,8 +441,8 @@ public sealed partial class Simulation
             Chronicle.Add(new WorldEvent(Day, EventCategory.Trade, "first_contact",
                 $"The {a.Name} and the {b.Name} meet for the first time and share a feast.",
                 a.CultureId != b.CultureId ? 0.45f : 0.26f, -1, a.Id));
-        if (a.Members.Count < 6 && a.RelationTo(b.Id) > 0.3f) Merge(a, b);
-        else if (b.Members.Count < 6 && b.RelationTo(a.Id) > 0.3f) Merge(b, a);
+        if (!Config.RequireModel && a.Members.Count < 6 && a.RelationTo(b.Id) > 0.3f) Merge(a, b);
+        else if (!Config.RequireModel && b.Members.Count < 6 && b.RelationTo(a.Id) > 0.3f) Merge(b, a);
 
         Agent? SingleAdult(Band x)
         {
@@ -500,17 +506,26 @@ public sealed partial class Simulation
 
     void Merge(Band small, Band into)
     {
+        foreach (var haul in Hauls.Values.Where(h => (h.BandId == small.Id || h.BandId == into.Id) && h.Active)) CancelHaul(haul, "The communities joined.");
+        foreach (int id in Production.Values.Where(j => (j.BandId == small.Id || j.BandId == into.Id) && j.Active).Select(j => j.Id).ToArray()) CancelProduction(id);
+        foreach (var road in RoadProjects.Values.Where(r => (r.BandId == small.Id || r.BandId == into.Id) && r.Active)) road.Cancelled = true;
         BandsChanged();
         foreach (int id in small.Members.ToArray())
             if (Living.TryGetValue(id, out var m)) { AddMember(into, id); m.BandId = into.Id; }
         small.Stores.MoveAllTo(into.Stores);
         foreach (var (species, head) in small.Herds) into.Herds[species] = into.Herds.GetValueOrDefault(species) + head;
         foreach (int sid in small.Structures)
-            if (Structures.TryGetValue(sid, out var s)) { s.BandId = World.Distance(s.Cell, into.Cell) <= 8 ? into.Id : -1; if (s.BandId == into.Id) into.Structures.Add(sid); }
+            if (Structures.TryGetValue(sid, out var s))
+            {
+                if (s.ParentBuildingId < 0) s.Contents.Detach();
+                s.BandId = World.Distance(s.Cell, into.Cell) <= World.Cells(8) ? into.Id : -1;
+                if (s.BandId == into.Id) { into.Structures.Add(sid); if (s.ParentBuildingId < 0 && s.Standing) into.Stores.Attach(s.Contents); }
+            }
         small.Structures.Clear();
         small.Members.Clear();
         Chronicle.Add(new WorldEvent(Day, EventCategory.Social, "merge", $"The last of the {small.Name} join the {into.Name}.", 0.3f, -1, into.Id));
         Disband(small);
+        if (Config.RequireModel) { Reconsider(small.Id); Reconsider(into.Id); }
     }
 
     void Raid(Band attacker, Band victim, bool first)
@@ -518,6 +533,7 @@ public sealed partial class Simulation
         Stats.Year.Raids++;
         var ma = Mood(attacker); var mv = Mood(victim);
         float odds = (ma.fighters + 1f) / (ma.fighters + mv.fighters + 2f) + Rng.Normal(0f, 0.1f);
+        odds += (Civics.GetValueOrDefault(attacker.Id)?.Preparedness ?? 0f) * 0.1f - (Civics.GetValueOrDefault(victim.Id)?.Preparedness ?? 0f) * 0.2f;
         bool won = odds > 0.5f;
         int casualtiesV = 0, casualtiesA = 0;
         foreach (var (band, losers, chance) in new[] { (victim, won, 0.06f), (attacker, !won, 0.04f) })

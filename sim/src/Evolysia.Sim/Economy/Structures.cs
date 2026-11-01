@@ -2,7 +2,7 @@ using Evolysia.Sim.Agents;
 
 namespace Evolysia.Sim.Economy;
 
-public enum StructureRole : byte { Dwelling, Storage, Station, Hearth, Field, Pen, Shrine, Defence, Water, Civic, Vessel, Power }
+public enum StructureRole : byte { Dwelling, Storage, Station, Hearth, Field, Pen, Shrine, Defence, Water, Civic, Vessel, Power, Decoration }
 
 public sealed record StructureDef(ushort Index, string Id, StructureRole Role, TechId[] Techs, int W, int H, (ushort good, float qty)[] Materials,
                                   float Labour, int Housing, float Warmth, float Capacity, float Effect, bool Portable, int Days);
@@ -11,6 +11,17 @@ public enum StructureState : byte { Planned, Building, Complete, Damaged, Ruined
 
 public sealed class Structure
 {
+    Inventory? _contents;
+    public int TransitCell = -1;
+    public int ParentBuildingId = -1;
+    public bool InteriorBuilt;
+    public (ushort good, float qty)[]? RegionalMaterials;
+    public StructureDef? CustomKind;
+    public RoomLayout? CustomLayout;
+    public string CustomName = "";
+    public RoomLayout? Layout => CustomLayout ?? RoomLayouts.All.GetValueOrDefault(Kind.Id);
+    public (ushort good, float qty)[] Materials => RegionalMaterials ?? Kind.Materials;
+    public Inventory Contents => _contents ??= new Inventory($"structure/{Id}", MathF.Max(Kind.Capacity, Layout != null ? 100f : Kind.Role == StructureRole.Vessel ? Kind.Effect * 50f : 0f));
     public int Id;
     public ushort Def;
     public int Cell;
@@ -25,7 +36,7 @@ public sealed class Structure
     public float Yield;
     public float Clearing;
     public string Style = "";
-    public StructureDef Kind => Structures.All[Def];
+    public StructureDef Kind => CustomKind ?? Structures.All[Def];
     public bool Standing => State is StructureState.Complete or StructureState.Damaged;
 }
 
@@ -148,8 +159,42 @@ public static class Structures
         S("hover_carrier", StructureRole.Vessel, T(TechId.Hover), "advanced_alloy:5,electronics:4,battery:3", 25f, w: 2, effect: 3f, days: 10000);
         S("construction_crane", StructureRole.Civic, T(TechId.Machinery), "steel:6,rope:2", 10f, effect: 1.5f, days: 8000);
 
+        AddRooms();
         All = _list.ToArray();
     }
+
+    static void AddRooms()
+    {
+        foreach (var room in RoomLayouts.All.Values)
+        {
+            TechId tech = room.Id switch
+            {
+                "camp" => TechId.StoneTools, "home" or "rural_home" => TechId.Carpentry, "granary" => TechId.Agriculture,
+                "pottery_workshop" => TechId.Pottery, "weaver" => TechId.Weaving, "smithy" => TechId.Iron, "bakery" => TechId.Baking,
+                "infirmary" => TechId.Herbalism, "machine_shop" or "construction_yard" => TechId.Machinery,
+                "research_lab" => TechId.Chemistry, "future_fabricator" => TechId.Fabrication, "royal_hall" => TechId.Monarchy,
+                "council_hall" => TechId.Governance, "ritual_hall" or "ceremonial_hall" => TechId.Priesthood,
+                "magic_workshop" => TechId.Alchemy, "fort_gatehouse" or "barracks" or "watch_post" => TechId.Fortification,
+                "carpentry_workshop" => TechId.Carpentry, "fishing_hut" => TechId.Fishing, "ranch" => TechId.Domestication,
+                "market" => TechId.Trade, "industrial_hall" => TechId.Machinery, "shipyard" => TechId.Shipbuilding,
+                "transport_depot" => TechId.Motors, "brew_house" => TechId.Brewing, "medical_clinic" => TechId.Medicine, "library" => TechId.Writing,
+                _ => TechId.Shelter,
+            };
+            var role = room.Id is "home" or "rural_home" or "camp" ? StructureRole.Dwelling : room.Id == "granary" ? StructureRole.Storage : StructureRole.Civic;
+            string materials = room.Wall is "stone" or "granite" or "limestone" or "sandstone" or "basalt" ? "stone:30,log:10,fiber:8" :
+                room.Floor is "concrete" or "metal_deck" ? "concrete:24,steel:8,glass:4" : "wood:30,fiber:12,clay:8";
+            if (ByName.TryGetValue(room.Id, out ushort existing))
+                _list[existing] = _list[existing] with { W = room.Width, H = room.Height, Labour = MathF.Max(20f, _list[existing].Labour), Materials = InMaterials(materials) };
+            else S(room.Id, role, T(tech), materials, 30f, w: room.Width, h: room.Height, housing: role == StructureRole.Dwelling ? 8 : 0,
+                warmth: role == StructureRole.Dwelling ? room.Id == "camp" ? 2f : 8f : 0f, capacity: role == StructureRole.Storage ? 300f : 0f, effect: 1f, days: 8000);
+            foreach (var obj in room.Objects)
+                if (!ByName.ContainsKey(obj.Kind))
+                    S(obj.Kind, obj.Kind == "bed" ? StructureRole.Dwelling : StructureRole.Decoration, T(tech), "wood:2,fiber:1", 1f,
+                        housing: obj.Kind == "bed" ? 1 : 0, warmth: obj.Kind == "bed" ? 2f : 0f, days: 4000);
+        }
+    }
+
+    static (ushort good, float qty)[] InMaterials(string text) => text.Split(',').Select(p => p.Split(':')).Select(p => (Goods.Id(p[0]), float.Parse(p[1], System.Globalization.CultureInfo.InvariantCulture))).ToArray();
 
     public static StructureDef? Get(string id) => ByName.TryGetValue(id, out var i) ? All[i] : null;
     public static StructureDef Need(string id) => All[ByName[id]];

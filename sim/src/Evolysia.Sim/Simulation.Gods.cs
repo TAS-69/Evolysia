@@ -17,6 +17,8 @@ public sealed partial class Simulation
         ActionLog.Add((Day, action));
         Apply(action);
         FlushDeathsAndBirths();
+        if (Config.RequireModel)
+            foreach (var band in BandsNear(action.Cell, Math.Max(World.Cells(2), action.Radius >= 0 ? action.Radius : Powers.DefaultRadius(action.Power, World.Scale)))) Reconsider(band.Id);
     }
 
     public IEnumerable<Prayer> OpenPrayers => Prayers.Where(p => p.Open);
@@ -51,6 +53,21 @@ public sealed partial class Simulation
 
         switch (a.Power)
         {
+            case Power.SpawnPlant:
+                foreach (int cell in CellsNear(a.Cell, r).Where(w.IsDryLand))
+                {
+                    w.PlantStock[cell] = w.PlantK[cell];
+                    w.Trees[cell] = w.TreesK[cell];
+                }
+                foreach (var b in bands) Witness(b, a.Power, true, 0.5f, "green shoots rising from bare earth");
+                break;
+            case Power.RaiseLand or Power.LowerLand:
+                ShapeLand(a.Cell, r, a.Power == Power.RaiseLand ? 200f : -200f);
+                foreach (var b in bands.Where(b => !b.Disbanded)) Witness(b, a.Power, a.Power == Power.RaiseLand, 0.8f, "the shape of the world changing beneath them");
+                break;
+            case Power.Possess:
+                Possess(a.TargetAgentId);
+                break;
             case Power.Rain:
                 foreach (int c in CellsNear(a.Cell, r))
                 {
@@ -241,6 +258,7 @@ public sealed partial class Simulation
                 effect = "becomes your prophet";
                 break;
             case DreamKind.Leave:
+                if (Config.RequireModel) { effect = "wakes with a desire to leave, to weigh against the needs of the band"; break; }
                 if (band.LeaderId == a.Id || a.Prestige >= 1.5f) { ForceMigrate(band, 4); effect = "leads the band to new land"; }
                 else
                 {
@@ -255,8 +273,8 @@ public sealed partial class Simulation
                 a.Emotions[(int)Emotion.Anger] = 0f;
                 foreach (var rel in a.Relations.Values) { rel.Grudge = false; rel.Affinity = MathF.Max(rel.Affinity, 0f); }
                 a.Shift(Trait.Cooperativeness, 0.1f * receptive, Day, scaleByPlasticity: false);
-                if (band.LeaderId == a.Id) foreach (var k in band.Relations.Keys.ToList()) band.Relations[k] = MathF.Max(band.Relations[k], 0.3f);
-                effect = band.LeaderId == a.Id ? "makes peace with every neighbour" : "lets go of every grudge";
+                if (!Config.RequireModel && band.LeaderId == a.Id) foreach (var k in band.Relations.Keys.ToList()) band.Relations[k] = MathF.Max(band.Relations[k], 0.3f);
+                effect = !Config.RequireModel && band.LeaderId == a.Id ? "makes peace with every neighbour" : "lets go of every grudge";
                 break;
             case DreamKind.Seek:
                 a.Shift(Trait.NoveltySeeking, 0.12f * receptive, Day, scaleByPlasticity: false);

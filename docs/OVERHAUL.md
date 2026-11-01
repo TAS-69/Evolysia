@@ -1,27 +1,27 @@
 # Spatial simulation
 
-The current client and simulation use an 800 × 400 planet. A cell corresponds to one logical sixteen-unit art tile. Distances derived from the original 160 × 80 model scale through `WorldMap.Scale`; ecological capacity scales through `CellArea`.
+The client and simulation use an 800 × 400 cylindrical planet. One cell is one logical sixteen-unit art tile; distance and ecological capacity scale from the original 160 × 80 model through `WorldMap.Scale` and `CellArea`.
 
-## Ownership and daily work
+## Authority and decisions
 
-`Simulation` owns people, bands, structures, cultures, ecology and history. The renderer reads that state. A person's `Site` records today's work tile; the client animates travel between home and work. Harvest deductions from overlapping band ranges are committed in fixed order to keep thread-count-independent results.
+`Simulation` owns people, bands, ecology, structures, physical stock, memories and history. The renderer reads that state. Ordinary gameplay requires model-generated councils and pivotal choices. Requests carry world-local IDs; validated replies govern work, projects, research, diplomacy, leadership and other bounded actions. Interventions expire affected plans and stale replies cannot apply.
 
-`Band.Stores` and `Agent.Pack` hold quantities by good. Gear is owned by people and carries wear. A rendered storage object shows representative goods from band stores; the contents are not independently located persistent stacks. Per-container inventory identities, loading reservations and full transport logistics remain unfinished.
+Random streams, chronological events and accepted plans survive saves. Background model requests receive immutable snapshots and apply replies on the simulation thread. Physiological needs, ecology, ownership and resource conservation remain authoritative rules. Rules-only diagnostic runs explicitly disable the model requirement; the game does not expose that as a fallback.
 
-## Construction and land
+## Stock and transport
 
-Structures have IDs, definitions, footprints, band ownership and condition. Bands plan and site projects, clear land, obtain materials and build with labour. State progresses through planned, building, complete, damaged, ruined and burned. Portable shelters can move; abandoned works may be adopted or reclaimed.
+Inventories own persistent stacks, split lineage, bounded merge records, reservations and nested containers. `Band.Stores` aggregates its owned storage once; packs and individual fixtures retain their own stock. Explicit cargo jobs move workers and vehicles between containers and can resume after loading a save.
 
-Timber, loose stone, boulders and ore are world resources. Felling, quarrying and construction change the landscape. Fields track crop, growth and yield. Pens support herds. The client rebakes dirty terrain chunks and draws surviving structures and owned gear.
+Routine deposits and some economic exchanges remain aggregate paths. Full traffic, theft, vehicle footprint clearance and sea-freight economies remain unfinished. A drawing of a ship is still cheaper than operating one.
 
-## Definitions and rendering
+## Construction
 
-The simulation defines 106 techniques, 107 goods, 146 gear items, 40 processing recipes and 90 structure kinds. The separate art catalogue includes additional concepts and planned coverage. Neither count establishes a complete modern or future civilisation loop.
+Projects clear land and consume instance material bills and labour. Thirty-one specialist layouts instantiate separately owned, paid fixtures. Generated named layouts validate known templates, dimensions, fixture access and costs. Tropical/wetland substitutions change actual construction inputs, rather than only appearance.
 
-The client chooses 16, 32 or 64 pixel art densities by screen tile size. The detailed terrain, wardrobe and civilisation kit cover those densities; other assets fall back to base sprites. Regional visual styles do not automatically alter each structure's physical recipe. Some simulation definitions have no dedicated runtime visual.
+The simulation currently has 106 techniques, 107 goods, 146 gear definitions, 40 processing recipes and 130 structure definitions. Those counts do not establish complete modern, future, magical or political systems.
 
-## Validation and remaining work
+## Rendering and verification
 
-The alpha includes tested economy rules, construction occupancy, inherited psychology, powers, narration choices and cross-thread repeatability. The complete asset manifest passes palette, metadata, animation and family contract checks. See [the alpha validation record](releases/v0.1.0-alpha.1-validation.md) for exact release evidence.
+The renderer chooses 16, 32 or 64 pixel art density from screen tile size. Modular outfits have independent main/trim dyes; the editor requests real manufactured garments. Portraits combine age, emotion, scars and inherited facial features. Other art families may enlarge their base sprites.
 
-Long-run balance, very large populations, memory ceilings, structure drawing at extreme scale, independent storage/cargo, complete specialist institutions and final visual coverage remain open. Earlier exploratory population and memory figures are not supported performance guarantees.
+[Development status](DEVELOPMENT.md) lists the remaining systems and verification workflow. Historical alpha evidence remains in its own release records. Population targets, memory projections and exploratory timings are not supported performance guarantees.

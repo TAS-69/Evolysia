@@ -9,9 +9,10 @@ public partial class Hud : CanvasLayer
     public RichTextLabel Feed = null!, Inspector = null!, Voices = null!;
     public Button StartModels = null!, Minds = null!;
     public event Action? StartModelsRequested;
+    public event Action? SaveRequested, LoadRequested, ConnectionRequested, OutfitRequested, FollowRequested, SettingsRequested, SavesRequested;
     public PanelContainer InspectorPanel = null!;
+    public TextureRect Portrait = null!;
     public OptionButton OverlayPick = null!;
-    public LineEdit SeedEdit = null!;
     readonly List<Button> _speedButtons = new();
     readonly Dictionary<Power, Button> _powerButtons = new();
     public event Action<string>? LinkClicked;
@@ -66,10 +67,10 @@ public partial class Hud : CanvasLayer
                                    TooltipText = "Runs tools/llm_lab/lab.py serve (uses your lab profile)" };
         StartModels.Pressed += () => StartModelsRequested?.Invoke();
         bar.AddChild(StartModels);
-        Minds = new Button { Text = "Minds", ToggleMode = true, ButtonPressed = true, FocusMode = Control.FocusModeEnum.None,
-                             TooltipText = "When on, pivotal choices (rejections, first contacts, your messages) are made by the local model in character. " +
-                                           "When off, by temperament alone." };
+        Minds = new Button { Text = "Minds required", Disabled = true, ButtonPressed = true, FocusMode = Control.FocusModeEnum.None,
+                             TooltipText = "A connected model generates work, goals, dialogue, construction, research and pivotal choices. The world waits if it cannot decide." };
         Minds.AddThemeFontSizeOverride("font_size", 12);
+        Minds.Visible = false;
         bar.AddChild(Minds);
         bar.AddChild(Perf = new Label { CustomMinimumSize = new Vector2(64, 0), HorizontalAlignment = HorizontalAlignment.Right, MouseFilter = Control.MouseFilterEnum.Pass });
         Perf.AddThemeColorOverride("font_color", new Color(Palette.Parchment, 0.45f));
@@ -99,9 +100,25 @@ public partial class Hud : CanvasLayer
         foreach (var o in Enum.GetValues<Overlay>()) OverlayPick.AddItem(o.ToString(), (int)o);
         OverlayPick.ItemSelected += i => OverlayChosen?.Invoke((Overlay)(int)i);
         bar.AddChild(OverlayPick);
-        SeedEdit = new LineEdit { Visible = false };
-        var newWorld = new Button { Text = "New world…", FocusMode = Control.FocusModeEnum.None, TooltipText = "Choose a planet and its first peoples" };
-        newWorld.Pressed += () => NewWorldRequested?.Invoke();
+        var newWorld = new MenuButton { Text = "World", FocusMode = Control.FocusModeEnum.None };
+        var menu = newWorld.GetPopup();
+        menu.AddItem("New world…", 0); menu.AddItem("Save world (F5)", 1); menu.AddItem("Load world (F9)", 2);
+        menu.AddItem("Model connection…", 3); menu.AddItem("Selected person's outfit…", 4); menu.AddItem("Follow selection (F)", 5);
+        menu.AddItem("Settings…", 6); menu.AddItem("Saved worlds…", 7);
+        menu.IdPressed += id =>
+        {
+            switch (id)
+            {
+                case 0: NewWorldRequested?.Invoke(); break;
+                case 1: SaveRequested?.Invoke(); break;
+                case 2: LoadRequested?.Invoke(); break;
+                case 3: ConnectionRequested?.Invoke(); break;
+                case 4: OutfitRequested?.Invoke(); break;
+                case 5: FollowRequested?.Invoke(); break;
+                case 6: SettingsRequested?.Invoke(); break;
+                case 7: SavesRequested?.Invoke(); break;
+            }
+        };
         bar.AddChild(newWorld);
 
         var right = new PanelContainer();
@@ -131,6 +148,9 @@ public partial class Hud : CanvasLayer
         close.Pressed += () => InspectorClosed?.Invoke();
         head.AddChild(close);
         lv.AddChild(head);
+        Portrait = new TextureRect { CustomMinimumSize = new Vector2(144, 144), ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered, TextureFilter = Control.TextureFilterEnum.Nearest, Visible = false };
+        lv.AddChild(Portrait);
         lv.AddChild(Inspector);
 
         BuildPowers(root);
@@ -228,13 +248,13 @@ public partial class Hud : CanvasLayer
 
         var groups = new[]
         {
-            (Power[])[Power.Rain, Power.Drought, Power.Bless, Power.Fertility, Power.Heal, Power.Game],
+            (Power[])[Power.Rain, Power.Drought, Power.Bless, Power.Fertility, Power.Heal, Power.Game, Power.SpawnPlant, Power.RaiseLand, Power.LowerLand],
             [Power.Lightning, Power.Wildfire, Power.Flood, Power.Earthquake, Power.Blizzard, Power.Plague, Power.Meteor, Power.Beasts, Power.Curse],
-            [Power.Dream, Power.Message],
+            [Power.Dream, Power.Message, Power.Possess],
         };
         for (int g = 0; g < groups.Length; g++)
         {
-            if (g > 0) row.AddChild(Divider());
+            if (g > 0) { row = new HBoxContainer { Alignment = BoxContainer.AlignmentMode.Center }; col.AddChild(row); }
             foreach (var p in groups[g])
             {
                 var power = p;
@@ -369,6 +389,9 @@ public partial class Hud : CanvasLayer
         Power.Earthquake => "Quake",
         Power.Fertility => "Fertile",
         Power.Lightning => "Bolt",
+        Power.SpawnPlant => "Grow",
+        Power.RaiseLand => "Raise land",
+        Power.LowerLand => "Lower land",
         _ => p.ToString(),
     };
 
@@ -389,6 +412,10 @@ public partial class Hud : CanvasLayer
         Power.Meteor => "A falling star: devastation, ash, a cooler world; seen from far away",
         Power.Beasts => "Predators gather, permanently more dangerous land",
         Power.Curse => "Curse the selected person: sickness, shame, misfortune",
+        Power.SpawnPlant => "Restore local wild plants and trees to the land's carrying capacity",
+        Power.RaiseLand => "Raise terrain by 200 metres, changing coasts, habitats and water access",
+        Power.LowerLand => "Lower terrain by 200 metres; submerged buildings are ruined and camps must escape",
+        Power.Possess => "Direct a selected adult. WASD/arrows move; E forage; C chop; Q quarry; R rest; X release. Needs, time and finite resources still apply.",
         Power.Message => "Your own words, written on the ground, carved in stone or sent as a vision. Whoever reads them takes them their own way. Once in 250 years.",
         _ => "Speak to the selected person in a dream",
     };

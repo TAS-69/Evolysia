@@ -8,7 +8,7 @@ public static class TileBake
     public const int Px = 16;
 
     public sealed record Input(WorldMap World, IReadOnlyDictionary<int, (string crop, float growth, bool orchard)> Fields,
-                               IReadOnlySet<int> Occupied, byte[] Trees, byte[] Rocks);
+                               IReadOnlySet<int> Occupied, byte[] Trees, byte[] Rocks, IReadOnlyDictionary<int, byte> Roads);
 
     public static string Material(Input input, int i)
     {
@@ -80,12 +80,50 @@ public static class TileBake
         var t = new Target(new byte[pixels * 4], new byte[pixels * 2], cx0 * density, cy0 * density, cw * density, ch * density,
                            input.World.W * density, input.World.H * density, density);
         Ground(input, t, cx0, cy0, cw, ch);
+        Cliffs(input, t, cx0, cy0, cw, ch);
         Rivers(input.World, t, cx0, cy0, cw, ch);
+        RoadSurface(input, t, cx0, cy0, cw, ch);
         Flora(input, t, cx0, cy0, cw, ch);
         return new Baked(t.Px, t.Anchor);
     }
 
     public sealed record Baked(byte[] Px, byte[] Anchor);
+
+    static void Cliffs(Input input, Target target, int x0, int y0, int width, int height)
+    {
+        var w = input.World; int d = target.D;
+        Span<int> cells = stackalloc int[4]; Span<int> levels = stackalloc int[4];
+        for (int y = Math.Max(1, y0); y <= Math.Min(y0 + height, w.H - 1); y++)
+            for (int x = x0; x <= x0 + width; x++)
+            {
+                cells[0] = w.Index(x - 1, y - 1); cells[1] = w.Index(x, y - 1); cells[2] = w.Index(x, y); cells[3] = w.Index(x - 1, y);
+                int high = int.MinValue, low = int.MaxValue; float top = float.MinValue, bottom = float.MaxValue;
+                for (int k = 0; k < 4; k++) { levels[k] = (int)MathF.Floor(w.Elevation[cells[k]] / 250f); high = Math.Max(high, levels[k]); low = Math.Min(low, levels[k]); top = MathF.Max(top, w.Elevation[cells[k]]); bottom = MathF.Min(bottom, w.Elevation[cells[k]]); }
+                if (high == low || high < 1 || top - bottom < 150f) continue;
+                int mask = 0; for (int k = 0; k < 4; k++) if (levels[k] == high) mask |= 1 << k;
+                int index = cells[0];
+                string material = w.Biome[index] == Biome.Volcanic ? "basalt" : w.TempMean[index] < -8f ? "ice" : w.Biome[index] == Biome.HotDesert ? "sandstone" : w.Elevation[index] > 3000f ? "granite" : "rock";
+                var sheet = Art.Lod("landscape." + material + "_cliff_corners", d) ?? Art.Get("terrain.rock_cliff_corners");
+                if (sheet != null) Blit(target, sheet, 0, mask, x * d - d / 2, y * d - d / 2, Math.Max(1, d / sheet.Density), 0);
+            }
+    }
+
+    static void RoadSurface(Input input, Target target, int x0, int y0, int width, int height)
+    {
+        var w = input.World; int d = target.D;
+        for (int y = Math.Max(0, y0); y < Math.Min(y0 + height, w.H); y++) for (int x = x0; x < x0 + width; x++)
+        {
+            int cell = w.Index(x, y); byte kind = input.Roads.GetValueOrDefault(cell);
+            if (kind == 0 || !w.IsDryLand(cell)) continue;
+            int mask = 0;
+            if (y > 0 && input.Roads.ContainsKey(w.Index(x, y - 1))) mask |= 1;
+            if (input.Roads.ContainsKey(w.Index(x + 1, y))) mask |= 2;
+            if (y + 1 < w.H && input.Roads.ContainsKey(w.Index(x, y + 1))) mask |= 4;
+            if (input.Roads.ContainsKey(w.Index(x - 1, y))) mask |= 8;
+            string name = kind >= 3 ? "stone_road" : kind == 2 ? "packed_dirt_road" : "trampled_path";
+            if (Art.Get("overlays.road_" + name) is { } road) Blit(target, road, 0, mask, x * d, y * d, d / Px, 0);
+        }
+    }
 
     readonly record struct Target(byte[] Px, byte[] Anchor, int X0, int Y0, int W, int H, int WorldW, int WorldH, int D)
     {
@@ -156,6 +194,7 @@ public static class TileBake
 
     static int[]? _riverMask;
     static WorldMap? _riverWorld;
+    public static void InvalidateRivers() { lock (Mats) { _riverWorld = null; _riverMask = null; } }
 
     static int[] RiverMasks(WorldMap w)
     {

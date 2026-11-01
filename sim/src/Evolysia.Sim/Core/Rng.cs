@@ -14,6 +14,7 @@ public sealed class Rng
     }
 
     public static Rng Derive(ulong seed, ulong key) => new(Mix(seed ^ Mix(key)), Mix(key + 1));
+    public Rng Fork(ulong key) => Derive(_state, _inc ^ key);
 
     public static ulong Mix(ulong z)
     {

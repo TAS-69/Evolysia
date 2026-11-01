@@ -118,10 +118,22 @@ public sealed partial class Simulation
 
         Section(2, ref t);
 
-        if (_hunters.Count > 0) Hunt(band, ctx);
+        if (_hunters.Count > 0)
+        {
+            var watch = WatchWork(band, _hunters, Activity.Hunt);
+            Hunt(band, ctx);
+            if (watch != null) SawWork(band, _hunters, Activity.Hunt, watch);
+        }
         Section(3, ref t);
         foreach (var a in _members)
-            if (a.Alive && a.Today != Activity.Hunt) Resolve(a, band, ctx);
+            if (a.Alive && a.Today != Activity.Hunt)
+            {
+                // While a kind of work is new to the band, they notice what it brings.
+                var watch = WatchWork(band, Single(a), a.Today);
+                var work = a.Today;
+                Resolve(a, band, ctx);
+                if (watch != null) SawWork(band, Single(a), work, watch);
+            }
         Section(4, ref t);
 
         ShareAndEat(band, ctx);
@@ -129,9 +141,14 @@ public sealed partial class Simulation
         foreach (var a in _members)
         {
             if (!a.Alive) continue;
-            Body(a, band, ctx);
+            var bodyContext = ctx;
+            if (!AtCamp(a, band))
+            {
+                bodyContext.Temp = w.Temperature(a.Site, Day); bodyContext.Water = w.WaterAccess[a.Site]; bodyContext.Predators = w.Predators[a.Site];
+            }
+            Body(a, band, bodyContext);
             if (!a.Alive) continue;
-            Reproduce(a, band, ctx);
+            if (AtCamp(a, band)) Reproduce(a, band, ctx);
             Psychology.DailyUpdate(a, Day);
             if (a.AgeDays(Day) == 12 * SimConfig.DaysPerYear) ComeOfAge(a, band);
         }
@@ -220,11 +237,13 @@ public sealed partial class Simulation
 
     Activity Choose(Agent a, Band band, in DayContext c)
     {
+        if (a.Id == ControlledAgentId) return ControlChoice(a);
         float age = a.Age(Day);
         if (age < 4f) return Activity.Rest;
         var s = _scores;
         Array.Fill(s, float.NegativeInfinity);
         float hunger = a.NeedOf(Need.Hunger), energy = a.NeedOf(Need.Energy);
+        if (OrderedActivity(a) is { } ordered) return ordered;
         float food = Math.Clamp(hunger * 1.2f + c.Shortage, 0f, 1.6f);
 
         if (age < 14f)
@@ -233,7 +252,7 @@ public sealed partial class Simulation
             s[(int)Activity.Socialize] = 0.25f + a.NeedOf(Need.Social) * 0.4f;
             if (age >= 8f) s[(int)Activity.Forage] = 0.2f + food * 0.7f;
             s[(int)Activity.Rest] = energy;
-            return (Activity)Rng.Softmax(s, 0.25f);
+            return Config.RequireModel ? ModelActivity(a, band, s) : (Activity)Rng.Softmax(s, 0.25f);
         }
 
         float ns = a.T(Trait.NoveltySeeking), ha = a.T(Trait.HarmAvoidance), rd = a.T(Trait.RewardDependence);
@@ -289,7 +308,7 @@ public sealed partial class Simulation
         if (CanTeach(a, band)) s[(int)Activity.Teach] = 0.1f + 0.3f * co + 0.2f * MathF.Min(a.Prestige, 1f);
         if (a.Emo(Emotion.Sadness) > 0.5f) s[(int)Activity.Mourn] = a.Emo(Emotion.Sadness) * 0.9f - 0.2f;
 
-        return (Activity)Rng.Softmax(s, 0.15f + 0.2f * ns);
+        return Config.RequireModel ? ModelActivity(a, band, s) : (Activity)Rng.Softmax(s, 0.15f + 0.2f * ns);
     }
 
     float MaxBeastFear(Agent a) =>
@@ -403,9 +422,12 @@ public sealed partial class Simulation
 
     void Resolve(Agent a, Band band, in DayContext c)
     {
+        if (a.Id == ControlledAgentId) { ResolveControl(a, band, c); return; }
         var w = World;
         int cell = band.Cell;
         a.Site = cell;
+        if (ServiceFor(a.Id) is { } service && a.Today == ServiceActivity(service.Order.Service) && Structures.TryGetValue(service.Order.BuildingId, out var serviceSite))
+        { a.Site = serviceSite.Cell; a.Needs[(int)Need.Energy] += 0.08f; return; }
         float tired = a.NeedOf(Need.Energy) > 0.8f ? 0.7f : 1f;
         float childFactor = a.IsChild(Day) ? 0.4f : 1f;
         switch (a.Today)
@@ -451,6 +473,7 @@ public sealed partial class Simulation
             case Activity.Farm: FarmWork(a, band, c); break;
             case Activity.Herd: HerdWork(a, band, c); break;
             case Activity.Build:
+                if (WorkRoad(a, band)) break;
                 if (!BuildWork(a, band, c)) GatherMaterials(a, band, c);
                 break;
             case Activity.Craft: CraftWork(a, band, c); break;
@@ -458,6 +481,13 @@ public sealed partial class Simulation
             case Activity.Quarry: Quarry(a, band, c); break;
             case Activity.Mine: Mine(a, band, c); break;
             case Activity.Gather: GatherMaterials(a, band, c); break;
+            case Activity.Haul:
+                if (HaulFor(a.Id) is { } haul) a.Site = haul.Cell;
+                a.Needs[(int)Need.Energy] += 0.12f;
+                break;
+            case Activity.Heal or Activity.Govern or Activity.Guard:
+                a.Needs[(int)Need.Energy] += 0.08f;
+                break;
             case Activity.Socialize: Socialize(a, band); break;
             case Activity.Court: Later(() => { if (a.Alive) Court(a, band); }); break;
             case Activity.CareChild: CareForChild(a, band); break;
@@ -499,6 +529,7 @@ public sealed partial class Simulation
         {
             if (!a.Alive || a.IsChild(Day)) continue;
             float co = a.T(Trait.Cooperativeness) + 0.2f * Held(a, MemeKind.SharingNorm);
+            if (Config.RequireModel && BandPlans.TryGetValue(band.Id, out var plan)) co += (plan.Plan.Sharing - 0.5f) * 0.5f;
             float keep = 1f + (1f - co) * 3f;
 
             Deposit(a, band, keep + MathF.Max(0f, a.Food - keep) * (1f - Math.Clamp(0.4f + 0.6f * co, 0f, 1f)));
@@ -520,11 +551,12 @@ public sealed partial class Simulation
                 float age = a.Age(Day);
                 bool nursed = age < 1f && Living.TryGetValue(a.MotherId, out var mom) && mom.BandId == a.BandId;
                 if (nursed) { a.Needs[(int)Need.Hunger] = MathF.Max(0f, a.NeedOf(Need.Hunger) - 0.3f); continue; }
+                float localEfficiency = AtCamp(a, band) ? efficiency : 1f;
                 float need = (age < 4f ? 0.4f : a.IsChild(Day) ? 0.7f : 1f) * (a.Pregnant ? 1.15f : 1f)
-                             * (NursingInfant(a) ? 1.25f : 1f) * (a.Genome.Has(Quirk.Glutton) ? 1.15f : 1f) / efficiency;
+                             * (NursingInfant(a) ? 1.25f : 1f) * (a.Genome.Has(Quirk.Glutton) ? 1.15f : 1f) / localEfficiency;
                 float eaten = a.Food > 0f ? a.Pack.TakeFood(need) : 0f;
-                if (eaten < need) eaten += band.Stores.TakeFood(need - eaten);
-                if (eaten < need) eaten += FamilyFeeds(a, need - eaten);
+                if (AtCamp(a, band) && eaten < need) eaten += band.Stores.TakeFood(need - eaten);
+                if (AtCamp(a, band) && eaten < need) eaten += FamilyFeeds(a, need - eaten);
                 float f = eaten / need;
                 ref float hunger = ref a.Needs[(int)Need.Hunger];
                 hunger = Math.Clamp(hunger + 0.12f * (1f - f) - 0.3f * f, 0f, 1f);
@@ -546,7 +578,7 @@ public sealed partial class Simulation
         bool child = a.IsChild(Day);
         foreach (int id in family)
         {
-            if (got >= lacking || id < 0 || !Living.TryGetValue(id, out var k) || k.BandId != a.BandId) continue;
+            if (got >= lacking || id < 0 || !Living.TryGetValue(id, out var k) || k.BandId != a.BandId || !AtCamp(k, Bands[a.BandId])) continue;
             bool parent = id != a.PartnerId;
             if (parent && !child) continue;
             float spare = parent ? k.Food : MathF.Max(0f, k.Food - 1f);
@@ -571,8 +603,9 @@ public sealed partial class Simulation
         if (c.Temp > 36f) thirst = MathF.Min(1f, thirst + 0.08f);
         if (thirst > 0.8f) { damage += 0.03f; worst = DeathCause.Thirst; }
 
-        float comfort = 10f - Warmth(a) - (band.HasFireToday && Techs.Has(c.Tech, TechId.ControlledFire) ? 7f : 0f)
-                        - band.ShelterWarmth * band.Shelter - (a.Genome.Has(Quirk.Hardy) ? 5f : 0f);
+        bool home = AtCamp(a, band);
+        float comfort = 10f - Warmth(a) - (home && band.HasFireToday && Techs.Has(c.Tech, TechId.ControlledFire) ? 7f : 0f)
+                        - (home ? band.ShelterWarmth * band.Shelter : 0f) - (a.Genome.Has(Quirk.Hardy) ? 5f : 0f);
         float cold = MathF.Max(0f, (comfort - c.Temp) / 12f) * (age < 4f || age > 65f ? 1.5f : 1f);
         a.Needs[(int)Need.Warmth] = Math.Clamp(cold, 0f, 1f);
         if (cold > 0.8f) { float d = 0.025f * (cold - 0.8f) * (1.3f - con); damage += d; if (d > 0.01f) worst = DeathCause.Cold; }

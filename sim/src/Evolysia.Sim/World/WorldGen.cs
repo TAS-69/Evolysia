@@ -4,6 +4,40 @@ namespace Evolysia.Sim.World;
 
 public static class WorldGen
 {
+    public static void RefreshEditedTerrain(WorldMap w, IReadOnlyCollection<int> changed, float capacityScale)
+    {
+        var altered = new HashSet<int>(changed);
+        var previous = (Biome[])w.Biome.Clone();
+        var oldFlow = (float[])w.Flow.Clone();
+        Array.Clear(w.Flow);
+        for (int i = 0; i < w.Count; i++)
+        {
+            if (!w.IsLand(i)) { w.Biome[i] = Biome.Ocean; w.Volcano[i] = false; continue; }
+            if (!altered.Contains(i) && previous[i] != Biome.Lake) continue;
+            float t = w.TempMean[i], rain = w.Precip[i];
+            w.Biome[i] = t < -9f ? Biome.IceSheet : w.Elevation[i] > 3000f ? Biome.Alpine : t < -1f ? Biome.Tundra :
+                t < 6f ? rain < 280f ? Biome.ColdDesert : Biome.BorealForest : t < 19f ? rain < 250f ? Biome.ColdDesert : rain < 500f ? Biome.TemperateGrassland : rain < 1700f ? Biome.TemperateForest : Biome.TemperateRainforest :
+                rain < 280f ? Biome.HotDesert : rain < 950f ? Biome.Savanna : rain < 1800f ? Biome.TropicalSeasonalForest : Biome.TropicalRainforest;
+            w.Volcano[i] = false;
+        }
+        Rivers(w);
+        var coast = DistanceToLand(w);
+        int width = Math.Max(1, (int)MathF.Round(w.Scale * 0.35f));
+        for (int i = 0; i < w.Count; i++) if (!w.IsLand(i)) w.Biome[i] = coast[i] <= width ? Biome.Coast : w.Elevation[i] > -1500f ? Biome.Ocean : Biome.DeepOcean;
+        for (int i = 0; i < w.Count; i++)
+            if (altered.Contains(i) || previous[i] != w.Biome[i] || MathF.Abs(oldFlow[i] - w.Flow[i]) > 0.01f) Ecology.RefreshEditedCell(w, i, capacityScale);
+        Landmasses(w);
+        Span<int> neighbours = stackalloc int[8];
+        for (int i = 0; i < w.Count; i++)
+        {
+            if (!w.IsLand(i)) { w.WaterAccess[i] = 1f; continue; }
+            bool fresh = w.Flow[i] > RiverFlow || w.Biome[i] is Biome.Lake or Biome.Wetland;
+            int count = w.Neighbors(i, neighbours);
+            for (int k = 0; k < count; k++) fresh |= w.Biome[neighbours[k]] == Biome.Lake || w.Flow[neighbours[k]] > RiverFlow * 2f;
+            w.WaterAccess[i] = fresh ? 1f : Math.Clamp(w.Precip[i] / 700f, 0.05f, 0.9f);
+        }
+    }
+
     public static WorldMap Generate(SimConfig cfg)
     {
         var rng = Rng.Derive(cfg.Seed, 0x574F524C44UL);

@@ -9,6 +9,7 @@ public partial class TargetOverlay : Node2D
     public float CameraZoom = 1f;
     public float WrapWidth;
     public Simulation? Sim;
+    public bool ReducedMotion;
     int _marks;
     readonly List<(Vector2 pos, float radius, Color color, ulong born)> _bursts = new();
 
@@ -17,8 +18,8 @@ public partial class TargetOverlay : Node2D
         if (Armed != null || _bursts.Count > 0 || _marks > 0 || Sim?.Inscriptions.Count > 0) QueueRedraw();
     }
 
-    public void Burst(Vector2 pos, float radius, bool kind) =>
-        _bursts.Add((pos, radius, kind ? Palette.Divine : Palette.Terracotta, Time.GetTicksMsec()));
+    public void Burst(Vector2 pos, float radius, bool kind)
+    { if (!ReducedMotion) _bursts.Add((pos, radius, kind ? Palette.Divine : Palette.Terracotta, Time.GetTicksMsec())); }
 
     public static float RadiusPx(Power p) => (Powers.DefaultRadius(p) + 0.5f) * Main.CellPx;
 

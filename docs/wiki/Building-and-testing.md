@@ -4,7 +4,7 @@
 
 - Godot **4.7.2 .NET**, rather than the standard editor.
 - A .NET SDK with `net8.0` build support for the client and libraries; **SDK 10** for the runner and test projects, which target `net10.0`.
-- Python **3.11+**, Pillow and NumPy for artwork regeneration. The optional model lab uses the standard library.
+- Python **3.11+**, Pillow and NumPy for artwork regeneration. Local model bootstrap uses the Python standard library. Gameplay requires a compatible running endpoint.
 
 Clone [the repository](https://github.com/TAS-69/Evolysia), keep its layout intact, and run these commands from its root:
 
@@ -18,10 +18,10 @@ Import `game/project.godot` into the .NET editor and press F5. The game reads `.
 ## Headless simulation
 
 ```powershell
-dotnet run -c Release --project sim/src/Evolysia.Sim.Runner -- --seed 42 --years 25 --threads 4 --out build/runs/seed42
+dotnet run -c Release --project sim/src/Evolysia.Sim.Runner -- --seed 42 --width 160 --height 80 --tribes 1 --bands 1 --days 2 --save build/world.evo --out build/runs/seed42
 ```
 
-The runner writes world/end maps, yearly statistics, agents, deaths, chronicle text and narratable moments. These are reports, not save files. Additional options include `--planet`, `--tribes`, `--width`, `--height`, `--bands`, `--band-size`, `--profile`, `--trace`, `--narrate` and `--minds`. See the argument parser in `Program.cs` for values; unknown options return an error.
+The runner writes world/end maps, yearly statistics, agents, deaths, chronicle text and narratable moments. Use `--save PATH` and `--load PATH` for resumable worlds; reports alone are not saves. A model endpoint is required by default. `--rules-only` explicitly selects engine diagnostics without model integration. Additional options include `--planet`, `--tribes`, `--width`, `--height`, `--bands`, `--band-size`, `--profile`, `--trace`, `--narrate` and `--minds`. See the argument parser in `Program.cs` for values; unknown options return an error.
 
 ## Artwork
 
@@ -31,6 +31,16 @@ python tools/assetgen/validate.py
 ```
 
 You can build selected families instead of `all`. Every family writes reference PNGs, index maps where applicable, JSON metadata and manifest entries. Review regenerated contact sheets before committing changed artwork. Stable IDs and palette-slot indices are shared contracts.
+
+## Vegetation colour regression
+
+Build the client, then run the render check with the Godot .NET console executable:
+
+```powershell
+Godot_console.exe --path game res://verification/NaturePaletteCheck.tscn
+```
+
+This requires a working graphics device. It compares actual terrain-shader colours with foreground vegetation redraws across trees, shrubs, rocks, multiple densities and seasonal blends. All 48 cases must pass within one 8-bit colour value per channel. The verification scene is excluded from exported game resources.
 
 ## Branding
 
@@ -48,6 +58,6 @@ Install the matching **4.7.2 .NET export templates**, or extract their Windows d
 python tools/release/package.py --godot C:/path/to/Godot_console.exe
 ```
 
-The packager exports the game, stages its complete artwork, copies the optional model-lab source and licence notices, verifies the package and creates a ZIP plus SHA-256 sums in `build/releases`. Local models, downloaded server binaries, configuration, previews, editor files and debug symbols are excluded. Build staging is ignored by Git.
+The packager exports the game, stages its complete artwork, copies the model-lab source and licence notices, verifies the package and creates a ZIP plus SHA-256 sums in `build/releases`. Local models, downloaded server binaries, configuration, previews, editor files and debug symbols are excluded. Build staging is ignored by Git.
 
 Before publishing, run the simulation suite and asset validator, inspect actual menu and settlement screenshots, and launch the packaged executable from a directory that does not contain the source project's `game` folder. See the release's validation record for what was actually tested.

@@ -15,7 +15,7 @@ public sealed record Narration(int MomentIndex, LlmMoment Moment, string AgentNa
 
 public readonly record struct NarratorStatus(bool Online, string Backend, int Queued, int Running, int Done, int Dropped, int Failed, double AvgLatencyMs);
 
-public sealed class Narrator
+public sealed class Narrator : IDisposable
 {
     readonly INarrationBackend _backend;
     readonly int _maxConcurrent, _maxQueue;
@@ -23,6 +23,8 @@ public sealed class Narrator
     readonly ConcurrentQueue<Narration> _results = new();
     readonly Dictionary<int, List<Narration>> _byAgent = new();
     readonly Stopwatch _clock = Stopwatch.StartNew();
+    readonly CancellationTokenSource _cancel = new();
+    readonly CancellationToken _ct;
     int _running, _done, _dropped, _failed;
     double _latencySum;
     long _lastHealthCheck = -1_000_000;
@@ -33,6 +35,7 @@ public sealed class Narrator
     public Narrator(INarrationBackend backend, int maxConcurrent = 3, int maxQueue = 16)
     {
         _backend = backend;
+        _ct = _cancel.Token;
         _maxConcurrent = maxConcurrent;
         _maxQueue = maxQueue;
     }
@@ -42,6 +45,7 @@ public sealed class Narrator
 
     public void Offer(NarrationRequest request, float bonus = 0f)
     {
+        if (_ct.IsCancellationRequested) return;
         _queue.Add((request, request.BasePriority + bonus, _clock.ElapsedMilliseconds));
         while (_queue.Count > _maxQueue)
         {
@@ -57,6 +61,7 @@ public sealed class Narrator
 
     public void Pump()
     {
+        if (_ct.IsCancellationRequested) return;
         long now = _clock.ElapsedMilliseconds;
         if (!_checking && now - _lastHealthCheck > (_online ? 30000 : 5000))
         {
@@ -64,7 +69,8 @@ public sealed class Narrator
             _lastHealthCheck = now;
             _ = Task.Run(async () =>
             {
-                try { _online = await _backend.HealthyAsync(CancellationToken.None); }
+                try { _online = await _backend.HealthyAsync(_ct); }
+                catch (Exception e) when (e is HttpRequestException or OperationCanceledException or ObjectDisposedException) { _online = false; }
                 finally { _checking = false; }
             });
         }
@@ -84,7 +90,7 @@ public sealed class Narrator
         var sw = Stopwatch.StartNew();
         try
         {
-            var n = Parse(request, await _backend.CompleteAsync(request, CancellationToken.None), sw.Elapsed.TotalMilliseconds);
+            var n = Parse(request, await _backend.CompleteAsync(request, _ct), sw.Elapsed.TotalMilliseconds);
             if (n != null) _results.Enqueue(n);
             else Interlocked.Increment(ref _failed);
         }
@@ -107,11 +113,14 @@ public sealed class Narrator
         _latencySum += narration.LatencyMs;
         if (!_byAgent.TryGetValue(narration.Moment.AgentId, out var list)) _byAgent[narration.Moment.AgentId] = list = new List<Narration>();
         list.Add(narration);
+        if (list.Count > 12) list.RemoveAt(0);
         return true;
     }
 
     public IReadOnlyList<Narration> ForAgent(int agentId) =>
         _byAgent.TryGetValue(agentId, out var list) ? list : Array.Empty<Narration>();
+
+    public void Dispose() { _cancel.Cancel(); _queue.Clear(); _cancel.Dispose(); }
 
     public async Task<Narration?> NarrateNowAsync(NarrationRequest request, CancellationToken ct = default)
     {

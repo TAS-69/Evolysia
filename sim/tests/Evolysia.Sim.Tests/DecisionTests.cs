@@ -5,7 +5,7 @@ namespace Evolysia.Sim.Tests;
 
 public class DecisionTests
 {
-    static Simulation Deferred(ulong seed = 5) => new(new SimConfig { Seed = seed }) { DeferDecisions = true };
+    static Simulation Deferred(ulong seed = 5) => new(new SimConfig { RequireModel = false, Seed = seed }) { DeferDecisions = true };
 
     [Fact]
     public void Without_a_mind_instinct_decides_at_the_deadline()

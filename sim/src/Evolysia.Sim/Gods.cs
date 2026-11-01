@@ -6,6 +6,7 @@ public enum Power : byte
     Lightning, Wildfire, Flood, Earthquake, Blizzard, Plague, Meteor, Beasts, Curse,
     Dream,
     Message,
+    SpawnPlant, RaiseLand, LowerLand, Possess,
 }
 
 public enum DreamKind : byte { Worship, Leave, Peace, Seek, Courage, Love }
@@ -26,8 +27,8 @@ public sealed class Prayer
 
 public static class Powers
 {
-    public static bool IsKind(Power p) => p is Power.Rain or Power.Bless or Power.Fertility or Power.Heal or Power.Game;
-    public static bool NeedsPerson(Power p) => p is Power.Dream or Power.Curse;
+    public static bool IsKind(Power p) => p is Power.Rain or Power.Bless or Power.Fertility or Power.Heal or Power.Game or Power.SpawnPlant or Power.RaiseLand;
+    public static bool NeedsPerson(Power p) => p is Power.Dream or Power.Curse or Power.Possess;
 
     public static float Spectacle(Power p) => p switch
     {
@@ -40,7 +41,7 @@ public static class Powers
     {
         Power.Rain or Power.Drought => 3,
         Power.Meteor or Power.Earthquake or Power.Beasts or Power.Game => 2,
-        Power.Bless or Power.Fertility or Power.Heal or Power.Flood or Power.Wildfire or Power.Blizzard => 1,
+        Power.Bless or Power.Fertility or Power.Heal or Power.Flood or Power.Wildfire or Power.Blizzard or Power.SpawnPlant or Power.RaiseLand or Power.LowerLand => 1,
         _ => 0,
     });
 

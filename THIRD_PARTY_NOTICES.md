@@ -18,10 +18,10 @@ The self-contained Windows build includes the .NET runtime and Godot's managed a
 
 The source build uses Microsoft.NET.Test.Sdk, xUnit, its Visual Studio runner and coverlet.collector for tests. The artwork tools use Pillow and NumPy. These development dependencies retain their own package licences and are not bundled as game runtime tools.
 
-## Optional local models
+## Local models
 
-No language-model weights or llama.cpp binaries are included in the game download. The optional model lab can download them separately. Each runtime and model has its own licence; review its upstream terms before downloading, modifying or redistributing it.
+No language-model weights or llama.cpp binaries are included in the game download. The model lab downloads them separately; current gameplay requires a compatible running endpoint. Each runtime and model has its own licence; review its upstream terms before downloading, modifying or redistributing it.
 
 ## Fonts
 
-The current client uses Godot's bundled default UI font, covered by the engine's component notices. Pixelify Sans and Alegreya are named in the art specification for future integration; they are not bundled in this alpha.
+The client includes Pixelify Sans for interface labels and Alegreya Sans for reading text, under the SIL Open Font License 1.1. Their original copyright and licence files are retained in `assets/fonts`. The source URLs, pinned Google Fonts revision and file checksums are recorded in `assets/fonts/sources.json`. Godot's bundled font remains a fallback under the engine's component notices.

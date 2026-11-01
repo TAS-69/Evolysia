@@ -30,6 +30,14 @@ public partial class SimHost : Node
         _backlog = 0;
     }
 
+    public void Restore(Simulation sim)
+    {
+        sim.Config.RequireModel = true;
+        sim.DeferDecisions = true;
+        sim.Config.Threads = Math.Max(1, System.Environment.ProcessorCount - 2);
+        Sim = sim; _backlog = 0; SpeedIndex = 0;
+    }
+
     public override void _Process(double delta)
     {
         if (Sim == null || Paused || Sim.Living.Count == 0) { ActualDaysPerSecond = 0; return; }
@@ -50,6 +58,6 @@ public partial class SimHost : Node
     public void FastForward(int days)
     {
         if (Sim == null) return;
-        for (int d = 0; d < days && Sim.Living.Count > 0; d++) Sim.Step();
+        for (int d = 0; d < days && Sim.Living.Count > 0 && (!Sim.Config.RequireModel || !Sim.WaitingForMinds); d++) Sim.Step();
     }
 }

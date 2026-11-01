@@ -42,12 +42,13 @@ public sealed class Agent
     public int SickUntil;
     Economy.Inventory? _pack;
 
-    public Economy.Inventory Pack => _pack ??= new Economy.Inventory();
+    public Economy.Inventory Pack => _pack ??= new Economy.Inventory($"person/{Id}/pack");
 
     public float Food => _pack?.FoodValue ?? 0f;
     internal void DropPack() => _pack = null;
 
     public readonly List<Economy.Item> Gear = new();
+    public readonly Appearance Appearance = new();
     public bool Pregnant;
     public int DueDay, PregnancyFatherId = -1, LastBirthDay = -100000;
 
@@ -59,7 +60,7 @@ public sealed class Agent
     public readonly float[] TabooOf = new float[Ids.CategoryCount];
     public readonly Dictionary<int, Relationship> Relations = new();
     public readonly List<LifeEvent> Memory = new();
-    public readonly int[] ActivityCounts = new int[Enum.GetValues<Activity>().Length];
+    public int[] ActivityCounts = new int[Enum.GetValues<Activity>().Length];
     public Activity Today;
     public int Site = -1;
 

@@ -296,7 +296,7 @@ public sealed partial class Simulation
         {
             if (good.Kind == GoodKind.Food) continue;
             float keep = MathF.Max(10f, (band.Targets.Length > good.Index ? band.Targets[good.Index] : 0f) * 2.5f) * (band.Sedentary ? 3f : 1f);
-            if (qty > keep) band.Stores.Take(good.Index, qty - keep);
+            if (qty > keep) band.Stores.TransferTo(GroundAt(band.Cell), good.Index, qty - keep);
         }
     }
 
@@ -324,11 +324,17 @@ public sealed partial class Simulation
         if (known.Has(TechId.Baskets)) t[GReed] = 4f;
         if (known.Has(TechId.Cordage)) t[GFiber] = 4f;
         if (known.Has(TechId.Herbalism)) t[GHerbs] = 3f;
+        foreach (var job in Production.Values.Where(j => j.BandId == band.Id && j.Active))
+            foreach (var (g, q) in Product(job.Product)!.Inputs) t[g] += MathF.Max(0f, q * job.Remaining - job.Inputs[g]);
+        foreach (var road in RoadProjects.Values.Where(r => r.BandId == band.Id && r.Active && r.Surface >= 2))
+            t[Goods.Id(road.Surface == 3 ? "stone_blocks" : "stone")] += (road.Cells.Length - road.Index) * (road.Surface == 3 ? 1f : 0.3f);
+        if (BandPlans.GetValueOrDefault(band.Id)?.Plan.Utilities?.FuelPower == true)
+            t[Goods.Id("coal")] += band.Structures.Count(id => Structures.TryGetValue(id, out var generator) && generator.Standing && generator.Kind.Id == "generator") * Config.PlanDays * 0.5f;
         foreach (int sid in band.Structures)
             if (Structures.TryGetValue(sid, out var s) && s.State is StructureState.Planned or StructureState.Building)
             {
                 float left = 1f - s.Progress / MathF.Max(0.1f, s.Kind.Labour);
-                foreach (var (g, q) in s.Kind.Materials) t[g] += q * left;
+                foreach (var (g, q) in s.Materials) t[g] += q * left;
             }
 
         foreach (int id in band.Members)
@@ -350,6 +356,12 @@ public sealed partial class Simulation
 
     ItemDef? WantedItem(Agent a, Band band, TechSet known, Band? from = null)
     {
+        foreach (var (layer, preference) in a.Appearance.Garments.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            if (preference.Part == null || !Enum.TryParse<ItemSlot>(layer, true, out var slot) || Worn(a, slot)?.Id == preference.Part) continue;
+            var wanted = Crafts.Item(slot, preference.Part);
+            if (wanted != null && Crafts.CanMake(known, wanted) && (from == null || HasInputs(from, wanted.Inputs))) return wanted;
+        }
 
         ItemDef? BestItem(TechSet k, ItemSlot slot, ItemMeasure measure, Activity act = default)
         {
@@ -415,6 +427,14 @@ public sealed partial class Simulation
 
     void CraftWork(Agent a, Band band, in DayContext c)
     {
+        if (WorkProduction(a, band)) return;
+        if (Config.RequireModel)
+        {
+            // Without an order a crafter only tinkers: what to make is the council's choice.
+            Psychology.Practice(a, Domain.Crafting, Rng.Chance(0.5f), 0.3f);
+            a.Needs[(int)Need.Energy] += 0.06f;
+            return;
+        }
         float skill = (0.6f + 0.6f * a.Efficacy[(int)Domain.Crafting]) * ToolBonus(a, Activity.Craft);
 
         for (int k = 0; k < Math.Min(8, band.Members.Count); k++)
@@ -422,6 +442,7 @@ public sealed partial class Simulation
             int id = band.Members[Rng.Next(band.Members.Count)];
             if (!Living.TryGetValue(id, out var m) || m.IsChild(Day)) continue;
             if (WantedItem(m, band, a.Knows, band) is not { } want || !HasStation(band, want.Station, out int at)) continue;
+            if (!ConsumePower(band.Id, Product("gear/" + Ids.Snake(want.Slot) + "/" + want.Id)!.Power)) continue;
             foreach (var (g, q) in want.Inputs) band.Stores.Take(g, q);
             Equip(m, band, want);
             a.Site = at >= 0 ? at : band.Cell;
@@ -448,6 +469,7 @@ public sealed partial class Simulation
         if (best == null) { Psychology.Practice(a, Domain.Crafting, Rng.Chance(0.5f), 0.3f); return; }
         float batches = MathF.Max(0.5f, skill / MathF.Max(0.1f, best.Labour) * 0.5f);
         foreach (var (g, q) in best.Inputs) batches = MathF.Min(batches, band.Stores[g] / q);
+        if (!ConsumePower(band.Id, Product("recipe/" + best.Id)!.Power * batches)) return;
         foreach (var (g, q) in best.Inputs) band.Stores.Take(g, q * batches);
         foreach (var (g, q) in best.Outputs) band.Stores.Add(g, q * batches);
         Psychology.Practice(a, best.Domain, true, 0.6f);
@@ -610,6 +632,8 @@ public sealed partial class Simulation
 
     void Deposit(Agent a, Band band, float keep)
     {
+        if (!AtCamp(a, band)) return;
+        if (HaulFor(a.Id) != null) return;
         if (a.Pack is not { } pack) return;
         pack.MoveNonFood(band.Stores);
         float food = pack.FoodValue;

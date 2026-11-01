@@ -5,5 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../../assets/civilisation/blueprints.json" LogicalName="Evolysia.Rooms.json" />
+  </ItemGroup>
 
 </Project>

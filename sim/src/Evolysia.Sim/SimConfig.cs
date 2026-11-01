@@ -4,6 +4,8 @@ public enum PlanetType : byte { Terra, Ignis, Cryos, Thalassia }
 
 public sealed class SimConfig
 {
+    public bool RequireModel = true;
+    public int PlanDays = 15;
     public ulong Seed = 42;
 
     public int Width = 800;

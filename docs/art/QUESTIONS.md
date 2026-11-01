@@ -113,3 +113,8 @@
 
 - The provided SVG remains the official source. Its proportionally rasterised menu/splash PNG and padded Windows icon are branding derivatives, separate from the pixel-sprite palette contract. The custom splash replaces the default engine image while retaining engine notices.
 - Earlier integration boundaries record the scope of those art phases. The client now renders multi-density terrain, modular buildings, owned gear and representative stores. Full stack identity, per-container inventories, logistics, portrait integration and the complete catalogue remain incomplete; see the current wiki.
+
+## Fonts and runtime completion — 2026-11-01
+
+- The specified SIL-OFL fonts are external font resources rather than generated pixel atlases. They live in `assets/fonts` with original licence files and a pinned source/checksum registry. They are checked and packaged separately from the PNG manifest; no third-party artwork is introduced.
+- Existing cliff and road assets now draw from world elevation and constructed/traffic-worn routes. No asset IDs, palette slots, sprite frames or authored dimensions are changed by that integration.

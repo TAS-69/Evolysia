@@ -1,15 +1,16 @@
 # Known limitations
 
-This is an initial alpha, not a finished civilisation sandbox.
+Current source is `0.2.0-dev`; the released `0.1.0-alpha.1` has different capabilities. Development is still very much in the "interesting things happen" stage.
 
-- **No save/load.** Closing the game or beginning a new world discards the session. The headless runner's CSV reports are analysis exports, not resumable saves.
-- Windows x64 is the packaged target. Other platforms, GPUs and graphics backends need testing.
-- There is no multiplayer, direct unit control, complete campaign, in-game character editor or comprehensive settings/accessibility screen.
-- The simulation catalogue contains advanced technology, but full modern/future societies, magic systems, space travel gameplay and every specialist institution are incomplete.
-- Inventories track quantities by good; rendered container contents are representative. Persistent stacks, independent container storage and comprehensive cargo logistics remain work in progress.
-- Some structure kinds lack dedicated runtime visuals. Much of the detailed art kit is an integration resource rather than currently reachable gameplay. Portraits, final UI assets, procedural culture glyphs, roads and cliff rendering are unfinished.
-- Simulation speeds are targets. Growing populations, terrain baking and large structure lists can lower frame rate and time progression. Population targets and memory projections are not supported hardware guarantees.
-- Optional narration depends on a separately installed runtime, compatible model and available memory. Replies can be slow or inconsistent. Bounded pivotal choices fall back to instinct when necessary.
-- Automated screenshot shutdown currently reports resource cleanup warnings. These are recorded separately from simulation test and asset validation results.
+- A compatible running model is mandatory. Slow or invalid replies hold progression at every speed. Two requests run concurrently; large societies and long campaigns need further performance and behaviour testing.
+- F5 writes a quick save; F9 opens named and automatic slots. Autosaves rotate three files by simulated days. Compatible optional fields migrate older development worlds, but required schema changes can still make a save incompatible.
+- Windows x64 is the checked client target. Other platforms, GPUs and rendering backends need testing. There is no multiplayer or complete campaign. Settings cover scale, reduced motion and common display options; keyboard/controller accessibility remains incomplete.
+- Manufacturing orders, fuel/solar power, batteries, refrigeration and six staffed service kinds are implemented. Complete future economies, magic, space travel, laws, taxation, markets and deeper institutions remain unfinished. Solar output uses a climate/temperature approximation.
+- Containers have persistent stacks and reservations. Explicit cargo jobs move physical stock, workers and vehicles. Routine harvest deposits, crafting inputs and some trade remain aggregate exchanges. Road surfaces improve freight speed and routes recheck obstacles. Traffic arbitration, full vehicle footprints while moving, comprehensive theft and end-to-end sea freight need more work.
+- The outfit editor chooses available garment definitions and independent dyes, skin tones and hairstyles. Clothing still needs knowledge, inputs and manufacture. Expanded wardrobe pieces are not all mirrored in the portrait atlases.
+- Roads, cliffs and the specified fonts are connected. Final interface icons/effects, procedural culture glyphs and some dedicated structure visuals remain unfinished. Some families enlarge base sprites at close zoom.
+- Scripted physiological and ecological rules remain authoritative. Generative councils supply goals and decisions, rather than replacing conservation, illness, reproduction or all social mechanics.
+- Possession supports one adult and basic local movement, rest, foraging, chopping and quarrying. It still advances in simulation cells and days, rather than providing a complete direct-control action game.
+- Reviewed settings, save and appearance screenshots now close cleanly. Long interactive sessions and other graphics drivers still need testing.
 
-When [reporting a bug](https://github.com/TAS-69/Evolysia/issues), include the version, OS, GPU, seed, planet, approximate year, population, speed and steps to reproduce. Include whether Minds or local voices were active. Please keep private model paths and machine-specific configuration out of public reports.
+[Development status](https://github.com/TAS-69/Evolysia/blob/main/docs/DEVELOPMENT.md) tracks implementation and remaining work. For bugs, include version, OS, GPU, endpoint/model, seed, planet, year, population, speed and reproduction steps. Include a save when useful, after checking it for private player messages.

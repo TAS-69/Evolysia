@@ -10,6 +10,7 @@ public partial class BandLayer : Node2D
     public Simulation? Sim;
     public int SelectedBandId = -1;
     public float CameraZoom = 1f;
+    public bool ShowShadows = true, ReducedMotion;
 
     public const float CampZoom = 1.8f;
 
@@ -21,7 +22,7 @@ public partial class BandLayer : Node2D
     readonly List<WorldSprite> _sprites = new();
     readonly Dictionary<int, Vector2> _spread = new();
     int _knowsDay = int.MinValue, _spreadDay = int.MinValue, _spreadCount;
-    static readonly Font Font = ThemeDB.FallbackFont;
+    static Font Font => Typeface.Interface;
 
     bool ShowCamps => CameraZoom >= CampZoom && Art.Available;
 
@@ -63,7 +64,7 @@ public partial class BandLayer : Node2D
 
     float HitRadius(Band band) => ShowCamps ? (band.Sedentary ? 18f : 8f) : Radius(band);
 
-    public void Ping(Vector2 pos, Color color) => _pings.Add((pos, color, Time.GetTicksMsec() / 1000.0));
+    public void Ping(Vector2 pos, Color color) { if (!ReducedMotion) _pings.Add((pos, color, Time.GetTicksMsec() / 1000.0)); }
 
     public override void _Process(double delta)
     {
@@ -142,15 +143,21 @@ public partial class BandLayer : Node2D
         foreach (var band in Sim!.Bands.Values)
         {
             var pos = NearestCopy(BandPosition(band), centre);
-            if (!view.HasPoint(pos)) continue;
-            Camps.AddPeople(Sim, band, pos, density, now, _sprites);
+            if (!view.HasPoint(pos))
+            {
+                if (Sim.Living.TryGetValue(Sim.ControlledAgentId, out var controlled) && controlled.BandId == band.Id)
+                    Camps.AddPeople(Sim, band, pos, density, ReducedMotion ? 0 : now, _sprites, controlled.Id);
+                continue;
+            }
+            Camps.AddPeople(Sim, band, pos, density, ReducedMotion ? 0 : now, _sprites);
         }
-        Camps.AddStructures(Sim, View, density, now, SelectedBandId, _sprites);
-        Wildlife.Add(Sim, View, density, now, _sprites);
+        Camps.AddStructures(Sim, View, density, ReducedMotion ? 0 : now, SelectedBandId, _sprites);
+        Camps.AddStock(Sim, View, density, _sprites);
+        Wildlife.Add(Sim, View, density, ReducedMotion ? 0 : now, _sprites);
         AddOccluders(density);
-        _sprites.Sort((a, b) => a.Foot.Y.CompareTo(b.Foot.Y));
+        _sprites.Sort((a, b) => a.DepthY.CompareTo(b.DepthY));
         foreach (var s in _sprites)
-            if (s.Shadow > 0f) DrawTextureRect(ShadowTexture, new Rect2(s.Foot - new Vector2(s.Shadow, s.Shadow * 0.35f), new Vector2(s.Shadow * 2f, s.Shadow * 0.7f)), false, new Color(0f, 0f, 0f, 0.16f));
+            if (ShowShadows && s.Shadow > 0f) DrawTextureRect(ShadowTexture, new Rect2(s.Foot - new Vector2(s.Shadow, s.Shadow * 0.35f), new Vector2(s.Shadow * 2f, s.Shadow * 0.7f)), false, new Color(0f, 0f, 0f, 0.16f));
         foreach (var s in _sprites)
         {
             var size = s.Source.Size * s.PixelSize;
@@ -161,6 +168,11 @@ public partial class BandLayer : Node2D
         }
         if (SelectedBandId >= 0 && Sim.Bands.TryGetValue(SelectedBandId, out var selected))
             DrawArc(NearestCopy(BandPosition(selected), centre), selected.Sedentary ? 24f : 10f, 0, Mathf.Tau, 48, Palette.Bone, outline * 1.5f);
+        if (Sim.Living.TryGetValue(Sim.ControlledAgentId, out var person) && person.Site >= 0)
+        {
+            var cell = new Vector2(Sim.World.X(person.Site) + 0.5f, Sim.World.Y(person.Site) + 0.75f) * Main.CellPx;
+            DrawArc(NearestCopy(cell, centre), 2.5f, 0f, Mathf.Tau, 16, Palette.Divine, outline);
+        }
     }
 
     readonly Dictionary<(int, int), List<TileBake.Plant>> _plantsByCell = new();
@@ -216,6 +228,7 @@ public partial class BandLayer : Node2D
     }
 
     static ImageTexture? _shadow;
+    public static void ReleaseShared() { _shadow?.Dispose(); _shadow = null; }
 
     static ImageTexture ShadowTexture
     {
@@ -223,7 +236,7 @@ public partial class BandLayer : Node2D
         {
             if (_shadow != null) return _shadow;
             const int w = 32, h = 12;
-            var image = Image.CreateEmpty(w, h, false, Image.Format.Rgba8);
+            using var image = Image.CreateEmpty(w, h, false, Image.Format.Rgba8);
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {

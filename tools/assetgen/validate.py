@@ -1,5 +1,6 @@
 
 import json
+import hashlib
 import math
 from pathlib import Path
 import numpy as np
@@ -13,6 +14,18 @@ def main():
         if not condition: errors.append(message)
     data=json.loads((ROOT/'assets/palette/palette.json').read_text())
     manifest=json.loads((ROOT/'assets/manifest.json').read_text())
+    font_directory=ROOT/'assets/fonts'
+    font_registry=json.loads((font_directory/'sources.json').read_text(encoding='utf-8'))
+    check(len(font_registry['fonts'])==4,'Expected four specified font files')
+    check({font['file'] for font in font_registry['fonts']}=={'PixelifySans.ttf','AlegreyaSans-Regular.ttf','AlegreyaSans-Bold.ttf','AlegreyaSans-Italic.ttf'},'Unexpected font family or face')
+    for font in font_registry['fonts']:
+        path=font_directory/font['file']; licence=font_directory/font['license_file']
+        check(path.is_file(),f'Missing font: {path.name}')
+        if path.is_file(): check(hashlib.sha256(path.read_bytes()).hexdigest()==font['sha256'],f'Font checksum mismatch: {path.name}')
+        check(licence.is_file() and 'SIL OPEN FONT LICENSE' in licence.read_text(encoding='utf-8'),f'Missing OFL notice: {font["file"]}')
+    for licence in font_registry['licenses']:
+        path=font_directory/licence['file']
+        check(path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()==licence['sha256'],f'Font licence changed: {path.name}')
     colours={tuple(c) for c in data['colours']}
     slots=data['slots']; indices={s['index'] for s in slots}
     reference_lookup=np.zeros((256,3),dtype=np.uint8)

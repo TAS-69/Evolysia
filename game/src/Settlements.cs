@@ -15,6 +15,7 @@ public static class Settlements
         foreach (var s in sim.Structures.Values)
         {
             var k = s.Kind;
+            if (k.Role == StructureRole.Vessel) continue;
             if (k.Role == StructureRole.Field)
             {
                 if (s.State != StructureState.Planned) fields[s.Cell] = (s.Crop, s.Growth, k.Id == "orchard");
@@ -31,7 +32,8 @@ public static class Settlements
             trees[i] = w.TreesK[i] <= 0f ? (byte)255 : (byte)Math.Clamp(w.Trees[i] / w.TreesK[i] * 255f + 0.5f, 0f, 255f);
             rocks[i] = w.RockK[i] <= 0f ? (byte)255 : (byte)Math.Clamp(w.Rock[i] / w.RockK[i] * 255f + 0.5f, 0f, 255f);
         }
-        return new TileBake.Input(w, fields, occupied, trees, rocks);
+        foreach (var road in sim.Roads) if (road.Value >= 2) occupied.Add(road.Key);
+        return new TileBake.Input(w, fields, occupied, trees, rocks, new Dictionary<int, byte>(sim.Roads));
     }
 
     public readonly record struct Style(string Wall, string Roof, string Floor);

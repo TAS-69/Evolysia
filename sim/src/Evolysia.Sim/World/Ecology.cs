@@ -27,6 +27,24 @@ public static class Ecology
 
     public const float PlantGrowth = 0.10f, GameGrowth = 0.06f, FishGrowth = 0.08f;
 
+    public static void RefreshEditedCell(WorldMap w, int cell, float capacityScale)
+    {
+        float area = w.CellArea * capacityScale;
+        if (!w.IsDryLand(cell))
+        {
+            w.PlantK[cell] = w.PlantStock[cell] = w.PreyK[cell] = w.PreyStock[cell] = w.TreesK[cell] = w.Trees[cell] = w.Predators[cell] = w.PredatorBase[cell] = 0f;
+            w.RockK[cell] = w.Rock[cell] = w.OreK[cell] = w.Ore[cell] = 0f;
+            w.FishK[cell] = w.Biome[cell] is Biome.Coast or Biome.Lake ? 700f * area : 0f; w.FishStock[cell] = MathF.Min(w.FishStock[cell], w.FishK[cell]); return;
+        }
+        var (plants, prey, danger) = Table[w.Biome[cell]];
+        w.PlantK[cell] = plants * 4f / PlantGrowth * area; w.PlantStock[cell] = MathF.Min(w.PlantStock[cell], w.PlantK[cell]);
+        w.PreyK[cell] = prey * 4f / GameGrowth * area; w.PreyStock[cell] = MathF.Min(w.PreyStock[cell], w.PreyK[cell]);
+        w.TreesK[cell] = TreeDensity(w.Biome[cell]) * 12f; w.Trees[cell] = MathF.Min(w.Trees[cell], w.TreesK[cell]);
+        if (w.RockK[cell] == 0f) { w.RockK[cell] = 8f; w.Rock[cell] = 8f; }
+        w.PredatorBase[cell] = danger; w.Predators[cell] = MathF.Min(w.Predators[cell], danger);
+        w.FishK[cell] = Math.Clamp(w.Flow[cell] / WorldGen.RiverFlow, 0f, 4f) * 60f * area; w.FishStock[cell] = MathF.Min(w.FishStock[cell], w.FishK[cell]);
+    }
+
     public static void InitCapacities(WorldMap w, Noise noise, float capacityScale = 1f)
     {
         Span<int> nb = stackalloc int[8];

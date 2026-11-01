@@ -88,6 +88,11 @@ def cmd_serve(a):
     print(config.describe(plan) + "\n")
     servers.serve(plan)
 
+def cmd_bootstrap(a):
+    if not install.find_server():
+        install.install(a.backend)
+    cmd_serve(a)
+
 def cmd_eval(a):
     plan = get_plan(a)
     if not a.mock:
@@ -118,6 +123,11 @@ def main():
     add_overrides(p)
     p.add_argument("--commands", action="store_true", help="also print llama-server command lines")
     p.set_defaults(fn=cmd_plan)
+
+    p = sub.add_parser("bootstrap", help="set up and start the required model")
+    add_overrides(p)
+    p.add_argument("--backend", choices=["vulkan", "rocm", "cpu"], default="vulkan")
+    p.set_defaults(fn=cmd_bootstrap)
 
     p = sub.add_parser("install", help="download prebuilt llama.cpp")
     p.add_argument("--backend", choices=["vulkan", "rocm", "cpu"], default="vulkan",

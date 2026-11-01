@@ -8,6 +8,9 @@ public partial class SetupScreen : Control
 {
     public event Action<SimConfig>? Begin;
     public event Action? Cancelled;
+    public event Action? StartModels;
+    public Func<(bool ready, string status)>? ModelStatus;
+    Label _modelStatus = null!;
 
     LineEdit _seed = null!;
     HSlider _tribes = null!;
@@ -167,12 +170,25 @@ public partial class SetupScreen : Control
         _status.AddThemeColorOverride("font_color", Ui.Muted);
         _status.AddThemeFontSizeOverride("font_size", 12);
         right.AddChild(_status);
+        right.AddChild(Ui.Heading("Living minds"));
+        _modelStatus = new Label { AutowrapMode = TextServer.AutowrapMode.WordSmart, CustomMinimumSize = new Vector2(680, 46) };
+        right.AddChild(_modelStatus);
+        var modelStart = new Button { Text = "Set up / start local model", TooltipText = "Installs the runtime if needed, then starts your configured model. The first start downloads model weights." };
+        modelStart.Pressed += () => StartModels?.Invoke();
+        right.AddChild(modelStart);
 
         Regenerate();
         Refresh();
     }
 
-    ulong Seed => ulong.TryParse(_seed.Text.Trim(), out var s) ? s : (ulong)_seed.Text.GetHashCode();
+    static ulong StableSeed(string text)
+    {
+        ulong seed = 14695981039346656037UL;
+        foreach (byte value in System.Text.Encoding.UTF8.GetBytes(text)) { seed ^= value; seed = unchecked(seed * 1099511628211UL); }
+        return seed;
+    }
+
+    ulong Seed => ulong.TryParse(_seed.Text.Trim(), out var s) ? s : StableSeed(_seed.Text.Trim());
 
     void Regenerate()
     {
@@ -182,6 +198,9 @@ public partial class SetupScreen : Control
 
     public override void _Process(double delta)
     {
+        var connection = ModelStatus?.Invoke() ?? (false, "A model connection is required.");
+        _modelStatus.Text = connection.Item2;
+        _begin.Disabled = !connection.Item1 || Placing && _placed.Count < (int)_tribes.Value;
 
         if (_generating == null && _wanted != _shown)
         {
@@ -259,6 +278,7 @@ public partial class SetupScreen : Control
 
     void OnBegin()
     {
+        if (ModelStatus?.Invoke().ready != true) return;
         var cfg = new SimConfig
         {
             Seed = Seed, Planet = _planet, Tribes = (int)_tribes.Value,

@@ -22,7 +22,7 @@ public class NarrationTests
 
     static Simulation SimWithMoments()
     {
-        var sim = new Simulation(new SimConfig { Seed = 5 });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 5 });
         sim.RunYears(25);
         return sim;
     }

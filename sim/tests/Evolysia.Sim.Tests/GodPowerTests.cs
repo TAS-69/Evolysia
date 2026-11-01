@@ -8,7 +8,7 @@ public class GodPowerTests
 {
     static (Simulation sim, Band band) World(int years = 10, ulong seed = 5)
     {
-        var sim = new Simulation(new SimConfig { Seed = seed });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = seed });
         sim.RunYears(years);
         var band = sim.Bands.Values.OrderByDescending(b => b.Members.Count).First();
         return (sim, band);
@@ -140,7 +140,7 @@ public class GodPowerTests
         sim.Act(new GodAction(Power.Message, band.Cell, Words: "Make peace", Medium: MessageMedium.Vision));
         Assert.Empty(sim.Inscriptions);
 
-        sim = new Simulation(new SimConfig { Seed = 5, FirstMessageYear = 0 });
+        sim = new Simulation(new SimConfig { RequireModel = false, Seed = 5, FirstMessageYear = 0 });
         sim.RunYears(10);
         band = sim.Bands.Values.OrderByDescending(b => b.Members.Count).First();
         Assert.True(sim.CanMessage);
@@ -152,7 +152,7 @@ public class GodPowerTests
         Assert.False(sim.CanMessage);
         Assert.Equal(ins.Day + Simulation.MessageCooldownDays, sim.NextMessageDay);
 
-        sim = new Simulation(new SimConfig { Seed = 5, FirstMessageYear = 0 });
+        sim = new Simulation(new SimConfig { RequireModel = false, Seed = 5, FirstMessageYear = 0 });
         sim.RunYears(10);
         int far = Enumerable.Range(0, sim.World.W * sim.World.H)
             .First(c => sim.World.IsDryLand(c) && sim.World.StructureAt[c] == 0 && sim.Bands.Values.All(b => sim.World.Distance(b.Cell, c) > sim.World.Cells(3)));

@@ -58,7 +58,7 @@ public class WorldAndGeneticsTests
     [Fact]
     public void World_has_land_climate_gradient_and_variety()
     {
-        var w = WorldGen.Generate(new SimConfig { Seed = 3 });
+        var w = WorldGen.Generate(new SimConfig { RequireModel = false, Seed = 3 });
         int land = Enumerable.Range(0, w.Count).Count(w.IsLand);
         Assert.InRange(land / (float)w.Count, 0.28f, 0.40f);
 
@@ -74,8 +74,8 @@ public class WorldAndGeneticsTests
     [Fact]
     public void Same_seed_same_world()
     {
-        var a = WorldGen.Generate(new SimConfig { Seed = 77 });
-        var b = WorldGen.Generate(new SimConfig { Seed = 77 });
+        var a = WorldGen.Generate(new SimConfig { RequireModel = false, Seed = 77 });
+        var b = WorldGen.Generate(new SimConfig { RequireModel = false, Seed = 77 });
         Assert.Equal(a.Elevation, b.Elevation);
         Assert.Equal(a.Biome, b.Biome);
     }
@@ -85,7 +85,7 @@ public class WorldAndGeneticsTests
     {
         string Run()
         {
-            var sim = new Simulation(new SimConfig { Seed = 21 });
+            var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 21 });
             sim.RunYears(15);
             return string.Join("|", sim.Stats.History.Select(r => $"{r.Population},{r.Births},{r.Deaths.Sum()},{r.Memes},{r.Inventions}"))
                    + $"#{sim.Living.Keys.Sum()}#{sim.Chronicle.Events.Count}";
@@ -96,7 +96,7 @@ public class WorldAndGeneticsTests
     [Fact]
     public void A_short_history_produces_life_events()
     {
-        var sim = new Simulation(new SimConfig { Seed = 5 });
+        var sim = new Simulation(new SimConfig { RequireModel = false, Seed = 5 });
         sim.RunYears(30);
         var h = sim.Stats.History;
         Assert.Equal(30, h.Count);
